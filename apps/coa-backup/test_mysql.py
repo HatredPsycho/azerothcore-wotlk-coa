@@ -298,6 +298,15 @@ def run(mysql_bin):
                 raise AssertionError("Unexpected backup selection: " + json.dumps(manifest))
             if checksums(admin, "src_characters") != source_before:
                 raise AssertionError("Backup changed the source database")
+            if directory.name != manifest["created"]:
+                raise AssertionError("A full backup is named by its timestamp: " + directory.name)
+            for selection, prefix, expected in (("--accounts", "account_ALICE_", ["Alice", "Alicealt"]),
+                                                ("--characters", "character_Bob_", ["Bob"])):
+                value = "alice" if selection == "--accounts" else "bob"
+                named = coa_backup.main(["backup", *common, "--output", scratch, selection, value])
+                selected = [c["name"] for c in coa_backup.load_manifest(named)["characters"]]
+                if not named.name.startswith(prefix) or selected != expected:
+                    raise AssertionError("Selected backup differs: " + named.name + " " + json.dumps(selected))
             print(coa_backup.list_backup(directory), flush=True)
             restore = ["restore", str(directory), *connection_args, "--auth-db", "dst_auth",
                        "--characters-db", "dst_characters", "--playerbots-db", "dst_playerbots"]

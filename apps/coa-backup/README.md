@@ -45,7 +45,10 @@ python apps/coa-backup/coa_backup.py backup --defaults-file my.cnf --characters 
 python apps/coa-backup/coa_backup.py backup --defaults-file my.cnf --exclude-account-regex "^RNDBOT"
 ```
 
-Each backup is a timestamped directory under `--output` (default `coa-backups/`) with one `mysqldump`
+Each backup is a directory under `--output` (default `coa-backups/`). A full backup is named by its UTC
+timestamp (`20260922_113238`); a backup selected with `--characters` or `--accounts` carries the names as
+stored in the database (`character_Alice_20260922_113238`, `account_SASCHA+BOB_20260922_113238`, with
+more than three names shortened to `A+B+C+2more`). The directory holds one `mysqldump`
 file per table in `auth/` and `characters/` and a `manifest.json` listing the accounts, characters,
 guilds, row counts and file checksums. Deleted characters are not included. A guild is included when
 one of the selected characters is a member; only the selected members are stored.

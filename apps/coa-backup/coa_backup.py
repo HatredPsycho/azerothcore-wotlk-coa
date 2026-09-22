@@ -21,6 +21,8 @@ IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z_0-9]*\Z")
 PROCESS_OPTIONS = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
 EMPTY_SET = "SELECT NULL FROM DUAL WHERE FALSE"
 MAPS = ("account", "character", "guild", "pet", "mail", "equipset", "auction", "chest", "item")
+UNSAFE_PATH = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+MAX_NAMES_IN_DIRECTORY = 3
 LOW_GUID = "0xFFFFFFFF"
 HIGH_GUID = "0xFFFFFFFF00000000"
 
@@ -396,6 +398,21 @@ def databases(args):
     return {"auth": args.auth_db, "characters": args.characters_db, "playerbots": args.playerbots_db}
 
 
+def backup_name(args, accounts, characters, stamp):
+    if args.characters:
+        kind, names = "character", characters
+    elif args.accounts:
+        kind, names = "account", accounts
+    else:
+        return stamp
+    shown = names[:MAX_NAMES_IN_DIRECTORY]
+    label = "+".join(shown)
+    if len(names) > len(shown):
+        label += "+" + str(len(names) - len(shown)) + "more"
+    label = UNSAFE_PATH.sub("_", label).rstrip(". ")
+    return kind + "_" + label + "_" + stamp
+
+
 def backup(connection, args):
     names = databases(args)
     auth, characters = names["auth"], names["characters"]
@@ -421,7 +438,8 @@ def backup(connection, args):
         print("Warning: characters are online, stop worldserver for a consistent backup: " + ", ".join(online),
               file=sys.stderr)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
-    target = args.output / stamp
+    name = backup_name(args, [row[1] for row in accounts], [row[2] for row in character_rows], stamp)
+    target = args.output / name
     if target.exists():
         raise ValueError("Backup directory already exists: " + str(target))
     options = connection.dump_options()

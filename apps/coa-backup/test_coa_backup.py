@@ -56,6 +56,20 @@ class Specification(unittest.TestCase):
         self.assertIn("{CHR}", tables["playerbots_custom_strategy"].select)
         self.assertIn("{ACC}", tables["playerbots_account_links"].select)
 
+    def test_selected_backups_are_named_after_their_selection(self):
+        stamp = "20260922_120000"
+
+        def name(accounts=(), characters=(), found_accounts=(), found_characters=()):
+            args = argparse.Namespace(accounts=list(accounts), characters=list(characters))
+            return coa_backup.backup_name(args, list(found_accounts), list(found_characters), stamp)
+
+        self.assertEqual(name(), stamp)
+        self.assertEqual(name(["sascha"], found_accounts=["SASCHA"]), "account_SASCHA_" + stamp)
+        self.assertEqual(name(["sascha"], ["alice"], ["SASCHA"], ["Alice"]), "character_Alice_" + stamp)
+        self.assertEqual(name(characters=["a"], found_characters=["A", "B", "C", "D", "E"]),
+                         "character_A+B+C+2more_" + stamp)
+        self.assertEqual(name(["x"], found_accounts=['a<b>:c"d/e\\f|g?h*i.']), "account_a_b__c_d_e_f_g_h_i_" + stamp)
+
     def test_selection_lists_are_split(self):
         args = coa_backup.parser().parse_args(["restore", "backup", "--characters", "Alice, Bob,,"])
         self.assertEqual(args.characters, ["Alice", "Bob"])
