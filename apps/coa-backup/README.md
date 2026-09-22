@@ -56,11 +56,14 @@ one of the selected characters is a member; only the selected members are stored
 The files contain `CREATE TABLE` statements and filtered rows. Restore them with the `restore` command;
 do not import them into a live database by hand.
 
-`list` shows the contents of a backup:
+`list` shows the backups in `coa-backups/`, or the contents of one backup:
 
 ```sh
-python apps/coa-backup/coa_backup.py list coa-backups/20260922_113238
+python apps/coa-backup/coa_backup.py list
+python apps/coa-backup/coa_backup.py list account_SASCHA_20260922_135936
 ```
+
+`list` and `restore` accept a backup path or just its directory name inside `coa-backups/`.
 
 For recurring backups of selected characters, schedule the `backup` command, for example with the
 Windows Task Scheduler or cron.

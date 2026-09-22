@@ -17,6 +17,7 @@ import uuid
 DESCRIPTION = "Back up and restore CoA accounts, characters, guilds and playerbot data as SQL."
 GROUPS = ("auth", "characters", "playerbots")
 FORMAT = 1
+DEFAULT_OUTPUT = Path("coa-backups")
 IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z_0-9]*\Z")
 PROCESS_OPTIONS = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
 EMPTY_SET = "SELECT NULL FROM DUAL WHERE FALSE"
@@ -475,6 +476,26 @@ def backup(connection, args):
     return target, manifest
 
 
+def resolve_backup(path):
+    candidates = [path]
+    if not path.is_absolute():
+        candidates.append(DEFAULT_OUTPUT / path)
+    for candidate in candidates:
+        if (candidate / "manifest.json").is_file():
+            return candidate
+    tried = ", ".join(str(candidate.resolve()) for candidate in candidates)
+    raise ValueError("No backup (manifest.json) found at " + tried
+                     + "; run 'list' to see the backups in " + str(DEFAULT_OUTPUT))
+
+
+def available_backups(root=None):
+    root = root or DEFAULT_OUTPUT
+    if not root.is_dir():
+        return "No backups in " + str(root.resolve())
+    names = sorted(entry.name for entry in root.iterdir() if (entry / "manifest.json").is_file())
+    return "\n".join(names) if names else "No backups in " + str(root.resolve())
+
+
 def load_manifest(directory):
     path = directory / "manifest.json"
     if not path.is_file():
@@ -756,26 +777,26 @@ def parser():
     selection.add_argument("--accounts", type=split, default=[], help="Comma-separated account names")
     selection.add_argument("--characters", type=split, default=[], help="Comma-separated character names")
     make = commands.add_parser("backup", parents=[connection, selection], help="Write a SQL backup")
-    make.add_argument("--output", type=Path, default=Path("coa-backups"))
+    make.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     make.add_argument("--account-regex")
     make.add_argument("--exclude-account-regex")
     restore = commands.add_parser("restore", parents=[connection, selection], help="Restore a backup")
-    restore.add_argument("backup", type=Path)
+    restore.add_argument("backup", type=Path, help="Backup directory, also looked up in " + str(DEFAULT_OUTPUT))
     restore.add_argument("--target-account", help="Restore the selected characters into this existing account")
     restore.add_argument("--realm-id", type=int, default=1)
     restore.add_argument("--dry-run", action="store_true")
     restore.add_argument("--allow-online", action="store_true")
     restore.add_argument("--keep-staging", action="store_true")
     restore.add_argument("--report", type=Path)
-    show = commands.add_parser("list", help="Show the accounts and characters in a backup")
-    show.add_argument("backup", type=Path)
+    show = commands.add_parser("list", help="List the backups, or show the contents of one backup")
+    show.add_argument("backup", type=Path, nargs="?")
     return root
 
 
 def main(argv=None):
     args = parser().parse_args(argv)
     if args.command == "list":
-        print(list_backup(args.backup))
+        print(list_backup(resolve_backup(args.backup)) if args.backup else available_backups())
         return None
     for name in databases(args).values():
         identifier(name)
@@ -786,7 +807,7 @@ def main(argv=None):
             print(json.dumps({"backup": str(directory), "accounts": len(manifest["accounts"]),
                               "characters": len(manifest["characters"]), "guilds": len(manifest["guilds"])}))
             return directory
-        report = Restore(connection, args.backup, args).run()
+        report = Restore(connection, resolve_backup(args.backup), args).run()
     finally:
         connection.close()
     if args.report:

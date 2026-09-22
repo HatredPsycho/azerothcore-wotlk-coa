@@ -1,5 +1,7 @@
 import argparse
+import os
 from pathlib import Path
+import tempfile
 import unittest
 
 import coa_backup
@@ -69,6 +71,22 @@ class Specification(unittest.TestCase):
         self.assertEqual(name(characters=["a"], found_characters=["A", "B", "C", "D", "E"]),
                          "character_A+B+C+2more_" + stamp)
         self.assertEqual(name(["x"], found_accounts=['a<b>:c"d/e\\f|g?h*i.']), "account_a_b__c_d_e_f_g_h_i_" + stamp)
+
+    def test_backup_names_are_found_in_the_default_output(self):
+        previous = os.getcwd()
+        with tempfile.TemporaryDirectory() as scratch:
+            os.chdir(scratch)
+            try:
+                backup = coa_backup.DEFAULT_OUTPUT / "account_SASCHA_20260922_135936"
+                backup.mkdir(parents=True)
+                (backup / "manifest.json").write_text("{}", encoding="utf-8")
+                self.assertEqual(coa_backup.resolve_backup(Path(backup.name)), backup)
+                self.assertEqual(coa_backup.resolve_backup(backup), backup)
+                self.assertEqual(coa_backup.available_backups(), backup.name)
+                with self.assertRaisesRegex(ValueError, "run 'list'"):
+                    coa_backup.resolve_backup(Path("account_OTHER_20260922_135936"))
+            finally:
+                os.chdir(previous)
 
     def test_selection_lists_are_split(self):
         args = coa_backup.parser().parse_args(["restore", "backup", "--characters", "Alice, Bob,,"])
