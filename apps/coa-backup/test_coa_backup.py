@@ -51,6 +51,12 @@ class Specification(unittest.TestCase):
         self.assertEqual(args.characters, ["Alice", "Bob"])
         self.assertEqual(args.backup, Path("backup"))
 
+    def test_missing_client_names_the_option(self):
+        with self.assertRaisesRegex(ValueError, "--mysqldump"):
+            coa_backup.executable(Path("coa-missing-dir/mysqldump"))
+        with self.assertRaisesRegex(ValueError, "--coa_missing_client"):
+            coa_backup.executable(Path("coa_missing_client"))
+
     def test_source_sets_skip_absent_optional_tables(self):
         args = argparse.Namespace(accounts=["ALICE"], account_regex=None, exclude_account_regex="^RNDBOT",
                                   characters=[])

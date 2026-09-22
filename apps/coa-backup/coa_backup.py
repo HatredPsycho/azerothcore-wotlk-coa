@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -217,10 +218,36 @@ ITEM_SOURCES = (
 )
 
 
+def install_directories():
+    roots = [os.environ.get(name) for name in ("ProgramFiles", "ProgramW6432", "ProgramFiles(x86)")]
+    found = []
+    for root in dict.fromkeys(root for root in roots if root):
+        for pattern in ("MySQL/MySQL Server */bin", "MariaDB */bin"):
+            found += sorted(Path(root).glob(pattern), reverse=True)
+    return found
+
+
+def executable(path):
+    if path.parent != Path(".") or path.is_file():
+        if not path.is_file() and not shutil.which(str(path)):
+            raise ValueError("--" + path.stem + " does not point to an existing file: " + str(path))
+        return str(path)
+    located = shutil.which(str(path))
+    if located:
+        return located
+    suffix = ".exe" if os.name == "nt" else ""
+    for directory in install_directories():
+        candidate = directory / (path.name + suffix)
+        if candidate.is_file():
+            return str(candidate)
+    raise ValueError(path.name + " was not found on PATH or in a MySQL/MariaDB installation; pass --"
+                     + path.name + " with the full path to " + path.name + suffix)
+
+
 class Connection:
     def __init__(self, args):
-        self.mysql = str(args.mysql)
-        self.mysqldump = str(args.mysqldump)
+        self.mysql = executable(args.mysql)
+        self.mysqldump = executable(args.mysqldump)
         self.temporary = None
         if args.password_prompt and args.defaults_file:
             raise ValueError("Use either --defaults-file or --password-prompt")
