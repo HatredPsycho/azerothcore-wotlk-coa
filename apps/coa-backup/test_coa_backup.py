@@ -22,10 +22,11 @@ class Specification(unittest.TestCase):
                 coa_backup.identifier(value)
 
     def test_every_table_is_unique_and_fully_formattable(self):
-        names = [(table.auth, table.name) for table in coa_backup.TABLES]
+        names = [(table.database, table.name) for table in coa_backup.TABLES]
         self.assertEqual(len(names), len(set(names)))
         for table in coa_backup.TABLES:
             self.assertIn(table.mode, ("insert", "ignore"))
+            self.assertIn(table.database, coa_backup.GROUPS)
             table.select.format(**SETS)
             table.keep.format(**NAMES)
             for column, expression in table.values:
@@ -45,6 +46,15 @@ class Specification(unittest.TestCase):
         tables = {table.name: table for table in coa_backup.TABLES}
         for name in ("mod_ascension_bank_item", "mod_ascension_bank_money", "mod_ascension_bank_tab"):
             self.assertIn("AND e = 0", tables[name].keep, name)
+
+    def test_playerbot_rows_follow_accounts_and_characters(self):
+        tables = {table.name: table for table in coa_backup.TABLES if table.database == "playerbots"}
+        self.assertEqual(set(tables), {
+            "playerbots_account_type", "playerbots_account_keys", "playerbots_account_links",
+            "playerbots_random_bots", "playerbots_db_store", "playerbots_preferred_mounts",
+            "playerbots_custom_strategy", "playerbots_guild_tasks"})
+        self.assertIn("{CHR}", tables["playerbots_custom_strategy"].select)
+        self.assertIn("{ACC}", tables["playerbots_account_links"].select)
 
     def test_selection_lists_are_split(self):
         args = coa_backup.parser().parse_args(["restore", "backup", "--characters", "Alice, Bob,,"])

@@ -4,10 +4,11 @@
 same or another CoA server. It covers the core AzerothCore character data and the CoA tables:
 Personal and Realm Bank, High-Risk chests, Manastorm progress and caches, appearance and vanity
 collections, character-selection state, Challenges/Trials, Worldforged pickups and Craftsman's Codex.
+When the `mod-playerbots` database exists, the per-account and per-character playerbot data is included.
 
 It replaces the PowerShell scripts from
 [WoW-export-import-scripts](https://github.com/AldebaraanMKII/WoW-export-import-scripts) for this fork.
-FusionGEN, Playerbots and third-party transmog/bank modules are not part of CoA and are not handled.
+FusionGEN and third-party transmog/bank modules are not part of CoA and are not handled.
 
 ## Requirements
 
@@ -32,7 +33,8 @@ password=acore
 ```
 
 Pass it with `--defaults-file`, or use `--host`, `--port`, `--user` with `--password-prompt`.
-`--auth-db` and `--characters-db` default to `acore_auth` and `acore_characters`.
+`--auth-db`, `--characters-db` and `--playerbots-db` default to `acore_auth`, `acore_characters` and
+`acore_playerbots`. A missing playerbots database is skipped.
 
 ## Back up
 
@@ -88,6 +90,11 @@ including the old and new account IDs and character GUIDs.
 - Account collections (appearances, vanity items) are merged into existing accounts.
 - Guilds whose name already exists in the target are skipped. When the guild master is not restored,
   worldserver promotes another member at startup.
+- Playerbots: account types, account keys and account links (both accounts restored) are kept from the
+  target when the account already exists there. Random-bot state, stored bot strategies and values,
+  preferred mounts, per-player custom strategies and guild tasks follow their character and guild.
+  Shared playerbot data (texts, caches, global strategies, travel nodes, name pools) is not backed up.
+  Random-bot accounts are ordinary accounts; exclude them with `--exclude-account-regex "^RNDBOT"`.
 - Instance binds, corpses, groups, arena teams and log tables are not restored. `realmcharacters` is
   recalculated for the affected accounts (`--realm-id`, default 1).
 

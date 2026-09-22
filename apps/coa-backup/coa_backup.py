@@ -14,7 +14,8 @@ import tempfile
 import uuid
 
 
-DESCRIPTION = "Back up and restore CoA accounts, characters and guilds as SQL."
+DESCRIPTION = "Back up and restore CoA accounts, characters, guilds and playerbot data as SQL."
+GROUPS = ("auth", "characters", "playerbots")
 FORMAT = 1
 IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z_0-9]*\Z")
 PROCESS_OPTIONS = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
@@ -62,7 +63,7 @@ class Table:
     keep: str
     values: tuple = ()
     mode: str = "insert"
-    auth: bool = False
+    database: str = "characters"
 
 
 def guid_table(name, column="guid", mode="insert"):
@@ -85,13 +86,13 @@ TRIAL_KEEP = has("character", "s.guid") + " AND " + text("s.trialId") + " IN (SE
 
 AUTH_TABLES = (
     Table("account", "id IN ({ACC})", NEW_ACCOUNT.replace("{column}", "id"),
-          (("id", ref("account", "s.id")), ("online", "0")), auth=True),
+          (("id", ref("account", "s.id")), ("online", "0")), database="auth"),
     Table("account_access", "id IN ({ACC})", NEW_ACCOUNT.replace("{column}", "id"),
-          (("id", ref("account", "s.id")),), auth=True),
+          (("id", ref("account", "s.id")),), database="auth"),
     Table("account_banned", "id IN ({ACC})", NEW_ACCOUNT.replace("{column}", "id"),
-          (("id", ref("account", "s.id")),), auth=True),
+          (("id", ref("account", "s.id")),), database="auth"),
     Table("account_muted", "guid IN ({ACC})", NEW_ACCOUNT.replace("{column}", "guid"),
-          (("guid", ref("account", "s.guid")),), auth=True),
+          (("guid", ref("account", "s.guid")),), database="auth"),
 )
 
 CHARACTER_TABLES = (
@@ -204,7 +205,30 @@ CHARACTER_TABLES = (
           (("guildid", ref("guild", "s.guildid")), ("item_guid", ref("item", "s.item_guid")))),
 )
 
-TABLES = AUTH_TABLES + CHARACTER_TABLES
+PLAYERBOT_TABLES = (
+    Table("playerbots_account_type", "account_id IN ({ACC})", has("account", "s.account_id"),
+          (("account_id", ref("account", "s.account_id")),), "ignore", "playerbots"),
+    Table("playerbots_account_keys", "account_id IN ({ACC})", has("account", "s.account_id"),
+          (("account_id", ref("account", "s.account_id")),), "ignore", "playerbots"),
+    Table("playerbots_account_links", "account_id IN ({ACC}) AND linked_account_id IN ({ACC})",
+          has("account", "s.account_id") + " AND " + has("account", "s.linked_account_id"),
+          (("account_id", ref("account", "s.account_id")),
+           ("linked_account_id", ref("account", "s.linked_account_id"))), "ignore", "playerbots"),
+    Table("playerbots_random_bots", "bot IN ({CHR})", has("character", "s.bot"),
+          (("bot", ref("character", "s.bot")),), database="playerbots"),
+    Table("playerbots_db_store", "guid IN ({CHR})", has("character", "s.guid"),
+          (("guid", ref("character", "s.guid")),), database="playerbots"),
+    Table("playerbots_preferred_mounts", "guid IN ({CHR})", has("character", "s.guid"),
+          (("guid", ref("character", "s.guid")),), database="playerbots"),
+    Table("playerbots_custom_strategy", "owner IN ({CHR})", has("character", "s.owner"),
+          (("owner", ref("character", "s.owner")),), database="playerbots"),
+    Table("playerbots_guild_tasks", "owner IN ({CHR}) AND guildid IN ({GLD})",
+          has("character", "s.owner") + " AND " + has("guild", "s.guildid"),
+          (("owner", ref("character", "s.owner")), ("guildid", ref("guild", "s.guildid"))),
+          database="playerbots"),
+)
+
+TABLES = AUTH_TABLES + CHARACTER_TABLES + PLAYERBOT_TABLES
 
 ITEM_SOURCES = (
     ("character_inventory", "SELECT item FROM {C}.character_inventory WHERE guid IN ({CHR})"),
@@ -368,12 +392,17 @@ def source_sets(auth, characters, present, args):
     return sets
 
 
+def databases(args):
+    return {"auth": args.auth_db, "characters": args.characters_db, "playerbots": args.playerbots_db}
+
+
 def backup(connection, args):
-    auth, characters = args.auth_db, args.characters_db
-    present = {"auth": existing_tables(connection, auth), "characters": existing_tables(connection, characters)}
-    for database, required in ((auth, "account"), (characters, "characters")):
-        if required not in present["auth" if database == auth else "characters"]:
-            raise ValueError("Database " + database + " has no table " + required)
+    names = databases(args)
+    auth, characters = names["auth"], names["characters"]
+    present = {group: existing_tables(connection, name) for group, name in names.items()}
+    for group, required in (("auth", "account"), ("characters", "characters")):
+        if required not in present[group]:
+            raise ValueError("Database " + names[group] + " has no table " + required)
     sets = source_sets(auth, characters, present["characters"], args)
     a, c = sets["A"], sets["C"]
     accounts = connection.run("SELECT id, username FROM " + a + ".account WHERE id IN (" + sets["ACC"]
@@ -398,8 +427,8 @@ def backup(connection, args):
     options = connection.dump_options()
     files, missing = [], []
     for table in TABLES:
-        database = auth if table.auth else characters
-        group = "auth" if table.auth else "characters"
+        group = table.database
+        database = names[group]
         if table.name not in present[group]:
             missing.append(group + "." + table.name)
             continue
@@ -414,7 +443,7 @@ def backup(connection, args):
     manifest = {
         "format": FORMAT,
         "created": stamp,
-        "source": {"auth": auth, "characters": characters},
+        "source": names,
         "accounts": [{"id": int(row[0]), "username": row[1]} for row in accounts],
         "characters": [{"guid": int(row[0]), "account": int(row[1]), "name": row[2], "race": int(row[3]),
                         "class": int(row[4]), "gender": int(row[5]), "level": int(row[6]), "money": int(row[7])}
@@ -449,10 +478,14 @@ class Restore:
         self.args = args
         self.manifest = load_manifest(directory)
         token = uuid.uuid4().hex[:12]
-        self.stage_auth = "coa_restore_" + token + "_auth"
-        self.stage = "coa_restore_" + token + "_characters"
-        self.names = {"target_auth": identifier(args.auth_db), "target": identifier(args.characters_db),
-                      "stage_auth": identifier(self.stage_auth), "stage": identifier(self.stage)}
+        self.targets = databases(args)
+        self.stages = {group: "coa_restore_" + token + "_" + group for group in GROUPS}
+        self.stage = self.stages["characters"]
+        self.names = {}
+        for group in GROUPS:
+            suffix = "" if group == "characters" else "_" + group
+            self.names["target" + suffix] = identifier(self.targets[group])
+            self.names["stage" + suffix] = identifier(self.stages[group])
         for kind in MAPS + ("trial",):
             self.names["map_" + kind] = self.names["stage"] + "." + identifier("map_" + kind)
 
@@ -465,10 +498,10 @@ class Restore:
         return template.format(**self.names)
 
     def stage_backup(self):
-        self.connection.run("CREATE DATABASE " + self.names["stage_auth"] + " CHARACTER SET utf8mb4; CREATE DATABASE "
-                            + self.names["stage"] + " CHARACTER SET utf8mb4;")
+        self.connection.run(" ".join("CREATE DATABASE " + identifier(name) + " CHARACTER SET utf8mb4;"
+                                     for name in self.stages.values()))
         for entry in self.manifest["files"]:
-            database = self.stage_auth if entry["database"] == "auth" else self.stage
+            database = self.stages[entry["database"]]
             self.connection.load(self.directory / entry["file"], database)
             rows = int(self.connection.run("SELECT COUNT(*) FROM " + identifier(database) + "."
                                            + identifier(entry["table"]) + ";")[0][0])
@@ -484,8 +517,8 @@ class Restore:
         self.connection.run(self.sql(" ".join(maps)))
 
     def drop_stage(self):
-        self.connection.run("DROP DATABASE IF EXISTS " + self.names["stage_auth"] + "; DROP DATABASE IF EXISTS "
-                            + self.names["stage"] + ";")
+        self.connection.run(" ".join("DROP DATABASE IF EXISTS " + identifier(name) + ";"
+                                     for name in self.stages.values()))
 
     def fresh(self, kind, table, key, where):
         base = "(SELECT COALESCE(MAX(" + key + "), 0) FROM {target}." + table + ")"
@@ -571,8 +604,9 @@ class Restore:
         selected = [name for name, extra in target_columns
                     if "generated" not in extra and (name in overrides or (name in stage_names
                                                                             and "auto_increment" not in extra))]
-        stage_db = "{stage_auth}" if table.auth else "{stage}"
-        target_db = "{target_auth}" if table.auth else "{target}"
+        suffix = "" if table.database == "characters" else "_" + table.database
+        stage_db = "{stage" + suffix + "}"
+        target_db = "{target" + suffix + "}"
         verb = "INSERT IGNORE INTO " if table.mode == "ignore" else "INSERT INTO "
         sql = (verb + target_db + "." + identifier(table.name) + " (" + ",".join(identifier(c) for c in selected)
                + ") SELECT " + ",".join(overrides.get(c, "s." + identifier(c)) for c in selected) + " FROM "
@@ -617,20 +651,20 @@ class Restore:
         try:
             self.stage_backup()
             staged = existing_tables(self.connection, self.stage)
-            stage_columns = {**columns(self.connection, self.stage_auth), **columns(self.connection, self.stage)}
-            target_columns = columns(self.connection, self.args.characters_db)
-            auth_columns = columns(self.connection, self.args.auth_db)
+            stage_columns = {group: columns(self.connection, name) for group, name in self.stages.items()}
+            target_columns = {group: columns(self.connection, name) for group, name in self.targets.items()}
             statements = ["SET NAMES utf8mb4;", "START TRANSACTION;"]
             statements += [self.sql(statement) for statement in self.mapping_sql(staged, target_tables)]
             statements += [self.sql(statement) for statement in self.kept_sql(staged)]
             skipped_tables = []
             for table in TABLES:
-                available = auth_columns if table.auth else target_columns
-                if table.name not in available or table.name not in stage_columns:
+                available = target_columns[table.database]
+                staged_columns = stage_columns[table.database]
+                if table.name not in available or table.name not in staged_columns:
                     if any(entry["table"] == table.name for entry in self.manifest["files"]):
-                        skipped_tables.append(table.name)
+                        skipped_tables.append(table.database + "." + table.name)
                     continue
-                statements.append(self.sql(self.insert_sql(table, stage_columns[table.name],
+                statements.append(self.sql(self.insert_sql(table, staged_columns[table.name],
                                                            available[table.name])))
                 statements.append("SELECT 'rows', " + literal(table.name) + ", ROW_COUNT(), '';")
             if "realmcharacters" in auth_tables:
@@ -698,6 +732,8 @@ def parser():
     connection.add_argument("--protocol")
     connection.add_argument("--auth-db", default="acore_auth")
     connection.add_argument("--characters-db", default="acore_characters")
+    connection.add_argument("--playerbots-db", default="acore_playerbots",
+                            help="mod-playerbots database; skipped when it does not exist")
     selection = argparse.ArgumentParser(add_help=False)
     selection.add_argument("--accounts", type=split, default=[], help="Comma-separated account names")
     selection.add_argument("--characters", type=split, default=[], help="Comma-separated character names")
@@ -723,8 +759,8 @@ def main(argv=None):
     if args.command == "list":
         print(list_backup(args.backup))
         return None
-    identifier(args.auth_db)
-    identifier(args.characters_db)
+    for name in databases(args).values():
+        identifier(name)
     connection = Connection(args)
     try:
         if args.command == "backup":

@@ -12,6 +12,7 @@ import coa_backup
 
 
 ROOT = Path(__file__).resolve().parents[2]
+PLAYERBOTS_SQL = ROOT / "modules/mod-playerbots/data/sql/playerbots"
 DESCRIPTION = "Back up and restore CoA characters between two disposable MySQL schemas."
 ITEM_HIGH = 0x4000000000000000
 
@@ -110,6 +111,36 @@ INSERT INTO mod_ascension_bank_item (owner_kind, owner_id, tab_index, slot, item
 INSERT INTO mod_ascension_bank_money (owner_kind, owner_id, money) VALUES (1, 5, 500);
 """
 
+SOURCE_PLAYERBOTS = """
+INSERT INTO playerbots_account_type (account_id, account_type) VALUES (1, 0), (2, 0), (3, 1);
+INSERT INTO playerbots_account_keys (account_id, security_key) VALUES (1, 'secret'), (3, 'bot');
+INSERT INTO playerbots_account_links (account_id, linked_account_id) VALUES (1, 2), (1, 3);
+INSERT INTO playerbots_random_bots (owner, bot, time, event, value) VALUES (0, 1, 5, 'add', 1), (0, 4, 5, 'add', 1);
+INSERT INTO playerbots_db_store (guid, `key`, value) VALUES
+ (1, 'co', '+dps,+aoe'), (2, 'co', '+tank'), (4, 'nc', '+rpg');
+INSERT INTO playerbots_preferred_mounts (guid, type, spellid) VALUES (1, 0, 458);
+INSERT INTO playerbots_custom_strategy (name, idx, owner, action_line) VALUES ('mine', 1, 1, 'attack');
+INSERT INTO playerbots_guild_tasks (owner, guildid, time, type, value) VALUES
+ (1, 5, 5, 'kill', 3), (4, 5, 5, 'kill', 4);
+"""
+
+TARGET_PLAYERBOTS = """
+INSERT INTO playerbots_account_type (account_id, account_type) VALUES (5, 2);
+INSERT INTO playerbots_random_bots (owner, bot, time, event, value) VALUES (0, 1, 5, 'add', 1);
+"""
+
+PLAYERBOTS_EXPECTED = {
+    "SELECT account_id, account_type FROM playerbots_account_type ORDER BY account_id": [["5", "2"], ["6", "0"]],
+    "SELECT account_id, security_key FROM playerbots_account_keys": [["6", "secret"]],
+    "SELECT account_id, linked_account_id FROM playerbots_account_links": [["6", "5"]],
+    "SELECT owner, bot, event FROM playerbots_random_bots ORDER BY id": [["0", "1", "add"], ["0", "8", "add"]],
+    "SELECT guid, `key`, value FROM playerbots_db_store": [["8", "co", "+dps,+aoe"]],
+    "SELECT guid, type, spellid FROM playerbots_preferred_mounts": [["8", "0", "458"]],
+    "SELECT owner, name, idx, action_line FROM playerbots_custom_strategy WHERE owner <> 0":
+        [["8", "mine", "1", "attack"]],
+    "SELECT owner, guildid, type, value FROM playerbots_guild_tasks": [["8", "6", "kill", "3"]],
+}
+
 EXPECTED = {
     "SELECT id, username FROM {auth}.account ORDER BY id":
         [["1", "CAROL"], ["5", "BOB"], ["6", "ALICE"]],
@@ -183,6 +214,16 @@ def create_schema(connection, kind, name):
             connection.load(path, name)
 
 
+def create_playerbots_schema(connection, name):
+    connection.run("CREATE DATABASE " + name + " CHARACTER SET utf8mb4;")
+    for path in sorted((PLAYERBOTS_SQL / "base").glob("*.sql")) + sorted((PLAYERBOTS_SQL / "updates").glob("*.sql")):
+        connection.load(path, name)
+
+
+def state(connection):
+    return [checksums(connection, "dst_" + group) for group in ("auth", "characters", "playerbots")]
+
+
 def checksums(connection, database):
     tables = sorted(coa_backup.existing_tables(connection, database))
     names = ",".join(coa_backup.identifier(database) + "." + coa_backup.identifier(t) for t in tables)
@@ -239,12 +280,16 @@ def run(mysql_bin):
         for side in ("src", "dst"):
             for kind in ("auth", "characters"):
                 create_schema(admin, kind, side + "_" + kind)
+            create_playerbots_schema(admin, side + "_playerbots")
             print("Schema ready:", side, flush=True)
         admin.run(SOURCE.format(auth="src_auth", item_high=ITEM_HIGH), "src_characters")
         admin.run(TARGET.format(auth="dst_auth"), "dst_characters")
+        admin.run(SOURCE_PLAYERBOTS, "src_playerbots")
+        admin.run(TARGET_PLAYERBOTS, "dst_playerbots")
         source_before = checksums(admin, "src_characters")
         with tempfile.TemporaryDirectory(prefix="coa-backup-") as scratch:
-            common = connection_args + ["--auth-db", "src_auth", "--characters-db", "src_characters"]
+            common = connection_args + ["--auth-db", "src_auth", "--characters-db", "src_characters",
+                                        "--playerbots-db", "src_playerbots"]
             directory = coa_backup.main(["backup", *common, "--output", scratch,
                                          "--exclude-account-regex", "^RNDBOT"])
             manifest = coa_backup.load_manifest(directory)
@@ -255,10 +300,10 @@ def run(mysql_bin):
                 raise AssertionError("Backup changed the source database")
             print(coa_backup.list_backup(directory), flush=True)
             restore = ["restore", str(directory), *connection_args, "--auth-db", "dst_auth",
-                       "--characters-db", "dst_characters"]
-            target_before = checksums(admin, "dst_characters") + checksums(admin, "dst_auth")
+                       "--characters-db", "dst_characters", "--playerbots-db", "dst_playerbots"]
+            target_before = state(admin)
             dry = coa_backup.main(restore + ["--dry-run"])
-            if checksums(admin, "dst_characters") + checksums(admin, "dst_auth") != target_before:
+            if state(admin) != target_before:
                 raise AssertionError("Dry run changed the target")
             if dry["skippedCharacters"] != ["Alicealt"]:
                 raise AssertionError("Dry run selection differs: " + json.dumps(dry))
@@ -266,6 +311,10 @@ def run(mysql_bin):
             failures = {}
             for sql, expected in EXPECTED.items():
                 actual = admin.run(sql.format(auth="dst_auth") + ";", "dst_characters")
+                if actual != expected:
+                    failures[sql] = {"expected": expected, "actual": actual}
+            for sql, expected in PLAYERBOTS_EXPECTED.items():
+                actual = admin.run(sql + ";", "dst_playerbots")
                 if actual != expected:
                     failures[sql] = {"expected": expected, "actual": actual}
             orphans = admin.run(
@@ -283,11 +332,11 @@ def run(mysql_bin):
             if failures:
                 raise AssertionError(json.dumps(failures, indent=2))
             print("Restore matches all expectations.", flush=True)
-            restored_state = checksums(admin, "dst_characters") + checksums(admin, "dst_auth")
+            restored_state = state(admin)
             again = coa_backup.main(restore)
             if sorted(again["skippedCharacters"]) != ["Alice", "Alicealt", "Bob"] or again["characters"]:
                 raise AssertionError("Repeated restore restored characters again: " + json.dumps(again))
-            if checksums(admin, "dst_characters") + checksums(admin, "dst_auth") != restored_state:
+            if state(admin) != restored_state:
                 raise AssertionError("Repeated restore changed the target")
             single = coa_backup.main(restore + ["--characters", "Alicealt", "--target-account", "CAROL"])
             if single["characters"] != [] or single["skippedCharacters"] != ["Alicealt"]:
@@ -301,7 +350,8 @@ def run(mysql_bin):
             leftovers = admin.run("SHOW DATABASES LIKE 'coa_restore_%';")
             if leftovers:
                 raise AssertionError("Staging databases were left behind: " + json.dumps(leftovers))
-        return {"backupCharacters": names, "restoredTables": len(report["rows"]), "checks": len(EXPECTED),
+        return {"backupCharacters": names, "restoredTables": len(report["rows"]),
+                "checks": len(EXPECTED) + len(PLAYERBOTS_EXPECTED),
                 "repeatRestoreUnchanged": True, "singleCharacterRestore": True}
 
 
