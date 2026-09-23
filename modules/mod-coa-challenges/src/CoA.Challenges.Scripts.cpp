@@ -1434,7 +1434,10 @@ namespace CoAChallenges
             }
             else if (PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS"))
             {
-                if (xpSource != XPSOURCE_PROFESSION_SKILL)
+                // A skill-up reaches the hook from the core as XPSOURCE_PROFESSION;
+                // the group share this module grants uses XPSOURCE_PROFESSION_SKILL.
+                // Both are profession experience, so both have to pass the rule.
+                if (xpSource != XPSOURCE_PROFESSION && xpSource != XPSOURCE_PROFESSION_SKILL)
                     amount = 0;
             }
 
