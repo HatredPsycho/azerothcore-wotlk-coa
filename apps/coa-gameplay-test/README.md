@@ -1,7 +1,7 @@
 # CoA gameplay tests
 
 Execute repeatable scenarios inside a real worldserver, using its loaded DBCs, SQL, scripts, maps and updates.
-The runtime component is `modules/mod-ascension-compat/src/CoAGameplayTest.cpp`; it is disabled by default.
+The runtime component is `src/server/coa/CoAGameplayTest.cpp`; it is disabled by default.
 
 ## Find and verify a mechanic
 
@@ -84,7 +84,7 @@ python -B tools/check_source.py --base origin/main --plan
 ```
 
 The JSON outcome lists the selected checks, failures and timings. `--all` runs every fast suite. SQL boundaries
-and new C++/Python comments in CoA-owned code are always checked; changed module sources select loader registration
+and new C++/Python comments in CoA-owned code are always checked; changed CoA sources select loader registration
 checks; gameplay tooling/scenario changes
 select scenario validation, combined-verification tests, and runner/cache ownership and cleanup tests. Reviewed
 execution-path changes also check mechanic-map references. Documentation-only changes skip these test suites.
@@ -94,14 +94,14 @@ client-compatibility harness runs only for relevant changes or a full audit. The
 starts a server.
 
 CoA-owned code uses names, structure and tests to express intent. The comment check covers
-`modules/mod-ascension-compat/`, `apps/coa-dbc/`, `apps/coa-gameplay-test/`, `apps/coa-mechanics/`, `tools/`
-and `.github/scripts/`. It rejects explanatory comments and docstrings on added lines, while preserving legal
+`src/server/coa/`, `apps/coa-tests/`, `apps/coa-bugreport/`, `apps/coa-dbc/`, `apps/coa-gameplay-test/`,
+`apps/coa-mechanics/`, `tools/` and `.github/scripts/`. It rejects explanatory comments and docstrings on added lines, while preserving legal
 headers, recognized tool directives and native test-generator markers. Strings and runtime CLI help remain data.
 `python -B tools/check_comments.py --all` also checks unchanged C++ and Python files in those directories.
 Upstream source, dependencies, SQL and configuration documentation remain outside this check.
 
 The loader check requires each CoA `AddSC_*`, `AddAscension*Scripts` and `AddCoA*Scripts` definition to have
-exactly one call from the module's flat loader, and each call to have exactly one definition. It ignores comments
+exactly one call from the flat CoA script loader, and each call to have exactly one definition. It ignores comments
 and string literals. It does not prove SQL bindings, hook reachability, or gameplay behavior; those require data
 inspection and behavioral tests. The checker intentionally reports an unsupported conditional loader for review.
 
@@ -133,7 +133,7 @@ are required. The commands below run the runner directly (Windows example); Dock
 the [Compose test service](#linux-docker), which provides all of them.
 Build a matching test executable when needed. Adding the new source requires CMake
 reconfiguration before building; running an older binary will fail the readiness check.
-The module requires Boost.PropertyTree headers. Component-based vcpkg installations need
+The CoA server component requires Boost.PropertyTree headers. Component-based vcpkg installations need
 `boost-property-tree` for the same triplet as the existing Boost libraries. CMake checks this dependency.
 
 ```powershell
@@ -248,7 +248,7 @@ SQL updates), the live `DOCKER_VOL_ETC` configs are read-only sources, and `DOCK
 Its database environment variables override any stale connections in `worldserver.conf` or the environment file.
 If another Compose override changes the live schema names, mirror those names in this service's
 `AC_*_DATABASE_INFO` variables while retaining the loopback endpoint. Build the worldserver image from the same
-checkout first, with the runtime module and cache startup barrier; rebuild the test image after it. A mounted
+checkout first, with CoA and the cache startup barrier; rebuild the test image after it. A mounted
 source checkout does not update the compiled server. Prefer rebuilding only the required test targets.
 
 ```bash
@@ -310,8 +310,8 @@ preserves Static and must leave the talent without a depletion bonus.
 
 The [damage-led scaling scenario](scenarios/level-scaling-damage-engagement.json) checks that an
 out-of-range attacker scales a fresh creature before a nonlethal or lethal opening hit, and that
-later damage leaves its combat level fixed. It requires `AscensionCompat.LevelScaling=1`,
-`AscensionCompat.LevelScalingMaxLift=5` and `MonsterSight=50`. The level-1 fixtures stand 80–85 yards
+later damage leaves its combat level fixed. It requires `CoA.LevelScaling=1`,
+`CoA.LevelScalingMaxLift=5` and `MonsterSight=50`. The level-1 fixtures stand 80–85 yards
 away and must scale to level 6, so both declare `level_scaling`. One fixture has only one maximum HP to
 expose damage-before-scaling.
 Spell 705798 is learned as a fixture: its one damage and zero initial threat exercise damage-led
@@ -362,6 +362,7 @@ damage coefficients.
 | `gossip_select` | `actor`, zero-based `option`: select from the current menu through the session handler. |
 | `who` | `actor`, optional name-filter `target`, `class_mask`, `race_mask`: submit a native Who query. |
 | `add_item` | `actor`, `item`, optional `count` (default 1): grant fixture inventory. |
+| `fill_bags` | `actor`, optional `slots` (default 0): fill the bags with distinct non-stacking armor until that many free slots remain, so a scenario can prove what a full inventory does. Fails if the bags cannot be filled. |
 | `equip` | `actor`, `item`, `slot` (0..18): equip an owned item through the session handler. |
 | `use_item` | `actor`, `item`, `spell`, optional `target` and `destination`: normal item-use handler. |
 | `use_gameobject` | `actor`, `entry`: native use request for the actor's single nearby owned gameobject. |
@@ -402,6 +403,19 @@ Metrics: `health`, `max_health`, `power`, `max_power`, `alive`, `combat`, `casti
 `charm_entry`, `charm_aura_stacks`, `controls_self`, `private_instance`, `dynamic_object`,
 `dynamic_object_duration_ms`, `distance`, `spell_proc_count`, `spell_cast_count`, `temporary_spell_replacement`,
 `bank_shows`, `system_messages`, `cast_failure`, `pet_is_banker`, `pet_display`, `pet_scale`.
+`free_inventory_slots` is how many bag slots the player could still fill, so `fill_bags` plus
+`free_inventory_slots` `equals: 0` is how a scenario states "the bags are full". `mail_count` is the
+number of mails the player holds and `mail_item_count` the items inside them, which is how a reward
+that the bags could not take proves it was posted rather than lost; `mail_has_item` takes `item` and
+returns whether any mail carries it, and `mail_pool_item_count` takes `cache` (optional `table`) and
+counts only the mail items that are in that cache's own pool. `notifications` counts the
+centre-screen notices a session has been sent and `notification_contains` takes `text` and returns
+whether one carried it, which is how a test proves a player was told something in the middle of the
+screen and not only in chat. The cache metrics are `carried_pool_item_count` (needs `cache`,
+optional `table`), `pool_variant_count`, `pool_retired_item_count`, `pool_row_count`,
+`pool_item_present` (needs `item`), and `cache_token_count`, `cache_token_stage`, `cache_token_present`
+(need `cache`, the last also `item`), which read the token table the realm loads and answer how many
+tier tokens a cache may pay, the highest tier among them, and whether one named token is among them.
 Boolean metrics use 0/1. Spell/aura metrics require `spell`; `item_count` requires `item`.
 `carried_item_count` sums the stack counts of equipped items (bags included), the backpack and the bags' contents.
 `aura_positive` reads the applied aura's beneficial flag; check `aura` separately to distinguish absence from a debuff.
@@ -521,6 +535,7 @@ submits that spell again).
 `pet_aura_stacks`
 requires `spell`, accepts `caster` for aura ownership, and returns zero if the pet or aura is absent.
 `pet_aura_amount` and `pet_aura_amplitude_ms` accept `effect` and read its amount or tick interval.
+`pet_aura_duration_ms` reads the same pet aura's remaining duration, and returns zero if the pet or aura is absent.
 `spell_energize_count` and `spell_energize_total` observe native instant and periodic energize logs, excluding
 ordinary regeneration. They require `spell`; optional `power`, `target`, `pet` and `target_pet` filter
 resource type, recipient and current pets. The total is the logged nominal gain before the resource cap.
@@ -555,14 +570,14 @@ check aura presence separately when zero is a valid effect amount. Permanent aur
 `scenarios/destiny-weaver-scaling.json` checks deferred scaling choices, armor debuffs, creature values
 updates after level changes, fractional damage accumulation, and ordinary damage with scaling off.
 It requires `DestinyWeaver.Enable=1`, `DestinyWeaver.LevelScaling=1`, `DestinyWeaver.Scaling.Offset=3`,
-and `AscensionCompat.QuestLevelScaling=1`. Spell 705798 supplies one base damage without critical hits;
+and `CoA.QuestLevelScaling=1`. Spell 705798 supplies one base damage without critical hits;
 Faerie Fire (770) supplies a 5% armor reduction. Spell 705798 uses melee hit resolution, so the fixture
 sets melee hit and expertise as well as spell hit. Template 1501 has HealthModifier 0.93: the level-1
 fixture's real pool remains 40 HP while its level-57 view has 2,590 HP. Ten one-damage hits cannot remove
 a whole real HP; 67 remove one.
 
 `scenarios/destiny-weaver-quest-fallback.json` requires a separate run with `DestinyWeaver.Enable=0`
-and `AscensionCompat.QuestLevelScaling=1`. Quest 7 must still scale to the player's level and award XP.
+and `CoA.QuestLevelScaling=1`. Quest 7 must still scale to the player's level and award XP.
 
 The `level_scaling_packet` action takes a player `actor` and `value` (0 or 1). It sends the existing
 four-byte request through the early packet hook on a worker, verifies that player state has not changed
@@ -602,7 +617,7 @@ not provide an automatic statistical test. Keep intended values independent of t
 
 ```powershell
 python -m unittest discover -s apps/coa-gameplay-test -p 'test_*.py'
-python apps/codestyle/codestyle-cpp.py --files modules/mod-ascension-compat/src/CoAGameplayTest.cpp
+python apps/codestyle/codestyle-cpp.py --files src/server/coa/CoAGameplayTest.cpp
 ```
 
 Runner checks cover invalid scenarios, incorrect/partial results, owned-process timeouts, isolation,
