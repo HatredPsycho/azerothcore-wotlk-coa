@@ -64,10 +64,25 @@ enum BloodmageSecondarySpells : uint32
     SPELL_AORTIC_AEGIS = 704637,
     SPELL_AORTIC_AEGIS_HEAL = 681029,
     SPELL_ATHERANN_ANGUISH = 680680,
-    SPELL_INFUSE = 681403
+    SPELL_INFUSE = 681403,
+    SPELL_FINGER_OF_DEATH = 806178,
+    SPELL_SHATTERED = 804447,
+    SPELL_TALDARAM_TORMENT = 800772,
+    SPELL_PACKLEADER = 504290,
+    SPELL_PACKLEADER_ENRAGE = 504289,
+    SPELL_TORTURE = 504071,
+    SPELL_TORTURE_EXTENSION = 561152
 };
 
 constexpr uint32 AtherannPooledPercent = 30;
+constexpr uint32 TortureThirstStacks = 9;
+
+constexpr uint32 HowlSpells[] = {800782, 804811, 806177, 804207, 500124};
+
+bool IsHowl(uint32 id)
+{
+    return std::find(std::begin(HowlSpells), std::end(HowlSpells), id) != std::end(HowlSpells);
+}
 
 constexpr uint32 VampiricFangRanks[] = {804726, 504093, 504094, 504095, 504096, 504097, 553271, 553272};
 
@@ -128,6 +143,8 @@ public:
         if (player->HasAura(SPELL_DARK_ESSENCE) && (IsCursedFormAbility(info) ||
             AscensionBloodmage::GetEmpowerment(info->Id) == AscensionBloodmage::Bloodbolt))
             player->CastSpell(player, SPELL_DARK_ESSENCE_HEAL, true);
+        if (IsHowl(info->Id) && player->HasAura(SPELL_PACKLEADER))
+            player->CastSpell(player, SPELL_PACKLEADER_ENRAGE, true);
         if (!player->HasAura(SPELL_NIGHT_HUNTER))
             return;
         if (RankOf(info->Id, SPELL_VEINBURST))
@@ -221,11 +238,27 @@ public:
             spell->SetScriptValue(SPELL_BITE_WOUND, 1);
             player->CastSpell(target, SPELL_BITE_WOUND, true);
         }
+        if (id == SPELL_FINGER_OF_DEATH && !spell->GetScriptValue(SPELL_SHATTERED))
+        {
+            spell->SetScriptValue(SPELL_SHATTERED, 1);
+            player->CastSpell(target, SPELL_SHATTERED, true);
+            for (auto const& pair : target->GetAppliedAuras())
+            {
+                Aura* torment = pair.second->GetBase();
+                if (RankOf(torment->GetId(), SPELL_TALDARAM_TORMENT) &&
+                    torment->GetCasterGUID() == player->GetGUID())
+                    torment->RefreshDuration();
+            }
+        }
         if (IsVampiricFang(id) && !spell->GetScriptValue(SPELL_VAMPIRIC_FANG))
         {
             spell->SetScriptValue(SPELL_VAMPIRIC_FANG, 1);
             if (damage)
                 Unit::DealHeal(player, player, damage);
+            if (player->HasAura(SPELL_TORTURE))
+                if (Aura const* thirst = player->GetAura(SPELL_BLOOD_THIRST))
+                    if (thirst->GetStackAmount() >= TortureThirstStacks)
+                        player->CastSpell(player, SPELL_TORTURE_EXTENSION, true);
             player->RemoveAurasDueToSpell(SPELL_BLOOD_THIRST);
             player->RemoveAurasDueToSpell(SPELL_INSATIABLE);
             player->RemoveAurasDueToSpell(SPELL_INSATIABLE_STACK);
