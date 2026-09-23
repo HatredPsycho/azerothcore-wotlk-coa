@@ -101,6 +101,8 @@ void ApplyContracts(SpellInfo* info)
                 effect.Effect = 0;
     if (id == 804360)
         dummy(0);
+    if (id == 583256 && !info->Effects[EFFECT_0].TargetA.GetTarget())
+        info->Effects[EFFECT_0].TargetA = SpellImplicitTargetInfo(TARGET_UNIT_TARGET_ENEMY);
     if (id == 573223)
     {
         dummy(0);
