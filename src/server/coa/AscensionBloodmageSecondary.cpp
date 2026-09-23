@@ -14,6 +14,7 @@
 #include <cmath>
 #include <limits>
 #include <list>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -54,8 +55,19 @@ enum BloodmageSecondarySpells : uint32
     SPELL_CURSED_FORM_REQUIREMENT = 525031,
     SPELL_CURSED_FORM_REQUIREMENT_2 = 524861,
     SPELL_VAMPIRIC_FANG_SHARE = 572373,
-    SPELL_VAMPIRIC_FANG_HEAL = 572374
+    SPELL_VAMPIRIC_FANG_HEAL = 572374,
+    SPELL_BLOODFANG_BITE = 800156,
+    SPELL_BITE_WOUND_TALENT = 532612,
+    SPELL_BITE_WOUND = 706654,
+    SPELL_VAMPIRIC_HUNGER = 802316,
+    SPELL_VAMPIRIC_HUNGER_ENRAGE = 504270,
+    SPELL_AORTIC_AEGIS = 704637,
+    SPELL_AORTIC_AEGIS_HEAL = 681029,
+    SPELL_ATHERANN_ANGUISH = 680680,
+    SPELL_INFUSE = 681403
 };
+
+constexpr uint32 AtherannPooledPercent = 30;
 
 constexpr uint32 VampiricFangRanks[] = {804726, 504093, 504094, 504095, 504096, 504097, 553271, 553272};
 
@@ -203,6 +215,12 @@ public:
             spell->SetScriptValue(SPELL_ROTCLAW_ENERGIZE, 1);
             player->CastSpell(player, SPELL_ROTCLAW_ENERGIZE, true);
         }
+        if (RankOf(id, SPELL_BLOODFANG_BITE) && player->HasAura(SPELL_BITE_WOUND_TALENT) &&
+            !spell->GetScriptValue(SPELL_BITE_WOUND))
+        {
+            spell->SetScriptValue(SPELL_BITE_WOUND, 1);
+            player->CastSpell(target, SPELL_BITE_WOUND, true);
+        }
         if (IsVampiricFang(id) && !spell->GetScriptValue(SPELL_VAMPIRIC_FANG))
         {
             spell->SetScriptValue(SPELL_VAMPIRIC_FANG, 1);
@@ -268,6 +286,124 @@ public:
                     if (player->HasAura(SPELL_BLACK_HEART))
                         player->ModifyPower(POWER_RAGE, int32(player->GetMaxPower(POWER_RAGE)) / 5);
                 }
+    }
+};
+
+thread_local ObjectGuid BiteWoundSwingAttacker;
+thread_local ObjectGuid BiteWoundSwingVictim;
+
+bool ClaimBiteWoundSwing(Unit* attacker, Unit* victim)
+{
+    bool const claimed = BiteWoundSwingAttacker == attacker->GetGUID() &&
+        BiteWoundSwingVictim == victim->GetGUID();
+    BiteWoundSwingAttacker.Clear();
+    BiteWoundSwingVictim.Clear();
+    return claimed;
+}
+
+class bloodmage_bite_wound_leech : public UnitScript
+{
+public:
+    bloodmage_bite_wound_leech() : UnitScript("bloodmage_bite_wound_leech", true,
+        {UNITHOOK_MODIFY_MELEE_DAMAGE, UNITHOOK_ON_DAMAGE}) { }
+
+    void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32&) override
+    {
+        BiteWoundSwingAttacker.Clear();
+        BiteWoundSwingVictim.Clear();
+        Player* player = attacker ? attacker->ToPlayer() : nullptr;
+        if (!player || player->getClass() != CLASS_SON_OF_ARUGAL || !target || target == player)
+            return;
+        if (!target->GetAura(SPELL_BITE_WOUND, player->GetGUID()))
+            return;
+        BiteWoundSwingAttacker = player->GetGUID();
+        BiteWoundSwingVictim = target->GetGUID();
+    }
+
+    void OnDamage(Unit* attacker, Unit* victim, uint32& damage) override
+    {
+        if (!attacker || !victim || !ClaimBiteWoundSwing(attacker, victim) || !damage)
+            return;
+        Player* player = attacker->ToPlayer();
+        if (!player || !player->IsAlive())
+            return;
+        SpellInfo const* rate = sSpellMgr->GetSpellInfo(SPELL_BITE_WOUND_TALENT);
+        int32 const percent = rate ? rate->Effects[EFFECT_0].CalcValue(player) : 0;
+        if (percent <= 0)
+            return;
+        uint64 const restored = std::min<uint64>(uint64(damage) * uint64(percent) / 100,
+            uint64(std::numeric_limits<int32>::max()));
+        if (restored)
+            Unit::DealHeal(player, player, uint32(restored));
+    }
+};
+
+std::mutex PlagueMutex;
+std::unordered_map<uint64, uint64> PlaguePools;
+
+uint64 PlagueKey(ObjectGuid caster, ObjectGuid victim)
+{
+    return (uint64(caster.GetCounter()) << 32) | uint64(victim.GetCounter());
+}
+
+void BankPlague(ObjectGuid caster, ObjectGuid victim, uint64 amount)
+{
+    if (!amount)
+        return;
+    std::lock_guard<std::mutex> lock(PlagueMutex);
+    uint64& pool = PlaguePools[PlagueKey(caster, victim)];
+    pool = std::min<uint64>(pool + amount, uint64(std::numeric_limits<int32>::max()));
+}
+
+uint64 TakePlague(ObjectGuid caster, ObjectGuid victim)
+{
+    std::lock_guard<std::mutex> lock(PlagueMutex);
+    auto pool = PlaguePools.find(PlagueKey(caster, victim));
+    if (pool == PlaguePools.end())
+        return 0;
+    uint64 const amount = pool->second;
+    PlaguePools.erase(pool);
+    return amount;
+}
+
+bool FeedsInfuse(Player* owner, Unit* attacker)
+{
+    Unit* source = attacker->GetCharmerOrOwnerOrSelf();
+    Player* player = source ? source->ToPlayer() : nullptr;
+    return player && (player == owner || player->IsInSameRaidWith(owner));
+}
+
+class bloodmage_plague_pools : public UnitScript
+{
+public:
+    bloodmage_plague_pools() : UnitScript("bloodmage_plague_pools", true,
+        {UNITHOOK_ON_DAMAGE}) { }
+
+    void OnDamage(Unit* attacker, Unit* victim, uint32& damage) override
+    {
+        Bank(attacker, victim, damage);
+    }
+
+private:
+    static void Bank(Unit* attacker, Unit* victim, uint32 damage)
+    {
+        if (!attacker || !victim || !damage)
+            return;
+        for (auto const& pair : victim->GetAppliedAuras())
+        {
+            uint32 const mark = pair.second->GetBase()->GetId();
+            if (mark != SPELL_ATHERANN_ANGUISH && mark != SPELL_INFUSE)
+                continue;
+            Unit* caster = pair.second->GetBase()->GetCaster();
+            Player* owner = caster ? caster->ToPlayer() : nullptr;
+            if (!owner || owner->getClass() != CLASS_SON_OF_ARUGAL)
+                continue;
+            if (mark == SPELL_ATHERANN_ANGUISH && attacker == owner)
+                BankPlague(owner->GetGUID(), victim->GetGUID(),
+                    uint64(damage) * AtherannPooledPercent / 100);
+            else if (mark == SPELL_INFUSE && FeedsInfuse(owner, attacker))
+                BankPlague(owner->GetGUID(), victim->GetGUID(), uint64(damage));
+        }
     }
 };
 
@@ -592,12 +728,87 @@ class spell_ascension_bloodmage_excision : public SpellScript
             EFFECT_0, SPELL_EFFECT_DUMMY);
     }
 };
+
+Player* ExpiringBloodmage(AuraScript* script)
+{
+    if (script->GetTargetApplication()->GetRemoveMode() != AURA_REMOVE_BY_EXPIRE)
+        return nullptr;
+    Unit* caster = script->GetCaster();
+    Player* player = caster ? caster->ToPlayer() : nullptr;
+    return player && player->getClass() == CLASS_SON_OF_ARUGAL ? player : nullptr;
+}
+
+class aura_ascension_bloodmage_blood_veil : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_bloodmage_blood_veil);
+
+    void Enrage(AuraEffect const*, AuraEffectHandleModes)
+    {
+        Player* player = ExpiringBloodmage(this);
+        Unit* target = GetTarget();
+        if (!player || !target || !player->HasAura(SPELL_VAMPIRIC_HUNGER))
+            return;
+        player->CastSpell(target, SPELL_VAMPIRIC_HUNGER_ENRAGE, true);
+    }
+
+    void Register() override
+    {
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_blood_veil::Enrage,
+            EFFECT_0, SPELL_AURA_SCHOOL_ABSORB, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
+class aura_ascension_bloodmage_darkfallen_lament : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_bloodmage_darkfallen_lament);
+
+    void Heal(AuraEffect const*, AuraEffectHandleModes)
+    {
+        Player* player = ExpiringBloodmage(this);
+        if (!player || !player->HasAura(SPELL_AORTIC_AEGIS))
+            return;
+        player->CastSpell(player, SPELL_AORTIC_AEGIS_HEAL, true);
+    }
+
+    void Register() override
+    {
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_darkfallen_lament::Heal,
+            EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
+class aura_ascension_bloodmage_plague_mark : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_bloodmage_plague_mark);
+
+    void Burst(AuraEffect const* effect, AuraEffectHandleModes)
+    {
+        Unit* target = GetTarget();
+        Unit* caster = GetCaster();
+        Player* owner = caster ? caster->ToPlayer() : nullptr;
+        if (!target || !owner || owner->getClass() != CLASS_SON_OF_ARUGAL)
+            return;
+        uint64 const pooled = TakePlague(owner->GetGUID(), target->GetGUID());
+        uint32 const burst = effect->GetSpellInfo()->Effects[EFFECT_0].TriggerSpell;
+        if (!pooled || !burst || !ExpiringBloodmage(this) || !target->IsAlive() || !owner->IsAlive())
+            return;
+        owner->CastCustomSpell(burst, SPELLVALUE_BASE_POINT0, int32(pooled), target, TRIGGERED_FULL_MASK);
+    }
+
+    void Register() override
+    {
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_plague_mark::Burst,
+            EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+    }
+};
 }
 
 void AddSC_AscensionBloodmageSecondary()
 {
     new bloodmage_secondary_casts();
     new bloodmage_kiss_periodic();
+    new bloodmage_bite_wound_leech();
+    new bloodmage_plague_pools();
     new bloodmage_secondary_contracts();
     RegisterSpellScript(spell_ascension_blood_feast_corpses);
     RegisterSpellScript(spell_ascension_blood_feast_drain);
@@ -608,4 +819,7 @@ void AddSC_AscensionBloodmageSecondary()
     RegisterSpellScript(spell_ascension_bloodmage_hemal_excision);
     RegisterSpellScript(aura_ascension_bloodmage_hemal_excision);
     RegisterSpellScript(spell_ascension_bloodmage_excision);
+    RegisterSpellScript(aura_ascension_bloodmage_blood_veil);
+    RegisterSpellScript(aura_ascension_bloodmage_darkfallen_lament);
+    RegisterSpellScript(aura_ascension_bloodmage_plague_mark);
 }
