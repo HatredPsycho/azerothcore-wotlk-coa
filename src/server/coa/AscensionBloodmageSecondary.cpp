@@ -6,7 +6,6 @@
 #include "ScriptMgr.h"
 #include "Spell.h"
 #include "SpellAuraEffects.h"
-#include "SpellAuraEffects.h"
 #include "SpellAuras.h"
 #include "SpellMgr.h"
 #include "SpellScript.h"
@@ -58,6 +57,7 @@ enum BloodmageSecondarySpells : uint32
     SPELL_VAMPIRIC_FANG_HEAL = 572374,
     SPELL_BLOODFANG_BITE = 800156,
     SPELL_BITE_WOUND_TALENT = 532612,
+    SPELL_ETERNAL_CURSE_PASSIVE = 92114,
     SPELL_BITE_WOUND = 706654,
     SPELL_VAMPIRIC_HUNGER = 802316,
     SPELL_VAMPIRIC_HUNGER_ENRAGE = 504270,
@@ -232,7 +232,7 @@ public:
             spell->SetScriptValue(SPELL_ROTCLAW_ENERGIZE, 1);
             player->CastSpell(player, SPELL_ROTCLAW_ENERGIZE, true);
         }
-        if (RankOf(id, SPELL_BLOODFANG_BITE) && player->HasAura(SPELL_BITE_WOUND_TALENT) &&
+        if (RankOf(id, SPELL_BLOODFANG_BITE) && player->HasSpell(SPELL_ETERNAL_CURSE_PASSIVE) &&
             !spell->GetScriptValue(SPELL_BITE_WOUND))
         {
             spell->SetScriptValue(SPELL_BITE_WOUND, 1);
@@ -254,7 +254,11 @@ public:
         {
             spell->SetScriptValue(SPELL_VAMPIRIC_FANG, 1);
             if (damage)
-                Unit::DealHeal(player, player, damage);
+            {
+                SpellInfo const* fang = spell->GetSpellInfo();
+                HealInfo healInfo(player, player, damage, fang, fang->GetSchoolMask());
+                player->HealBySpell(healInfo);
+            }
             if (player->HasAura(SPELL_TORTURE))
                 if (Aura const* thirst = player->GetAura(SPELL_BLOOD_THIRST))
                     if (thirst->GetStackAmount() >= TortureThirstStacks)
@@ -366,8 +370,10 @@ public:
             return;
         uint64 const restored = std::min<uint64>(uint64(damage) * uint64(percent) / 100,
             uint64(std::numeric_limits<int32>::max()));
-        if (restored)
-            Unit::DealHeal(player, player, uint32(restored));
+        if (!restored)
+            return;
+        HealInfo healInfo(player, player, uint32(restored), rate, rate->GetSchoolMask());
+        player->HealBySpell(healInfo);
     }
 };
 

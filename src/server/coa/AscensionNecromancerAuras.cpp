@@ -166,7 +166,9 @@ class aura_ascension_necromancer_lifecycle : public AuraScript
         if (id == 301207 && effect->GetEffIndex() == 1)
         {
             PreventDefaultAction();
-            player->ModifyHealth(player->CountPctFromMaxHealth(2) * Count(player, {50068, 50115}));
+            HealInfo healInfo(player, player, player->CountPctFromMaxHealth(2) * Count(player, {50068, 50115}),
+                GetSpellInfo(), GetSpellInfo()->GetSchoolMask());
+            player->HealBySpell(healInfo);
         }
         if (id == 807796 && effect->GetEffIndex() == 1 && !_expired)
         {

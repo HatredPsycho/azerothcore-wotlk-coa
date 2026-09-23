@@ -517,7 +517,12 @@ struct npc_ascension_tinker_device : ScriptedAI
             player->EnterVehicle(me);
         else if (me->GetEntry() == 506051 && used.insert(player->GetGUID()).second)
         {
-            player->ModifyHealth(player->CountPctFromMaxHealth(Amount(570715)));
+            if (SpellInfo const* burst = sSpellMgr->GetSpellInfo(570715))
+            {
+                HealInfo healInfo(creator, player, player->CountPctFromMaxHealth(Amount(570715)),
+                    burst, burst->GetSchoolMask());
+                creator->HealBySpell(healInfo);
+            }
             Mana(player,CalculatePct(player->GetMaxPower(POWER_MANA),Amount(570715)),creator);
             for (Powers power : {POWER_RAGE,POWER_ENERGY,POWER_FOCUS,POWER_RUNIC_POWER})
                 if (player->GetMaxPower(power))
