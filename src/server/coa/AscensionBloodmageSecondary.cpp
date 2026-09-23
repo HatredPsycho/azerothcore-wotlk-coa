@@ -372,7 +372,10 @@ public:
             uint64(std::numeric_limits<int32>::max()));
         if (!restored)
             return;
-        HealInfo healInfo(player, player, uint32(restored), rate, rate->GetSchoolMask());
+        SpellInfo const* wound = sSpellMgr->GetSpellInfo(SPELL_BITE_WOUND);
+        if (!wound)
+            return;
+        HealInfo healInfo(player, player, uint32(restored), wound, wound->GetSchoolMask());
         player->HealBySpell(healInfo);
     }
 };
