@@ -32,6 +32,11 @@ Repository root. Defaults to the checkout this script lives in.
 .PARAMETER Databases
 Which databases to update: auth, characters, world. All three by default.
 
+.PARAMETER IncludeModules
+Also apply the module migrations in modules/*/data/sql/db-auth, db-characters and db-world, the
+ones the server registers with state MODULE. They are sorted together with the pending files by
+file name, the way the server's updater orders them.
+
 .PARAMETER CharacterSet
 Connection character set used while applying a file. Defaults to utf8, the one the server's
 updater uses; utf8mb4 makes a user variable collide with a utf8mb4_unicode_ci column.
@@ -62,6 +67,7 @@ param(
     [ValidateSet("auth", "characters", "world")]
     [string[]]$Databases = @("auth", "characters", "world"),
     [string]$CharacterSet = "utf8",
+    [switch]$IncludeModules,
     [switch]$SkipChanged,
     [switch]$DryRun
 )
@@ -185,19 +191,56 @@ function Get-UpdateHash {
     return (($digest | ForEach-Object { $_.ToString("X2") }) -join "")
 }
 
-function Invoke-PendingDirectory {
-    param(
-        [string]$Name,
-        [string]$Database,
-        [string]$Directory
-    )
+function Get-UpdateSource {
+    param([string]$Group)
 
-    if (-not (Test-Path -LiteralPath $Directory -PathType Container)) {
-        Write-Verbose "No pending directory for $Name : $Directory"
-        return
+    $sources = @()
+    $pending = Join-Path $Root "data/sql/updates/pending_db_$Group"
+    if (Test-Path -LiteralPath $pending -PathType Container) {
+        $sources += [pscustomobject]@{ Directory = $pending; State = "PENDING" }
+    } else {
+        Write-Verbose "No pending directory for $Group : $pending"
     }
 
-    $files = Get-ChildItem -LiteralPath $Directory -Filter *.sql -File | Sort-Object Name
+    if ($IncludeModules) {
+        $modules = Join-Path $Root "modules"
+        if (Test-Path -LiteralPath $modules -PathType Container) {
+            foreach ($module in (Get-ChildItem -LiteralPath $modules -Directory | Sort-Object Name)) {
+                $directory = Join-Path $module.FullName "data/sql/db-$Group"
+                if (Test-Path -LiteralPath $directory -PathType Container) {
+                    $sources += [pscustomobject]@{ Directory = $directory; State = "MODULE" }
+                }
+            }
+        }
+    }
+
+    return , $sources
+}
+
+function Invoke-DatabaseUpdate {
+    param(
+        [string]$Group,
+        [string]$Database
+    )
+
+    $sources = Get-UpdateSource -Group $Group
+    if (-not $sources) { return }
+
+    # The server sorts pending, custom and module files together by file name, so a module
+    # migration and a pending one of the same day run in the order their names give.
+    $files = @()
+    foreach ($source in $sources) {
+        foreach ($file in (Get-ChildItem -LiteralPath $source.Directory -Filter *.sql -File -Recurse)) {
+            $files += [pscustomobject]@{ File = $file; State = $source.State }
+        }
+    }
+    $files = $files | Sort-Object { $_.File.Name }
+
+    $duplicates = $files | Group-Object { $_.File.Name } | Where-Object { $_.Count -gt 1 }
+    foreach ($duplicate in $duplicates) {
+        Write-Warning "$($duplicate.Name) exists more than once; the `updates` table keeps one row per name."
+    }
+
     $applied = @{}
     $byHash = @{}
     $recorded = Invoke-MysqlQuery -Database $Database -Query "SELECT ``name``, ``hash``, ``state`` FROM ``updates``;"
@@ -206,9 +249,11 @@ function Invoke-PendingDirectory {
         if ($row[1]) { $byHash[$row[1]] = $row[0] }
     }
     $present = @{}
-    foreach ($file in $files) { $present[$file.Name] = $true }
+    foreach ($entry in $files) { $present[$entry.File.Name] = $true }
 
-    foreach ($file in $files) {
+    foreach ($entry in $files) {
+        $file = $entry.File
+        $state = $entry.State
         $hash = Get-UpdateHash -Path $file.FullName
         $record = $applied[$file.Name]
         $action = "apply"
@@ -216,11 +261,11 @@ function Invoke-PendingDirectory {
 
         if ($record) {
             if ($record.Hash -eq $hash) {
-                if ($record.State -eq "PENDING") {
+                if ($record.State -eq $state) {
                     $action = "skip"
                 } else {
                     $action = "state"
-                    $note = "$($record.State) -> PENDING"
+                    $note = "$($record.State) -> $state"
                 }
             } elseif ($SkipChanged) {
                 $action = "changed"
@@ -249,13 +294,15 @@ function Invoke-PendingDirectory {
             }
             if ($action -eq "apply" -or $action -eq "reapply" -or $action -eq "state") {
                 $register = "REPLACE INTO ``updates`` (``name``, ``hash``, ``state``, ``speed``) VALUES (" +
-                    (Get-SqlLiteral $file.Name) + ", " + (Get-SqlLiteral $hash) + ", 'PENDING', $speed);"
+                    (Get-SqlLiteral $file.Name) + ", " + (Get-SqlLiteral $hash) + ", " +
+                    (Get-SqlLiteral $state) + ", $speed);"
                 Invoke-MysqlQuery -Database $Database -Query $register | Out-Null
             }
         }
 
         [pscustomobject]@{
-            Database = $Name
+            Database = $Group
+            Source   = $state
             File     = $file.Name
             Action   = $action
             Milliseconds = $speed
@@ -306,17 +353,15 @@ try {
     }
 
     $targets = @(
-        [pscustomobject]@{ Name = "auth"; Database = $AuthDb; Directory = "data/sql/updates/pending_db_auth" }
-        [pscustomobject]@{ Name = "characters"; Database = $CharactersDb
-                           Directory = "data/sql/updates/pending_db_characters" }
-        [pscustomobject]@{ Name = "world"; Database = $WorldDb; Directory = "data/sql/updates/pending_db_world" }
+        [pscustomobject]@{ Name = "auth"; Database = $AuthDb }
+        [pscustomobject]@{ Name = "characters"; Database = $CharactersDb }
+        [pscustomobject]@{ Name = "world"; Database = $WorldDb }
     )
 
     $results = @()
     foreach ($target in $targets) {
         if ($Databases -notcontains $target.Name) { continue }
-        $directory = Join-Path $Root $target.Directory
-        $results += Invoke-PendingDirectory -Name $target.Name -Database $target.Database -Directory $directory
+        $results += Invoke-DatabaseUpdate -Group $target.Name -Database $target.Database
     }
 
     if ($results) {
