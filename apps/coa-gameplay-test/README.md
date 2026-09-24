@@ -347,6 +347,7 @@ damage coefficients.
 | `learn`, `unlearn` | `actor`, `spell`: configure learned spells/passives through player APIs. `unlearn` accepts `all_specs: true` to remove the fixture grant from every specialization before testing a lower weapon rank. |
 | `money` | `actor`, `copper`: fixture purse, so a priced trainer row can be bought on a character that starts with none. |
 | `set_aura` | `actor`, `spell`, `stacks`: fixture aura state, within its stack limit; zero removes it. Optional `pet: true` selects the actor's current pet. |
+| `cancel_aura` | Player `actor`, `spell`: native `CMSG_CANCEL_AURA` handler; assert the resulting aura state. |
 | `talent` | `actor`, `talent`, zero-based `rank`: learn with normal point/prerequisite checks. |
 | `reset_talents` | `actor`: reset active talents through normal removal, without a trainer fee. |
 | `cast` | `actor`, `spell`, optional `target` (self by default): normal session cast handler. |
@@ -394,7 +395,7 @@ by other nearby fixture actors. Rejected equipment actions include native invent
 must assert consumption and recovery after normal casts; restoring fixture charges does not prove recovery.
 For absence checks, wait through the relevant cast/proc window first, then assert. `relative_to` subtracts
 a previously named snapshot of the same metric; it is available on snapshots and assertions.
-`ratio_to` then divides by a nonzero snapshot of the same metric, for comparisons such as boosted/base damage.
+`ratio_to` then divides by a nonzero snapshot, including a different numeric metric such as healing/damage.
 `cast` accepts an optional `destination` with `x`, `y`, `z` to send an explicit ground target.
 
 Metrics: `health`, `max_health`, `power`, `max_power`, `alive`, `combat`, `casting`, `level`, `quest_objective_count` (needs `quest`, optional `index`), `knows_spell`,
@@ -417,6 +418,7 @@ optional `table`), `pool_variant_count`, `pool_retired_item_count`, `pool_row_co
 (need `cache`, the last also `item`), which read the token table the realm loads and answer how many
 tier tokens a cache may pay, the highest tier among them, and whether one named token is among them.
 Boolean metrics use 0/1. Spell/aura metrics require `spell`; `item_count` requires `item`.
+`stunned` reads the unit's native stun state, including changes caused by aura removal.
 `carried_item_count` sums the stack counts of equipped items (bags included), the backpack and the bags' contents.
 `aura_positive` reads the applied aura's beneficial flag; check `aura` separately to distinguish absence from a debuff.
 `gossip_options` counts the player's current server-side gossip options; it does not verify client rendering.

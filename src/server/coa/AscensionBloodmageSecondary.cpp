@@ -21,6 +21,8 @@ namespace
 {
 enum BloodmageSecondarySpells : uint32
 {
+    SPELL_SACRIFICIAL_RITE = 800785,
+    SPELL_SACRIFICIAL_RITE_HEALING = 800786,
     SPELL_VEINBURST = 504260,
     SPELL_REAVE = 800490,
     SPELL_REAVE_BLEED = 802883,
@@ -38,6 +40,8 @@ enum BloodmageSecondarySpells : uint32
     SPELL_ROTCLAW = 804197,
     SPELL_ROTCLAW_ENERGIZE = 805352,
     SPELL_BLOOD_THIRST = 706613,
+    SPELL_TORTURE = 504071,
+    SPELL_TORTURE_DURATION = 561152,
     SPELL_INSATIABLE = 706621,
     SPELL_INSATIABLE_STACK = 706663,
     SPELL_VAMPIRIC_FANG = 804726,
@@ -67,24 +71,42 @@ enum BloodmageSecondarySpells : uint32
     SPELL_INFUSE = 681403,
     SPELL_FINGER_OF_DEATH = 806178,
     SPELL_SHATTERED = 804447,
-    SPELL_TALDARAM_TORMENT = 800772,
-    SPELL_PACKLEADER = 504290,
-    SPELL_PACKLEADER_ENRAGE = 504289,
-    SPELL_TORTURE = 504071,
-    SPELL_TORTURE_EXTENSION = 561152
+    SPELL_TALDARAM_TORMENT = 800772
 };
 
 constexpr uint32 AtherannPooledPercent = 30;
-constexpr uint32 TortureThirstStacks = 9;
-
-constexpr uint32 HowlSpells[] = {800782, 804811, 806177, 804207, 500124};
-
-bool IsHowl(uint32 id)
-{
-    return std::find(std::begin(HowlSpells), std::end(HowlSpells), id) != std::end(HowlSpells);
-}
-
+constexpr uint32 TORTURE_MINIMUM_THIRST_STACKS = 9;
 constexpr uint32 VampiricFangRanks[] = {804726, 504093, 504094, 504095, 504096, 504097, 553271, 553272};
+
+class aura_ascension_bloodmage_sacrificial_rite : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_bloodmage_sacrificial_rite);
+
+    bool Validate(SpellInfo const* info) override
+    {
+        return info && info->Id == SPELL_SACRIFICIAL_RITE &&
+            info->Effects[EFFECT_0].IsAura(SPELL_AURA_MOD_MELEE_RANGED_HASTE) &&
+            ValidateSpellInfo({SPELL_SACRIFICIAL_RITE_HEALING});
+    }
+
+    void GrantHealing(AuraEffect const*, AuraEffectHandleModes)
+    {
+        if (GetTargetApplication()->GetRemoveMode() != AURA_REMOVE_BY_EXPIRE)
+            return;
+
+        Player* player = GetTarget()->ToPlayer();
+        if (!player || player->getClass() != CLASS_SON_OF_ARUGAL || !player->IsAlive() || !player->IsInWorld())
+            return;
+
+        player->CastSpell(player, SPELL_SACRIFICIAL_RITE_HEALING, TRIGGERED_FULL_MASK);
+    }
+
+    void Register() override
+    {
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_sacrificial_rite::GrantHealing,
+            EFFECT_0, SPELL_AURA_MOD_MELEE_RANGED_HASTE, AURA_EFFECT_HANDLE_REAL);
+    }
+};
 
 bool IsVampiricFang(uint32 id)
 {
@@ -143,8 +165,6 @@ public:
         if (player->HasAura(SPELL_DARK_ESSENCE) && (IsCursedFormAbility(info) ||
             AscensionBloodmage::GetEmpowerment(info->Id) == AscensionBloodmage::Bloodbolt))
             player->CastSpell(player, SPELL_DARK_ESSENCE_HEAL, true);
-        if (IsHowl(info->Id) && player->HasAura(SPELL_PACKLEADER))
-            player->CastSpell(player, SPELL_PACKLEADER_ENRAGE, true);
         if (!player->HasAura(SPELL_NIGHT_HUNTER))
             return;
         if (RankOf(info->Id, SPELL_VEINBURST))
@@ -253,19 +273,20 @@ public:
         if (IsVampiricFang(id) && !spell->GetScriptValue(SPELL_VAMPIRIC_FANG))
         {
             spell->SetScriptValue(SPELL_VAMPIRIC_FANG, 1);
+            Aura const* thirst = player->GetAura(SPELL_BLOOD_THIRST);
+            bool extendTransgression = player->HasAura(SPELL_TORTURE) && thirst &&
+                thirst->GetStackAmount() >= TORTURE_MINIMUM_THIRST_STACKS;
             if (damage)
             {
                 SpellInfo const* fang = spell->GetSpellInfo();
                 HealInfo healInfo(player, player, damage, fang, fang->GetSchoolMask());
                 player->HealBySpell(healInfo);
             }
-            if (player->HasAura(SPELL_TORTURE))
-                if (Aura const* thirst = player->GetAura(SPELL_BLOOD_THIRST))
-                    if (thirst->GetStackAmount() >= TortureThirstStacks)
-                        player->CastSpell(player, SPELL_TORTURE_EXTENSION, true);
             player->RemoveAurasDueToSpell(SPELL_BLOOD_THIRST);
             player->RemoveAurasDueToSpell(SPELL_INSATIABLE);
             player->RemoveAurasDueToSpell(SPELL_INSATIABLE_STACK);
+            if (extendTransgression)
+                player->CastSpell(player, SPELL_TORTURE_DURATION, true);
         }
         if (!damage)
             return;
@@ -847,6 +868,7 @@ class aura_ascension_bloodmage_plague_mark : public AuraScript
 
 void AddSC_AscensionBloodmageSecondary()
 {
+    RegisterSpellScript(aura_ascension_bloodmage_sacrificial_rite);
     new bloodmage_secondary_casts();
     new bloodmage_kiss_periodic();
     new bloodmage_bite_wound_leech();
