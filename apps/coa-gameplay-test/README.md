@@ -129,6 +129,8 @@ For behavior, choose the existing scenario that observes the changed mechanic an
   collisions, leases, failed audits and unstopped processes; infrastructure cleanup is part of combined verification.
 - **Chance-limited procs:** `reaper-beyond-death-reliquary` counts the ordinary Soul Bolts and the additional
   helper casts and damage hits across 90 trials. Its 8% chance still leaves about a 0.055% chance of no proc.
+- **Damage-based healing:** `reaper-siphon-anima` confirms a Reaper hit on a separate target and checks the
+  resulting health gain against the five-percent Siphon Anima aura.
 
 Keep expectations independent of implementation. Use distinguishable players/stats, positive and negative
 controls, and bounded final values; a broad “damage increased” assertion can miss double scaling. The fast tests
