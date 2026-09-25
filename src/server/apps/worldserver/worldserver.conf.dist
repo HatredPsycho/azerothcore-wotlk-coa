@@ -3647,6 +3647,20 @@ DungeonFinder.CastDeserter = 1
 DungeonFinder.AllowCompleted = 1
 
 #
+#    DungeonFinder.MaxExpansion
+#
+#        Description: Most recent expansion whose dungeons the Dungeon Finder offers, whatever the
+#                     account's expansion. Conquest of Azeroth stops at level 60: the Burning Crusade
+#                     dungeons open at 58 in LFGDungeons.dbc but need level 64-67 to enter.
+#                     Below 2, the normal random dungeon of that expansion stays open up to
+#                     MaxPlayerLevel (Random Classic Dungeon stops at 59 in the DBC).
+#        Default:     0 - (Classic dungeons only)
+#                     1 - (Up to The Burning Crusade)
+#                     2 - (Up to Wrath of the Lich King, Blizzlike)
+
+DungeonFinder.MaxExpansion = 0
+
+#
 #    DungeonFinder.DungeonSelectionCooldown
 #
 #        Description: Duration in minutes for the dungeon selection cooldown. Players who complete a
