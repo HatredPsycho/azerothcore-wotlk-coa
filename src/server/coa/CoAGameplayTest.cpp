@@ -23,6 +23,7 @@
 #include "Group.h"
 #include "GroupMgr.h"
 #include "Item.h"
+#include "LFGMgr.h"
 #include "ItemPackets.h"
 #include "NPCPackets.h"
 #include "Log.h"
@@ -245,6 +246,7 @@ struct Actor
     uint32 lootReceived = 0;
     std::array<uint32, 2> meleeAttacksByHand{};
     std::array<uint32, 2> meleeDamageByHand{};
+    std::array<uint64, 2> meleeDamageTotalByHand{};
     uint64 castPushbackMs = 0;
     std::vector<SpellCastEvent> spellCasts;
     std::vector<SpellDamageEvent> spellDamage;
@@ -652,7 +654,10 @@ private:
                         uint8 hand = hitInfo & HITINFO_OFFHAND ? OFF_ATTACK : BASE_ATTACK;
                         ++actor.meleeAttacksByHand[hand];
                         if (damage)
+                        {
                             ++actor.meleeDamageByHand[hand];
+                            actor.meleeDamageTotalByHand[hand] += damage;
+                        }
                     }
                 }
 
@@ -979,6 +984,8 @@ private:
             return unit->GetHealthPct();
         if (metric == "max_health")
             return unit->GetMaxHealth();
+        if (metric == "creature_type")
+            return unit->GetCreatureType();
         if (metric == "display_id")
             return unit->GetDisplayId();
         if (metric == "unit_scale")
@@ -1004,6 +1011,8 @@ private:
             return unit->IsNonMeleeSpellCast(false);
         if (metric == "moving")
             return unit->isMoving();
+        if (metric == "water_walk")
+            return unit->HasWaterWalkAura();
         if (metric == "forced_forward")
             return unit->HasUnitFlag2(UNIT_FLAG2_FORCE_MOVEMENT);
         if (metric == "cast_pushback_ms")
@@ -1031,6 +1040,12 @@ private:
         }
         if (metric == "level")
             return unit->GetLevel();
+        if (metric == "lfg_dungeon_disabled")
+        {
+            lfg::LFGDungeonData const* dungeon = sLFGMgr->GetLFGDungeon(step.get<uint32>("dungeon"));
+            Require(dungeon != nullptr, "LFG disable metric needs a known dungeon");
+            return sLFGMgr->IsDungeonDisabled(dungeon->map, Difficulty(dungeon->difficulty)) ? 1 : 0;
+        }
         if (metric == "view_level")
             return GetUnit(step.get<std::string>("target"))->getLevelForTarget(unit);
         if (metric == "sent_level" || metric == "sent_max_health")
@@ -1373,9 +1388,19 @@ private:
             return player->GetShieldBlockValue();
         if (metric == "critical_block_chance")
             return player->GetTotalAuraModifier(SPELL_AURA_MOD_BLOCK_CRIT_CHANCE);
-        if (metric == "melee_attack_count" || metric == "melee_damage_count")
+        if (metric == "melee_attack_count" || metric == "melee_damage_count" ||
+            metric == "melee_damage_total")
         {
             Actor const& actor = _actors.at(step.get<std::string>("actor"));
+            if (metric == "melee_damage_total")
+            {
+                if (auto hand = step.get_optional<uint32>("hand"))
+                {
+                    Require(*hand < 2, "Melee hand must be main hand or off hand");
+                    return double(actor.meleeDamageTotalByHand[*hand]);
+                }
+                return double(actor.meleeDamageTotalByHand[BASE_ATTACK] + actor.meleeDamageTotalByHand[OFF_ATTACK]);
+            }
             auto const& counts = metric == "melee_attack_count" ? actor.meleeAttacksByHand : actor.meleeDamageByHand;
             if (auto hand = step.get_optional<uint32>("hand"))
             {
