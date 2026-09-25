@@ -5929,10 +5929,42 @@ public:
   }
 };
 
+static bool IsAdventureModeTierAura(uint32 spellId)
+{
+    return spellId == 302053 || (spellId >= 302059 && spellId <= 302068 && (spellId - 302059) % 3 == 0) ||
+        (spellId >= 302600 && spellId <= 302882 && (spellId - 302600) % 3 == 0);
+}
+
+static bool IsAdventureModeMagicDifficultyAura(uint32 spellId)
+{
+    return spellId > 302055 && IsAdventureModeTierAura(spellId - 2);
+}
+
+static void ApplyAdventureModeDifficultyContracts(SpellInfo* info)
+{
+    if (!info || !IsAdventureModeMagicDifficultyAura(info->Id))
+        return;
+
+    for (SpellEffectInfo& effect : info->Effects)
+        if (effect.ApplyAuraName == SPELL_AURA_MOD_HEALING_DONE)
+            effect.ApplyAuraName = SPELL_AURA_MOD_HEALING_DONE_PERCENT;
+}
+
 void ApplyAscensionExperienceContracts(SpellInfo* info)
 {
     if (!info)
         return;
+
+    if (IsAdventureModeTierAura(info->Id))
+    {
+        uint32 const creatureKills = 1;
+        uint32 const quests = 2;
+        for (SpellEffectInfo& effect : info->Effects)
+            if (effect.ApplyAuraName == SPELL_AURA_MOD_XP_PCT && (effect.MiscValue & quests) &&
+                !(effect.MiscValue & creatureKills))
+                effect.ApplyAuraName = SPELL_AURA_MOD_XP_QUEST_PCT;
+        return;
+    }
 
     switch (info->Id)
     {
@@ -5941,6 +5973,7 @@ void ApplyAscensionExperienceContracts(SpellInfo* info)
         case 157353:
         case 818046:
         case 819046:
+        case 993943:
             for (SpellEffectInfo& effect : info->Effects)
                 if (effect.ApplyAuraName == SPELL_AURA_MOD_XP_PCT &&
                     (effect.MiscValue == 2 || effect.MiscValue == 8))
@@ -5981,6 +6014,7 @@ public:
         {
             ApplyAscensionChangelogSpellChanges(spellInfo);
             ApplyAscensionExperienceContracts(spellInfo);
+            ApplyAdventureModeDifficultyContracts(spellInfo);
             switch (spellInfo->Id)
             {
                 case 19743:

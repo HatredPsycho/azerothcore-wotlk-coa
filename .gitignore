@@ -126,6 +126,7 @@ __pycache__/
 #
 # ==================
 !/modules/mod-ascension/
+!/modules/mod-book-of-artisans/
 !/modules/mod-coa-challenges/
 !/modules/mod-worldforged-pickups/
 !/modules/mod-teleport-actionbar/
@@ -134,3 +135,4 @@ __pycache__/
 !/modules/mod-spellbook/
 !/modules/mod-destiny-weaver/
 !/modules/mod-treasure-keeper/
+!/modules/mod-coa-titan-scrolls/

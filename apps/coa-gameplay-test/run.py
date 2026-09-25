@@ -35,7 +35,7 @@ METRICS = {
     'melee_damage_count', 'melee_damage_total',
     'pet_power', 'pet_max_power', 'spell_energize_count', 'spell_energize_total',
     'xp', 'next_level_xp', 'skill_value', 'lfg_dungeon_disabled',
-    'view_level', 'sent_level', 'sent_max_health', 'quest_level', 'quest_xp',
+    'view_level', 'sent_level', 'sent_max_health', 'creature_query_rank', 'quest_level', 'quest_xp',
     'health', 'health_pct', 'max_health', 'creature_type', 'power', 'max_power', 'alive', 'combat', 'casting', 'level',
     'aura', 'aura_stacks', 'aura_charges', 'aura_duration_ms', 'aura_amount', 'aura_positive',
     'knows_spell', 'has_talent', 'talent_points', 'cooldown_ms', 'global_cooldown_ms', 'spell_charges',
@@ -58,6 +58,7 @@ METRICS = {
     'spellbook_buys_granted', 'spellbook_unannounced_buys', 'spellbook_misannounced_buys',
     'spellbook_notify_rows', 'spellbook_notified_spells', 'spellbook_unnotified_buys',
     'trainer_list_packets', 'trainer_window_rows', 'trainer_window_state', 'trainer_window_ability',
+    'vendor_list_packets', 'vendor_items', 'vendor_price', 'vendor_price_sum',
     'spellbook_superseded_packets', 'spellbook_superseded_for',
     'spellbook_cues_in_last_buy', 'spellbook_last_buy_cued',
     'spellbook_silent_buys', 'spellbook_multi_announced_buys',
@@ -128,11 +129,12 @@ ACTIONS = {
     'cast': ({'actor', 'spell'}, {'actor', 'spell', 'target', 'destination'}),
     'attack': ({'actor', 'target'}, {'actor', 'target', 'pet'}),
     'pvp': ({'actor', 'enabled'}, {'actor', 'enabled'}),
-    'group': ({'actor', 'target'}, {'actor', 'target'}),
+    'group': ({'actor', 'target'}, {'actor', 'target', 'loot_method'}),
     'cast_charm': ({'actor', 'spell'}, {'actor', 'spell', 'target'}),
     'gossip_hello': ({'actor'}, {'actor', 'target'}),
     'banker_activate': ({'actor'}, {'actor', 'target', 'owner', 'entry'}),
     'start_challenge': ({'actor', 'challenge', 'level'}, {'actor', 'challenge', 'level'}),
+    'stop_challenge': ({'actor', 'challenge'}, {'actor', 'challenge'}),
     'area_trigger': ({'actor', 'id'}, {'actor', 'id'}),
     'trainer_buy': ({'actor', 'spell'}, {'actor', 'spell', 'target'}),
     'gossip_select': ({'actor', 'option'}, {'actor', 'option'}),
@@ -323,6 +325,8 @@ def validate(scenario):
         if action == 'group':
             require(step['target'] in player_ids and step['target'] != step['actor'],
                     f'{where}: group needs another player')
+            if 'loot_method' in step:
+                number(step['loot_method'], f'{where}.loot_method', 0, 4, True)
         for key in ('ms', 'within_ms'):
             if key in step:
                 number(step[key], f'{where}.{key}', 0, scenario.get('timeout_ms', 90000), True)
@@ -367,6 +371,9 @@ def validate(scenario):
             if metric in {'view_level', 'sent_level', 'sent_max_health'}:
                 require(step['actor'] in player_ids and 'target' in step,
                         f'{where}: view metric needs a player and target')
+            if metric == 'creature_query_rank':
+                require(step['actor'] in player_ids, f'{where}: creature query metric needs a player')
+                number(step.get('entry'), f'{where}.entry', 1, 2**31 - 1, True)
             if metric == 'lfg_dungeon_disabled':
                 number(step.get('dungeon'), f'{where}.dungeon', 1, 2**24 - 1, True)
             if metric in {'quest_level', 'quest_xp'}:
@@ -507,7 +514,8 @@ def validate(scenario):
                           'spellbook_notify_rows', 'spellbook_notified_spells',
                           'spellbook_unnotified_buys',
                           'trainer_list_packets', 'trainer_window_rows', 'trainer_window_state',
-                          'trainer_window_ability', 'spellbook_superseded_packets',
+                          'trainer_window_ability', 'vendor_list_packets', 'vendor_items',
+                          'vendor_price', 'vendor_price_sum', 'spellbook_superseded_packets',
                           'spellbook_superseded_for',
                           'spellbook_cues_in_last_buy', 'spellbook_last_buy_cued',
                           'cast_speed_multiplier', 'spell_crit_chance', 'spell_power_cost',

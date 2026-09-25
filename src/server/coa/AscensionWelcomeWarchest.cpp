@@ -11,6 +11,8 @@
 #include "WorldSession.h"
 
 #include <algorithm>
+#include <mutex>
+#include <unordered_set>
 #include <vector>
 
 namespace
@@ -18,12 +20,31 @@ namespace
 constexpr uint32 WARCHEST_ITEM = 2977351;
 constexpr uint8 WARCHEST_LEVEL = 10;
 
+std::mutex g_claimLock;
+std::unordered_set<uint32> g_claimedAccounts;
+
+bool ClaimAccount(uint32 accountId)
+{
+    std::lock_guard<std::mutex> guard(g_claimLock);
+    if (!g_claimedAccounts.insert(accountId).second)
+        return false;
+
+    return !CharacterDatabase.Query("SELECT 1 FROM coa_account_warchest WHERE account = {}", accountId);
+}
+
+void ReleaseAccount(uint32 accountId)
+{
+    std::lock_guard<std::mutex> guard(g_claimLock);
+    g_claimedAccounts.erase(accountId);
+}
+
 void GrantWarchest(Player* player)
 {
-    uint32 const accountId = player->GetSession()->GetAccountId();
-
-    if (CharacterDatabase.Query("SELECT 1 FROM coa_account_warchest WHERE account = {}", accountId))
+    WorldSession* session = player->GetSession();
+    if (session->IsBot())
         return;
+
+    uint32 const accountId = session->GetAccountId();
 
     if (!sObjectMgr->GetItemTemplate(WARCHEST_ITEM))
     {
@@ -31,11 +52,17 @@ void GrantWarchest(Player* player)
         return;
     }
 
-    Item* item = Item::CreateItem(WARCHEST_ITEM, 1);
-    if (!item)
+    if (!ClaimAccount(accountId))
         return;
 
-    CharacterDatabase.Execute("INSERT INTO coa_account_warchest (account, claimed_at) VALUES ({}, {})",
+    Item* item = Item::CreateItem(WARCHEST_ITEM, 1);
+    if (!item)
+    {
+        ReleaseAccount(accountId);
+        return;
+    }
+
+    CharacterDatabase.Execute("INSERT IGNORE INTO coa_account_warchest (account, claimed_at) VALUES ({}, {})",
         accountId, uint32(GameTime::GetGameTime().count()));
 
     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
