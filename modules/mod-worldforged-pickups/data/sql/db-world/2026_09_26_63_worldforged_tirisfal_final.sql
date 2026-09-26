@@ -1,4 +1,12 @@
 -- ----------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+-- LOCAL REPAIR, not upstream (#5215): the three gameobject_template rows below
+-- named 33 columns and gave 32 values, so MySQL refused the whole file with
+-- "Column count doesn't match value count" and the updater stopped there. The
+-- missing value is Data23, which every one of the 1759 worldforged chests in the
+-- world database carries as 0. Drop this repair once the file is fixed upstream.
+-- ---------------------------------------------------------------------------
+
 -- Worldforged pickups: Tirisfal Glades restored and audited in game (final)
 -- ----------------------------------------------------------------------------
 -- The zone's pickups are reconciled against the realm map marker by marker and then
@@ -65,16 +73,16 @@ DELETE FROM `gameobject` WHERE `guid` = 6930064;
 
 
 REPLACE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `ScriptName`) VALUES
-(90641, 3, 980926, 'Joshua''s Cherry Pie', '', 'Looting', '', 1.00, 1689, 90641, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 'worldforged_pickup');
+(90641, 3, 980926, 'Joshua''s Cherry Pie', '', 'Looting', '', 1.00, 1689, 90641, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'worldforged_pickup');
 
 REPLACE INTO `gameobject_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
 (90641, 694542, 0, 100.0000, 0, 1, 0, 1, 1, 'AscensionWorldforged Joshua''s Cherry Pie: the marker is named for this item (the realm''s own chest 90641 stands here)');
 
 REPLACE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `ScriptName`) VALUES
-(90642, 3, 1033132, 'Maquel''s Fallen Water Pouch', '', 'Looting', '', 1.00, 1689, 90642, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 'worldforged_pickup');
+(90642, 3, 1033132, 'Maquel''s Fallen Water Pouch', '', 'Looting', '', 1.00, 1689, 90642, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'worldforged_pickup');
 
 REPLACE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `ScriptName`) VALUES
-(90635, 5, 5493, 'Cherry Pie prop', '', 'Looting', '', 3.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
+(90635, 5, 5493, 'Cherry Pie prop', '', 'Looting', '', 3.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
 
 
 -- ---- the review: twelve stands taken out ----------------------------------------------
