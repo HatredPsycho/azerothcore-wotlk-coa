@@ -16,6 +16,12 @@ namespace
 constexpr uint32 FLAME_FAMILY = uint32(CLASS_WITCH_HUNTER) + 6;
 constexpr uint32 SPELL_FLAMES_BUFF = 803422;
 constexpr uint32 SPELL_FLAMES_DAMAGE = 802850;
+constexpr float FLAMES_DAMAGE_STOCK_COEFFICIENT = 0.25f;
+
+bool StockCoefficientAuthoredOrAlreadyCleared(float multiplier)
+{
+    return multiplier == FLAMES_DAMAGE_STOCK_COEFFICIENT || multiplier == 0.0f;
+}
 
 bool IsFlameCaster(Unit* caster)
 {
@@ -265,7 +271,8 @@ void ApplyAscensionWitchHunterFlameContracts(SpellInfo* spellInfo)
     }
     else if (spellInfo->Id == SPELL_FLAMES_DAMAGE && spellInfo->SpellFamilyFlags == flag96(0, 0, 16384) &&
         spellInfo->Effects[EFFECT_0].Effect == SPELL_EFFECT_SCHOOL_DAMAGE && spellInfo->Effects[EFFECT_0].DieSides == 1 &&
-        !spellInfo->Effects[EFFECT_0].RealPointsPerLevel && spellInfo->Effects[EFFECT_0].BonusMultiplier == 0.25f)
+        !spellInfo->Effects[EFFECT_0].RealPointsPerLevel &&
+        StockCoefficientAuthoredOrAlreadyCleared(spellInfo->Effects[EFFECT_0].BonusMultiplier))
     {
         spellInfo->Effects[EFFECT_0].BonusMultiplier = 0.0f;
         spellInfo->Effects[EFFECT_0].ChainTarget = 1;
