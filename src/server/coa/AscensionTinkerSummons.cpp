@@ -548,10 +548,24 @@ public:
         return true;
     }
 };
+
+class tinker_pet_type : public PlayerScript
+{
+public:
+    tinker_pet_type() : PlayerScript("tinker_pet_type", {PLAYERHOOK_ON_BEFORE_GUARDIAN_INIT_STATS_FOR_LEVEL}) { }
+
+    void OnPlayerBeforeGuardianInitStatsForLevel(Player* player, Guardian* guardian, CreatureTemplate const*,
+        PetType& type) override
+    {
+        if (player->getClass() == CLASS_TINKER && guardian && Permanent(guardian->GetEntry()))
+            type = SUMMON_PET;
+    }
+};
 }
 void AddSC_AscensionTinkerSummons()
 {
     new go_ascension_tinker_battery();
+    new tinker_pet_type();
     RegisterCreatureAI(npc_ascension_tinker_pet);
     RegisterCreatureAI(npc_ascension_tinker_device);
 }
