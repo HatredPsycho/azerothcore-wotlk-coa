@@ -25,10 +25,9 @@ bool IsRustyShivContract(SpellInfo const* spellInfo)
 {
     return spellInfo && spellInfo->Id == SPELL_RANGER_RUSTY_SHIV &&
         spellInfo->SpellFamilyName == RANGER_SPELL_FAMILY &&
-        spellInfo->HasAttribute(SPELL_ATTR3_DOT_STACKING_RULE) &&
         spellInfo->Effects[EFFECT_0].IsAura(SPELL_AURA_DUMMY) &&
         spellInfo->Effects[EFFECT_0].TriggerSpell == SPELL_RANGER_RUSTY_SHIV_DAMAGE &&
-        spellInfo->Effects[EFFECT_1].IsAura(SPELL_AURA_DUMMY) &&
+        spellInfo->Effects[EFFECT_1].IsAura(SPELL_AURA_SCHOOL_ABSORB) &&
         spellInfo->Effects[EFFECT_1].MiscValueB == 20;
 }
 
