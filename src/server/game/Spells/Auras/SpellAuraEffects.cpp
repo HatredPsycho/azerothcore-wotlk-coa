@@ -2147,6 +2147,25 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
         case FORM_STEALTH:                                  // 0x1E
         case FORM_MOONKIN:                                  // 0x1F
         case FORM_SPIRITOFREDEMPTION:                       // 0x20
+        case FORM_COA_23:
+        case FORM_COA_24:
+        case FORM_COA_33:
+        case FORM_COA_34:
+        case FORM_GUARDIAN_LINE_FORMATION:
+        case FORM_GUARDIAN_TOWER_FORMATION:
+        case FORM_GUARDIAN_ASSAULT_FORMATION:
+        case FORM_COA_38:
+        case FORM_COA_40:
+        case FORM_VENOMANCER_WING:
+        case FORM_COA_48:
+        case FORM_TINKER_MECHSUIT:
+        case FORM_NECROMANCER_LICH:
+        case FORM_VENOMANCER_WEAVER:
+        case FORM_FELSWORN_INNER_DEMON:
+        case FORM_BLOODMAGE_ACCURSED:
+        case FORM_COA_59:
+        case FORM_COA_61:
+        case FORM_VENOMANCER_VIZIER:
             break;
         default:
             LOG_ERROR("spells.aura.effect", "Auras: Unknown Shapeshift Type: {}", GetMiscValue());
