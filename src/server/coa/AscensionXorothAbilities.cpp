@@ -539,6 +539,7 @@ class xoroth_casts : public AllSpellScript
 class spell_ascension_xoroth_ability : public SpellScript
 {
     PrepareSpellScript(spell_ascension_xoroth_ability);
+    Unit* HitUnit() { return IsInTargetHook() ? GetHitUnit() : nullptr; }
     bool summoned = false;
     void Effect(SpellEffIndex index)
     {
@@ -556,7 +557,7 @@ class spell_ascension_xoroth_ability : public SpellScript
         if (id == 801042)
         {
             PreventHitDefaultEffect(index);
-            if (Unit* unit = GetHitUnit())
+            if (Unit* unit = HitUnit())
                 if (Creature* corpse = unit->ToCreature(); corpse && corpse->getDeathState() == DeathState::Corpse)
                 {
                     corpse->RemoveCorpse();

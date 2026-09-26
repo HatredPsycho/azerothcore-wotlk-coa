@@ -381,6 +381,7 @@ class spell_ascension_pyromancer_resource : public SpellScript
 class spell_ascension_pyromancer_ability : public SpellScript
 {
     PrepareSpellScript(spell_ascension_pyromancer_ability);
+    Unit* HitUnit() { return IsInTargetHook() ? GetHitUnit() : nullptr; }
     bool summoned = false, commanded = false;
     SpellCastResult Check()
     {
@@ -395,11 +396,11 @@ class spell_ascension_pyromancer_ability : public SpellScript
         if (!player)
             return;
         uint32 id = GetSpellInfo()->Id;
-        if (id == 520868 && index == EFFECT_0 && GetHitUnit())
+        if (id == 520868 && index == EFFECT_0 && HitUnit())
         {
             PreventHitDefaultEffect(index);
-            Cast(player, GetHitUnit(), 1604);
-            if (Aura* slow = GetHitUnit()->GetAura(1604, player->GetGUID()))
+            Cast(player, HitUnit(), 1604);
+            if (Aura* slow = HitUnit()->GetAura(1604, player->GetGUID()))
             {
                 int32 duration = std::max(0, Amount(520868));
                 slow->SetMaxDuration(duration);
@@ -418,10 +419,10 @@ class spell_ascension_pyromancer_ability : public SpellScript
                        std::max(0, GetSpellInfo()->GetDuration()));
             }
         }
-        if (id == 520019 && GetHitUnit())
+        if (id == 520019 && HitUnit())
         {
             PreventHitDefaultEffect(index);
-            Unit* target = GetHitUnit();
+            Unit* target = HitUnit();
             uint64 total = 0;
             std::vector<uint32> consumed;
             for (auto const& pair : target->GetAppliedAuras())

@@ -334,6 +334,7 @@ class spell_ascension_sun_cleric_resource : public SpellScript
 class spell_ascension_sun_cleric_ability : public SpellScript
 {
     PrepareSpellScript(spell_ascension_sun_cleric_ability);
+    Unit* HitUnit() { return IsInTargetHook() ? GetHitUnit() : nullptr; }
     bool done = false;
     uint32 hitIndex = 0;
     uint32 targetCount = 1;
@@ -385,7 +386,7 @@ class spell_ascension_sun_cleric_ability : public SpellScript
         if (Any(GetSpellInfo(), {804249,804253,804254,804250}))
         {
             PreventHitDefaultEffect(index);
-            Unit* ally = GetHitUnit();
+            Unit* ally = HitUnit();
             if (!ally || !ally->HasAura(Bless, player->GetGUID()))
                 return;
             if (Named(GetSpellInfo(), 804249))
