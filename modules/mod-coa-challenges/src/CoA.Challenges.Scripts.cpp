@@ -3575,6 +3575,12 @@ namespace CoAChallenges
         // Gate is Unit::_IsValidAttackTarget (both melee and spells). Pets/
         // guardians are resolved to their owner. Battlegrounds/arenas keep their
         // own rules (only the open world is restricted).
+        //
+        // This hook is a predicate, not an action: the core evaluates it for every
+        // target validity question - area target selection, threat and range checks,
+        // each swing - so merely standing near another player runs it many times a
+        // second. It must therefore never send the player a message; a refusal that
+        // explains itself here reads as a chat flood.
         bool CanUnitAttack(Unit const* attacker, Unit const* target, SpellInfo const* /*spell*/) override
         {
             if (!attacker || !target)
@@ -3588,11 +3594,7 @@ namespace CoAChallenges
             // KNOWN LIMITATION: only attack is blocked; flag/BG/arena scope not
             // modelled (the client tooltip is empty; About 211 doesn't mention PvP).
             if (PlayerHasRule(a, "CHALLENGE_RULES_TYPE_PVE_ONLY"))
-            {
-                if (a->GetSession())
-                    NotifyPlayer(a, "Your challenge is PvE only: you cannot fight players.");
                 return false;
-            }
 
             if (a->GetMap()->IsBattlegroundOrArena())
                 return true;
@@ -3613,9 +3615,6 @@ namespace CoAChallenges
                 if (a->IsMaxLevel() != t->IsMaxLevel())
                     blocked = true;
             }
-            if (blocked && a->GetSession())
-                NotifyPlayer(a,
-                    "Your challenge restricts who you may fight in PvP.");
             return !blocked;
         }
 
