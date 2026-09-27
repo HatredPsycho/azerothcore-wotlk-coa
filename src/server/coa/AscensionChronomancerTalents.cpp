@@ -34,7 +34,8 @@ enum ChronomancerTalentSpells : uint32
     SPELL_TIMEGUARD = 804441,
     SPELL_MARK_OF_ORDER_ADD_STACK = 806270,
     SPELL_IDEAL_TIME_BUFF = 807210,
-    SPELL_NOZDORMUS_GAZE = 807691
+    SPELL_NOZDORMUS_GAZE = 807691,
+    SPELL_DESTABILIZE_TIME_SLOW = 570761
 };
 
 constexpr uint32 TimeguardHeavyHitPercent = 20;
@@ -145,6 +146,55 @@ class spell_ascension_unmaker_of_realities : public AuraScript
     }
 };
 
+class spell_ascension_destabilize_time : public AuraScript
+{
+    PrepareAuraScript(spell_ascension_destabilize_time);
+
+    bool Validate(SpellInfo const*) override
+    {
+        return ValidateSpellInfo({SPELL_DESTABILIZE_TIME_SLOW});
+    }
+
+    void MatchSlow(AuraEffect const*, AuraEffectHandleModes)
+    {
+        Unit* caster = GetCaster();
+        Unit* target = GetTarget();
+        if (!caster || !target)
+            return;
+        Aura* slow = target->GetAura(SPELL_DESTABILIZE_TIME_SLOW, caster->GetGUID());
+        if (!slow)
+            slow = caster->AddAura(SPELL_DESTABILIZE_TIME_SLOW, target);
+        if (!slow)
+            return;
+        slow->SetMaxDuration(GetMaxDuration());
+        slow->SetDuration(GetDuration());
+        if (slow->GetStackAmount() != GetStackAmount())
+            slow->SetStackAmount(GetStackAmount());
+    }
+
+    void RemoveSlow(AuraEffect const*, AuraEffectHandleModes)
+    {
+        GetTarget()->RemoveAurasDueToSpell(SPELL_DESTABILIZE_TIME_SLOW, GetCasterGUID());
+    }
+
+    void GainStackOnCast(AuraEffect const*, ProcEventInfo&)
+    {
+        PreventDefaultAction();
+        if (uint32(GetStackAmount()) < GetSpellInfo()->StackAmount)
+            GetAura()->SetStackAmount(uint8(GetStackAmount() + 1));
+    }
+
+    void Register() override
+    {
+        AfterEffectApply += AuraEffectApplyFn(spell_ascension_destabilize_time::MatchSlow, EFFECT_0,
+            SPELL_AURA_PROC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+        AfterEffectRemove += AuraEffectRemoveFn(spell_ascension_destabilize_time::RemoveSlow, EFFECT_0,
+            SPELL_AURA_PROC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+        OnEffectProc += AuraEffectProcFn(spell_ascension_destabilize_time::GainStackOnCast, EFFECT_0,
+            SPELL_AURA_PROC_TRIGGER_SPELL);
+    }
+};
+
 class spell_ascension_timeguard : public AuraScript
 {
     PrepareAuraScript(spell_ascension_timeguard);
@@ -205,12 +255,40 @@ public:
             player->CastSpell(player, SPELL_THROUGH_THE_AEONS_BUFF, true);
     }
 };
+
+constexpr uint32 BlackHoleRank1 = 707557;
+constexpr uint32 BlackHoleRank2 = 707743;
+constexpr uint32 MeltRealityAndUnmakeFamilyFlags1 = 512 | 33554432;
+
+void ApplyBlackHoleSlowedDamageContract(SpellInfo* info)
+{
+    if (info->Id != BlackHoleRank1 && info->Id != BlackHoleRank2)
+        return;
+
+    SpellEffectInfo& effect = info->Effects[EFFECT_0];
+    bool const copied = effect.ApplyAuraName == SPELL_AURA_OVERRIDE_CLASS_SCRIPTS &&
+        effect.MiscValue == ASCENSION_CLASSMASK_AURASTATE_DAMAGE && effect.MiscValueB == ASCENSION_TARGET_SLOWED;
+    bool const converted = effect.ApplyAuraName == SPELL_AURA_MOD_DAMAGE_DONE_VERSUS_AURASTATE &&
+        effect.MiscValue == ASCENSION_TARGET_SLOWED && effect.MiscValueB == ASCENSION_CLASSMASK_AURASTATE_DAMAGE;
+    if (effect.Effect != SPELL_EFFECT_APPLY_AURA || (!copied && !converted) ||
+        effect.SpellClassMask != flag96(0, MeltRealityAndUnmakeFamilyFlags1, 0) ||
+        effect.TargetA.GetTarget() != TARGET_UNIT_CASTER || effect.TargetB.GetTarget())
+    {
+        LOG_ERROR("coa", "Skipped unexpected Black Hole record {}", info->Id);
+        return;
+    }
+
+    effect.ApplyAuraName = SPELL_AURA_MOD_DAMAGE_DONE_VERSUS_AURASTATE;
+    effect.MiscValue = ASCENSION_TARGET_SLOWED;
+    effect.MiscValueB = ASCENSION_CLASSMASK_AURASTATE_DAMAGE;
+}
 }
 
 void ApplyAscensionChronomancerTalentContracts(SpellInfo* info)
 {
     if (info->SpellFamilyName != 28)
         return;
+    ApplyBlackHoleSlowedDamageContract(info);
     if (info->Id == SPELL_ROLL_BACK)
     {
         info->Effects[EFFECT_0].Effect = SPELL_EFFECT_DISPEL;
@@ -260,5 +338,6 @@ void AddSC_AscensionChronomancerTalents()
     new chronomancer_talent_casts();
     RegisterSpellScript(spell_ascension_dimensional_divergence);
     RegisterSpellScript(spell_ascension_unmaker_of_realities);
+    RegisterSpellScript(spell_ascension_destabilize_time);
     RegisterSpellScript(spell_ascension_timeguard);
 }

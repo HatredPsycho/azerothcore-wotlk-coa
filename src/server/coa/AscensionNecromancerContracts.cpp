@@ -114,8 +114,6 @@ void ApplyContracts(SpellInfo* info)
         info->Effects[0].ApplyAuraName = SPELL_AURA_MOD_ATTACK_POWER;
     if (id == 561318)
         info->Effects[0].ValueMultiplier = 1.0f;
-    if (id == 573131)
-        info->DurationEntry = sSpellDurationStore.LookupEntry(1);
     if (id == 807098)
     {
         info->Effects[0].Effect = SPELL_EFFECT_DUMMY;
@@ -303,6 +301,11 @@ void ApplyContracts(SpellInfo* info)
         info->Effects[1].Effect = 0;
     if (id == 500307)
         info->Effects[0].Effect = 0;
+    if (id == 500443)
+    {
+        info->TargetAuraSpell = 0;
+        info->Effects[2].Effect = 0;
+    }
     if ((id >= 533236 && id <= 533239) || Family(info, 2, 67108864) || id == 802121)
     {
         info->Effects[0].Effect = SPELL_EFFECT_DUMMY;

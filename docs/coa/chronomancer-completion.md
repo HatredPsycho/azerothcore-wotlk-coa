@@ -171,9 +171,13 @@ the decisive field.
   (801291) is zeroed by `AscensionStockCoefficients.cpp`. The Timerend half is dead. 560528 also has no
   `spell_group` / `spell_group_stack_rules` row, so "does not stack with similar effects" is unenforced.
 - **#786 Black Hole 707557, 707743** — aura 112 `SPELL_AURA_OVERRIDE_CLASS_SCRIPTS`, `EffectMiscValue` 20007,
-  `EffectMiscValueB` 26. No module converts it to the native aura 303, and `enum AuraStateType` has no state
-  26, so even a converted effect would test permanently false. The mask `[0,33554944,0]` also omits Chromatic
-  Shard, which the tooltip names.
+  `EffectMiscValueB` 26. Every other client record with selector 20007 and state 26 describes "slowed"
+  targets (Reckless Assault 804610, The Time Has Come 572879, Shard of True Ice 805425), and Felsworn's
+  Reckless Assault already reads it as `SPELL_AURA_MOD_DECREASE_SPEED`. Since 2026-09-27
+  `Unit::HasAuraState` computes `ASCENSION_TARGET_SLOWED` (26) that way and both ranks convert to aura 303,
+  so Melt Reality and Unmake gain the bonus
+  (`chronomancer-black-hole-slowed-damage`). The mask `[0,33554944,0]` still omits Chromatic Shard, which the
+  tooltip names; that half has no carrier.
 - **#1987 Timeblender 555737** — the crit half works; "gives it an additional charge" has no carrier.
   `SpellCharges.dbc` holds exactly one row for the Fabric of Time family, `(572378, 328)`, and none of the
   obtainable ranks (570177/570178/570179, 572361/572362/572363, 806299) has one.
@@ -196,7 +200,9 @@ the decisive field.
   aura-354 record.
 - **#534 Destabilize Time 680971** — effect 0 is aura 42 with `EffectTriggerSpell` **0**, and
   `AuraEffect::HandleProcTriggerSpellAuraProc` returns on a null trigger. Every number in the tooltip lives in
-  570761, which nothing casts.
+  570761, which nothing casts. Since 2026-09-26 `spell_ascension_destabilize_time` keeps 570761 on the target
+  at the debuff's stacks and remaining duration and adds a stack on each enemy cast
+  (`chronomancer-destabilize-time-cast-slow`).
 - **#3395 Roll Back 804490** — its single `SPELL_EFFECT_SCRIPT_EFFECT` falls through
   `Spell::EffectScriptEffect`, which handles only `SPELLFAMILY_GENERIC` and `SPELLFAMILY_ROGUE`, and no module
   script registers on the id.
@@ -236,7 +242,9 @@ the decisive field.
   correct; only "casting Unmake on a target will remove this effect" has no carrier. No Unmake rank has a
   `spell_linked_spell` or a `spell_script_names` row, no module script touches 520185/520186/520188, and
   `Unit::GetDispellableAuraList` only lets a spell with `SPELL_ATTR0_NO_IMMUNITIES` remove a
-  `MECHANIC_BANISH` aura.
+  `MECHANIC_BANISH` aura. Since 2026-09-26 every Unmake rank casts the client's own remover 807310
+  ("Unmake / Buy Time Remover", `SPELL_EFFECT_REMOVE_AURA` 520186 with `SPELL_ATTR0_NO_IMMUNITIES`) through
+  `spell_linked_spell` (`chronomancer-buy-time-unmake-removal`).
 - **#1163 Rapid Acceleration 570149** — the tooltip adds 15% bonus-healing scaling to Accelerated Recovery and
   an instant heal for 15% of the total periodic effect. Effect 0 is `SPELL_AURA_ADD_PCT_MODIFIER` with
   `EffectMiscValue` 40 while `MAX_SPELLMOD` is 32, so `AuraEffect::CalculateSpellMod` and
