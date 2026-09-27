@@ -6767,43 +6767,6 @@ class spell_ascension_wildcard_mount : public SpellScript
     }
 };
 
-class npc_ascension_training_book : public CreatureScript
-{
-public:
-    npc_ascension_training_book() : CreatureScript("npc_ascension_training_book") { }
-
-    enum BookGossip : uint32
-    {
-        TextTraining = 900370,
-        ActionRestoreAbilities = GOSSIP_ACTION_INFO_DEF + 1
-    };
-
-    bool OnGossipHello(Player* player, Creature* creature) override
-    {
-        ClearGossipMenuFor(player);
-        if (ascensionCompatConfig.GetConfigValue<bool>(AscensionCompatConfig::ENABLED) &&
-            IsAscensionCustomClass(player))
-            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "Restore my available class abilities.",
-                GOSSIP_SENDER_MAIN, ActionRestoreAbilities);
-        SendGossipMenuFor(player, TextTraining, creature->GetGUID());
-        return true;
-    }
-
-    bool OnGossipSelect(Player* player, Creature*, uint32 sender, uint32 action) override
-    {
-        ClearGossipMenuFor(player);
-        CloseGossipMenuFor(player);
-        if (sender != GOSSIP_SENDER_MAIN || action != ActionRestoreAbilities ||
-            !ascensionCompatConfig.GetConfigValue<bool>(AscensionCompatConfig::ENABLED) ||
-            !IsAscensionCustomClass(player))
-            return true;
-
-        if (!AscensionClassService::Instance().SynchronizeProgression(player, true))
-            ChatHandler(player->GetSession()).SendSysMessage("Your available class abilities are already up to date.");
-        return true;
-    }
-};
-
 class spell_ascension_experience_potion : public SpellScript
 {
     PrepareSpellScript(spell_ascension_experience_potion);
@@ -7006,7 +6969,6 @@ public:
 };
 
 void AddAscensionCompatScripts() {
-  new npc_ascension_training_book();
   RegisterSpellScript(spell_ascension_personal_bank);
   RegisterSpellScript(spell_ascension_experience_potion);
   RegisterSpellScript(spell_ascension_local_mount);
