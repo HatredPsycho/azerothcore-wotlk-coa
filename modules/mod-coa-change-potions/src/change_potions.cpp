@@ -1216,6 +1216,13 @@ void ApplyClassChange(Player* player, Item* item, uint8 newClass)
     //    rather than asked for: a rebuilt class is a relog, not a conversation.
     AcknowledgeAndConsume(player, item);
 
+    // Both halves of the change have to reach the database together.  characters.class is written
+    // straight out above, while the rebuilt spell book, skills, talents, glyphs, action bar and the
+    // spent potion live in memory until the logout ten seconds from now saves them.  A worldserver
+    // that dies inside that window would come back to a character holding the new class and the old
+    // class's spells.  Saving here makes the change one step.
+    player->SaveToDB(false, false);
+
     std::string const className = ClassName(newClass);
     std::string const sentence = ClassSentence(className, ClassColor(newClass));
     Notify(player, sentence, sentence);
@@ -1270,6 +1277,13 @@ bool RequestService(Player* player, Item* item, AtLoginFlags flag, Service const
     CharacterDatabase.Execute(stmt);
 
     AcknowledgeAndConsume(player, item);
+
+    // Both halves of the request have to reach the database together.  The at_login flag is written
+    // straight out above, while the spent potion lives in memory until the logout ten seconds from
+    // now saves it.  A worldserver that dies inside that window would come back to a character with
+    // the service waiting and the potion still in its bags, which is a free second service.  Saving
+    // here makes the request one step.
+    player->SaveToDB(false, false);
 
     std::string const notice = ServiceSentence(potion, service);
     std::string const chat = ServiceSentence(ItemLink(entry, potion), service);
