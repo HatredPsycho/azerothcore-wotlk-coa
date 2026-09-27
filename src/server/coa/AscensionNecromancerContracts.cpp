@@ -301,6 +301,11 @@ void ApplyContracts(SpellInfo* info)
         info->Effects[1].Effect = 0;
     if (id == 500307)
         info->Effects[0].Effect = 0;
+    if (id == 500365)
+    {
+        info->Effects[0].TargetA = SpellImplicitTargetInfo(TARGET_DEST_DEST);
+        info->AttributesEx5 |= SPELL_ATTR5_ALWAYS_AOE_LINE_OF_SIGHT;
+    }
     if (id == 500443)
     {
         info->TargetAuraSpell = 0;
@@ -320,6 +325,8 @@ void ApplyContracts(SpellInfo* info)
         info->Effects[1].TargetB = SpellImplicitTargetInfo();
         info->TargetAuraSpell = 0;
     }
+    if (id == 801545)
+        info->TargetAuraSpell = 0;
     if (id == 801514)
     {
         info->Effects[2].TargetA = SpellImplicitTargetInfo(TARGET_UNIT_MASTER);
@@ -412,7 +419,9 @@ class necromancer_scaling : public UnitScript
             {
                 float sp = float(row.healing ? player->SpellBaseHealingBonusDone(SpellSchoolMask(row.school))
                                              : player->SpellBaseDamageBonusDone(SpellSchoolMask(row.school)));
-                value += std::max(0.0f, sp) * row.sp + player->GetStat(STAT_INTELLECT) * row.intellect +
+                float coefficient = row.sp * 100.0f;
+                player->ApplySpellMod(info->Id, SPELLMOD_BONUS_MULTIPLIER, coefficient);
+                value += std::max(0.0f, sp) * coefficient / 100.0f + player->GetStat(STAT_INTELLECT) * row.intellect +
                          player->GetTotalAttackPowerValue(BASE_ATTACK) * row.ap;
             }
     }

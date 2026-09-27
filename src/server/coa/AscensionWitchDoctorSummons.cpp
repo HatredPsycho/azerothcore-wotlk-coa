@@ -214,7 +214,7 @@ class npc_ascension_witch_doctor : public ScriptedAI
             me->SetCreatorGUID(_owner);
             me->SetFaction(player->GetFaction());
             me->SetLevel(player->GetLevel());
-            me->SetDisplayId(player->GetDisplayId());
+            player->CastSpell(me, CloneMe, true);
             me->SetReactState(REACT_PASSIVE);
             me->SetCombatMovement(false);
             RunAwayFrom(player);
@@ -238,7 +238,7 @@ class npc_ascension_witch_doctor : public ScriptedAI
             RunAwayFrom(player);
         }
         if (me->GetEntry() == NpcMarionette)
-            me->SetDisplayId(player->GetDisplayId());
+            player->CastSpell(me, CloneMe, true);
         if (me->GetEntry() == NpcGolem)
         {
             me->SetMaxHealth(std::max(100u, uint32(player->GetStat(STAT_INTELLECT) * 8)));

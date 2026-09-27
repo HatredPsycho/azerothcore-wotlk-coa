@@ -35,6 +35,7 @@ void SyncStonePetroglyph(Player* player)
 
 constexpr uint32 SPELL_RUNIC_BREAKOUT = 705583;
 constexpr uint32 SPELL_RUNIC_BREAKOUT_WINDOW = 520767;
+constexpr uint32 SPELL_WAVEFORGED_WINDOW = 500469;
 
 void OpenRunicBreakoutWindow(Player* player, Aura const* runeshroud, AuraRemoveMode mode)
 {
@@ -46,7 +47,8 @@ void OpenRunicBreakoutWindow(Player* player, Aura const* runeshroud, AuraRemoveM
 
 void SyncRuneshroudOrWaveforged(Player* player)
 {
-    bool active = player->HasAura(500288, player->GetGUID()) || player->HasAura(705565, player->GetGUID()) ||
+    bool active = player->HasAura(500288, player->GetGUID()) ||
+        player->HasAura(SPELL_WAVEFORGED_WINDOW, player->GetGUID()) ||
         player->HasAura(SPELL_RUNIC_BREAKOUT_WINDOW, player->GetGUID());
     if (!active)
         player->RemoveAurasDueToSpell(808089, player->GetGUID());
@@ -131,7 +133,7 @@ public:
         uint32 id = aura->GetId();
         if (id == 707157 || id == 712310 || IsEarthTattoo(id))
             SyncStonePetroglyph(player);
-        if (id == 500288 || id == 705565 || id == SPELL_RUNIC_BREAKOUT_WINDOW)
+        if (id == 500288 || id == SPELL_WAVEFORGED_WINDOW || id == SPELL_RUNIC_BREAKOUT_WINDOW)
             SyncRuneshroudOrWaveforged(player);
     }
 
@@ -151,7 +153,7 @@ public:
             player->CastSpell(player, 520768, true);
         if (id == SPELL_RUNESHROUD)
             OpenRunicBreakoutWindow(player, aura, mode);
-        if (id == 500288 || id == 705565 || id == SPELL_RUNIC_BREAKOUT_WINDOW)
+        if (id == 500288 || id == SPELL_WAVEFORGED_WINDOW || id == SPELL_RUNIC_BREAKOUT_WINDOW)
             SyncRuneshroudOrWaveforged(player);
     }
 };
@@ -167,6 +169,18 @@ void ApplyAdvancedMagiScaling(SpellInfo* info)
         scaling.SpellClassMask == elementalBurstFamilyFlags)
         scaling.MiscValue = SPELLMOD_BONUS_MULTIPLIER;
 }
+
+constexpr uint32 SPELL_ALTERATION_RANK_1 = 705619;
+
+void ApplyAlterationWaterTattooScope(SpellInfo* info)
+{
+    flag96 const rankOneTattooFamilyFlags(4, 0, 16418);
+    flag96 const waterTattooFamilyFlags(2097152, 0, 0);
+    SpellEffectInfo& effectiveness = info->Effects[EFFECT_0];
+    if (effectiveness.IsAura(SPELL_AURA_ADD_PCT_MODIFIER) && effectiveness.MiscValue == SPELLMOD_ALL_EFFECTS &&
+        effectiveness.SpellClassMask == rankOneTattooFamilyFlags)
+        effectiveness.SpellClassMask |= waterTattooFamilyFlags;
+}
 }
 
 void ApplyAscensionRunemasterTalentContracts(SpellInfo* info)
@@ -174,6 +188,11 @@ void ApplyAscensionRunemasterTalentContracts(SpellInfo* info)
     if (info->Id == SPELL_ADVANCED_MAGI && info->SpellFamilyName == 38)
     {
         ApplyAdvancedMagiScaling(info);
+        return;
+    }
+    if (info->Id == SPELL_ALTERATION_RANK_1 && info->SpellFamilyName == 38)
+    {
+        ApplyAlterationWaterTattooScope(info);
         return;
     }
     if (info->Id == SPELL_PERMAFROST_RUNE)
