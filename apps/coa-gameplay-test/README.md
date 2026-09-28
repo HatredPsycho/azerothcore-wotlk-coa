@@ -361,17 +361,6 @@ Arm of Thorim rolls 133–144 base damage at the fixture level, so two independe
 of 1.10–1.31 with its 20% bonus and 0.91–1.09 without it (including integer rounding). Charged Conduit
 preserves Static and must leave the talent without a depletion bonus.
 
-The [damage-led scaling scenario](scenarios/level-scaling-damage-engagement.json) checks that an
-out-of-range attacker scales a fresh creature before a nonlethal or lethal opening hit, and that
-later damage leaves its combat level fixed. It requires `CoA.LevelScaling=1`,
-`CoA.LevelScalingMaxLift=5`, `MonsterSight=50` and `DestinyWeaver.LevelScaling=0` (or
-`DestinyWeaver.Enable=0`): while the Destiny Weaver owns creature scaling per viewer, the realm-wide lift
-stands aside, so this case and `destiny-weaver-scaling` need separate runs. The level-1 fixtures stand 80–85 yards
-away and must scale to level 6, so both declare `level_scaling`. One fixture has only one maximum HP to
-expose damage-before-scaling.
-Spell 705798 is learned as a fixture: its one damage and zero initial threat exercise damage-led
-engagement through the normal cast handler. This tests the damage path, not an Overload proc or pet AI.
-
 Players require `id`, numeric `race` and `class`; `level` defaults to 80. Optional `bot` logs the actor in on a
 session flagged as a bot, the way playerbots flags the sessions it creates, so a scenario can check what the
 server does differently for them. Optional `spell_hit_rating`,
@@ -405,11 +394,8 @@ template whose scripts suit the experiment.
 Setup clears combat initiated by spawn-time AI before starting the scenario: a fixture whose AI engaged a player
 while spawning evades at once. No step runs while any fixture is evading, so a spell or attack is never aimed at
 a fixture that is resetting; the step's time keeps running meanwhile. Combat otherwise follows normal rules.
-Local level scaling ignores fixtures, because it rebuilds a creature through `SelectLevel()` and would discard
-the declared `level` and `health`; optional `level_scaling` (default false) opts a fixture back into it, which
-only the damage-led scaling scenario above needs. Creature AI can still change initial fixture levels and
-maximum health. Let them settle before taking baselines; assert stable maximums and final levels when testing
-damage coefficients.
+Creature AI can change initial fixture levels and maximum health. Let them settle before taking baselines;
+assert stable maximums and final levels when testing damage coefficients.
 
 | Action | Fields and behavior |
 | --- | --- |
@@ -421,6 +407,10 @@ damage coefficients.
 | `cancel_aura` | Player `actor`, `spell`: native `CMSG_CANCEL_AURA` handler; assert the resulting aura state. |
 | `talent` | `actor`, `talent`, zero-based `rank`: learn with normal point/prerequisite checks. |
 | `reset_talents` | `actor`: reset active talents through normal removal, without a trainer fee. |
+| `specialization` | Player `actor`, `ChrSpecs.dbc` `id`: the client's specialization switch. Uploads the class tree plus the specialization's identity and signature entries as native `0x0727`, as `SwitchActiveChrSpec` and `ApplyPendingBuild` do, then waits up to 2 s for the server to activate it. With `refused: true` it instead waits for the upload's `0x072C` result and requires the specialization to stay inactive. |
+| `advancement_rank` | Player `actor`, CharacterAdvancement `entry`, `rank` (0 removes): uploads the known entries with that rank as native `0x0727`, then waits up to 2 s for the server to apply it. |
+| `client_packet` | Player `actor`, `opcode`, optional `fields` (a list of one-key objects: `u8`, `u32`, `u64`, `string` as a C string, `buyback_guid` slot, `actor_guid` player id) and `consumed` (default true): sends the request through the early packet hook as the client would. |
+| `apply_appearances` | Player `actor`, `selection` mapping category ids to appearance ids: sends the complete array as native `CMSG_APPLY_APPEARANCES` (`0x0697`); unlisted categories are 0. The next step sees the result. |
 | `cast` | `actor`, `spell`, optional `target` (self by default): normal session cast handler. |
 | `attack` | `actor`, `target`: native melee attack request; optional `pet: true` sends the pet's attack command. Verify combat or damage with assertions. |
 | `stop_attack` | Player `actor`: native melee stop request. |
@@ -499,6 +489,8 @@ Boolean metrics use 0/1. Spell/aura metrics require `spell`; `item_count` requir
 `carried_item_count` sums the stack counts of equipped items (bags included), the backpack and the bags' contents.
 `aura_positive` reads the applied aura's beneficial flag; check `aura` separately to distinguish absence from a debuff.
 `gossip_options` counts the player's current server-side gossip options; it does not verify client rendering.
+`gossip_option_text` needs `index` (zero-based) and `text` and returns whether that option carries exactly that
+text, which is how a scenario holds the server to a client window that finds its buttons by their wording.
 `trainer_list_packets` counts the trainer windows the session has been sent, `trainer_window_rows` is the row
 count of the last one, and `trainer_window_state` requires `spell` and returns the state byte that window gave
 the spell's row (`0` available, `1` unavailable, `2` known), or `-1` when the window does not hold that row.
@@ -512,6 +504,9 @@ a fingerprint of a vendor's stock, so one vendor can be held to another's items 
 and returns that player's class ID, or zero if absent. These inspect packets from socketless test sessions,
 not client packet delivery. Masks use native Who bits (`1 << classID`, `1 << raceID`), with class 32 in bit zero;
 omitted masks mean all. The custom-class scenario expects ordinary player RBAC, including faction separation.
+`player_class` reads the player's current class byte and `cached_class` the class the character cache holds,
+which is what name queries tell other clients. `at_login_flag` requires an `AtLoginFlags` value as `id` and
+reports whether the player carries it (for example `8` customize, `64` faction change, `128` race change).
 `health_pct` observes current health as a percentage of maximum health.
 `creature_type` reads the native type used by creature-type targeting and effects.
 `cast_speed_multiplier` observes the native cast-time multiplier; smaller values mean faster casts.
@@ -567,6 +562,8 @@ numeric `SpellCastResult` reasons. These diagnose a rejected submission; effect 
 `distance` requires `target` and measures the native two-dimensional distance, in yards, between the actor and
 that target. It reads position and nothing else, so displacement from a knockback, pull or teleport shows up as
 the difference between two observations; take a `snapshot` first and assert `relative_to` it. Height is excluded.
+`position_x`, `position_y` and `position_z` read the unit's native coordinates on its current map, so a
+teleport's landing can be held to its destination with `min`/`max` bounds; pair them with `map_id`.
 `spell_proc_count` requires `spell` and counts the procs of that spell's aura on the actor since the scenario
 started. What is counted is each spell the proc cast while the aura was named as its trigger, which is the one
 place the server records both the proc and its owner; an aura whose proc does not cast anything counts zero.

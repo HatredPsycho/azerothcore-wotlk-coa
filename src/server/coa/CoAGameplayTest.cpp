@@ -5,6 +5,8 @@
 
 #include "AscensionReaperTalents.h"
 #include "AccountMgr.h"
+#include "AscensionCoATalentState.h"
+#include "AscensionSpecialization.h"
 #include "AscensionWisdomball.h"
 #include "AsyncCallbackProcessor.h"
 #include "Bag.h"
@@ -101,6 +103,10 @@ public:
 };
 constexpr uint32 MaximumActors = 8;
 constexpr uint16 LevelScalingOpcode = 0x0667;
+constexpr uint16 ApplyAppearancesOpcode = 0x0697;
+constexpr uint16 KnownEntriesUploadOpcode = 0x0727;
+constexpr uint16 UpdateEntriesResultOpcode = 0x072C;
+constexpr uint32 TalentRequestWindowMs = 2000;
 
 void Require(bool condition, std::string const& message)
 {
@@ -985,7 +991,6 @@ public:
             if (Map* map = sMapMgr->FindMap(target.map, target.instance))
                 if (Creature* creature = map->GetCreature(target.guid))
                     creature->DespawnOrUnsummon();
-            LocalLevelScaling::ForgetFixture(target.guid.GetRawValue());
             units.insert(target.guid);
         }
         bool ungrouped = true;
@@ -1415,8 +1420,6 @@ private:
                 Require(creature != nullptr, "Could not summon fixture creature: " + id);
                 _targets.emplace(id, Target{ creature->GetMapId(), creature->GetInstanceId(), creature->GetGUID() });
                 creature->SetPhaseMask(_phase, true);
-                if (definition.get<bool>("level_scaling", false))
-                    LocalLevelScaling::AllowFixtureScaling(creature->GetGUID().GetRawValue());
                 creature->SetReactState(REACT_PASSIVE);
                 creature->SetRegeneratingHealth(false);
                 creature->SetFaction(definition.get<uint32>("faction", 14));
@@ -1479,6 +1482,12 @@ private:
             return unit->IsAlive();
         if (metric == "map_id")
             return unit->GetMapId();
+        if (metric == "position_x")
+            return unit->GetPositionX();
+        if (metric == "position_y")
+            return unit->GetPositionY();
+        if (metric == "position_z")
+            return unit->GetPositionZ();
         if (metric == "combat")
             return unit->IsInCombat();
         if (metric == "casting")
@@ -1797,6 +1806,14 @@ private:
         }
         if (metric == "gossip_options")
             return player->PlayerTalkClass->GetGossipMenu().GetMenuItemCount();
+        if (metric == "gossip_option_text")
+        {
+            GossipMenuItemContainer const& options = player->PlayerTalkClass->GetGossipMenu().GetMenuItems();
+            uint32 const index = step.get<uint32>("index");
+            if (index >= options.size())
+                return 0;
+            return std::next(options.begin(), index)->second.Message == step.get<std::string>("text");
+        }
         if (metric == "loot_received")
             return _actors.at(step.get<std::string>("actor")).lootReceived;
         if (metric == "nearby_gameobject_count")
@@ -2651,6 +2668,15 @@ private:
             uint32 const index = step.get<uint32>("index");
             return values && index < values->size() ? double((*values)[index].value) : 0.0;
         }
+        if (metric == "player_class")
+            return player->getClass();
+        if (metric == "cached_class")
+        {
+            CharacterCacheEntry const* cached = sCharacterCache->GetCharacterCacheByGuid(player->GetGUID());
+            return cached ? cached->Class : 0;
+        }
+        if (metric == "at_login_flag")
+            return player->HasAtLoginFlag(AtLoginFlags(step.get<uint32>("id"))) ? 1.0 : 0.0;
         if (metric == "server_packets")
         {
             auto const& packets = _actors.at(step.get<std::string>("actor")).extensionPackets;
@@ -2705,18 +2731,61 @@ private:
                             request << value.get_value<std::string>();
                         else if (kind == "buyback_guid")
                             request << BuybackGuid(player, value.get_value<uint32>());
+                        else if (kind == "actor_guid")
+                            request << GetPlayer(value.get_value<std::string>())->GetGUID().GetRawValue();
                         else
                             throw std::runtime_error("Unknown packet field type: " + kind);
                     }
 
-            WorldSession* session = player->GetSession();
-            bool const consumed = std::async(std::launch::async, [session, &request]
-            {
-                return !sScriptMgr->CanPacketReceiveEarly(session, request);
-            }).get();
+            bool const consumed = ReceiveEarly(player, request);
             record.put("consumed_early", consumed);
             Require(consumed == step.get<bool>("consumed", true), consumed
                 ? "The packet was consumed by an early packet hook" : "No early packet hook consumed the packet");
+        }
+        else if (action == "specialization" || action == "advancement_rank")
+        {
+            Player* player = GetPlayer(step.get<std::string>("actor"));
+            bool const specialization = action == "specialization";
+            uint32& results = _actors.at(step.get<std::string>("actor")).extensionPackets[UpdateEntriesResultOpcode];
+            if (!_talentRequestSent)
+            {
+                _talentRequestSent = true;
+                _talentResultsBefore = results;
+                WorldPacket upload = KnownEntriesUpload(specialization
+                    ? AscensionCoATalentState::SpecializationSwitch(player->getClass(), SpellbookOf(player),
+                        step.get<uint32>("id"))
+                    : KnownEntriesWithRank(player, step.get<uint32>("entry"), step.get<uint32>("rank")));
+                Require(ReceiveEarly(player, upload), "No early packet hook consumed the known-entries upload");
+                return;
+            }
+            bool const applied = specialization
+                ? GetAscensionActiveSpecialization(player) == step.get<uint32>("id")
+                : GetAscensionTalentRank(player, step.get<uint32>("entry")) == step.get<uint32>("rank");
+            if (step.get<bool>("refused", false))
+            {
+                bool const answered = results > _talentResultsBefore;
+                if (!answered && GameElapsed(_stepTime) < TalentRequestWindowMs)
+                    return;
+                Require(answered && !applied, "The server did not refuse the upload");
+                return;
+            }
+            if (!applied && GameElapsed(_stepTime) < TalentRequestWindowMs)
+                return;
+            Require(applied, specialization ? "The server did not activate the uploaded specialization"
+                : "The server did not apply the uploaded talent rank");
+        }
+        else if (action == "apply_appearances")
+        {
+            Player* player = GetPlayer(step.get<std::string>("actor"));
+            std::map<uint32, uint32> selection;
+            for (auto const& [category, appearance] : step.get_child("selection"))
+                selection[uint32(std::stoul(category))] = appearance.get_value<uint32>();
+            uint32 const count = selection.empty() ? 1 : selection.rbegin()->first + 1;
+            WorldPacket request(ApplyAppearancesOpcode, sizeof(uint32) * (count + 1));
+            request << count;
+            for (uint32 category = 0; category < count; ++category)
+                request << (selection.contains(category) ? selection[category] : 0u);
+            Require(ReceiveEarly(player, request), "No early packet hook consumed the appearance request");
         }
         else if (action == "level_scaling_packet")
         {
@@ -3549,17 +3618,56 @@ private:
             throw std::runtime_error("Unknown action: " + action);
     }
 
+    static AscensionCoATalentState::HasSpell SpellbookOf(Player const* player)
+    {
+        return [player](uint32 spellId) { return player->HasSpell(spellId); };
+    }
+
+    static std::vector<AscensionCoATalentState::KnownEntry> KnownEntriesWithRank(Player const* player, uint32 entryId,
+        uint32 rank)
+    {
+        std::vector<AscensionCoATalentState::KnownEntry> known =
+            AscensionCoATalentState::KnownEntries(player->getClass(), SpellbookOf(player));
+        std::erase_if(known, [entryId](AscensionCoATalentState::KnownEntry const& item)
+        {
+            return item.EntryId == entryId;
+        });
+        if (rank)
+            known.push_back({ entryId, rank });
+        return known;
+    }
+
+    static WorldPacket KnownEntriesUpload(std::vector<AscensionCoATalentState::KnownEntry> const& known)
+    {
+        std::vector<uint8> const body = AscensionCoATalentState::KnownEntriesPayload(known);
+        WorldPacket upload(KnownEntriesUploadOpcode, body.size());
+        upload.append(body.data(), body.size());
+        return upload;
+    }
+
+    static bool ReceiveEarly(Player* player, WorldPacket const& packet)
+    {
+        WorldSession* session = player->GetSession();
+        return std::async(std::launch::async, [session, &packet]
+        {
+            return !sScriptMgr->CanPacketReceiveEarly(session, packet);
+        }).get();
+    }
+
     void Advance()
     {
         ++_nextStep;
         ++_completed;
         _stepStarted = false;
+        _talentRequestSent = false;
         _characterQueueMarked = false;
         _characterQueueReached = false;
     }
 
     bool _targetsCreated = false;
     bool _stepStarted = false;
+    bool _talentRequestSent = false;
+    uint32 _talentResultsBefore = 0;
     bool _characterQueueMarked = false;
     bool _characterQueueReached = false;
     bool _measured = false;
@@ -3761,7 +3869,6 @@ private:
             _lanes[index].index = index;
             _lanes[index].phase = CoAGameplay::LanePhase(index);
         }
-        LocalLevelScaling::SetFixturePhases(CoAGameplay::LanePhases(lanes));
         _simulated = _clock == SimulatedClock;
         if (!_simulated)
             return;
