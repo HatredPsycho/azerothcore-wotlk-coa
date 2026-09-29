@@ -109,7 +109,8 @@
 
 enum CustomEquipmentSpells : uint32
 {
-    SPELL_BURNING_COMMANDER = 92089
+    SPELL_BURNING_COMMANDER = 92089,
+    SPELL_VALKYR_GRIP = 707072
 };
 
 enum CharacterFlags
@@ -10388,7 +10389,8 @@ void Player::AddSpellMod(SpellModifier* mod, bool apply)
 
     int i = 0;
     flag96 _mask = 0;
-    for (int eff = 0; eff < 96 && mod->op < MAX_CLIENT_SPELLMOD; ++eff)
+    uint32 const clientSpellModCount = useAscensionSpellModifierLayout ? MAX_SPELLMOD : MAX_CLIENT_SPELLMOD;
+    for (int eff = 0; eff < 96 && uint32(mod->op) < clientSpellModCount; ++eff)
     {
         if (eff != 0 && eff % 32 == 0)
             _mask[i++] = 0;
@@ -13815,9 +13817,14 @@ bool Player::HasBurningCommander() const
     return getClass() == CLASS_DEMON_HUNTER && GetLevel() >= 10 && HasActiveSpell(SPELL_BURNING_COMMANDER);
 }
 
+bool Player::HasValkyrGrip() const
+{
+    return getClass() == CLASS_SUN_CLERIC && HasActiveSpell(SPELL_VALKYR_GRIP);
+}
+
 bool Player::CanTitanGrip(ItemTemplate const* weapon) const
 {
-    bool commander = HasBurningCommander();
+    bool commander = HasBurningCommander() || HasValkyrGrip();
     if (!m_canTitanGrip && !commander)
         return false;
     return !weapon || (weapon->Class == ITEM_CLASS_WEAPON &&
