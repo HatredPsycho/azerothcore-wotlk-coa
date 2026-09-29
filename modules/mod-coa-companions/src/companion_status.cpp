@@ -33,6 +33,7 @@
 #include "WorldSession.h"
 
 #include <algorithm>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 
@@ -55,7 +56,10 @@ struct CompanionFeed
     bool primed = false;
 };
 
+// Map threads update their players in parallel, so every touch of the shared feed table is guarded
+// and no reference into it outlives the lock.
 std::unordered_map<ObjectGuid, CompanionFeed> feeds;
+std::mutex feedsMutex;
 
 bool Enabled()
 {
@@ -111,6 +115,7 @@ public:
 
     void OnPlayerLogout(Player* player) override
     {
+        std::lock_guard<std::mutex> guard(feedsMutex);
         feeds.erase(player->GetGUID());
     }
 
@@ -119,26 +124,41 @@ public:
         if (!player || !player->GetSession() || !Enabled())
             return;
 
-        CompanionFeed& feed = feeds[player->GetGUID()];
-        feed.sinceUpdate += diff;
-        feed.sinceSend += diff;
-        if (feed.sinceUpdate < Interval())
-            return;
-        feed.sinceUpdate = 0;
+        ObjectGuid const guid = player->GetGUID();
+        std::string lastBody;
+        uint32 sinceSend = 0;
+        bool primed = false;
+        {
+            std::lock_guard<std::mutex> guard(feedsMutex);
+            CompanionFeed& feed = feeds[guid];
+            feed.sinceUpdate += diff;
+            feed.sinceSend += diff;
+            if (feed.sinceUpdate < Interval())
+                return;
+            feed.sinceUpdate = 0;
+            lastBody = feed.lastBody;
+            sinceSend = feed.sinceSend;
+            primed = feed.primed;
+        }
 
         std::string const body = BuildBody(player);
 
         // Nothing to say, and nothing was said before: the common case for most players.
-        if (body.empty() && !feed.primed)
+        if (body.empty() && !primed)
             return;
 
-        if (body == feed.lastBody && feed.sinceSend < KeepAliveMs)
+        if (body == lastBody && sinceSend < KeepAliveMs)
             return;
 
         Send(player, body);
-        feed.lastBody = body;
-        feed.sinceSend = 0;
-        feed.primed = !body.empty();
+
+        std::lock_guard<std::mutex> guard(feedsMutex);
+        auto const entry = feeds.find(guid);
+        if (entry == feeds.end())
+            return;
+        entry->second.lastBody = body;
+        entry->second.sinceSend = 0;
+        entry->second.primed = !body.empty();
     }
 };
 }
