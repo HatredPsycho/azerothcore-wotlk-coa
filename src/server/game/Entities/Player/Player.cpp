@@ -13344,6 +13344,11 @@ bool Player::isHonorOrXPTarget(Unit* victim) const
     return true;
 }
 
+bool Player::IsKillXPAuraEffect(AuraEffect const* effect)
+{
+    return (effect->GetMiscValue() & XP_AURA_SOURCE_KILL) != 0;
+}
+
 bool Player::GetsRecruitAFriendBonus(bool forXP)
 {
     bool recruitAFriend = false;
