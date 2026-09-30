@@ -2558,6 +2558,10 @@ bool AchievementGlobalMgr::IsStatisticAchievement(AchievementEntry const* achiev
         return false;
 
     AchievementCategoryEntry const* cat = sAchievementCategoryStore.LookupEntry(achievement->categoryId);
+    // The CoA client DBC has achievements whose category is missing from Achievement_Category.dbc.
+    if (!cat)
+        return false;
+
     do
     {
         switch (cat->ID)
