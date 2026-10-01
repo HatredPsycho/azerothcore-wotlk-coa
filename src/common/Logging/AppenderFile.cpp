@@ -115,7 +115,16 @@ void AppenderFile::_write(LogMessage const* message)
     }
 
     fprintf(logfile, "%s%s\n", message->prefix.c_str(), message->text.c_str());
-    fflush(logfile);
+
+    // Flushing after every line makes each log message a disk write; with thousands of lines a second (companions log
+    // every decision) that alone can take half of the world thread. Warnings and errors still reach the disk at once,
+    // everything else within a quarter of a second (the file is also flushed when it is closed).
+    auto const now = std::chrono::steady_clock::now();
+    if (message->level <= LOG_LEVEL_WARN || now - _lastFlush >= std::chrono::milliseconds(250))
+    {
+        fflush(logfile);
+        _lastFlush = now;
+    }
     _fileSize += uint64(message->Size());
 }
 
