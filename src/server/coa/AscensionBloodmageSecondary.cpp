@@ -10,6 +10,7 @@
 #include "SpellMgr.h"
 #include "SpellScript.h"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <list>
@@ -57,6 +58,8 @@ enum BloodmageSecondarySpells : uint32
     SPELL_DARK_ESSENCE = 680732,
     SPELL_DARK_ESSENCE_HEAL = 681036,
     SPELL_BLOOD_RITUALS = 706623,
+    SPELL_BLOOD_RITUALS_TALENT = 706624,
+    SPELL_BLOOD_RITUALS_HEAL = 704119,
     SPELL_CURSED_FORM_REQUIREMENT = 525031,
     SPELL_CURSED_FORM_REQUIREMENT_2 = 524861,
     SPELL_VAMPIRIC_FANG_SHARE = 572373,
@@ -79,6 +82,8 @@ enum BloodmageSecondarySpells : uint32
 constexpr uint32 AtherannPooledPercent = 30;
 constexpr uint32 TORTURE_MINIMUM_THIRST_STACKS = 9;
 constexpr uint32 VampiricFangRanks[] = {804726, 504093, 504094, 504095, 504096, 504097, 553271, 553272};
+constexpr std::array<uint32, 10> BLOODMOON_BLAST_RANKS = {
+    500125, 501607, 501608, 501609, 501610, 501611, 501612, 501613, 501614, 572332 };
 
 class aura_ascension_bloodmage_sacrificial_rite : public AuraScript
 {
@@ -127,6 +132,12 @@ bool RankOf(uint32 id, uint32 root)
     return id == root || sSpellMgr->GetFirstSpellInChain(id) == root;
 }
 
+bool IsBloodmoonBlast(uint32 id)
+{
+    return std::find(BLOODMOON_BLAST_RANKS.begin(), BLOODMOON_BLAST_RANKS.end(), id) !=
+        BLOODMOON_BLAST_RANKS.end();
+}
+
 Player* Bloodmage(Spell* spell)
 {
     Player* player = spell->GetCaster()->ToPlayer();
@@ -167,6 +178,8 @@ public:
         if (player->HasAura(SPELL_DARK_ESSENCE) && (IsCursedFormAbility(info) ||
             AscensionBloodmage::GetEmpowerment(info->Id) == AscensionBloodmage::Bloodbolt))
             player->CastSpell(player, SPELL_DARK_ESSENCE_HEAL, true);
+        if (player->HasAura(SPELL_BLOOD_RITUALS_TALENT) && IsBloodmoonBlast(info->Id))
+            player->CastSpell(player, SPELL_BLOOD_RITUALS_HEAL, true);
         if (!player->HasAura(SPELL_NIGHT_HUNTER))
             return;
         if (RankOf(info->Id, SPELL_VEINBURST))
@@ -554,6 +567,26 @@ class spell_ascension_dark_essence : public SpellScript
     }
 };
 
+class spell_ascension_blood_rituals_heal : public SpellScript
+{
+    PrepareSpellScript(spell_ascension_blood_rituals_heal);
+
+    void Select(std::list<WorldObject*>& targets)
+    {
+        targets.remove_if([](WorldObject* object)
+        {
+            Unit* target = object ? object->ToUnit() : nullptr;
+            return !target || !target->HasAura(SPELL_BLOOD_RITUALS);
+        });
+    }
+
+    void Register() override
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_ascension_blood_rituals_heal::Select,
+            EFFECT_0, TARGET_UNIT_SRC_AREA_ALLY);
+    }
+};
+
 class spell_ascension_blood_feast_corpses : public SpellScript
 {
     PrepareSpellScript(spell_ascension_blood_feast_corpses);
@@ -881,6 +914,7 @@ void AddSC_AscensionBloodmageSecondary()
     new bloodmage_bite_wound_leech();
     new bloodmage_plague_pools();
     new bloodmage_secondary_contracts();
+    RegisterSpellScript(spell_ascension_blood_rituals_heal);
     RegisterSpellScript(spell_ascension_blood_feast_corpses);
     RegisterSpellScript(spell_ascension_blood_feast_drain);
     RegisterSpellScript(spell_ascension_bloodmage_blood_craving);
