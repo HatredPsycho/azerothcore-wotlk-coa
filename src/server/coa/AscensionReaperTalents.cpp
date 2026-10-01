@@ -60,7 +60,8 @@ enum ReaperTalentSpells : uint32
     SPELL_WEAKENED_SOUL = 803433,
     SPELL_LIFE_TAP = 706788,
     SPELL_DOMINION = 803999,
-    SPELL_DOMINION_ARMOR = 804000
+    SPELL_DOMINION_ARMOR = 804000,
+    SPELL_DARK_SOUL_STAMINA = 707091
 };
 
 Unit* HostileTargetInRange(Player* player, uint32 spellId)
@@ -181,6 +182,56 @@ void ApplyTormentor(Player* player)
 
     player->ModifySpellCooldown(affected, milliseconds);
 }
+
+class aura_ascension_reaper_dark_soul : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_reaper_dark_soul);
+
+    bool Validate(SpellInfo const*) override { return ValidateSpellInfo({SPELL_DARK_SOUL_STAMINA}); }
+
+    bool Load() override
+    {
+        Player* player = GetUnitOwner() ? GetUnitOwner()->ToPlayer() : nullptr;
+        return player && player->getClass() == CLASS_REAPER && GetCasterGUID() == player->GetGUID();
+    }
+
+    void UpdateStamina()
+    {
+        Player* player = GetTarget()->ToPlayer();
+        uint32 const rating = player->GetUInt32Value(uint32(PLAYER_FIELD_COMBAT_RATING_1) + CR_ARMOR_PENETRATION);
+        if (!rating)
+            player->RemoveAurasDueToSpell(SPELL_DARK_SOUL_STAMINA, player->GetGUID());
+        else if (player->IsAlive() && player->IsInWorld())
+            player->CastCustomSpell(SPELL_DARK_SOUL_STAMINA, SPELLVALUE_BASE_POINT0,
+                int32(std::min<uint32>(rating, std::numeric_limits<int32>::max())), player, TRIGGERED_FULL_MASK);
+    }
+
+    void Apply(AuraEffect const*, AuraEffectHandleModes)
+    {
+        UpdateStamina();
+    }
+
+    void Tick(AuraEffect const*)
+    {
+        PreventDefaultAction();
+        UpdateStamina();
+    }
+
+    void Remove(AuraEffect const*, AuraEffectHandleModes)
+    {
+        GetTarget()->RemoveAurasDueToSpell(SPELL_DARK_SOUL_STAMINA, GetCasterGUID());
+    }
+
+    void Register() override
+    {
+        AfterEffectApply += AuraEffectApplyFn(aura_ascension_reaper_dark_soul::Apply,
+            EFFECT_1, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+        OnEffectPeriodic += AuraEffectPeriodicFn(aura_ascension_reaper_dark_soul::Tick,
+            EFFECT_1, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_reaper_dark_soul::Remove,
+            EFFECT_1, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+    }
+};
 
 class spell_ascension_reaper_essence_invigoration_heal : public SpellScript
 {
@@ -538,6 +589,7 @@ void AddSC_AscensionReaperTalents()
 {
     new reaper_essence_invigoration_metadata();
     RegisterSpellScript(spell_ascension_reaper_essence_invigoration_heal);
+    RegisterSpellScript(aura_ascension_reaper_dark_soul);
     RegisterSpellScript(spell_ascension_soul_capture);
     RegisterSpellScript(aura_ascension_harvester);
     RegisterSpellScript(aura_ascension_jailers_call);
