@@ -25,8 +25,15 @@
 #include <map>
 #include <vector>
 
+class Group;
 class InstanceMap;
 class Player;
+
+namespace lfg
+{
+    struct LfgQueuePolicy;
+    struct LfgProposal;
+}
 
 enum GlobalHook
 {
@@ -51,6 +58,9 @@ enum GlobalHook
     GLOBALHOOK_ON_BEFORE_SET_BOSS_STATE,
     GLOBALHOOK_AFTER_INSTANCE_GAME_OBJECT_CREATE,
     GLOBALHOOK_ON_INSTANCE_MAP_CREATED,
+    GLOBALHOOK_ON_RESOLVE_LFG_QUEUE_POLICY,
+    GLOBALHOOK_ON_LFG_PROPOSAL_MADE_GROUP,
+    GLOBALHOOK_HAS_LFG_AUTO_FILL_PROVIDER,
     GLOBALHOOK_END
 };
 
@@ -109,6 +119,15 @@ public:
 
     // Called when an instance map is created for a player, before its grids are loaded
     virtual void OnInstanceMapCreated(InstanceMap* /*instanceMap*/, Player* /*player*/) { }
+
+    // Called when the Dungeon Finder asks how a queue entry should be composed
+    virtual void OnResolveLfgQueuePolicy(ObjectGuid const& /*guid*/, lfg::LfgQueuePolicy& /*policy*/) { }
+
+    // Called when an LFG proposal has formed a group
+    virtual void OnLfgProposalMadeGroup(lfg::LfgProposal const& /*proposal*/, Group* /*group*/) { }
+
+    // Whether something on this realm can fill an incomplete Dungeon Finder group
+    [[nodiscard]] virtual bool HasLfgAutoFillProvider() const { return false; }
 };
 
 #endif

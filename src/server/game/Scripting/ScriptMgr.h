@@ -57,6 +57,12 @@ class GameObject;
 class GameObjectAI;
 class GridMap;
 class Group;
+
+namespace lfg
+{
+    struct LfgProposal;
+    struct LfgQueuePolicy;
+}
 class Guild;
 class InstanceMap;
 class InstanceScript;
@@ -591,6 +597,9 @@ public: /* GlobalScript */
     void OnBeforeSetBossState(uint32 id, EncounterState newState, EncounterState oldState, Map* instance);
     void AfterInstanceGameObjectCreate(Map* instance, GameObject* go);
     void OnInstanceMapCreated(InstanceMap* instanceMap, Player* player);
+    void OnResolveLfgQueuePolicy(ObjectGuid const& guid, lfg::LfgQueuePolicy& policy);
+    void OnLfgProposalMadeGroup(lfg::LfgProposal const& proposal, Group* group);
+    [[nodiscard]] bool HasLfgAutoFillProvider() const;
 
 public: /* Scheduled scripts */
     uint32 IncreaseScheduledScriptsCount() { return ++_scheduledScripts; }

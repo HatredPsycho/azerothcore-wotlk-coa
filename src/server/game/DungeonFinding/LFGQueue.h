@@ -53,6 +53,7 @@ namespace lfg
         LfgDungeonSet dungeons;                                // Selected Player/Group Dungeon/s
         LfgRolesMap roles;                                     // Selected Player Role/s
         Lfg5Guids bestCompatible;                              // Best compatible combination of people queued
+        LfgQueuePolicy policy;                                 // Policy snapshotted on queue join
     };
 
     struct LfgWaitTime

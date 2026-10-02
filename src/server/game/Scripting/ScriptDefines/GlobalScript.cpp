@@ -150,6 +150,33 @@ void ScriptMgr::OnInstanceMapCreated(InstanceMap* instanceMap, Player* player)
         script->OnInstanceMapCreated(instanceMap, player));
 }
 
+void ScriptMgr::OnResolveLfgQueuePolicy(ObjectGuid const& guid, lfg::LfgQueuePolicy& policy)
+{
+    CALL_ENABLED_HOOKS(GlobalScript, GLOBALHOOK_ON_RESOLVE_LFG_QUEUE_POLICY,
+        script->OnResolveLfgQueuePolicy(guid, policy));
+}
+
+void ScriptMgr::OnLfgProposalMadeGroup(lfg::LfgProposal const& proposal, Group* group)
+{
+    CALL_ENABLED_HOOKS(GlobalScript, GLOBALHOOK_ON_LFG_PROPOSAL_MADE_GROUP,
+        script->OnLfgProposalMadeGroup(proposal, group));
+}
+
+bool ScriptMgr::HasLfgAutoFillProvider() const
+{
+    bool hasProvider = false;
+    CALL_ENABLED_HOOKS(GlobalScript, GLOBALHOOK_HAS_LFG_AUTO_FILL_PROVIDER,
+    {
+        if (script->HasLfgAutoFillProvider())
+        {
+            hasProvider = true;
+            break;
+        }
+    });
+
+    return hasProvider;
+}
+
 GlobalScript::GlobalScript(char const* name, std::vector<uint16> enabledHooks)
     : ScriptObject(name, GLOBALHOOK_END)
 {

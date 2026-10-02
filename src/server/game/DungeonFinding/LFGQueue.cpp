@@ -107,7 +107,9 @@ namespace lfg
     void LFGQueue::AddQueueData(ObjectGuid guid, time_t joinTime, LfgDungeonSet const& dungeons, LfgRolesMap const& rolesMap)
     {
         LOG_DEBUG("lfg", "JOINED AddQueueData: {}", guid.ToString());
-        QueueDataStore[guid] = LfgQueueData(joinTime, dungeons, rolesMap);
+        LfgQueueData data(joinTime, dungeons, rolesMap);
+        sScriptMgr->OnResolveLfgQueuePolicy(guid, data.policy);
+        QueueDataStore[guid] = std::move(data);
         AddToQueue(guid);
     }
 
@@ -187,7 +189,12 @@ namespace lfg
 
             FindNewGroups(newGuid);
 
-            CompatibleList.splice((pushCompatiblesToFront ? CompatibleList.begin() : CompatibleList.end()), CompatibleTempList);
+            LfgQueueDataContainer::const_iterator itNewQueue = QueueDataStore.find(newGuid);
+            bool const bypassMatchmaking = (itNewQueue != QueueDataStore.end() && itNewQueue->second.policy.bypassMatchmaking);
+            if (!bypassMatchmaking)
+            {
+                CompatibleList.splice((pushCompatiblesToFront ? CompatibleList.begin() : CompatibleList.end()), CompatibleTempList);
+            }
             CompatibleTempList.clear();
 
             return newGroupsProcessed; // pussywizard: only one per update, shouldn't be a problem
@@ -197,6 +204,16 @@ namespace lfg
 
     LfgCompatibility LFGQueue::FindNewGroups(ObjectGuid const& newGuid)
     {
+        LfgQueueDataContainer::const_iterator itNewQueue = QueueDataStore.find(newGuid);
+        bool const bypassMatchmaking = (itNewQueue != QueueDataStore.end() && itNewQueue->second.policy.bypassMatchmaking);
+        if (bypassMatchmaking)
+        {
+            uint64 foundMask = 0;
+            uint32 foundCount = 0;
+            std::set<Lfg5Guids> emptyCompatibles;
+            return CheckCompatibility(Lfg5Guids(), newGuid, foundMask, foundCount, emptyCompatibles);
+        }
+
         // each combination of dps+heal+tank (tank*8 + heal+4 + dps) has a value assigned 0..15
         // first 16 bits of the mask are for marking if such combination was found once, second 16 bits for marking second occurence of that combination, etc
         uint64 foundMask = 0;
@@ -255,6 +272,18 @@ namespace lfg
         if (!currentCompatibles.empty() && currentCompatibles.find(strGuids) != currentCompatibles.end())
             return LFG_INCOMPATIBLES_TOO_MUCH_PLAYERS;
 
+        // Ensure bypassMatchmaking queue entries never match with other groups
+        auto itNewQueueData = QueueDataStore.find(newGuid);
+        if (itNewQueueData != QueueDataStore.end() && itNewQueueData->second.policy.bypassMatchmaking && !checkWith.empty())
+            return LFG_INCOMPATIBLES_TOO_MUCH_PLAYERS;
+
+        for (uint8 i = 0; i < 5 && checkWith.guids[i]; ++i)
+        {
+            auto itCheckData = QueueDataStore.find(checkWith.guids[i]);
+            if (itCheckData != QueueDataStore.end() && itCheckData->second.policy.bypassMatchmaking)
+                return LFG_INCOMPATIBLES_TOO_MUCH_PLAYERS;
+        }
+
         LfgProposal proposal;
         LfgDungeonSet proposalDungeons;
         LfgGroupsMap proposalGroups;
@@ -293,15 +322,27 @@ namespace lfg
         if (numLfgGroups > 1)
             return LFG_INCOMPATIBLES_MULTIPLE_LFG_GROUPS;
 
-        // Group with less that MAXGROUPSIZE members always compatible
-        if (!sLFGMgr->IsTesting() && check.size() == 1 && numPlayers < MAXGROUPSIZE)
+        LfgQueueDataContainer::iterator itFrontQueue = QueueDataStore.find(check.front());
+        // Upstream looked this up inside the branch below, where the entry is known to be there.
+        // Reading the policy needs it on every call instead, and an entry that has been dropped
+        // between queue passes would otherwise be dereferenced at end().
+        if (itFrontQueue == QueueDataStore.end())
+            return LFG_INCOMPATIBLES_WRONG_GROUP_SIZE;
+
+        LfgQueuePolicy const& policy = itFrontQueue->second.policy;
+
+        // Group with less that MAXGROUPSIZE members always compatible (unless bypassMatchmaking reached target/min players)
+        if (policy.bypassMatchmaking && numPlayers >= policy.minPlayers && numPlayers <= policy.targetPlayers)
         {
-            LfgQueueDataContainer::iterator itQueue = QueueDataStore.find(check.front());
-            LfgRolesMap roles = itQueue->second.roles;
+            // Bypass matchmaking: do not wait for MAXGROUPSIZE, proceed to proposal creation below!
+        }
+        else if (!sLFGMgr->IsTesting() && check.size() == 1 && numPlayers < MAXGROUPSIZE)
+        {
+            LfgRolesMap roles = itFrontQueue->second.roles;
             uint8 roleCheckResult = LFGMgr::CheckGroupRoles(roles);
             strGuids.addRoles(roles);
-            itQueue->second.bestCompatible.clear(); // this may be left after a failed proposal (not cleared, because UpdateQueueTimers would try to generate it with every update)
-            //UpdateBestCompatibleInQueue(itQueue, strGuids);
+            itFrontQueue->second.bestCompatible.clear(); // this may be left after a failed proposal (not cleared, because UpdateQueueTimers would try to generate it with every update)
+            //UpdateBestCompatibleInQueue(itFrontQueue, strGuids);
             AddToCompatibles(strGuids);
             if (roleCheckResult && roleCheckResult <= 15)
                 foundMask |= ( (((uint64)1) << (roleCheckResult - 1)) | (((uint64)1) << (16 + roleCheckResult - 1)) | (((uint64)1) << (32 + roleCheckResult - 1)) | (((uint64)1) << (48 + roleCheckResult - 1)));
@@ -387,11 +428,26 @@ namespace lfg
             LfgQueueData const& queue = QueueDataStore[gguid];
             proposalDungeons = queue.dungeons;
             proposalRoles = queue.roles;
-            LFGMgr::CheckGroupRoles(proposalRoles);          // assing new roles
+            if (queue.policy.requireStandardRoles)
+            {
+                LFGMgr::CheckGroupRoles(proposalRoles);          // assign new roles
+            }
+            else
+            {
+                for (auto& [pguid, pRole] : proposalRoles)
+                {
+                    if (pRole == 0 || pRole == PLAYER_ROLE_NONE)
+                        pRole = PLAYER_ROLE_DAMAGE;
+                }
+            }
         }
 
         // Enough players?
-        if (!sLFGMgr->IsTesting() && numPlayers != MAXGROUPSIZE)
+        bool const enoughPlayers = policy.bypassMatchmaking ?
+            (numPlayers >= policy.minPlayers && numPlayers <= policy.targetPlayers) :
+            (numPlayers == MAXGROUPSIZE);
+
+        if (!sLFGMgr->IsTesting() && !enoughPlayers)
         {
             strGuids.addRoles(proposalRoles);
             for (uint8 i = 0; i < 5 && check.guids[i]; ++i)
@@ -400,7 +456,8 @@ namespace lfg
                 if (!itr->second.bestCompatible.empty()) // update if groups don't have it empty (for empty it will be generated in UpdateQueueTimers)
                     UpdateBestCompatibleInQueue(itr, strGuids);
             }
-            AddToCompatibles(strGuids);
+            if (!policy.bypassMatchmaking)
+                AddToCompatibles(strGuids);
             foundMask |= addToFoundMask;
             ++foundCount;
             return LFG_COMPATIBLES_WITH_LESS_PLAYERS;
@@ -408,6 +465,7 @@ namespace lfg
 
         proposal.queues = strGuids;
         proposal.isNew = numLfgGroups != 1;
+        proposal.policy = policy;
 
         if (!sLFGMgr->AllQueued(check)) // can't create proposal
             return LFG_COMPATIBILITY_PENDING;

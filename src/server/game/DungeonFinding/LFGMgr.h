@@ -368,6 +368,7 @@ namespace lfg
         Lfg5Guids queues;                                      ///< Queue Ids to remove/readd
         LfgGuidList showorder;                                 ///< Show order in update window
         LfgProposalPlayerContainer players;                    ///< Players data
+        LfgQueuePolicy policy;                                 ///< Queue policy (composition & challenge size)
     };
 
     // Stores all rolecheck info of a group that wants to join
