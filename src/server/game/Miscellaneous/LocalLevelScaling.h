@@ -27,6 +27,11 @@ inline std::atomic<QuestBaseLevelResolver> QuestBaseLevelOwner{nullptr};
 
 std::int32_t GetEffectiveQuestBaseLevel(Quest const* quest);
 
+using QuestMinLevelResolver = std::uint32_t (*)(Quest const*);
+inline std::atomic<QuestMinLevelResolver> QuestMinLevelOwner{nullptr};
+
+std::uint32_t GetEffectiveQuestMinLevel(Quest const* quest);
+
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 

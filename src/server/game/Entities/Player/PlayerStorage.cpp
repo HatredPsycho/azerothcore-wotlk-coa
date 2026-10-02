@@ -6893,10 +6893,13 @@ bool Player::Satisfy(DungeonProgressionRequirements const* ar, uint32 target_map
 
         if (!sWorld->getBoolConfig(CONFIG_INSTANCE_IGNORE_LEVEL))
         {
-            if (ar->levelMin && GetLevel() < ar->levelMin)
-                LevelMin = ar->levelMin;
-            if (ar->levelMax && GetLevel() > ar->levelMax)
-                LevelMax = ar->levelMax;
+            uint8 minLevel = ar->levelMin;
+            uint8 maxLevel = ar->levelMax;
+            sScriptMgr->OnResolveDungeonAccessLevels(this, target_map, minLevel, maxLevel);
+            if (minLevel && GetLevel() < minLevel)
+                LevelMin = minLevel;
+            if (maxLevel && GetLevel() > maxLevel)
+                LevelMax = maxLevel;
         }
 
         if (sDisableMgr->IsDisabledFor(DISABLE_TYPE_MAP, target_map, this))

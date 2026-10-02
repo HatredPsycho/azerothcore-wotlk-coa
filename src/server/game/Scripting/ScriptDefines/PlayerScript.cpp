@@ -1103,6 +1103,12 @@ std::optional<uint32> ScriptMgr::OnPlayerGetGameModeMask(Player const* player)
     return std::nullopt;
 }
 
+void ScriptMgr::OnResolveDungeonAccessLevels(Player const* player, uint32 mapId, uint8& minLevel, uint8& maxLevel)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_RESOLVE_DUNGEON_ACCESS_LEVELS,
+        script->OnResolveDungeonAccessLevels(player, mapId, minLevel, maxLevel));
+}
+
 PlayerScript::PlayerScript(char const* name, std::vector<uint16> enabledHooks)
     : ScriptObject(name, PLAYERHOOK_END)
 {

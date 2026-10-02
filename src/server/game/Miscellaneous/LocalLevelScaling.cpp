@@ -23,6 +23,18 @@ namespace LocalLevelScaling
         return quest->GetQuestLevel();
     }
 
+    std::uint32_t GetEffectiveQuestMinLevel(Quest const* quest)
+    {
+        if (!quest)
+            return 0;
+
+        QuestMinLevelResolver const owner = QuestMinLevelOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(quest);
+
+        return quest->GetMinLevel();
+    }
+
     std::uint8_t GetEffectiveCreatureBaseLevel(CreatureTemplate const* cinfo, Creature const* creature)
     {
         if (!cinfo)
