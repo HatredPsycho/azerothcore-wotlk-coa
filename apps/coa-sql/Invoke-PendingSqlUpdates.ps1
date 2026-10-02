@@ -231,12 +231,18 @@ function Get-UpdateSource {
         if (Test-Path -LiteralPath $modules -PathType Container) {
             foreach ($module in (Get-ChildItem -LiteralPath $modules -Directory | Sort-Object Name)) {
                 # Two layouts. Most modules follow the AzerothCore one, data/sql/db-<group>; the
-                # playerbots module keeps its own, data/sql/<group>/updates, with a fourth database
-                # of its own. Both are read, and a module may have either.
-                foreach ($candidate in @("data/sql/db-$Group", "data/sql/$Group/updates")) {
-                    $directory = Join-Path $module.FullName $candidate
+                # playerbots module keeps its own, data/sql/<group>/updates beside a <group>/custom
+                # for files that may be applied again, with a fourth database of its own. All are
+                # read, and a module may have any of them.
+                $candidates = @(
+                    [pscustomobject]@{ Path = "data/sql/db-$Group"; State = Get-ModuleState -Group $Group }
+                    [pscustomobject]@{ Path = "data/sql/$Group/updates"; State = Get-ModuleState -Group $Group }
+                    [pscustomobject]@{ Path = "data/sql/$Group/custom"; State = "CUSTOM" }
+                )
+                foreach ($candidate in $candidates) {
+                    $directory = Join-Path $module.FullName $candidate.Path
                     if (Test-Path -LiteralPath $directory -PathType Container) {
-                        $sources += [pscustomobject]@{ Directory = $directory; State = Get-ModuleState -Group $Group }
+                        $sources += [pscustomobject]@{ Directory = $directory; State = $candidate.State }
                     }
                 }
             }
