@@ -530,7 +530,7 @@ namespace lfg
         /// Checks if given dungeon map is disabled
         bool IsDungeonDisabled(uint32 mapId, Difficulty difficulty) const;
         /// Gets the random dungeon reward corresponding to given dungeon and player level
-        LfgReward const* GetRandomDungeonReward(uint32 dungeon, uint8 level);
+        LfgReward const* GetRandomDungeonReward(uint32 dungeon, uint8 level, Player const* player = nullptr);
         /// Returns all random and seasonal dungeons for given level and expansion
         LfgDungeonSet GetRandomAndSeasonalDungeons(uint8 level, uint8 expansion);
         void CollapseExpandedRandomDungeon(Player* player, LfgDungeonSet& dungeons);

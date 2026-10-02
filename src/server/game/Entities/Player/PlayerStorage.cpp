@@ -6895,7 +6895,8 @@ bool Player::Satisfy(DungeonProgressionRequirements const* ar, uint32 target_map
         {
             uint8 minLevel = ar->levelMin;
             uint8 maxLevel = ar->levelMax;
-            sScriptMgr->OnResolveDungeonAccessLevels(this, target_map, minLevel, maxLevel);
+            sScriptMgr->OnResolveDungeonAccessLevels(this, target_map, GetDifficulty(mapEntry->IsRaid()),
+                minLevel, maxLevel);
             if (minLevel && GetLevel() < minLevel)
                 LevelMin = minLevel;
             if (maxLevel && GetLevel() > maxLevel)

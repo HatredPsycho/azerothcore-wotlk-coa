@@ -251,6 +251,7 @@ enum PlayerHook
     PLAYERHOOK_ON_COA_PROGRESS,
     PLAYERHOOK_ON_GET_GAME_MODE_MASK,
     PLAYERHOOK_ON_RESOLVE_DUNGEON_ACCESS_LEVELS,
+    PLAYERHOOK_ON_RESOLVE_LFG_REWARD_LEVEL,
     PLAYERHOOK_END
 };
 
@@ -1087,7 +1088,16 @@ public:
      * answers with the levels that hold on this realm; with nobody answering, the authored ones stand.
      */
     virtual void OnResolveDungeonAccessLevels(Player const* /*player*/, uint32 /*mapId*/,
-        uint8& /*minLevel*/, uint8& /*maxLevel*/) { }
+        Difficulty /*difficulty*/, uint8& /*minLevel*/, uint8& /*maxLevel*/) { }
+
+    /**
+     * @brief Called while deciding which reward bracket a finished random dungeon pays from. The
+     * brackets are written against the levels the content was authored at, and a realm that maps
+     * content onto other levels has players below them - so the bracket is answered for the
+     * content, not for the number on the character. With nobody answering, the player's own level
+     * stands.
+     */
+    virtual void OnResolveLfgRewardLevel(Player const* /*player*/, uint32 /*dungeonId*/, uint8& /*level*/) { }
 };
 
 #endif

@@ -528,7 +528,8 @@ public: /* PlayerScript */
     bool OnPlayerRefreshQuestGiver(Player* player, Object* questGiver, Quest const* quest);
     void OnPlayerCoAProgress(Player* player, CoAProgressEvent event, uint32 value);
     std::optional<uint32> OnPlayerGetGameModeMask(Player const* player);
-    void OnResolveDungeonAccessLevels(Player const* player, uint32 mapId, uint8& minLevel, uint8& maxLevel);
+    void OnResolveDungeonAccessLevels(Player const* player, uint32 mapId, Difficulty difficulty, uint8& minLevel, uint8& maxLevel);
+    void OnResolveLfgRewardLevel(Player const* player, uint32 dungeonId, uint8& level);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);
