@@ -58,6 +58,7 @@
 #include "InstanceScript.h"
 #include "LFGMgr.h"
 #include "LiveClassResourcePolicy.h"
+#include "LocalLevelScaling.h"
 #include "Log.h"
 #include "LootItemStorage.h"
 #include "MapMgr.h"
@@ -17063,9 +17064,11 @@ uint16 Player::GetMaxSkillValueForLevel() const
     return result;
 }
 
-float Player::GetQuestRate(bool isDFQuest, int32 questLevel)
+float Player::GetQuestRate(bool isDFQuest, int32 questLevel, Quest const* quest)
 {
     float result = Acore::XP::QuestRate(isDFQuest, questLevel, GetLevel());
+
+    result = LocalLevelScaling::GetEffectiveQuestRewardRate(this, quest, result);
 
     sScriptMgr->OnPlayerGetQuestRate(this, result);
 

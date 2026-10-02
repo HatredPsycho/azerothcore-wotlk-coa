@@ -58,4 +58,35 @@ namespace LocalLevelScaling
 
         return generatedArmor;
     }
+
+    std::uint32_t GetEffectiveQuestMoneyMaxLevel(Quest const* quest, std::uint32_t defaultRewardMoney)
+    {
+        if (!quest)
+            return defaultRewardMoney;
+
+        QuestMoneyMaxLevelResolver const owner = QuestMoneyMaxLevelOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(quest, defaultRewardMoney);
+
+        return defaultRewardMoney;
+    }
+
+    std::uint8_t GetEffectiveKillContentLevel(Player const* player, Unit const* victim,
+        std::uint8_t defaultContentLevel)
+    {
+        KillContentLevelResolver const owner = KillContentLevelOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(player, victim, defaultContentLevel);
+
+        return defaultContentLevel;
+    }
+
+    float GetEffectiveQuestRewardRate(Player const* player, Quest const* quest, float defaultRate)
+    {
+        QuestRewardRateResolver const owner = QuestRewardRateOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(player, quest, defaultRate);
+
+        return defaultRate;
+    }
 }

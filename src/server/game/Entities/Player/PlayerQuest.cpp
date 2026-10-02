@@ -1518,7 +1518,7 @@ uint32 Player::CalculateQuestRewardXP(Quest const* quest)
     sScriptMgr->OnPlayerBeforeGetLevelForXPGain(this, level);
 
     // apply world quest rate
-    uint32 xp = uint32(quest->XPValue(level, LocalLevelScaling::QuestScalingEnabled(this)) * GetQuestRate(quest->IsDFQuest(), quest->GetQuestLevel()));
+    uint32 xp = uint32(quest->XPValue(level, LocalLevelScaling::QuestScalingEnabled(this)) * GetQuestRate(quest->IsDFQuest(), quest->GetQuestLevel(), quest));
 
     // handle SPELL_AURA_MOD_XP_QUEST_PCT auras; a NO_BONUS_EXPERIENCE challenge drops
     // the positive bonuses but keeps penalties.

@@ -13,6 +13,7 @@
 #include <optional>
 
 class Creature;
+class Unit;
 class CreatureTemplate;
 class Player;
 class Quest;
@@ -31,6 +32,27 @@ using QuestMinLevelResolver = std::uint32_t (*)(Quest const*);
 inline std::atomic<QuestMinLevelResolver> QuestMinLevelOwner{nullptr};
 
 std::uint32_t GetEffectiveQuestMinLevel(Quest const* quest);
+
+/// The three questions below belong to whoever owns a realm's progression. This core answers them
+/// itself - a quest is lifted to the character's level and its reward follows the game's own
+/// tables, discounted by distance - and stands down entirely while a content scaling module is in
+/// charge, the same way the raid difficulty module stands down over boss health. Two answers to
+/// one question cannot both be right, and they would otherwise be applied one after the other.
+using QuestMoneyMaxLevelResolver = std::uint32_t (*)(Quest const*, std::uint32_t);
+inline std::atomic<QuestMoneyMaxLevelResolver> QuestMoneyMaxLevelOwner{nullptr};
+
+std::uint32_t GetEffectiveQuestMoneyMaxLevel(Quest const* quest, std::uint32_t defaultRewardMoney);
+
+using KillContentLevelResolver = std::uint8_t (*)(Player const*, Unit const*, std::uint8_t);
+inline std::atomic<KillContentLevelResolver> KillContentLevelOwner{nullptr};
+
+std::uint8_t GetEffectiveKillContentLevel(Player const* player, Unit const* victim,
+    std::uint8_t defaultContentLevel);
+
+using QuestRewardRateResolver = float (*)(Player const*, Quest const*, float);
+inline std::atomic<QuestRewardRateResolver> QuestRewardRateOwner{nullptr};
+
+float GetEffectiveQuestRewardRate(Player const* player, Quest const* quest, float defaultRate);
 
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};

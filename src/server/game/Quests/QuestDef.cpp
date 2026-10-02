@@ -237,8 +237,10 @@ uint32 Quest::XPValue(uint8 playerLevel, bool levelScaling) const
     }
 
     // Optional discount on experience, off by default: levelling through content far below the
-    // character is what the scaling system exists to allow. See QuestXpKeepSharePercent.
-    uint32 const xpFloor = LocalLevelScaling::QuestXpKeepSharePercent.load(std::memory_order_relaxed);
+    // character is what the scaling system exists to allow. See QuestXpKeepSharePercent. A content
+    // scaling module answers this question its own way, so this stands down while one is in charge.
+    uint32 const xpFloor = LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed) ?
+        100 : LocalLevelScaling::QuestXpKeepSharePercent.load(std::memory_order_relaxed);
     if (uint32 const keep = LocalLevelScaling::RewardKeepPercent(xpFloor, baseLevel, uint8(quest_level));
         keep < 100)
     {
@@ -324,7 +326,8 @@ int32 Quest::GetRewOrReqMoney(uint8 playerLevel, bool levelScaling) const
                 uint8 const effectiveLevel = LocalLevelScaling::ScaleQuestLevel(Level, playerLevel);
                 uint32 const base = sObjectMgr->GetQuestMoneyReward(ownLevel, uint8(tier));
                 uint32 const target = sObjectMgr->GetQuestMoneyReward(effectiveLevel, uint8(tier));
-                if (base && target)
+                // Same here: with a module owning progression, the lift below is its business.
+                if (base && target && !LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
                 {
                     uint32 const moneyFloor =
                         LocalLevelScaling::QuestMoneyKeepSharePercent.load(std::memory_order_relaxed);
@@ -351,7 +354,9 @@ uint32 Quest::GetRewMoneyMaxLevel(bool levelScaling) const
 
     rewMoney = (XPValue(sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL), levelScaling) * (6 * COPPER));
     // https://wowpedia.fandom.com/wiki/Quest?oldid=1035002 Formula is XP gained * 6c
-    return static_cast<int32>(rewMoney * sWorld->getRate(RATE_REWARD_BONUS_MONEY));
+    uint32 const finalMoney = static_cast<uint32>(rewMoney * sWorld->getRate(RATE_REWARD_BONUS_MONEY));
+
+    return static_cast<int32>(LocalLevelScaling::GetEffectiveQuestMoneyMaxLevel(this, finalMoney));
 }
 
 bool Quest::IsAutoAccept() const
