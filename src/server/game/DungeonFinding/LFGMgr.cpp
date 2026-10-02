@@ -2931,9 +2931,19 @@ namespace lfg
 
     void LFGMgr::SetupGroupMember(ObjectGuid guid, ObjectGuid gguid)
     {
-        LfgDungeonSet dungeons;
-        dungeons.insert(GetDungeon(gguid));
-        SetSelectedDungeons(guid, dungeons);
+        // What a member queued with is what FinishDungeon pays them for, and only a random entry
+        // pays at all. Replacing it with the concrete dungeon the group ended up in takes that
+        // reward away: before the group has a dungeon this wrote a zero, which is what everyone
+        // added while the group was still being formed received, and afterwards it wrote the
+        // dungeon itself. A member who asked for a random dungeon keeps asking for one.
+        uint32 const dungeonId = GetDungeon(gguid);
+        if (dungeonId && !selectedRandomLfgDungeon(guid))
+        {
+            LfgDungeonSet dungeons;
+            dungeons.insert(dungeonId);
+            SetSelectedDungeons(guid, dungeons);
+        }
+
         SetState(guid, GetState(gguid));
         SetGroup(guid, gguid);
         AddPlayerToGroup(gguid, guid);
