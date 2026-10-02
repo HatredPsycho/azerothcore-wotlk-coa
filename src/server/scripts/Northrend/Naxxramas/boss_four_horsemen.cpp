@@ -295,9 +295,17 @@ public:
             switch (events.ExecuteEvent())
             {
                 case EVENT_MARK_CAST:
+                {
                     me->CastSpell(me, TABLE_SPELL_MARK[horsemanId], false);
-                    events.Repeat((me->GetEntry() == NPC_LADY_BLAUMEUX || me->GetEntry() == NPC_SIR_ZELIEK) ? 15s : 12s);
+                    // The mark is survivable because four corners are tanked at once and the stacks
+                    // are shared out. A group that has to take the corners one after another eats
+                    // every stack itself.
+                    uint32 const markInterval = instance->ResolveEncounterMechanic(BOSS_HORSEMAN,
+                        TABLE_SPELL_MARK[horsemanId], EncounterMechanic::TimerMs,
+                        (me->GetEntry() == NPC_LADY_BLAUMEUX || me->GetEntry() == NPC_SIR_ZELIEK) ? 15000 : 12000);
+                    events.Repeat(Milliseconds(markInterval));
                     return;
+                }
                 case EVENT_BERSERK:
                     Talk(SAY_SPECIAL);
                     me->CastSpell(me, SPELL_BERSERK, true);
@@ -328,8 +336,15 @@ public:
                 }
                 else if (!me->IsWithinDistInMap(me->GetVictim(), 45.0f) || !me->IsValidAttackTarget(me->GetVictim()))
                 {
-                    DoCastAOE(TABLE_SPELL_PUNISH[horsemanId]);
-                    Talk(EMOTE_RAGECAST);
+                    // The punishment is what stops a raid from ignoring a corner. With nobody to
+                    // spare for it, it is a room-wide wipe for a corner the group was never going
+                    // to reach; a resolved zero says so.
+                    if (instance->ResolveEncounterMechanic(BOSS_HORSEMAN, TABLE_SPELL_PUNISH[horsemanId],
+                        EncounterMechanic::FailThreshold, 1))
+                    {
+                        DoCastAOE(TABLE_SPELL_PUNISH[horsemanId]);
+                        Talk(EMOTE_RAGECAST);
+                    }
                 }
             }
             else

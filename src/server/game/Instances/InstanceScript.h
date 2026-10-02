@@ -19,6 +19,7 @@
 #define ACORE_INSTANCE_DATA_H
 
 #include "CreatureAI.h"
+#include "EncounterMechanic.h"
 #include "ObjectMgr.h"
 #include "TaskScheduler.h"
 #include "World.h"
@@ -270,6 +271,12 @@ public:
 
     // Returns completed encounters mask for packets
     uint32 GetCompletedEncounterMask() const { return completedEncounters; }
+
+    /// What one of this encounter's numbers should be for the group that is actually here, which is
+    /// the authored number unless a module that scales content answers otherwise. A script that calls
+    /// this on a realm with no such module gets back exactly what it passed in.
+    uint32 ResolveEncounterMechanic(uint32 encounterId, uint32 mechanicId, EncounterMechanic mechanicType,
+        uint32 authoredValue) const;
 
     void SendEncounterUnit(uint32 type, Unit* unit = nullptr, uint8 param1 = 0, uint8 param2 = 0);
 

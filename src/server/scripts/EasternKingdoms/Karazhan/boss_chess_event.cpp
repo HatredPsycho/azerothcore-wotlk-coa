@@ -1337,7 +1337,10 @@ struct npc_echo_of_medivh : public ScriptedAI
             if (_cheatTimer <= diff)
             {
                 HandleCheat();
-                _cheatTimer = urand(45000, 100000);
+                // Medivh cheats on a clock the players answer by repositioning pieces. Fewer hands
+                // mean fewer pieces moved between cheats.
+                _cheatTimer = _instance ? _instance->ResolveEncounterMechanic(DATA_CHESS_EVENT, 0,
+                    EncounterMechanic::TimerMs, urand(45000, 100000)) : urand(45000, 100000);
             }
             else
             {

@@ -252,9 +252,14 @@ struct instance_blackwing_lair : public InstanceScript
 
                     break;
                 case SPECIAL:
+                {
                     if (EggEvent == NOT_STARTED)
                         SetData(DATA_EGG_EVENT, IN_PROGRESS);
-                    if (++EggCount >= EggList.size())
+                    // Every egg in the room is what the fight was written for. A group that cannot
+                    // hold the orb long enough to break them all never reaches phase two at all.
+                    uint32 const requiredEggs = ResolveEncounterMechanic(DATA_RAZORGORE_THE_UNTAMED,
+                        DATA_EGG_EVENT, EncounterMechanic::ObjectiveCount, uint32(EggList.size()));
+                    if (++EggCount >= requiredEggs)
                     {
                         if (Creature* razor = instance->GetCreature(razorgoreGUID))
                         {
@@ -266,6 +271,7 @@ struct instance_blackwing_lair : public InstanceScript
                         _events.CancelEvent(EVENT_RAZOR_SPAWN);
                     }
                     break;
+                }
             }
         }
 

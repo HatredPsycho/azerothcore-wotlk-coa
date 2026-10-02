@@ -385,10 +385,16 @@ struct boss_flame_leviathan : public BossAI
         switch (events.ExecuteEvent())
         {
             case EVENT_PURSUE:
+            {
                 Talk(FLAME_LEVIATHAN_SAY_PURSUE);
                 me->CastSpell(me, SPELL_PURSUED, false);
-                events.RescheduleEvent(EVENT_PURSUE, 31s);
+                // Pursuit passes from vehicle to vehicle while the rest keep firing. With only one
+                // vehicle out there, the same driver is chased the whole fight and never shoots.
+                uint32 const pursueInterval = instance ? instance->ResolveEncounterMechanic(BOSS_LEVIATHAN,
+                    SPELL_PURSUED, EncounterMechanic::TimerMs, 31000) : 31000;
+                events.RescheduleEvent(EVENT_PURSUE, Milliseconds(pursueInterval));
                 return;
+            }
             case EVENT_SPEED:
                 me->CastSpell(me, SPELL_GATHERING_SPEED, false);
                 events.Repeat(15s);
