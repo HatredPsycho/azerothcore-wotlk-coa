@@ -62,12 +62,24 @@ void WorldSession::HandleLfgJoinOpcode(WorldPackets::LFG::LFGJoin& packet)
     }
 
     lfg::LfgDungeonSet newDungeons;
+    std::string submittedSlots;
     for (uint32 slot : packet.Slots)
     {
         uint32 dungeon = slot & 0x00FFFFFF;                             // remove the type from the dungeon entry
+
+        // The type the client put on the slot is thrown away a line above, and with a client that
+        // sends a random dungeon already broken into the dungeons behind it, that type is the only
+        // thing that could still say so. Written out once per join so it can be read rather than
+        // guessed at.
+        if (!submittedSlots.empty())
+            submittedSlots += ", ";
+        submittedSlots += std::to_string(dungeon) + "/type " + std::to_string(slot >> 24);
+
         if (sLFGDungeonStore.LookupEntry(dungeon))
             newDungeons.insert(dungeon);
     }
+
+    LOG_DEBUG("lfg", "CMSG_LFG_JOIN [{}] submitted slots: {}", GetPlayerInfo(), submittedSlots);
 
     LOG_DEBUG("network", "CMSG_LFG_JOIN [{}] roles: {}, Dungeons: {}, Comment: {}",
                  GetPlayerInfo(), packet.Roles, newDungeons.size(), packet.Comment);

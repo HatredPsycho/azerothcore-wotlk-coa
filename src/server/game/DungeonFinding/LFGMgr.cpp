@@ -603,6 +603,46 @@ namespace lfg
        @param[in]     dungeons Dungeons the player/group is applying for
        @param[in]     comment Player selected comment
     */
+    /// A client that offers a random dungeon but sends the dungeons behind it instead of the random
+    /// entry itself leaves the player queued for a list of ordinary dungeons - which is exactly what
+    /// it looks like, so no reward is ever paid for a run the player chose as random. The Ascension
+    /// client does this: picking "Random Classic Dungeon" arrives here as its thirteen dungeons, each
+    /// marked as an ordinary one.
+    ///
+    /// A selection is read as the random entry only when it is all of it: every dungeon that random
+    /// covers and this player is allowed to enter, and nothing else. Choosing a few of them by hand
+    /// stays a choice of a few dungeons.
+    void LFGMgr::CollapseExpandedRandomDungeon(Player* player, LfgDungeonSet& dungeons)
+    {
+        if (!player || dungeons.size() < 2)
+            return;
+
+        LfgLockMap const& locks = GetLockedDungeons(player->GetGUID());
+
+        for (uint32 randomEntry : GetRandomAndSeasonalDungeons(player->GetLevel(), player->GetSession()->Expansion()))
+        {
+            uint32 const randomId = randomEntry & 0x00FFFFFF;
+
+            LfgDungeonSet reachable;
+            for (uint32 dungeonId : GetDungeonsByRandom(randomId))
+            {
+                LFGDungeonData const* dungeon = GetLFGDungeon(dungeonId);
+                if (dungeon && locks.find(dungeon->Entry()) == locks.end())
+                    reachable.insert(dungeonId);
+            }
+
+            if (reachable.size() < 2 || reachable != dungeons)
+                continue;
+
+            LOG_DEBUG("lfg", "LFGMgr::JoinLfg: [{}] submitted all {} dungeons of random {}; reading it as that random.",
+                      player->GetGUID().ToString(), reachable.size(), randomId);
+
+            dungeons.clear();
+            dungeons.insert(randomId);
+            return;
+        }
+    }
+
     void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, std::string const& comment)
     {
         if (!player || dungeons.empty())
@@ -618,6 +658,8 @@ namespace lfg
 
         if (grp && (grp->isBGGroup() || grp->isBFGroup()))
             return;
+
+        CollapseExpandedRandomDungeon(player, dungeons);
 
         if (grp && guid != grp->GetLeaderGUID())
         {
