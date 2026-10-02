@@ -27,6 +27,7 @@
 #include "Containers.h"
 #include "Creature.h"
 #include "CreatureAI.h"
+#include "Log.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "ThreatManager.h"
@@ -384,17 +385,29 @@ void CombatManager::EndAllPvPCombat()
 
 void CombatManager::PutReference(ObjectGuid const& guid, CombatReference* ref)
 {
+    // The slot is occasionally already taken under heavy bot load, from a combat state that was torn
+    // down on one side only. Asserting ends the whole worldserver over one stale reference; ending
+    // that reference purges it from both managers and deletes it, which leaves the slot free for the
+    // one being inserted. Logged as an error so a recurring pattern stays visible.
     if (ref->_isPvP)
     {
-        auto& inMap = _pvpRefs[guid];
-        ASSERT(!inMap, "Duplicate combat state at %p being inserted for %s vs %s - memory leak!", (void*)ref, _owner->GetGUID().ToString().c_str(), guid.ToString().c_str());
-        inMap = static_cast<PvPCombatReference*>(ref);
+        if (auto it = _pvpRefs.find(guid); it != _pvpRefs.end())
+        {
+            LOG_ERROR("entities.unit.combat", "CombatManager::PutReference: duplicate PvP combat state at {} "
+                "for {} vs {}; ending the stale reference.", (void*)ref, _owner->GetGUID().ToString(), guid.ToString());
+            it->second->EndCombat();
+        }
+        _pvpRefs[guid] = static_cast<PvPCombatReference*>(ref);
     }
     else
     {
-        auto& inMap = _pveRefs[guid];
-        ASSERT(!inMap, "Duplicate combat state at %p being inserted for %s vs %s - memory leak!", (void*)ref, _owner->GetGUID().ToString().c_str(), guid.ToString().c_str());
-        inMap = ref;
+        if (auto it = _pveRefs.find(guid); it != _pveRefs.end())
+        {
+            LOG_ERROR("entities.unit.combat", "CombatManager::PutReference: duplicate PvE combat state at {} "
+                "for {} vs {}; ending the stale reference.", (void*)ref, _owner->GetGUID().ToString(), guid.ToString());
+            it->second->EndCombat();
+        }
+        _pveRefs[guid] = ref;
     }
 }
 

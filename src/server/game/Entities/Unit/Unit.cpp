@@ -13492,6 +13492,14 @@ void Unit::RemoveFromWorld()
     if (IsInWorld())
     {
         m_duringRemoveFromWorld = true;
+
+        // A unit that queued itself for delayed visibility stays a raw pointer in the map's set until
+        // HandleDelayedVisibility() drains it later in the same tick. Nothing unhooked that pointer when
+        // the unit left the world in between, so a despawn, logout, kill or teleport in that window left
+        // the map dereferencing freed memory. Every removal path funnels through here.
+        if (Map* map = FindMap())
+            map->i_objectsForDelayedVisibility.erase(this);
+
         if (IsAIEnabled)
             GetAI()->OnDespawn();
 
