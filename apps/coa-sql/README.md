@@ -28,6 +28,25 @@ failure are already applied while the file stays unregistered, so the next run r
 Stop worldserver first, or let the server apply the updates itself. Running both at once can
 apply the same file twice.
 
+## The playerbots database
+
+A module may keep its migrations in either of two layouts, and both are read:
+
+- `data/sql/db-<group>`, the AzerothCore convention most modules follow,
+- `data/sql/<group>/updates`, which the playerbots module uses, with a fourth database of its own.
+
+`-Databases playerbots` (included by default) applies `data/sql/playerbots/updates` to
+`acore_playerbots`, the module's own `updates` table. That table's enum knows only `RELEASED`,
+`ARCHIVED` and `CUSTOM`, so a file there is registered as `RELEASED` — which is also what the
+module's own `updates_include` row says the directory holds. A realm without that database is
+skipped rather than failed.
+
+## Driving it
+
+`-Json` prints one line instead of the table: `{"dryRun":…,"summary":…,"files":[…]}`, with one entry
+per file carrying `Database`, `Source`, `File`, `Action`, `Milliseconds` and `Note`. That is what the
+repack launcher and the manager read; a person reads the table.
+
 ## Usage
 
 ```powershell

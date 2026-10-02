@@ -64,12 +64,14 @@ param(
     [string]$AuthDb = "acore_auth",
     [string]$CharactersDb = "acore_characters",
     [string]$WorldDb = "acore_world",
-    [ValidateSet("auth", "characters", "world")]
-    [string[]]$Databases = @("auth", "characters", "world"),
+    [string]$PlayerbotsDb = "acore_playerbots",
+    [ValidateSet("auth", "characters", "world", "playerbots")]
+    [string[]]$Databases = @("auth", "characters", "world", "playerbots"),
     [string]$CharacterSet = "utf8",
     [switch]$IncludeModules,
     [switch]$SkipChanged,
-    [switch]$DryRun
+    [switch]$DryRun,
+    [switch]$Json
 )
 
 $ErrorActionPreference = "Stop"
@@ -191,6 +193,28 @@ function Get-UpdateHash {
     return (($digest | ForEach-Object { $_.ToString("X2") }) -join "")
 }
 
+# The state an applied file is registered with. The three core databases take the server's own
+# vocabulary; the playerbots database has an `updates` table of its own whose enum knows only
+# RELEASED, ARCHIVED and CUSTOM, so a module file there is RELEASED - which is also what that
+# module's own updates_include row says its directory holds.
+function Get-ModuleState {
+    param([string]$Group)
+
+    if ($Group -eq "playerbots") { return "RELEASED" }
+    return "MODULE"
+}
+
+function Test-Database {
+    param([string]$Database)
+
+    try {
+        Invoke-MysqlQuery -Database $Database -Query "SELECT 1;" | Out-Null
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 function Get-UpdateSource {
     param([string]$Group)
 
@@ -206,9 +230,14 @@ function Get-UpdateSource {
         $modules = Join-Path $Root "modules"
         if (Test-Path -LiteralPath $modules -PathType Container) {
             foreach ($module in (Get-ChildItem -LiteralPath $modules -Directory | Sort-Object Name)) {
-                $directory = Join-Path $module.FullName "data/sql/db-$Group"
-                if (Test-Path -LiteralPath $directory -PathType Container) {
-                    $sources += [pscustomobject]@{ Directory = $directory; State = "MODULE" }
+                # Two layouts. Most modules follow the AzerothCore one, data/sql/db-<group>; the
+                # playerbots module keeps its own, data/sql/<group>/updates, with a fourth database
+                # of its own. Both are read, and a module may have either.
+                foreach ($candidate in @("data/sql/db-$Group", "data/sql/$Group/updates")) {
+                    $directory = Join-Path $module.FullName $candidate
+                    if (Test-Path -LiteralPath $directory -PathType Container) {
+                        $sources += [pscustomobject]@{ Directory = $directory; State = Get-ModuleState -Group $Group }
+                    }
                 }
             }
         }
@@ -356,25 +385,41 @@ try {
         [pscustomobject]@{ Name = "auth"; Database = $AuthDb }
         [pscustomobject]@{ Name = "characters"; Database = $CharactersDb }
         [pscustomobject]@{ Name = "world"; Database = $WorldDb }
+        [pscustomobject]@{ Name = "playerbots"; Database = $PlayerbotsDb }
     )
 
     $results = @()
     foreach ($target in $targets) {
         if ($Databases -notcontains $target.Name) { continue }
+        # A realm without bots has no playerbots database, and that is not a failure of this run.
+        if (-not (Test-Database -Database $target.Database)) {
+            Write-Verbose "$($target.Database) does not exist; skipped"
+            continue
+        }
         $results += Invoke-DatabaseUpdate -Group $target.Name -Database $target.Database
-    }
-
-    if ($results) {
-        $results | Format-Table -AutoSize | Out-String | Write-Host
     }
 
     $counts = $results | Group-Object Action | Sort-Object Name
     $summary = ($counts | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ", "
     if (-not $summary) { $summary = "nothing to do" }
-    if ($DryRun) {
-        Write-Host "Dry run, nothing was changed: $summary"
+
+    if ($Json) {
+        # One object on one line, for a caller that drives this script rather than reads it.
+        $payload = [pscustomobject]@{
+            dryRun  = [bool]$DryRun
+            summary = $summary
+            files   = @($results)
+        }
+        Write-Host ($payload | ConvertTo-Json -Depth 4 -Compress)
     } else {
-        Write-Host "Done: $summary"
+        if ($results) {
+            $results | Format-Table -AutoSize | Out-String | Write-Host
+        }
+        if ($DryRun) {
+            Write-Host "Dry run, nothing was changed: $summary"
+        } else {
+            Write-Host "Done: $summary"
+        }
     }
 } finally {
     if ($temporaryOptionFile) { Remove-Item -LiteralPath $temporaryOptionFile -Force -ErrorAction SilentlyContinue }
