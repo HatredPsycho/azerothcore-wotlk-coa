@@ -13,11 +13,29 @@
 #include <optional>
 
 class Creature;
+class CreatureTemplate;
 class Player;
+class Quest;
 
 namespace LocalLevelScaling
 {
+/// A module that owns the level a quest or a creature is authored at installs itself here, and the
+/// core asks through these instead of reading the template directly. Nothing is installed by default,
+/// so both answers are the authored value.
+using QuestBaseLevelResolver = std::int32_t (*)(Quest const*);
+inline std::atomic<QuestBaseLevelResolver> QuestBaseLevelOwner{nullptr};
+
+std::int32_t GetEffectiveQuestBaseLevel(Quest const* quest);
+
+using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
+inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
+
+std::uint8_t GetEffectiveCreatureBaseLevel(CreatureTemplate const* cinfo, Creature const* creature = nullptr);
+
 inline std::atomic<bool> QuestEnabled{false};
+/// Set by a content scaling module while it is in charge, so systems that scale the same thing by
+/// themselves can stand down.
+inline std::atomic<bool> ContentScalingActive{false};
 inline std::atomic<std::uint8_t> CreatureOffset{3};
 
 /// How much of the level-scaled reward a quest keeps when it is lifted from its own level to the

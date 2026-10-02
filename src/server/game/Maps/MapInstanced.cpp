@@ -227,6 +227,7 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave* save,
         map->SetScriptedPrivateOwner(player->GetScriptedPrivateOwner(), player->GetScriptedPrivateMembers());
     ASSERT(map->IsDungeon());
     m_InstancedMaps[InstanceId] = map;
+    sScriptMgr->OnInstanceMapCreated(map, player);
 
     if (!privateInstance)
     {

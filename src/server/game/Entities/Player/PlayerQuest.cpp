@@ -55,9 +55,12 @@ int32 Player::GetQuestLevel(Quest const* quest) const
 {
     if (!quest)
         return GetLevel();
+
+    int32 const baseLevel = LocalLevelScaling::GetEffectiveQuestBaseLevel(quest);
     if (LocalLevelScaling::QuestScalingEnabled(this))
-        return LocalLevelScaling::ScaleQuestLevel(quest->GetQuestLevel(), GetLevel());
-    return quest->GetQuestLevel() > 0 ? quest->GetQuestLevel() : GetLevel();
+        return LocalLevelScaling::ScaleQuestLevel(baseLevel, GetLevel());
+
+    return baseLevel > 0 ? baseLevel : GetLevel();
 }
 
 void Player::PrepareQuestMenu(ObjectGuid guid)

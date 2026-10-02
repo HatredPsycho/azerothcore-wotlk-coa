@@ -589,6 +589,7 @@ public: /* GlobalScript */
     void OnInstanceIdRemoved(uint32 instanceId);
     void OnBeforeSetBossState(uint32 id, EncounterState newState, EncounterState oldState, Map* instance);
     void AfterInstanceGameObjectCreate(Map* instance, GameObject* go);
+    void OnInstanceMapCreated(InstanceMap* instanceMap, Player* player);
 
 public: /* Scheduled scripts */
     uint32 IncreaseScheduledScriptsCount() { return ++_scheduledScripts; }

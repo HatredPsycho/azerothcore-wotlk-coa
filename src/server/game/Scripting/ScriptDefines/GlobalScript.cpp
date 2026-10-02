@@ -144,6 +144,12 @@ void ScriptMgr::AfterInstanceGameObjectCreate(Map* instance, GameObject* go)
     CALL_ENABLED_HOOKS(GlobalScript, GLOBALHOOK_AFTER_INSTANCE_GAME_OBJECT_CREATE, script->AfterInstanceGameObjectCreate(instance, go));
 }
 
+void ScriptMgr::OnInstanceMapCreated(InstanceMap* instanceMap, Player* player)
+{
+    CALL_ENABLED_HOOKS(GlobalScript, GLOBALHOOK_ON_INSTANCE_MAP_CREATED,
+        script->OnInstanceMapCreated(instanceMap, player));
+}
+
 GlobalScript::GlobalScript(char const* name, std::vector<uint16> enabledHooks)
     : ScriptObject(name, GLOBALHOOK_END)
 {

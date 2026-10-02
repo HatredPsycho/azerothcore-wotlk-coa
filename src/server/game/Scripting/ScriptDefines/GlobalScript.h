@@ -25,6 +25,9 @@
 #include <map>
 #include <vector>
 
+class InstanceMap;
+class Player;
+
 enum GlobalHook
 {
     GLOBALHOOK_ON_ITEM_DEL_FROM_DB,
@@ -47,6 +50,7 @@ enum GlobalHook
     GLOBALHOOK_ON_INSTANCEID_REMOVED,
     GLOBALHOOK_ON_BEFORE_SET_BOSS_STATE,
     GLOBALHOOK_AFTER_INSTANCE_GAME_OBJECT_CREATE,
+    GLOBALHOOK_ON_INSTANCE_MAP_CREATED,
     GLOBALHOOK_END
 };
 
@@ -102,6 +106,9 @@ public:
 
     // Called when a gameobject is created by an instance
     virtual void AfterInstanceGameObjectCreate(Map* /*instance*/, GameObject* /*go*/) { }
+
+    // Called when an instance map is created for a player, before its grids are loaded
+    virtual void OnInstanceMapCreated(InstanceMap* /*instanceMap*/, Player* /*player*/) { }
 };
 
 #endif

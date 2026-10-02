@@ -199,8 +199,9 @@ void Quest::LoadQuestTemplateAddon(Field* fields)
 
 uint32 Quest::XPValue(uint8 playerLevel, bool levelScaling) const
 {
+    int32 const baseLevel = LocalLevelScaling::GetEffectiveQuestBaseLevel(this);
     int32 quest_level = levelScaling && LocalLevelScaling::QuestEnabled.load(std::memory_order_relaxed) ?
-        LocalLevelScaling::ScaleQuestLevel(Level, playerLevel) : (Level == -1 ? playerLevel : Level);
+        LocalLevelScaling::ScaleQuestLevel(baseLevel, playerLevel) : (baseLevel == -1 ? playerLevel : baseLevel);
     QuestXPEntry const* xpentry = sQuestXPStore.LookupEntry(quest_level);
     if (!xpentry)
     {
@@ -238,7 +239,7 @@ uint32 Quest::XPValue(uint8 playerLevel, bool levelScaling) const
     // Optional discount on experience, off by default: levelling through content far below the
     // character is what the scaling system exists to allow. See QuestXpKeepSharePercent.
     uint32 const xpFloor = LocalLevelScaling::QuestXpKeepSharePercent.load(std::memory_order_relaxed);
-    if (uint32 const keep = LocalLevelScaling::RewardKeepPercent(xpFloor, Level, uint8(quest_level));
+    if (uint32 const keep = LocalLevelScaling::RewardKeepPercent(xpFloor, baseLevel, uint8(quest_level));
         keep < 100)
     {
         xp = xp * keep / 100;
