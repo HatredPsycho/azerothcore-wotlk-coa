@@ -640,7 +640,7 @@ bool Creature::UpdateEntry(uint32 Entry, CreatureData const* data, bool changele
 
     SetMeleeDamageSchool(SpellSchools(cInfo->dmgschool));
     CreatureBaseStats const* stats = sObjectMgr->GetCreatureBaseStats(GetLevel(), cInfo->unit_class);
-    float armor = stats->GenerateArmor(cInfo);
+    float armor = LocalLevelScaling::GetEffectiveCreatureArmor(cInfo, this, stats->GenerateArmor(cInfo));
     SetStatFlatModifier(UNIT_MOD_ARMOR,             BASE_VALUE, armor);
     SetStatFlatModifier(UNIT_MOD_RESISTANCE_HOLY,   BASE_VALUE, float(cInfo->resistance[SPELL_SCHOOL_HOLY]));
     SetStatFlatModifier(UNIT_MOD_RESISTANCE_FIRE,   BASE_VALUE, float(cInfo->resistance[SPELL_SCHOOL_FIRE]));

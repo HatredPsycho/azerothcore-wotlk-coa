@@ -37,6 +37,15 @@ inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 
 std::uint8_t GetEffectiveCreatureBaseLevel(CreatureTemplate const* cinfo, Creature const* creature = nullptr);
 
+/// The armor a creature wears. `Creature::UpdateEntry` regenerates armor from the template *after*
+/// `SelectLevel` has run, so a module that set it from the creature hook loses it again a few lines
+/// later. The core asks here instead of writing the generated value straight back; with nothing
+/// installed that generated value is the answer, so the stock path is unchanged.
+using CreatureArmorResolver = float (*)(CreatureTemplate const*, Creature const*, float);
+inline std::atomic<CreatureArmorResolver> CreatureArmorOwner{nullptr};
+
+float GetEffectiveCreatureArmor(CreatureTemplate const* cinfo, Creature const* creature, float generatedArmor);
+
 inline std::atomic<bool> QuestEnabled{false};
 /// Set by a content scaling module while it is in charge, so systems that scale the same thing by
 /// themselves can stand down.

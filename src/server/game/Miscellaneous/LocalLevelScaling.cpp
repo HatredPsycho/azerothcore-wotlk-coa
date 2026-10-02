@@ -46,4 +46,16 @@ namespace LocalLevelScaling
 
         return cinfo->maxlevel;
     }
+
+    float GetEffectiveCreatureArmor(CreatureTemplate const* cinfo, Creature const* creature, float generatedArmor)
+    {
+        if (!cinfo)
+            return generatedArmor;
+
+        CreatureArmorResolver const owner = CreatureArmorOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(cinfo, creature, generatedArmor);
+
+        return generatedArmor;
+    }
 }
