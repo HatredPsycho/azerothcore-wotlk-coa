@@ -31,6 +31,7 @@
 #include "DBCEnums.h"
 #include "DatabaseEnv.h"
 #include "Field.h"
+#include "LocalLevelScaling.h"
 #include "Log.h"
 #include "Map.h"
 #include "Player.h"
@@ -89,6 +90,15 @@ namespace
     // already hurt stays exactly as hurt.
     void ApplyFlex(Creature* creature)
     {
+        // A content scaling module works out a boss's health from the whole
+        // progression layout, for groups of one to forty, and it does that for
+        // dungeons as well as raids. Two systems setting the same health would
+        // just overwrite each other, so this one stands down while that one is
+        // in charge. Nothing sets the flag unless such a module is loaded and
+        // switched on.
+        if (LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
+            return;
+
         if (!creature || !creature->GetMap() || !creature->GetMap()->IsRaid())
             return;
 
