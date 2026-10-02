@@ -606,43 +606,53 @@ namespace lfg
     /// A client that offers a random dungeon but sends the dungeons behind it instead of the random
     /// entry itself leaves the player queued for a list of ordinary dungeons - which is exactly what
     /// it looks like, so no reward is ever paid for a run the player chose as random. The Ascension
-    /// client does this: picking "Random Classic Dungeon" arrives here as its thirteen dungeons, each
-    /// marked as an ordinary one.
+    /// client does this: picking "Random Classic Dungeon" arrives here as its dungeons, each marked
+    /// as an ordinary one, with nothing in the packet still calling it random.
     ///
-    /// A selection is read as the random entry only when it is all of it: every dungeon that random
-    /// covers and this player is allowed to enter, and nothing else. Choosing a few of them by hand
-    /// stays a choice of a few dungeons.
+    /// A selection is read as the random entry only when it is all of it. "All of it" is what the
+    /// client could have offered: the dungeons of that random the player may enter and whose own
+    /// level range holds them. The second half matters because a realm that scales content unlocks
+    /// dungeons below their authored level, which the client knows nothing about, and the first
+    /// because a dungeon the server could not load an entrance for is offered by the client and is
+    /// not in the group at all. Picking a few by hand stays a choice of a few dungeons.
     void LFGMgr::CollapseExpandedRandomDungeon(Player* player, LfgDungeonSet& dungeons)
     {
         if (!player || dungeons.size() < 2)
             return;
 
+        uint8 const level = player->GetLevel();
         LfgLockMap const& locks = GetLockedDungeons(player->GetGUID());
 
-        for (uint32 randomEntry : GetRandomAndSeasonalDungeons(player->GetLevel(), player->GetSession()->Expansion()))
+        for (uint32 randomEntry : GetRandomAndSeasonalDungeons(level, player->GetSession()->Expansion()))
         {
             uint32 const randomId = randomEntry & 0x00FFFFFF;
+            LfgDungeonSet const& group = GetDungeonsByRandom(randomId);
 
-            LfgDungeonSet reachable;
-            for (uint32 dungeonId : GetDungeonsByRandom(randomId))
+            LfgDungeonSet offered;
+            for (uint32 dungeonId : group)
             {
                 LFGDungeonData const* dungeon = GetLFGDungeon(dungeonId);
-                if (dungeon && locks.find(dungeon->Entry()) == locks.end())
-                    reachable.insert(dungeonId);
+                if (dungeon && level >= dungeon->minlevel && level <= dungeon->maxlevel &&
+                    locks.find(dungeon->Entry()) == locks.end())
+                    offered.insert(dungeonId);
             }
 
-            if (reachable.size() < 2 || reachable != dungeons)
+            LfgDungeonSet submittedFromGroup;
+            for (uint32 dungeonId : dungeons)
+                if (group.find(dungeonId) != group.end())
+                    submittedFromGroup.insert(dungeonId);
+
+            if (offered.size() < 2 || offered != submittedFromGroup)
                 continue;
 
-            LOG_DEBUG("lfg", "LFGMgr::JoinLfg: [{}] submitted all {} dungeons of random {}; reading it as that random.",
-                      player->GetGUID().ToString(), reachable.size(), randomId);
+            LOG_DEBUG("lfg", "LFGMgr::JoinLfg: [{}] submitted all {} dungeons random {} offers; reading it as that random.",
+                      player->GetGUID().ToString(), offered.size(), randomId);
 
             dungeons.clear();
             dungeons.insert(randomId);
             return;
         }
     }
-
     void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, std::string const& comment)
     {
         if (!player || dungeons.empty())
