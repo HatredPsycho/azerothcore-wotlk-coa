@@ -3487,6 +3487,13 @@ SpellCastResult Spell::prepare(SpellCastTargets const* targets, AuraEffect const
     {
         m_castItemGUID = m_CastItem->GetGUID();
     }
+    else if (triggeredByAura && triggeredByAura->GetBase())
+    {
+        // A spell an item set off keeps coming from that item, however many steps the chain takes:
+        // scripts pass the triggering aura rather than the item, so without this the trail ends at
+        // the first hop and nothing downstream can still tell what put it there.
+        m_castItemGUID = triggeredByAura->GetBase()->GetCastItemGUID();
+    }
     else
     {
         m_castItemGUID = ObjectGuid::Empty;

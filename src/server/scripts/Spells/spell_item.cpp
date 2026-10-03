@@ -2649,7 +2649,7 @@ class spell_item_shadowmourne_soul_fragment : public AuraScript
         return ValidateSpellInfo({ SPELL_SHADOWMOURNE_VISUAL_LOW, SPELL_SHADOWMOURNE_VISUAL_HIGH, SPELL_SHADOWMOURNE_CHAOS_BANE_BUFF });
     }
 
-    void OnStackChange(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    void OnStackChange(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
     {
         Unit* target = GetTarget();
         switch (GetStackAmount())
@@ -2663,7 +2663,9 @@ class spell_item_shadowmourne_soul_fragment : public AuraScript
                 break;
             case 10:
                 target->RemoveAurasDueToSpell(SPELL_SHADOWMOURNE_VISUAL_HIGH);
-                target->CastSpell(target, SPELL_SHADOWMOURNE_CHAOS_BANE_BUFF, true);
+                // Passed on like every other cast of this chain, so the buff still knows which
+                // weapon granted it.
+                target->CastSpell(target, SPELL_SHADOWMOURNE_CHAOS_BANE_BUFF, true, nullptr, aurEff);
                 break;
             default:
                 break;
