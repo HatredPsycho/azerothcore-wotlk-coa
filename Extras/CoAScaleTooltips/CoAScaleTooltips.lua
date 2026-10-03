@@ -84,6 +84,20 @@ end
 -- A stacking buff is printed with its amount already multiplied by the stack count, so from the
 -- second stack onwards the authored figure is no longer in the text to be found. Both forms are
 -- searched for: the one the client prints at a single stack and the one it prints at this many.
+-- A line can carry its colour at the font object or as an escape inside the text, and which of the
+-- two the client used is not something this file can know from outside. Both are answered for.
+local function Reddish(red, green, blue)
+  return red > 0.8 and green < 0.4 and blue < 0.4
+end
+
+local function Uncolour(text)
+  return (string.gsub(text, "|c(%x%x)(%x%x)(%x%x)(%x%x)", function(alpha, red, green, blue)
+    if Reddish(tonumber(red, 16) / 255, tonumber(green, 16) / 255, tonumber(blue, 16) / 255) then
+      return "|c" .. alpha .. "ffffff"
+    end
+  end))
+end
+
 local function Rewrite(tooltip, amounts, stacks)
   if not amounts then
     return
@@ -123,14 +137,17 @@ local function Rewrite(tooltip, amounts, stacks)
         end
       end
 
+      -- Only a line that carried one of these numbers is recoloured. A red line this file did not
+      -- touch is red for a reason of its own - a class or race it is closed to - and stays so.
+      if requirementMet and rewritten ~= text then
+        rewritten = Uncolour(rewritten)
+      end
+
       if rewritten ~= text then
         line:SetText(rewritten)
 
-        if requirementMet then
-          local red, green, blue = line:GetTextColor()
-          if red > 0.8 and green < 0.4 and blue < 0.4 then
-            line:SetTextColor(1, 1, 1)
-          end
+        if requirementMet and Reddish(line:GetTextColor()) then
+          line:SetTextColor(1, 1, 1)
         end
 
         touched = true
@@ -226,6 +243,39 @@ local function RefreshVisible()
   for _, tooltip in pairs(watched) do
     if tooltip and tooltip:IsShown() then
       RewriteItem(tooltip)
+    end
+  end
+end
+
+-- Reports what this file knows about the item under the cursor: whether an answer arrived for it,
+-- what the server said, and how each line of the tooltip is coloured and spelled. Pipes are doubled
+-- so that a colour escape is shown rather than obeyed.
+SLASH_COASCALE1 = "/coascale"
+SlashCmdList["COASCALE"] = function()
+  local _, link = GameTooltip:GetItem()
+  if not link then
+    print("CoAScaleTooltips: no item in the tooltip.")
+    return
+  end
+
+  local _, key = Describe(link)
+  local amounts = key and items[key]
+  print("CoAScaleTooltips: key " .. tostring(key) .. ", answer " .. (amounts and "yes" or "no"))
+
+  if amounts then
+    for _, amount in pairs(amounts) do
+      print(string.format("  %s %d -> %d", amount.requirement and "requirement" or "amount",
+        amount.authored, amount.effective))
+    end
+  end
+
+  local name = GameTooltip:GetName()
+  for i = 1, GameTooltip:NumLines() do
+    local line = _G[name .. "TextLeft" .. i]
+    local text = line and line:GetText()
+    if text then
+      local red, green, blue = line:GetTextColor()
+      print(string.format("  %d [%.2f %.2f %.2f] %s", i, red, green, blue, string.gsub(text, "|", "||")))
     end
   end
 end
