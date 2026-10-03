@@ -81,6 +81,16 @@ inline std::atomic<ItemEnchantmentAmountResolver> ItemEnchantmentAmountOwner{nul
 std::uint32_t GetEffectiveItemEnchantmentAmount(std::uint32_t hostItemEntry, std::uint32_t enchantmentType,
     std::uint32_t statType, std::uint32_t amount);
 
+/// The level an enchantment asks of the character wearing it.
+///
+/// Rewriting an item moves what it asks of its wearer, and an enchantment put into it has to move
+/// with it or it stops applying: a gem written for level 80 in a weapon now asking for 60 is read as
+/// out of reach and silently contributes nothing, while its own line still promises it.
+using EnchantmentRequiredLevelResolver = std::uint32_t (*)(std::uint32_t);
+inline std::atomic<EnchantmentRequiredLevelResolver> EnchantmentRequiredLevelOwner{nullptr};
+
+std::uint32_t GetEffectiveEnchantmentRequiredLevel(std::uint32_t requiredLevel);
+
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 

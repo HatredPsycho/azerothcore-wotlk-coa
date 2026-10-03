@@ -114,4 +114,16 @@ namespace LocalLevelScaling
 
         return amount;
     }
+
+    std::uint32_t GetEffectiveEnchantmentRequiredLevel(std::uint32_t requiredLevel)
+    {
+        if (!requiredLevel)
+            return requiredLevel;
+
+        EnchantmentRequiredLevelResolver const owner = EnchantmentRequiredLevelOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(requiredLevel);
+
+        return requiredLevel;
+    }
 }
