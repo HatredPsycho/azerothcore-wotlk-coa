@@ -27,6 +27,8 @@
  * it applies equally to bosses that keep their stock script, like Ragnaros.
  */
 
+#include "FlexHealth.h"
+
 #include "Creature.h"
 #include "DBCEnums.h"
 #include "DatabaseEnv.h"
@@ -46,7 +48,24 @@ namespace
 {
     constexpr uint32 FLEX_MIN_PLAYERS = 10;
     constexpr uint32 FLEX_MAX_PLAYERS = 25;
+}
 
+namespace coa_flex
+{
+    uint32 CountPlayers(Map* map)
+    {
+        uint32 count = 0;
+        map->DoForAllPlayers([&count](Player* player)
+        {
+            if (!player->IsGameMaster())
+                ++count;
+        });
+        return std::clamp(count, FLEX_MIN_PLAYERS, FLEX_MAX_PLAYERS);
+    }
+}
+
+namespace
+{
     struct FlexRow
     {
         // Positive: health per player, multiplied by the instance's actual
@@ -78,17 +97,6 @@ namespace
             } while (result->NextRow());
         }
         LOG_INFO("server.loading", ">> Loaded flex health for {} bosses", uint32(g_flex.size()));
-    }
-
-    uint32 CountPlayers(Map* map)
-    {
-        uint32 count = 0;
-        map->DoForAllPlayers([&count](Player* player)
-        {
-            if (!player->IsGameMaster())
-                ++count;
-        });
-        return std::clamp(count, FLEX_MIN_PLAYERS, FLEX_MAX_PLAYERS);
     }
 
     // Scales health and keeps the current percentage, so a boss that is
@@ -130,7 +138,7 @@ namespace
             return;
 
         int32 const configured = it->second.perPlayer[mode];
-        uint32 const players = configured < 0 ? FLEX_MAX_PLAYERS : CountPlayers(creature->GetMap());
+        uint32 const players = configured < 0 ? FLEX_MAX_PLAYERS : coa_flex::CountPlayers(creature->GetMap());
         uint64 const wanted = uint64(configured < 0 ? uint32(-configured) : uint32(configured)) * players;
         uint32 const health = uint32(std::min<uint64>(wanted, std::numeric_limits<uint32>::max()));
 

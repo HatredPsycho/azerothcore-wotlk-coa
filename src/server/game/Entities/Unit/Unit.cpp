@@ -16408,8 +16408,17 @@ void Unit::UpdateObjectVisibility(bool forced, bool /*fromUpdate*/)
     }
 }
 
+bool Unit::IsImmuneToForcedMovement() const
+{
+    Creature const* creature = ToCreature();
+    return creature && (creature->isWorldBoss() || creature->IsDungeonBoss() || creature->IsImmuneToKnockback());
+}
+
 void Unit::KnockbackFrom(float x, float y, float speedXY, float speedZ)
 {
+    if (IsImmuneToForcedMovement())
+        return;
+
     Player* player = ToPlayer();
     if (!player)
     {
