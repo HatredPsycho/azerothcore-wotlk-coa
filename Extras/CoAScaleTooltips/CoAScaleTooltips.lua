@@ -94,6 +94,17 @@ local function Rewrite(tooltip, amounts, stacks)
     return
   end
 
+  -- The client draws an enchantment out of reach in red, and not only on the line that names the
+  -- level: the stat it grants is drawn red too. Once the requirement sits where the realm really
+  -- put it, every one of those lines is saying the enchantment does nothing while it is being
+  -- applied, so each one this file rewrote and finds red is given back its ordinary colour.
+  local requirementMet = nil
+  for _, amount in pairs(amounts) do
+    if amount.requirement then
+      requirementMet = (requirementMet ~= false) and amount.effective <= UnitLevel("player")
+    end
+  end
+
   local touched = false
 
   for i = 2, tooltip:NumLines() do
@@ -102,31 +113,26 @@ local function Rewrite(tooltip, amounts, stacks)
 
     if text then
       local rewritten = text
-      local withinReach = false
 
       for _, amount in pairs(amounts) do
         if amount.authored ~= amount.effective then
-          local before = rewritten
-
           if stacks and stacks > 1 then
             rewritten = Substitute(rewritten, amount.authored * stacks, amount.effective * stacks)
           end
           rewritten = Substitute(rewritten, amount.authored, amount.effective)
-
-          -- The client drew this line red because it compared the authored requirement against the
-          -- reader's level. With the requirement where it really sits the line is met, and leaving
-          -- it red would go on saying the enchantment does nothing while it is being applied.
-          if amount.requirement and rewritten ~= before and amount.effective <= UnitLevel("player") then
-            withinReach = true
-          end
         end
       end
 
       if rewritten ~= text then
         line:SetText(rewritten)
-        if withinReach then
-          line:SetTextColor(1, 1, 1)
+
+        if requirementMet then
+          local red, green, blue = line:GetTextColor()
+          if red > 0.8 and green < 0.4 and blue < 0.4 then
+            line:SetTextColor(1, 1, 1)
+          end
         end
+
         touched = true
       end
     end
