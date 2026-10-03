@@ -38,11 +38,18 @@ local function RememberItem(body)
   end
 
   local amounts = {}
-  for authoredMin, effectiveMin, authoredMax, effectiveMax in
-      string.gmatch(pairs_ or "", "(%-?%d+),(%-?%d+),(%-?%d+),(%-?%d+)") do
-    table.insert(amounts, { authored = tonumber(authoredMin), effective = tonumber(effectiveMin) })
-    if authoredMax ~= authoredMin then
-      table.insert(amounts, { authored = tonumber(authoredMax), effective = tonumber(effectiveMax) })
+  for row in string.gmatch(pairs_ or "", "[^;]+") do
+    local kind, authoredMin, effectiveMin, authoredMax, effectiveMax =
+      string.match(row, "^(%a?)(%-?%d+),(%-?%d+),(%-?%d+),(%-?%d+)$")
+
+    if authoredMin then
+      local requirement = kind == "r"
+      table.insert(amounts,
+        { authored = tonumber(authoredMin), effective = tonumber(effectiveMin), requirement = requirement })
+      if authoredMax ~= authoredMin then
+        table.insert(amounts,
+          { authored = tonumber(authoredMax), effective = tonumber(effectiveMax), requirement = requirement })
+      end
     end
   end
 
@@ -95,17 +102,31 @@ local function Rewrite(tooltip, amounts, stacks)
 
     if text then
       local rewritten = text
+      local withinReach = false
+
       for _, amount in pairs(amounts) do
         if amount.authored ~= amount.effective then
+          local before = rewritten
+
           if stacks and stacks > 1 then
             rewritten = Substitute(rewritten, amount.authored * stacks, amount.effective * stacks)
           end
           rewritten = Substitute(rewritten, amount.authored, amount.effective)
+
+          -- The client drew this line red because it compared the authored requirement against the
+          -- reader's level. With the requirement where it really sits the line is met, and leaving
+          -- it red would go on saying the enchantment does nothing while it is being applied.
+          if amount.requirement and rewritten ~= before and amount.effective <= UnitLevel("player") then
+            withinReach = true
+          end
         end
       end
 
       if rewritten ~= text then
         line:SetText(rewritten)
+        if withinReach then
+          line:SetTextColor(1, 1, 1)
+        end
         touched = true
       end
     end
