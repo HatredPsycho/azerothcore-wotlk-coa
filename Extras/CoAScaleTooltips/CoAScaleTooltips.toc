@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: CoA Scale Tooltips
+## Notes: Shows the amount an item proc really applies instead of the figure it was authored with.
+## Author: CoA
+## Version: 1.0
+## DefaultState: enabled
+
+CoAScaleTooltips.lua
