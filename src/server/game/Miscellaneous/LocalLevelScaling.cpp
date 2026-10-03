@@ -101,4 +101,17 @@ namespace LocalLevelScaling
 
         return value;
     }
+
+    std::uint32_t GetEffectiveItemEnchantmentAmount(std::uint32_t hostItemEntry, std::uint32_t enchantmentType,
+        std::uint32_t statType, std::uint32_t amount)
+    {
+        if (!hostItemEntry || !amount)
+            return amount;
+
+        ItemEnchantmentAmountResolver const owner = ItemEnchantmentAmountOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(hostItemEntry, enchantmentType, statType, amount);
+
+        return amount;
+    }
 }

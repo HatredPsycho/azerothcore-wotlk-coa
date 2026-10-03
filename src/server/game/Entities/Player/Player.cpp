@@ -5328,14 +5328,17 @@ void Player::UpdateDamageDoneMods(WeaponAttackType attackType, int32 skipEnchant
 
         for (uint8 i = 0; i < MAX_SPELL_ITEM_ENCHANTMENT_EFFECTS; ++i)
         {
+            uint32 const enchantmentAmount = LocalLevelScaling::GetEffectiveItemEnchantmentAmount(
+                item->GetEntry(), enchantmentEntry->type[i], enchantmentEntry->spellid[i], enchantmentEntry->amount[i]);
+
             switch (enchantmentEntry->type[i])
             {
                 case ITEM_ENCHANTMENT_TYPE_DAMAGE:
-                    amount += enchantmentEntry->amount[i];
+                    amount += enchantmentAmount;
                     break;
                 case ITEM_ENCHANTMENT_TYPE_TOTEM:
                     if (IsClass(CLASS_SHAMAN, CLASS_CONTEXT_ABILITY))
-                        amount += enchantmentEntry->amount[i] * item->GetTemplate()->Delay / 1000.0f;
+                        amount += enchantmentAmount * item->GetTemplate()->Delay / 1000.0f;
                     break;
                 default:
                     break;

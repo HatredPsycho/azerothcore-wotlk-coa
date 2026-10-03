@@ -38,6 +38,7 @@
 #include "InstanceSaveMgr.h"
 #include "LFGMgr.h"
 #include "Language.h"
+#include "LocalLevelScaling.h"
 #include "Log.h"
 #include "LootItemStorage.h"
 #include "MailMgr.h"
@@ -4454,8 +4455,9 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
         for (int s = 0; s < MAX_SPELL_ITEM_ENCHANTMENT_EFFECTS; ++s)
         {
             uint32 enchant_display_type = pEnchant->type[s];
-            uint32 enchant_amount = pEnchant->amount[s];
             uint32 enchant_spell_id = pEnchant->spellid[s];
+            uint32 enchant_amount = LocalLevelScaling::GetEffectiveItemEnchantmentAmount(
+                item->GetEntry(), enchant_display_type, enchant_spell_id, pEnchant->amount[s]);
 
             switch (enchant_display_type)
             {

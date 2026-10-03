@@ -32,8 +32,8 @@ local function RememberAura(body)
 end
 
 local function RememberItem(body)
-  local itemId, pairs_ = string.match(body, "^(%d+):(.*)$")
-  if not itemId then
+  local key, pairs_ = string.match(body, "^([^|]*)|(.*)$")
+  if not key then
     return
   end
 
@@ -46,7 +46,7 @@ local function RememberItem(body)
     end
   end
 
-  items[tonumber(itemId)] = amounts
+  items[key] = amounts
 end
 
 local function Remember(message)
@@ -139,27 +139,49 @@ end)
 -- An item's own statistics already arrive scaled from the server; only the sentences the client
 -- builds from its copy of the spell are wrong. Those cannot be pushed the way an applied aura can,
 -- because the item may belong to a vendor or be a link in chat, so the server is asked for them.
-local function Ask(itemId)
-  if asked[itemId] then
+-- An enchantment and its gems belong to this one copy of the item rather than to the item itself,
+-- and the link is where the client keeps them, so they are named in the question and the answer is
+-- remembered against them. Two copies of the same sword with different gems are two questions.
+local function Describe(link)
+  local itemId, enchantId, gem1, gem2, gem3, gem4 =
+    string.match(link, "item:(%d+):(%d+):(%d+):(%d+):(%d+):(%d+)")
+  if not itemId then
+    itemId = string.match(link, "item:(%d+)")
+    if not itemId then
+      return nil
+    end
+    return tonumber(itemId), itemId
+  end
+
+  return tonumber(itemId),
+    table.concat({ itemId, enchantId, gem1, gem2, gem3, gem4 }, ":")
+end
+
+local function Ask(key)
+  if asked[key] then
     return
   end
 
-  asked[itemId] = true
-  SendAddonMessage(PREFIX, "Q:" .. itemId, "WHISPER", UnitName("player"))
+  asked[key] = true
+  SendAddonMessage(PREFIX, "Q:" .. key, "WHISPER", UnitName("player"))
 end
 
 local function RewriteItem(tooltip)
   local _, link = tooltip:GetItem()
-  local itemId = link and tonumber(string.match(link, "item:(%d+)"))
+  if not link then
+    return
+  end
+
+  local itemId, key = Describe(link)
   if not itemId then
     return
   end
 
-  local amounts = items[itemId]
+  local amounts = items[key]
   if amounts then
     Rewrite(tooltip, amounts)
   else
-    Ask(itemId)
+    Ask(key)
   end
 end
 

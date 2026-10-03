@@ -67,6 +67,20 @@ inline std::atomic<ItemEffectValueResolver> ItemEffectValueOwner{nullptr};
 
 std::int32_t GetEffectiveItemEffectValue(std::uint32_t itemEntry, std::int32_t value);
 
+/// The flat amount an enchantment, a gem or a socket bonus adds to the item it sits on.
+///
+/// An enchantment belongs to no item of its own: the same one goes on anything that will take it,
+/// so the item it was put on is what decides. That also makes a socket bonus, which is written in
+/// the host's own template, answer the same way as the gem that unlocks it.
+///
+/// Amounts an enchantment's spell carries are not asked about here; those travel with the item
+/// already and are cut where every other spell value is.
+using ItemEnchantmentAmountResolver = std::uint32_t (*)(std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t);
+inline std::atomic<ItemEnchantmentAmountResolver> ItemEnchantmentAmountOwner{nullptr};
+
+std::uint32_t GetEffectiveItemEnchantmentAmount(std::uint32_t hostItemEntry, std::uint32_t enchantmentType,
+    std::uint32_t statType, std::uint32_t amount);
+
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 
