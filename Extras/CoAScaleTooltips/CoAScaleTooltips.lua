@@ -74,7 +74,10 @@ local function Substitute(text, authored, effective)
   return string.gsub(text, pattern, tostring(effective))
 end
 
-local function Rewrite(tooltip, amounts)
+-- A stacking buff is printed with its amount already multiplied by the stack count, so from the
+-- second stack onwards the authored figure is no longer in the text to be found. Both forms are
+-- searched for: the one the client prints at a single stack and the one it prints at this many.
+local function Rewrite(tooltip, amounts, stacks)
   if not amounts then
     return
   end
@@ -94,6 +97,9 @@ local function Rewrite(tooltip, amounts)
       local rewritten = text
       for _, amount in pairs(amounts) do
         if amount.authored ~= amount.effective then
+          if stacks and stacks > 1 then
+            rewritten = Substitute(rewritten, amount.authored * stacks, amount.effective * stacks)
+          end
           rewritten = Substitute(rewritten, amount.authored, amount.effective)
         end
       end
@@ -110,10 +116,12 @@ local function Rewrite(tooltip, amounts)
   end
 end
 
--- UnitAura and its two filtered forms return the spell id as their eleventh value in 3.3.5a.
+-- UnitAura and its two filtered forms return the stack count as their fourth value and the spell id
+-- as their eleventh in 3.3.5a. An unstacked aura reports zero rather than one.
 local function RewriteFromAura(tooltip, ...)
+  local stacks = select(4, ...)
   local spellId = select(11, ...)
-  Rewrite(tooltip, spellId and applied[spellId])
+  Rewrite(tooltip, spellId and applied[spellId], stacks)
 end
 
 hooksecurefunc(GameTooltip, "SetUnitBuff", function(self, unit, index, filter)
