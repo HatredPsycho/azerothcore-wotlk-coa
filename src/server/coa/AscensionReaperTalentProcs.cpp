@@ -24,8 +24,6 @@ constexpr uint32 SiphonAnimaAura = 572768;
 constexpr uint32 SiphonAnimaHeal = 504306;
 constexpr uint32 DeathchaserExtender = 807546;
 constexpr uint32 DeathchaserFirstRank = 805190;
-constexpr uint32 SiphonAnimaAura = 572768;
-constexpr uint32 SiphonAnimaHeal = 504306;
 constexpr uint32 SoulsForSlaughterDamage = 575847;
 
 class aura_ascension_reaper_souls_for_slaughter : public AuraScript
