@@ -54,6 +54,19 @@ inline std::atomic<QuestRewardRateResolver> QuestRewardRateOwner{nullptr};
 
 float GetEffectiveQuestRewardRate(Player const* player, Quest const* quest, float defaultRate);
 
+/// The flat part of what a spell cast from an item does - the damage or healing written into the
+/// spell before any coefficient. A module that rewrites an item's statistics for this realm's level
+/// band leaves its spells alone, because they belong to the spell and not to the item, and a weapon
+/// whose stats were cut to a third keeps a proc written for the level it came from.
+///
+/// Only the flat part is asked about. What a coefficient adds is already in proportion: it is
+/// computed from attack power or spell power, which come from the statistics that were cut. Asking
+/// after the coefficient would cut the same thing twice.
+using ItemEffectValueResolver = std::int32_t (*)(std::uint32_t, std::int32_t);
+inline std::atomic<ItemEffectValueResolver> ItemEffectValueOwner{nullptr};
+
+std::int32_t GetEffectiveItemEffectValue(std::uint32_t itemEntry, std::int32_t value);
+
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 

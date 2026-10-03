@@ -89,4 +89,16 @@ namespace LocalLevelScaling
 
         return defaultRate;
     }
+
+    std::int32_t GetEffectiveItemEffectValue(std::uint32_t itemEntry, std::int32_t value)
+    {
+        if (!itemEntry || !value)
+            return value;
+
+        ItemEffectValueResolver const owner = ItemEffectValueOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(itemEntry, value);
+
+        return value;
+    }
 }

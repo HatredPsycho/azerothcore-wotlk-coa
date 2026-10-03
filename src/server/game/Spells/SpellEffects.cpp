@@ -33,6 +33,7 @@
 #include "Group.h"
 #include "InstanceScript.h"
 #include "Language.h"
+#include "LocalLevelScaling.h"
 #include "Log.h"
 #include "MapMgr.h"
 #include "MiscPackets.h"
@@ -635,6 +636,18 @@ void Spell::EffectEnvironmentalDMG(SpellEffIndex /*effIndex*/)
     }
 }
 
+namespace
+{
+    // The flat value a spell cast from an item carries, asked for before any coefficient is added:
+    // whoever rewrote the item for this realm answers for the numbers written into its spells too.
+    int32 ScaleItemSpellValue(Item const* castItem, int32 value)
+    {
+        if (!castItem || !value)
+            return value;
+
+        return LocalLevelScaling::GetEffectiveItemEffectValue(castItem->GetEntry(), value);
+    }
+}
 void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
 {
     if (effectHandleMode != SPELL_EFFECT_HANDLE_LAUNCH_TARGET)
@@ -966,6 +979,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
             if (damage < 0)
                 damage = 0;
 
+            damage = ScaleItemSpellValue(m_CastItem, damage);
             damage = m_originalCaster->SpellDamageBonusDone(unitTarget, m_spellInfo, (uint32)damage, SPELL_DIRECT_DAMAGE, effIndex);
             damage = unitTarget->SpellDamageBonusTaken(m_originalCaster, m_spellInfo, (uint32)damage, SPELL_DIRECT_DAMAGE);
         }
@@ -1677,6 +1691,7 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
         return;
 
     // add spell damage bonus
+    damage = ScaleItemSpellValue(m_CastItem, damage);
     damage = m_caster->SpellDamageBonusDone(unitTarget, m_spellInfo, uint32(damage), SPELL_DIRECT_DAMAGE, effIndex);
     damage = unitTarget->SpellDamageBonusTaken(m_caster, m_spellInfo, uint32(damage), SPELL_DIRECT_DAMAGE);
 
@@ -1881,6 +1896,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
         }
         else if (m_spellInfo->Id != 33778) // not lifebloom
         {
+            addhealth = ScaleItemSpellValue(m_CastItem, addhealth);
             addhealth = caster->SpellHealingBonusDone(unitTarget, m_spellInfo, addhealth, HEAL, effIndex);
             m_damageBeforeTakenMods -= addhealth;
             addhealth = unitTarget->SpellHealingBonusTaken(caster, m_spellInfo, addhealth, HEAL);
