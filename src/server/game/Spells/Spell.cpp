@@ -3487,16 +3487,22 @@ SpellCastResult Spell::prepare(SpellCastTargets const* targets, AuraEffect const
     {
         m_castItemGUID = m_CastItem->GetGUID();
     }
-    else if (triggeredByAura && triggeredByAura->GetBase())
+    else if (triggeredByAura && triggeredByAura->GetBase() && triggeredByAura->GetBase()->GetCastItemGUID())
     {
         // A spell an item set off keeps coming from that item, however many steps the chain takes:
         // scripts pass the triggering aura rather than the item, so without this the trail ends at
         // the first hop and nothing downstream can still tell what put it there.
+        //
+        // Inherited, not cast from the item: the caster is not holding it up and must not be asked
+        // to. CheckItems reads a guid without an item as "the item is gone" and refuses the cast,
+        // which is right for a real item cast and wrong for a trail.
         m_castItemGUID = triggeredByAura->GetBase()->GetCastItemGUID();
+        m_castItemOrigin = true;
     }
     else
     {
         m_castItemGUID = ObjectGuid::Empty;
+        m_castItemOrigin = false;
     }
 
     InitExplicitTargets(*targets);
@@ -7340,7 +7346,7 @@ SpellCastResult Spell::CheckItems(uint32* param1, uint32* param2)
 
     if (!m_CastItem)
     {
-        if (m_castItemGUID)
+        if (m_castItemGUID && !m_castItemOrigin)
             return SPELL_FAILED_ITEM_NOT_READY;
     }
     else

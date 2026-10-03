@@ -548,6 +548,9 @@ public:
     Item* m_CastItem;
     Item* m_weaponItem;
     ObjectGuid m_castItemGUID;
+    // The guid above was inherited from the aura that triggered this cast rather than naming an
+    // item this cast consumes, so nothing may require the caster to still be holding it.
+    bool m_castItemOrigin{false};
     uint8 m_cast_count;
     uint32 m_glyphIndex;
     uint32 m_preCastSpell;
