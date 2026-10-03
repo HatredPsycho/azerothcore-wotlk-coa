@@ -2395,6 +2395,17 @@ namespace lfg
 
     }
 
+    LFGDungeonData const* LFGMgr::GetClassicRandomFallback(uint32 completedDungeonId)
+    {
+        LFGDungeonData const* completed = GetLFGDungeon(completedDungeonId);
+        if (!completed || completed->type != LFG_TYPE_DUNGEON || completed->seasonal || completed->expansion != 0 ||
+            completed->difficulty != DUNGEON_DIFFICULTY_NORMAL)
+            return nullptr;
+
+        LFGDungeonData const* random = GetLFGDungeon(LFG_DUNGEON_RANDOM_CLASSIC);
+        return random && random->type == LFG_TYPE_RANDOM ? random : nullptr;
+    }
+
     /**
        Finish a dungeon and give reward, if any.
 
@@ -2438,6 +2449,15 @@ namespace lfg
 
             // Give rewards only if its a random dungeon
             LFGDungeonData const* dungeon = GetLFGDungeon(rDungeonId);
+
+            if (!dungeon || (dungeon->type != LFG_TYPE_RANDOM && !dungeon->seasonal))
+            {
+                if (LFGDungeonData const* classicRandom = GetClassicRandomFallback(dungeonId))
+                {
+                    rDungeonId = classicRandom->id;
+                    dungeon = classicRandom;
+                }
+            }
 
             if (!dungeon || (dungeon->type != LFG_TYPE_RANDOM && !dungeon->seasonal))
             {

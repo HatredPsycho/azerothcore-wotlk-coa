@@ -37,7 +37,7 @@ METRICS = {
     'xp', 'next_level_xp', 'skill_value', 'skill_maximum', 'lfg_dungeon_disabled', 'map_id',
     'position_x', 'position_y', 'position_z',
     'view_level', 'sent_level', 'sent_max_health', 'creature_query_rank', 'quest_level', 'quest_xp',
-    'health', 'health_pct', 'max_health', 'creature_type', 'power', 'max_power', 'alive', 'combat', 'victim', 'casting', 'level',
+    'health', 'health_pct', 'max_health', 'creature_type', 'respawn_remaining', 'power', 'max_power', 'alive', 'combat', 'victim', 'casting', 'level',
     'aura', 'aura_stacks', 'aura_charges', 'aura_duration_ms', 'aura_amount', 'aura_positive',
     'knows_spell', 'spell_active', 'has_talent', 'talent_points', 'cooldown_ms', 'global_cooldown_ms', 'spell_charges',
     'action_button', 'item_count', 'carried_item_count', 'carried_pool_item_count', 'carried_variant_item_count',
@@ -146,6 +146,7 @@ ACTIONS = {
     'group': ({'actor', 'target'}, {'actor', 'target', 'loot_method'}),
     'lfg_dungeon': ({'actor', 'dungeon'}, {'actor', 'dungeon'}),
     'lfg_teleport': ({'actor'}, {'actor', 'out'}),
+    'encounter_credit': ({'actor', 'entry'}, {'actor', 'entry'}),
     'leave_group': ({'actor'}, {'actor'}),
     'die': ({'actor'}, {'actor', 'revived'}),
     'cast_charm': ({'actor', 'spell'}, {'actor', 'spell', 'target', 'pet', 'destination'}),
@@ -169,7 +170,7 @@ ACTIONS = {
     'attack_nearby': ({'actor', 'entry'}, {'actor', 'entry', 'kill', 'damage_pct'}),
     'loot_nearby': ({'actor', 'entry'}, {'actor', 'entry'}),
     'loot_creature': ({'actor', 'target'}, {'actor', 'target'}),
-    'loot_slot': ({'actor'}, {'actor', 'slot'}),
+    'loot_slot': ({'actor'}, {'actor', 'slot', 'item'}),
     'loot_money': ({'actor'}, {'actor'}),
     'prepare_quest': ({'actor', 'quest'}, {'actor', 'quest', 'complete'}),
     'reward_quest': ({'actor', 'quest'}, {'actor', 'quest', 'choice'}),
@@ -373,6 +374,8 @@ def validate(scenario):
                 number(step['loot_method'], f'{where}.loot_method', 0, 4, True)
         if action == 'lfg_dungeon':
             number(step['dungeon'], f'{where}.dungeon', 1, 2**24 - 1, True)
+        if action == 'encounter_credit':
+            number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
         if action == 'lfg_teleport' and 'out' in step:
             require(type(step['out']) is bool, f'{where}: out must be boolean')
         for key in ('ms', 'within_ms'):

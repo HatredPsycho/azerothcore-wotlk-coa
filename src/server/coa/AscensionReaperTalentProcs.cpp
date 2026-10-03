@@ -20,6 +20,8 @@ using AscensionReaperTalentProcs::Rules;
 constexpr uint32 JailersWill = 524939;
 constexpr uint32 JailersWillHelper = 578264;
 constexpr float JailersWillStrengthCoefficient = 0.3f;
+constexpr uint32 SiphonAnimaAura = 572768;
+constexpr uint32 SiphonAnimaHeal = 504306;
 constexpr uint32 DeathchaserExtender = 807546;
 constexpr uint32 DeathchaserFirstRank = 805190;
 constexpr uint32 SiphonAnimaAura = 572768;

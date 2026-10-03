@@ -1236,6 +1236,9 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
         ;//victim->ToPlayer()->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_HIT_RECEIVED, damage); // pussywizard: optimization
     else if (!victim->IsControlledByPlayer() || victim->IsVehicle())
     {
+        if (damage)
+            victim->ToCreature()->RegisterSharedQuestContributor(attacker);
+
         if (!victim->ToCreature()->hasLootRecipient())
             victim->ToCreature()->SetLootRecipient(attacker);
 
@@ -5663,15 +5666,20 @@ void Unit::RemoveOwnedAuras(std::function<bool(Aura const*)> const& check)
 
 void Unit::RemoveAppliedAuras(std::function<bool(AuraApplication const*)> const& check)
 {
-    for (AuraApplicationMap::iterator iter = m_appliedAuras.begin(); iter != m_appliedAuras.end();)
+    std::vector<std::pair<uint32, AuraApplication*>> const applications(m_appliedAuras.begin(), m_appliedAuras.end());
+    for (auto const& [spellId, aurApp] : applications)
     {
-        // RemoveAura no-ops on applications already mid-removal
-        if (!iter->second->GetRemoveMode() && check(iter->second))
+        AuraApplicationMapBoundsNonConst range = m_appliedAuras.equal_range(spellId);
+        for (AuraApplicationMap::iterator iter = range.first; iter != range.second; ++iter)
         {
-            RemoveAura(iter);
-            continue;
+            if (iter->second != aurApp)
+                continue;
+
+            if (!aurApp->GetRemoveMode() && check(aurApp))
+                RemoveAura(iter);
+
+            break;
         }
-        ++iter;
     }
 }
 
@@ -15044,6 +15052,7 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
         {
             Loot* loot = &creature->loot;
             loot->clear();
+            creature->FinalizeSharedQuestParticipants();
 
             if (uint32 lootid = creature->GetCreatureTemplate()->lootid)
                 loot->FillLoot(lootid, LootTemplates_Creature, looter, false, false, creature->GetLootMode(), creature);
@@ -15064,7 +15073,11 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
             }
         }
 
+        ObjectGuid rewardedPlayer = player->GetGUID();
+        ObjectGuid rewardedGroup = player->GetGroup() ? player->GetGroup()->GetGUID() : ObjectGuid::Empty;
         player->RewardPlayerAndGroupAtKill(victim, false);
+        if (creature)
+            creature->RewardSharedQuestParticipants(rewardedPlayer, rewardedGroup);
     }
 
     // Do KILL and KILLED procs. KILL proc is called only for the unit who landed the killing blow (and its owner - for pets and totems) regardless of who tapped the victim
@@ -17986,7 +17999,7 @@ void Unit::PatchValuesUpdate(ByteBuffer& valuesUpdateBuf, BuildValuesCachePosPoi
             if (creature->hasLootRecipient())
             {
                 dynamicFlags |= UNIT_DYNFLAG_TAPPED;
-                if (creature->isTappedBy(target))
+                if (creature->isTappedBy(target) || creature->IsSharedQuestParticipant(target))
                     dynamicFlags |= UNIT_DYNFLAG_TAPPED_BY_PLAYER;
             }
 
