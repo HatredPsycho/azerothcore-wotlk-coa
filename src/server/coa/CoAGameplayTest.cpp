@@ -395,6 +395,7 @@ struct Actor
     std::map<uint32, uint32> questQueryFlags;
     uint32 lastQuestWindow = 0;
     uint32 lastStableResult = 0;
+    std::optional<uint8> charCreateResult;
     uint32 lfgProposalId = 0;
     std::map<uint16, uint32> extensionPackets;
     std::map<uint16, std::vector<std::string>> extensionPayloads;
@@ -601,11 +602,53 @@ void ObserveExtensionPacket(Actor& actor, WorldPacket const& packet)
             : std::string(reinterpret_cast<char const*>(packet.contents()), packet.size()));
 }
 
+std::string CharCreateRefusal(Actor const& actor)
+{
+    if (!actor.charCreateResult || *actor.charCreateResult == CHAR_CREATE_SUCCESS ||
+        *actor.charCreateResult == CHAR_CREATE_IN_PROGRESS)
+        return {};
+
+    std::string reason;
+    switch (*actor.charCreateResult)
+    {
+        case CHAR_CREATE_DISABLED:
+            reason = "the realm disables this race or class for creation; see CharacterCreating.Disabled"
+                     ".RaceMask and .ClassMask in the worldserver config";
+            break;
+        case CHAR_CREATE_RESTRICTED_RACECLASS:
+            reason = "the realm does not offer this race and class together";
+            break;
+        case CHAR_CREATE_EXPANSION:
+        case CHAR_CREATE_EXPANSION_CLASS:
+            reason = "the account's expansion is below the one this race or class needs";
+            break;
+        case CHAR_CREATE_NAME_IN_USE:
+            reason = "the name is taken";
+            break;
+        case CHAR_CREATE_FAILED:
+            reason = "the race or class is missing from the server's DBC or creation data";
+            break;
+        case CHAR_CREATE_PVP_TEAMS_VIOLATION:
+            reason = "the account already holds a character of the opposing faction";
+            break;
+        default:
+            reason = "the server refused it";
+            break;
+    }
+
+    return "Character creation refused for " + actor.name + " (race " +
+        std::to_string(actor.definition.get<uint32>("race")) + ", class " +
+        std::to_string(actor.definition.get<uint32>("class")) + "): " + reason + " [code " +
+        std::to_string(*actor.charCreateResult) + "]";
+}
+
 void ObservePacket(Actor& actor, WorldPacket const& packet)
 {
     ObserveExtensionPacket(actor, packet);
     if (packet.GetOpcode() == SMSG_STABLE_RESULT && packet.size() == sizeof(uint8))
         actor.lastStableResult = packet.read<uint8>(0);
+    if (packet.GetOpcode() == SMSG_CHAR_CREATE && packet.size() == sizeof(uint8))
+        actor.charCreateResult = packet.read<uint8>(0);
     constexpr std::size_t LfgProposalIdOffset = sizeof(uint32) + sizeof(uint8);
     if (packet.GetOpcode() == SMSG_LFG_PROPOSAL_UPDATE && packet.size() >= LfgProposalIdOffset + sizeof(uint32))
         actor.lfgProposalId = packet.read<uint32>(LfgProposalIdOffset);
@@ -1227,6 +1270,9 @@ private:
         Require(!actor.session->IsKicked(), "Test session was kicked: " + id);
         if (actor.stage == ActorStage::Creating)
         {
+            std::string const refusal = CharCreateRefusal(actor);
+            Require(refusal.empty(), refusal);
+
             actor.guid = sCharacterCache->GetCharacterGuidByName(actor.name);
             if (!actor.guid)
                 return;
