@@ -524,12 +524,14 @@ bool Player::CanRewardQuest(Quest const* quest, uint32 reward, bool msg)
     ItemPosCountVec dest;
     if (quest->GetRewChoiceItemsCount() > 0)
     {
-        if (quest->RewardChoiceItemId[reward])
+        if (uint32 const itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardChoiceItemId[reward],
+            quest->GetQuestLevel()))
         {
-            InventoryResult res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, quest->RewardChoiceItemId[reward], quest->RewardChoiceItemCount[reward]);
+            InventoryResult res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId,
+                quest->RewardChoiceItemCount[reward]);
             if (res != EQUIP_ERR_OK)
             {
-                SendEquipError(res, nullptr, nullptr, quest->RewardChoiceItemId[reward]);
+                SendEquipError(res, nullptr, nullptr, itemId);
                 return false;
             }
         }
@@ -539,12 +541,13 @@ bool Player::CanRewardQuest(Quest const* quest, uint32 reward, bool msg)
     {
         for (uint32 i = 0; i < quest->GetRewItemsCount(); ++i)
         {
-            if (quest->RewardItemId[i])
+            if (uint32 const itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardItemId[i],
+                quest->GetQuestLevel()))
             {
-                InventoryResult res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, quest->RewardItemId[i], quest->RewardItemIdCount[i]);
+                InventoryResult res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, quest->RewardItemIdCount[i]);
                 if (res != EQUIP_ERR_OK)
                 {
-                    SendEquipError(res, nullptr, nullptr, quest->RewardItemId[i]);
+                    SendEquipError(res, nullptr, nullptr, itemId);
                     return false;
                 }
             }
@@ -619,8 +622,9 @@ void Player::AddQuest(Quest const* quest, Object* questGiver)
     }
 
     // The client caches quest queries per quest ID across characters, so refresh the per-player scaled
-    // level here as well: the copy it holds from another character would otherwise colour the log.
-    if (LocalLevelScaling::QuestScalingEnabled(this))
+    // level and rewards here as well, scaled or not: the copy it holds from another character would
+    // otherwise colour the log.
+    if (LocalLevelScaling::QuestEnabled.load(std::memory_order_relaxed))
         PlayerTalkClass->SendQuestQueryResponse(quest);
 
     SetQuestSlot(log_slot, quest_id, qtime);
@@ -750,7 +754,8 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
 
     if (quest->GetRewChoiceItemsCount())
     {
-        if (uint32 itemId = quest->RewardChoiceItemId[reward])
+        if (uint32 itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardChoiceItemId[reward],
+            quest->GetQuestLevel()))
         {
             ItemPosCountVec dest;
             if (CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, quest->RewardChoiceItemCount[reward]) == EQUIP_ERR_OK)
@@ -771,7 +776,8 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
     {
         for (uint32 i = 0; i < quest->GetRewItemsCount(); ++i)
         {
-            if (uint32 itemId = quest->RewardItemId[i])
+            if (uint32 itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardItemId[i],
+                quest->GetQuestLevel()))
             {
                 ItemPosCountVec dest;
                 if (CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, quest->RewardItemIdCount[i]) == EQUIP_ERR_OK)
