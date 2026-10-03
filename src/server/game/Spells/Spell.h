@@ -544,6 +544,10 @@ public:
     void HandleEffects(Unit* pUnitTarget, Item* pItemTarget, GameObject* pGOTarget, uint32 i, SpellEffectHandleMode mode);
     void HandleThreatSpells();
 
+    // The item whose numbers this cast carries, whether it was cast from the item or inherited the
+    // trail from it: both answer the same question about where the flat values were written.
+    [[nodiscard]] Item const* GetValueOriginItem() const;
+
     SpellInfo const* const m_spellInfo;
     Item* m_CastItem;
     Item* m_weaponItem;

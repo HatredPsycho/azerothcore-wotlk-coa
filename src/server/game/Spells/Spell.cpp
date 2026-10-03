@@ -3481,6 +3481,20 @@ bool Spell::UpdateChanneledTargetList()
     return channelTargetEffectMask == 0;
 }
 
+Item const* Spell::GetValueOriginItem() const
+{
+    if (m_CastItem)
+        return m_CastItem;
+
+    if (!m_castItemOrigin || !m_castItemGUID)
+        return nullptr;
+
+    if (Player const* owner = m_caster ? m_caster->ToPlayer() : nullptr)
+        return owner->GetItemByGuid(m_castItemGUID);
+
+    return nullptr;
+}
+
 SpellCastResult Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggeredByAura)
 {
     if (m_CastItem)
