@@ -3683,8 +3683,18 @@ private:
             packet << uint8(3) << uint8(0) << uint8(0) << uint8(0) << std::string();
             WorldPackets::LFG::LFGJoin join(std::move(packet));
             join.Read();
+            record.put("lfg_parsed_slots", uint32(join.Slots.size()));
+            record.put("lfg_parsed_roles", uint32(join.Roles));
+            Group const* group = player->GetGroup();
+            record.put("lfg_group_members", uint32(group ? group->GetMembersCount() : 0));
+            record.put("lfg_is_leader", uint32(group && group->GetLeaderGUID() == player->GetGUID()));
+            record.put("lfg_can_join_hook", uint32(player->GetSession()->HasPermission(
+                rbac::RBAC_PERM_JOIN_DUNGEON_FINDER)));
+            record.put("lfg_locked_dungeons", uint32(sLFGMgr->GetLockedDungeons(player->GetGUID()).size()));
             player->GetSession()->HandleLfgJoinOpcode(join);
             record.put("lfg_state", uint32(sLFGMgr->GetState(player->GetGUID())));
+            if (group)
+                record.put("lfg_group_state", uint32(sLFGMgr->GetState(group->GetGUID())));
         }
         else if (action == "lfg_set_roles")
         {
