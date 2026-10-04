@@ -34,6 +34,7 @@
 #include "LFGMgr.h"
 #include "LFGPackets.h"
 #include "ItemPackets.h"
+#include "InstancePackets.h"
 #include "NPCPackets.h"
 #include "Log.h"
 #include "LocalLevelScaling.h"
@@ -362,6 +363,7 @@ struct Actor
     uint32 buysMisannounced = 0;
     uint32 supersededPackets = 0;
     std::map<uint32, uint32> supersededFor;
+    std::set<uint32> clientSpells;
     std::vector<std::pair<uint32, uint32>> announcements;
     uint32 lastBuyOrdinal = 0;
     uint32 lastBuyCues = 0;
@@ -823,6 +825,25 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
         packet.GetOpcode() == SMSG_QUESTGIVER_QUEST_DETAILS)
         actor.lastQuestWindow = packet.GetOpcode();
 
+    if (packet.GetOpcode() == SMSG_INITIAL_SPELLS)
+    {
+        WorldPacket list(packet);
+        uint8 talentSpec = 0;
+        uint16 count = 0;
+        list >> talentSpec >> count;
+        actor.clientSpells.clear();
+        for (uint16 index = 0; index < count; ++index)
+        {
+            uint32 spell = 0;
+            uint16 slot = 0;
+            list >> spell >> slot;
+            actor.clientSpells.insert(spell);
+        }
+    }
+
+    if (packet.GetOpcode() == SMSG_REMOVED_SPELL && packet.size() >= sizeof(uint32))
+        actor.clientSpells.erase(packet.read<uint32>(0));
+
     if (packet.GetOpcode() == SMSG_SUPERCEDED_SPELL)
     {
         ++actor.supersededPackets;
@@ -831,6 +852,8 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
         uint32 replacement = 0;
         swap >> previous >> replacement;
         ++actor.supersededFor[replacement];
+        actor.clientSpells.erase(previous);
+        actor.clientSpells.insert(replacement);
         actor.announcements.emplace_back(actor.packetOrdinal, replacement);
     }
 
@@ -841,6 +864,7 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
         announcement >> announced;
         ++actor.learnedAlerts[announced];
         actor.announced.insert(announced);
+        actor.clientSpells.insert(announced);
         actor.announcements.emplace_back(actor.packetOrdinal, announced);
     }
 
@@ -2104,10 +2128,12 @@ private:
             metric == "spell_active" || metric == "global_cooldown_ms" || metric == "has_talent" ||
             metric == "spellbook_offers_spell" || metric == "spellbook_covers_spell" ||
             metric == "trainer_window_state" || metric == "trainer_window_ability" ||
-            metric == "temporary_spell_replacement")
+            metric == "temporary_spell_replacement" || metric == "client_knows_spell")
             Require(sSpellMgr->GetSpellInfo(spell) != nullptr, "Unknown spell in metric");
         if (metric == "knows_spell")
             return player->HasSpell(spell);
+        if (metric == "client_knows_spell")
+            return _actors.at(step.get<std::string>("actor")).clientSpells.count(spell) ? 1.0 : 0.0;
         if (metric == "spell_active")
         {
             auto known = player->GetSpellMap().find(spell);
@@ -2326,6 +2352,23 @@ private:
             }
             return 100.0 * hits / rolls;
         }
+        if (metric == "map_id")
+            return player->GetMapId();
+        if (metric == "map_difficulty")
+            return player->GetMap()->GetSpawnMode();
+        if (metric == "nearby_creature_max_health")
+        {
+            Creature* creature = player->FindNearestCreature(step.get<uint32>("entry"), 60.0f, true);
+            Require(creature != nullptr, "Creature health metric needs a living nearby creature");
+            return creature->GetMaxHealth();
+        }
+        if (metric == "nearby_creature_template")
+        {
+            std::list<Creature*> creatures;
+            player->GetCreatureListWithEntryInGrid(creatures, step.get<uint32>("entry"), 60.0f);
+            Require(creatures.size() == 1, "Creature template metric needs exactly one nearby creature");
+            return creatures.front()->GetCreatureTemplate()->Entry;
+        }
         if (metric == "nearby_creature_count")
         {
             std::list<Creature*> creatures;
@@ -2337,7 +2380,7 @@ private:
             return player->GetMoney();
         if (metric == "loot_count" || metric == "loot_entry" || metric == "loot_gold" ||
             metric == "loot_required_level" || metric == "loot_item_level" || metric == "loot_base_entry" ||
-            metric == "loot_item_armor")
+            metric == "loot_item_armor" || metric == "loot_gear_item_level")
         {
             Loot* window = nullptr;
             ObjectGuid const lootGuid = player->GetLootGUID();
@@ -2370,6 +2413,12 @@ private:
                     if (!proto || (step.get_optional<uint32>("quality") &&
                         proto->Quality != step.get<uint32>("quality")))
                         continue;
+                    if (metric == "loot_gear_item_level")
+                    {
+                        if (proto->Class == ITEM_CLASS_WEAPON || proto->Class == ITEM_CLASS_ARMOR)
+                            return proto->ItemLevel;
+                        continue;
+                    }
                     if (metric == "loot_entry")
                         return item.itemid;
                     if (metric == "loot_base_entry")
@@ -4164,6 +4213,18 @@ private:
             Require(_actors.at(step.get<std::string>("actor")).whoResponses == before + 1,
                 "Who request did not produce a native response");
         }
+        else if (action == "summon")
+        {
+            std::string id = step.get<std::string>("as");
+            Require(!_actors.count(id) && !_targets.count(id), "Duplicate actor id");
+            Position position = player->GetPosition();
+            position.m_positionX += step.get<float>("distance", 5);
+            TempSummon* creature = player->SummonCreature(step.get<uint32>("entry"), position, TEMPSUMMON_MANUAL_DESPAWN);
+            Require(creature != nullptr, "Could not summon creature: " + id);
+            creature->SetPhaseMask(player->GetPhaseMask(), true);
+            _targets.emplace(id, Target{ creature->GetMapId(), creature->GetInstanceId(), creature->GetGUID() });
+            record.put("result", creature->GetCreatureTemplate()->Entry);
+        }
         else if (action == "attack")
         {
             Unit* target = GetUnit(step.get<std::string>("target"));
@@ -4486,6 +4547,30 @@ private:
             }
             Require(value <= target->GetMaxPower(Powers(power)), "Power fixture exceeds maximum");
             target->SetPower(Powers(power), value);
+        }
+        else if (action == "ascension_dungeon_difficulty_packet")
+        {
+            uint32 const difficulty = step.get<uint32>("value");
+            Require(difficulty < MAX_DUNGEON_DIFFICULTY, "Invalid dungeon difficulty");
+            WorldPacket packet(CMSG_COA_SET_DUNGEON_DIFFICULTY, 1);
+            packet << uint8(difficulty);
+            Require(!sScriptMgr->CanPacketReceiveEarly(player->GetSession(), packet),
+                "Ascension dungeon difficulty request was not consumed");
+            WorldSessionFilter filter(player->GetSession());
+            player->GetSession()->Update(0, filter);
+        }
+        else if (action == "dungeon_difficulty_packet")
+        {
+            uint32 const difficulty = step.get<uint32>("value");
+            Require(difficulty < MAX_DUNGEON_DIFFICULTY, "Invalid dungeon difficulty");
+            WorldPacket packet(MSG_SET_DUNGEON_DIFFICULTY, 4);
+            packet << difficulty;
+            if (sScriptMgr->CanPacketReceive(player->GetSession(), packet))
+            {
+                WorldPackets::Instance::SetDungeonDifficultyClient request(std::move(packet));
+                request.Read();
+                player->GetSession()->HandleSetDungeonDifficultyOpcode(request);
+            }
         }
         else if (action == "teleport")
         {
