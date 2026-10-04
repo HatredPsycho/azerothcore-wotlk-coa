@@ -612,6 +612,32 @@ void ObserveExtensionPacket(Actor& actor, WorldPacket const& packet)
             : std::string(reinterpret_cast<char const*>(packet.contents()), packet.size()));
 }
 
+std::string PrintableRuns(std::string const& payload)
+{
+    constexpr std::size_t MinimumRun = 4;
+    std::string runs;
+    std::string current;
+    auto flush = [&runs, &current]()
+    {
+        if (current.size() >= MinimumRun)
+        {
+            if (!runs.empty())
+                runs += " | ";
+            runs += current;
+        }
+        current.clear();
+    };
+    for (char const character : payload)
+    {
+        if (character >= 0x20 && character < 0x7F)
+            current.push_back(character);
+        else
+            flush();
+    }
+    flush();
+    return runs;
+}
+
 std::string CharCreateRefusal(Actor const& actor)
 {
     if (!actor.charCreateResult || *actor.charCreateResult == CHAR_CREATE_SUCCESS ||
@@ -3386,6 +3412,10 @@ private:
             bool const applied = specialization
                 ? GetAscensionActiveSpecialization(player) == step.get<uint32>("id")
                 : GetAscensionTalentRank(player, step.get<uint32>("entry")) == step.get<uint32>("rank");
+            Actor const& answering = _actors.at(step.get<std::string>("actor"));
+            if (auto const payloads = answering.extensionPayloads.find(UpdateEntriesResultOpcode);
+                payloads != answering.extensionPayloads.end() && !payloads->second.empty())
+                record.put("update_entries_result", PrintableRuns(payloads->second.back()));
             if (step.get<bool>("refused", false))
             {
                 bool const answered = results > _talentResultsBefore;
