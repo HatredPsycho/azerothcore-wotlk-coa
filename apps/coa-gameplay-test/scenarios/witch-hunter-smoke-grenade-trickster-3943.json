@@ -19,33 +19,33 @@
       "id": "hunter",
       "race": 1,
       "class": 15,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "ally",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy",
       "race": 2,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "inside",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "outside",
       "race": 1,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],

@@ -13,28 +13,28 @@
       "id": "guardian",
       "race": 1,
       "class": 18,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "wh",
       "race": 2,
       "class": 15,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "horde",
       "race": 2,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "alliance",
       "race": 1,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     }
   ],

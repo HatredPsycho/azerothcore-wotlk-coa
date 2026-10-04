@@ -19,7 +19,7 @@
       "id": "doctor",
       "race": 1,
       "class": 13,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -28,7 +28,7 @@
       "id": "enemy1",
       "owner": "doctor",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -36,7 +36,7 @@
       "id": "enemy2",
       "owner": "doctor",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 4
     },
@@ -44,7 +44,7 @@
       "id": "outside",
       "owner": "doctor",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 25
     },
@@ -53,7 +53,7 @@
       "owner": "doctor",
       "entry": 36,
       "faction": 35,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 6
     }

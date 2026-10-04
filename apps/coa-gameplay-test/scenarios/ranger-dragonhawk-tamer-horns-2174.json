@@ -20,31 +20,31 @@
       "id": "war",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     },
     {
       "id": "perseverance",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     },
     {
       "id": "endurance",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     },
     {
       "id": "alacrity",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     },
     {
       "id": "plain",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -316,9 +316,9 @@
       "action": "assert",
       "actor": "war",
       "metric": "owned_creature_weapon_damage_min",
-      "label": "The guardian uses its level-80 owner's weapon damage",
+      "label": "The guardian uses its level-60 owner's weapon damage, far above its own level-1 template",
       "entry": 52393,
-      "min": 40
+      "min": 30
     },
     {
       "action": "assert",
@@ -468,9 +468,9 @@
       "action": "assert",
       "actor": "perseverance",
       "metric": "owned_creature_weapon_damage_min",
-      "label": "The guardian uses its level-80 owner's weapon damage",
+      "label": "The guardian uses its level-60 owner's weapon damage, far above its own level-1 template",
       "entry": 52393,
-      "min": 40
+      "min": 30
     },
     {
       "action": "assert",
@@ -568,9 +568,9 @@
       "action": "assert",
       "actor": "endurance",
       "metric": "owned_creature_weapon_damage_min",
-      "label": "The guardian uses its level-80 owner's weapon damage",
+      "label": "The guardian uses its level-60 owner's weapon damage, far above its own level-1 template",
       "entry": 52393,
-      "min": 40
+      "min": 30
     },
     {
       "action": "assert",
@@ -668,9 +668,9 @@
       "action": "assert",
       "actor": "alacrity",
       "metric": "owned_creature_weapon_damage_min",
-      "label": "The guardian uses its level-80 owner's weapon damage",
+      "label": "The guardian uses its level-60 owner's weapon damage, far above its own level-1 template",
       "entry": 52393,
-      "min": 40
+      "min": 30
     },
     {
       "action": "assert",
