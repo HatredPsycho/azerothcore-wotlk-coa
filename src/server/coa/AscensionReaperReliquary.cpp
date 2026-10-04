@@ -17,6 +17,7 @@ constexpr uint32 SPELL_STORED_BOLTS = 500629;
 constexpr uint32 SPELL_BEYOND_DEATH = 301193;
 constexpr uint32 SPELL_SOUL_BOLT = 500627;
 constexpr uint32 BOLT_INTERVAL_MS = 2500;
+constexpr uint32 FIRST_BOLT_DELAY_MS = 1;
 
 class ReliquaryBolts : public BasicEvent
 {
@@ -68,11 +69,11 @@ class spell_reaper_reliquary_of_the_lost : public SpellScript
         if (Aura* stored = caster->AddAura(SPELL_STORED_BOLTS, caster))
             stored->SetStackAmount(uint8(bolts));
 
-        caster->m_Events.AddEventAtOffset(new ReliquaryBolts(caster, 0, bolts),
-            Milliseconds(BOLT_INTERVAL_MS));
-
         for (uint32 index = 0; index < bolts; ++index)
             caster->CastSpell(caster, SPELL_VISUAL_BOLTS[index], true);
+
+        caster->m_Events.AddEventAtOffset(new ReliquaryBolts(caster, 0, bolts),
+            Milliseconds(FIRST_BOLT_DELAY_MS));
     }
 
     void Register() override
