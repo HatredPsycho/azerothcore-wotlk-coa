@@ -23,7 +23,7 @@
       "id": "archer",
       "race": 1,
       "class": 26,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     },
@@ -31,7 +31,7 @@
       "id": "control",
       "race": 1,
       "class": 26,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     },
@@ -39,13 +39,13 @@
       "id": "archer_helper",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     },
     {
       "id": "control_helper",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -53,7 +53,7 @@
       "id": "archer_golem",
       "owner": "archer",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -61,7 +61,7 @@
       "id": "control_golem",
       "owner": "control",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

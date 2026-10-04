@@ -4,8 +4,8 @@
   "contract": "301241 Effect[0] is SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL (245) with EffectMiscValue=2 (DISPEL_CURSE, SharedDefines.h:1466), EffectBasePoints=-41, EffectDieSides=1, so CalcValue=-40 (-40%, matching the tooltip exactly). This aura type is fully native: SpellAuraEffects.cpp:310 binds it to HandleNoImmediateEffect (a passive lookup, not a tick), and Unit::ModSpellDuration (Unit.cpp:12193, consuming line 12243) reads target->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_AURA_DURATION_BY_DISPEL, spellProto->Dispel) whenever a curse (Dispel==DISPEL_CURSE==2) lands on the aura holder, and shortens its applied duration by the sum of this modifier. No script or classmask is needed: any curse works, so Curse of Weakness (702, Dispel=2, DurationIndex=4, SpellDuration.dbc id 4 = 120000 ms, verified) is used as the probe. Positive control: the curse runs its full 120000 ms before the talent is learned. A fresh level-80 Warlock fixture does not automatically know Curse of Weakness (HasActiveSpell returned false on the first native run, and the cast was a silent no-op), so the warlock must `learn` 702 before casting it. Regression guard for behaviour that already works natively.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cultist", "race": 1, "class": 25, "level": 80 },
-    { "id": "warlock", "race": 5, "class": 9, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "cultist", "race": 1, "class": 25, "level": 60 },
+    { "id": "warlock", "race": 5, "class": 9, "level": 60, "spell_hit_rating": 10000 }
   ],
   "location": { "map": 0, "x": -9617.06, "y": -288.949, "z": 57.3053, "o": 0 },
   "steps": [

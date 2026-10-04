@@ -15,20 +15,20 @@
       "id": "r",
       "race": 1,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy",
       "race": 2,
       "class": 8,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {

@@ -36,19 +36,19 @@
       "id": "ranger",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     },
     {
       "id": "second",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

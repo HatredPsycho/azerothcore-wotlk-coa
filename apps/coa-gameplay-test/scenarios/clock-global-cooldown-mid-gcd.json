@@ -15,7 +15,7 @@
   ],
   "timeout_ms": 60000,
   "players": [
-    { "id": "mage", "race": 1, "class": 8, "level": 80 }
+    { "id": "mage", "race": 1, "class": 8, "level": 60 }
   ],
   "steps": [
     {

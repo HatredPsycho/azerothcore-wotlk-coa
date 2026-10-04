@@ -11,21 +11,21 @@
       "id": "barbarian",
       "race": 1,
       "class": 12,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "ally",
       "race": 1,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "enemy",
       "race": 5,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "allow_regeneration": false
     }

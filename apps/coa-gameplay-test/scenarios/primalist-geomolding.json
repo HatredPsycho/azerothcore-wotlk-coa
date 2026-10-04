@@ -14,14 +14,14 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -29,7 +29,7 @@
       "id": "dummy",
       "owner": "primalist",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "distance": 35
     }
   ],
@@ -102,7 +102,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "snapshot",
@@ -173,7 +174,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "snapshot",
@@ -297,7 +299,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -402,7 +405,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "snapshot",

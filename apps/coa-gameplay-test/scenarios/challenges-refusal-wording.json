@@ -13,7 +13,7 @@
     { "id": "fresh", "race": 1, "class": 1, "level": 1 },
     { "id": "played", "race": 1, "class": 1, "level": 1 },
     { "id": "steady", "race": 1, "class": 1, "level": 1 },
-    { "id": "veteran", "race": 1, "class": 1, "level": 80 }
+    { "id": "veteran", "race": 1, "class": 1, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "ms": 5000 },

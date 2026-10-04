@@ -16,8 +16,8 @@
   "timeout_ms": 90000,
   "location": {"map": 0, "x": -9617.06, "y": -288.949, "z": 57.3053, "o": 0},
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80, "spell_hit_rating": 10000},
-    {"id": "mage", "race": 5, "class": 8, "level": 80, "spell_hit_rating": 10000}
+    {"id": "rm", "race": 1, "class": 32, "level": 60, "spell_hit_rating": 10000},
+    {"id": "mage", "race": 5, "class": 8, "level": 60, "spell_hit_rating": 10000}
   ],
   "steps": [
     {"action": "wait", "label": "Let the characters settle", "ms": 5000},

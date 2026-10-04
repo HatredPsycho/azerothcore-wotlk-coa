@@ -8,19 +8,19 @@
       "id": "owner",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "friend",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "helper",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -30,7 +30,7 @@
       "entry": 1493,
       "distance": 2,
       "health": 100000,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

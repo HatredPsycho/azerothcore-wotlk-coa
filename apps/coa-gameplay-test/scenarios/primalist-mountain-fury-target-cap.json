@@ -14,7 +14,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -23,43 +23,43 @@
       "id": "behind",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy0",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy1",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy2",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy3",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy4",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy5",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -67,7 +67,7 @@
       "id": "front0",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.0
     },
@@ -75,7 +75,7 @@
       "id": "front1",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.1
     },
@@ -83,7 +83,7 @@
       "id": "front2",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.2
     },
@@ -91,7 +91,7 @@
       "id": "front3",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.3
     },
@@ -99,7 +99,7 @@
       "id": "front4",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.4
     },
@@ -107,7 +107,7 @@
       "id": "front5",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.5
     },
@@ -115,7 +115,7 @@
       "id": "front6",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.6
     },
@@ -123,7 +123,7 @@
       "id": "far",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 20
     }

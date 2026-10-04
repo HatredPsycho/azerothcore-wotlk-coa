@@ -11,8 +11,8 @@
     "o": 0
   },
   "players": [
-    { "id": "chronomancer", "race": 1, "class": 22, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "enemy", "race": 8, "class": 8, "level": 80 }
+    { "id": "chronomancer", "race": 1, "class": 22, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "enemy", "race": 8, "class": 8, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

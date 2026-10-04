@@ -12,10 +12,10 @@
   ],
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 8, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "caster", "race": 1, "class": 8, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "target", "owner": "caster", "entry": 36, "level": 80, "health": 100000, "distance": 3 }
+    { "id": "target", "owner": "caster", "entry": 36, "level": 60, "health": 100000, "distance": 3 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI settle", "ms": 5000 },

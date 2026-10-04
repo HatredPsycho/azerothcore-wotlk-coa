@@ -3,7 +3,7 @@
   "name": "Book of Artisans: a profession rank the character's skill already reached is neither sold nor shown",
   "contract": "A trainer rank row (Journeyman/Expert/Artisan Woodworker 1005015-1005017) teaches a rank spell (1005009-1005011) whose SPELL_EFFECT_SKILL grants a skill maximum of step x 75 (150, 225, 300). Trainer::GetSpellState read a row as known only when the character had that exact rank spell, so a character whose Woodworking is already 300/300 without those spells - raised by another route, such as the Tradesman's Scroll, which only teaches ranks above the current step - kept being offered all three ranks as available. A rank whose granted maximum the character's pure maximum already reaches is now known, so it cannot be bought. It is also left out of the window: the 3.3.5 client re-reads a known row as available whenever the character learns any spell and it does not hold the row's learned spell, so a row sent as known turned green again after the next recipe was trained. Expected: with Woodworking 300/300 and only the apprentice spell, the three Woodworker ranks are not rows (-1), before and after a recipe is bought from the book; with Tailoring 60/75, Journeyman Tailor (maximum 150) is still available (0).",
   "timeout_ms": 60000,
-  "players": [ { "id": "a", "race": 1, "class": 1, "level": 80 } ],
+  "players": [ { "id": "a", "race": 1, "class": 1, "level": 60 } ],
   "creatures": [ { "id": "book", "owner": "a", "entry": 57500, "distance": 2, "faction": 35 } ],
   "steps": [
     { "action": "money", "actor": "a", "copper": 400000, "label": "fixture: a purse for one recipe" },

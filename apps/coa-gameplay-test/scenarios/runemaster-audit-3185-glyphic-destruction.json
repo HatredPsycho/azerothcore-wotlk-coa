@@ -17,11 +17,11 @@
   "timeout_ms": 60000,
   "location": {"map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0},
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80},
-    {"id": "mage", "race": 1, "class": 8, "level": 80, "spell_hit_rating": 10000}
+    {"id": "rm", "race": 1, "class": 32, "level": 60},
+    {"id": "mage", "race": 1, "class": 8, "level": 60, "spell_hit_rating": 10000}
   ],
   "creatures": [
-    {"id": "dummy", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 3}
+    {"id": "dummy", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 3}
   ],
   "steps": [
     {"action": "wait", "label": "Let spawn AI settle", "ms": 3000},

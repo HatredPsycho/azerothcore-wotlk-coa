@@ -14,13 +14,13 @@
       "id": "control",
       "race": 2,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "talented",
       "race": 2,
       "class": 30,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -14,28 +14,28 @@
       "id": "dodge",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "dodge_enemy",
       "race": 5,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000
     },
     {
       "id": "parry",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "parry_enemy",
       "race": 5,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000
     }
   ],

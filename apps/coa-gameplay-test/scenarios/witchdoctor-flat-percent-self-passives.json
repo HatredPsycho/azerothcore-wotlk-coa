@@ -8,33 +8,33 @@
             "id": "loa",
             "race": 1,
             "class": 13,
-            "level": 80
+            "level": 60
         },
         {
             "id": "mojo",
             "race": 1,
             "class": 13,
-            "level": 80
+            "level": 60
         },
         {
             "id": "wd",
             "race": 1,
             "class": 13,
-            "level": 80,
+            "level": 60,
             "spell_hit_rating": 10000
         },
         {
             "id": "enemy",
             "race": 5,
             "class": 8,
-            "level": 80,
+            "level": 60,
             "spell_hit_rating": 10000
         },
         {
             "id": "ae",
             "race": 1,
             "class": 13,
-            "level": 80
+            "level": 60
         }
     ],
     "steps": [

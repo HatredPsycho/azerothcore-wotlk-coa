@@ -8,13 +8,13 @@
       "id": "reaper",
       "race": 10,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "mage",
       "race": 10,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -23,7 +23,7 @@
       "id": "slowed",
       "owner": "reaper",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -31,7 +31,7 @@
       "id": "unslowed",
       "owner": "reaper",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 6
     }

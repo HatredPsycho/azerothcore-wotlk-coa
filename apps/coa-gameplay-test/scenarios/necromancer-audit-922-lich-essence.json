@@ -4,8 +4,8 @@
   "contract": "Lich Essence 802988 (Passive) reads 'Reduces the cast time of Lichfrost by $s2% and reduces your spell pushback suffered from taking damage by $s1%.' Effect 0 is SPELL_AURA_REDUCE_PUSHBACK (149), EffectBasePoints 49 + DieSides 1 = 50; effect 1 is SPELL_AURA_ADD_PCT_MODIFIER (108), MiscValue 10 (SPELLMOD_CASTING_TIME), EffectBasePoints -16 + 1 = -15, class mask (0, 0, 0x08000000), the SpellFamilyName 29 flag every Lichfrost rank carries (501969-501980, 801722). Both are native: SpellInfo::CalcCastTime applies SPELLMOD_CASTING_TIME, so Lichfrost rank 13 (501980, SpellCastTimes 19 = 2500 ms) casts in 2125 ms, and Spell::Delayed adds GetTotalAuraModifier(SPELL_AURA_REDUCE_PUSHBACK) - 100 to its 100% reduction base, so each damaging hit pushes the cast back 250 ms instead of 500 ms (Lichfrost InterruptFlags 47 include PUSH_BACK and not ABORT_ON_DMG). The audit's premise (no source reference to 802988) does not apply to native aura types. The pushback fixture follows witchdoctor-flat-percent-self-passives: a PvP-flagged mage with fixture hit rating lands Fire Blast 2136 during the cast.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "n", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "enemy", "race": 1, "class": 8, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "n", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "enemy", "race": 1, "class": 8, "level": 60, "spell_hit_rating": 10000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 3000 },

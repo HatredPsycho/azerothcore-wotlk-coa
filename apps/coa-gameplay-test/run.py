@@ -210,7 +210,7 @@ ACTIONS = {
     'set_health': ({'actor'}, {'actor', 'value', 'percent', 'pet', 'maximum'}),
     'reset_cooldown': ({'actor', 'spell'}, {'actor', 'spell'}),
     'restore_charges': ({'actor', 'spell'}, {'actor', 'spell'}),
-    'set_power': ({'actor', 'value'}, {'actor', 'value', 'power', 'pet'}),
+    'set_power': ({'actor', 'value'}, {'actor', 'value', 'power', 'pet', 'maximum'}),
     'teleport': ({'actor', 'map', 'x', 'y', 'z'}, {'actor', 'map', 'x', 'y', 'z', 'o'}),
     'quest_accept': ({'actor', 'quest'}, {'actor', 'quest', 'entry', 'gameobject'}),
     'quest_open': ({'actor', 'quest', 'entry'}, {'actor', 'quest', 'entry'}),
@@ -504,10 +504,10 @@ def validate(scenario):
             if 'percent' in step:
                 require(step['actor'] not in player_ids, f'{where}: a health share needs a creature')
                 number(step['percent'], f'{where}.percent', 1, 100, True)
-        if action == 'set_health' and 'maximum' in step:
-            require(step['actor'] in player_ids, f'{where}: maximum health fixture needs a player or their pet')
+        if action in ('set_health', 'set_power') and 'maximum' in step:
+            require(step['actor'] in player_ids, f'{where}: a maximum fixture needs a player or their pet')
             number(step['maximum'], f'{where}.maximum', 1, 2**31 - 1, True)
-            require(step['value'] <= step['maximum'], f'{where}: health exceeds fixture maximum')
+            require(step['value'] <= step['maximum'], f'{where}: value exceeds fixture maximum')
         if action in {'snapshot', 'assert'}:
             metric = step['metric']
             if metric == 'victim':

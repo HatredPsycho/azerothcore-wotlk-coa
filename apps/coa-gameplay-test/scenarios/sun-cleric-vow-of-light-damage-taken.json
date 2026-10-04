@@ -4,9 +4,9 @@
   "contract": "#1511 reports that Vow of Light 807547 has no effect; its healing-taken half is pinned by sun-cleric-vow-of-light-heal, and a maintainer noted the damage-taken trigger was never checked with real hits. Vow of Light reads 'Direct damage taken or direct healing taken by you generates 1 Solar Power and heals the nearest nearby ally equal to $807750s1% of the amount.' 807750 effect 0 has EffectBasePoints 9, so 9%; its client ProcFlags 1081344 include PROC_FLAG_TAKEN_DAMAGE. Solar Power is the caster aura 500149 (StackAmount 20). The heal copy is 505197 (SPELL_EFFECT_HEAL, radius index 10 = 30 yd, one target), which the Sun Cleric contracts aim at the chosen ally. A hostile Horde warrior, both players flagged for PvP because fixture creatures are passive and never swing, lands unavoidable melee auto attacks on the grouped Sun Cleric (melee hit and expertise fixtures remove misses, dodges and parries). Each landed hit must add Solar Power and heal the grouped ally standing beside the Sun Cleric; that ally's own regeneration is suppressed, so any rise in its health comes from the copy. No Dawn is active, so Solar Power generation is not blocked.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cleric", "race": 1, "class": 27, "level": 80 },
-    { "id": "ally", "race": 1, "class": 1, "level": 80, "allow_regeneration": false },
-    { "id": "attacker", "race": 2, "class": 1, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000 }
+    { "id": "cleric", "race": 1, "class": 27, "level": 60 },
+    { "id": "ally", "race": 1, "class": 1, "level": 60, "allow_regeneration": false },
+    { "id": "attacker", "race": 2, "class": 1, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000 }
   ],
   "location": { "map": 0, "x": -9617.06, "y": -288.949, "z": 57.3053, "o": 0 },
   "steps": [

@@ -8,13 +8,13 @@
       "id": "reaper",
       "race": 10,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "attacker",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {

@@ -12,13 +12,13 @@
       "id": "reaper",
       "race": 10,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "hostile",
       "race": 1,
       "class": 9,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -8,8 +8,8 @@
   ],
   "timeout_ms": 90000,
   "players": [
-    { "id": "tinker", "race": 1, "class": 28, "level": 80, "spell_crit_rating": 10000 },
-    { "id": "enemy", "race": 5, "class": 8, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "tinker", "race": 1, "class": 28, "level": 60, "spell_crit_rating": 10000 },
+    { "id": "enemy", "race": 5, "class": 8, "level": 60, "spell_hit_rating": 10000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login hooks settle", "ms": 3000 },

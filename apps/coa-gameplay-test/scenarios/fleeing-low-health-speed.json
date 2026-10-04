@@ -25,7 +25,7 @@
       "id": "caster",
       "race": 1,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -34,7 +34,7 @@
       "id": "control",
       "owner": "caster",
       "entry": 87,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -42,7 +42,7 @@
       "id": "runner",
       "owner": "caster",
       "entry": 87,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 5
     }
@@ -65,7 +65,7 @@
       "label": "Control keeps its declared level",
       "actor": "control",
       "metric": "level",
-      "equals": 80
+      "equals": 60
     },
     {
       "action": "assert",
@@ -79,7 +79,7 @@
       "label": "Runner keeps its declared level",
       "actor": "runner",
       "metric": "level",
-      "equals": 80
+      "equals": 60
     },
     {
       "action": "learn",

@@ -16,11 +16,11 @@
   "timeout_ms": 120000,
   "location": {"map": 0, "x": -9617.06, "y": -288.949, "z": 57.3053, "o": 0},
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80},
-    {"id": "plain", "race": 1, "class": 32, "level": 80},
-    {"id": "attacker", "race": 2, "class": 1, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000,
+    {"id": "rm", "race": 1, "class": 32, "level": 60},
+    {"id": "plain", "race": 1, "class": 32, "level": 60},
+    {"id": "attacker", "race": 2, "class": 1, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000,
       "melee_crit_rating": 10000},
-    {"id": "control_attacker", "race": 2, "class": 1, "level": 80, "melee_hit_rating": 10000,
+    {"id": "control_attacker", "race": 2, "class": 1, "level": 60, "melee_hit_rating": 10000,
       "expertise_rating": 10000, "melee_crit_rating": 10000}
   ],
   "steps": [

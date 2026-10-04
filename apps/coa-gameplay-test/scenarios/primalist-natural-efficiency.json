@@ -15,13 +15,13 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     },
     {
       "id": "enemy",
       "race": 5,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -36,7 +36,7 @@
       "action": "assert",
       "actor": "primalist",
       "metric": "max_health",
-      "equals": 8288
+      "equals": 2074
     },
     {
       "action": "pvp",
@@ -154,7 +154,7 @@
       "actor": "primalist",
       "metric": "spell_heal_total",
       "spell": 707806,
-      "equals": 331
+      "equals": 82
     },
     {
       "action": "set_health",
@@ -190,7 +190,7 @@
       "actor": "primalist",
       "metric": "spell_heal_total",
       "spell": 707806,
-      "equals": 662
+      "equals": 164
     },
     {
       "action": "set_aura",
@@ -232,7 +232,7 @@
       "actor": "primalist",
       "metric": "spell_heal_total",
       "spell": 707806,
-      "equals": 993
+      "equals": 246
     },
     {
       "action": "set_aura",
@@ -274,7 +274,7 @@
       "actor": "primalist",
       "metric": "spell_heal_total",
       "spell": 707806,
-      "equals": 1324
+      "equals": 328
     },
     {
       "action": "set_aura",

@@ -28,43 +28,43 @@
       "id": "bear",
       "race": 1,
       "class": 28,
-      "level": 80
+      "level": 60
     },
     {
       "id": "hound",
       "race": 1,
       "class": 28,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ziggi",
       "race": 1,
       "class": 28,
-      "level": 80
+      "level": 60
     },
     {
       "id": "scrap",
       "race": 1,
       "class": 28,
-      "level": 80
+      "level": 60
     },
     {
       "id": "clock",
       "race": 1,
       "class": 28,
-      "level": 80
+      "level": 60
     },
     {
       "id": "friend",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "orc",
       "race": 2,
       "class": 9,
-      "level": 70
+      "level": 56
     }
   ],
   "creatures": [
@@ -72,7 +72,7 @@
       "id": "g_bear",
       "owner": "bear",
       "entry": 36,
-      "level": 70,
+      "level": 56,
       "distance": 5,
       "health": 1000000
     },
@@ -80,7 +80,7 @@
       "id": "wizard",
       "owner": "hound",
       "entry": 474,
-      "level": 70,
+      "level": 56,
       "distance": 2,
       "health": 1000000
     },
@@ -88,7 +88,7 @@
       "id": "g_scrap",
       "owner": "scrap",
       "entry": 36,
-      "level": 70,
+      "level": 56,
       "distance": 5,
       "health": 1000000
     },
@@ -96,7 +96,7 @@
       "id": "g_clock",
       "owner": "clock",
       "entry": 36,
-      "level": 70,
+      "level": 56,
       "distance": 5,
       "health": 1000000
     }

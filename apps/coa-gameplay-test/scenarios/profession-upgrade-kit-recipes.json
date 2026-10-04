@@ -5,7 +5,7 @@
   "timeout_ms": 180000,
   "players": [
     { "id": "novice", "race": 1, "class": 1, "level": 10 },
-    { "id": "veteran", "race": 1, "class": 1, "level": 80 }
+    { "id": "veteran", "race": 1, "class": 1, "level": 60 }
   ],
   "location": { "map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0 },
   "creatures": [

@@ -29,14 +29,14 @@
       "id": "chrono",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "ally",
       "race": 1,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     }
   ],
@@ -46,7 +46,7 @@
       "owner": "ally",
       "entry": 36,
       "faction": 14,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 5,
       "spell_hit_bonus": 100

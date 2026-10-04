@@ -8,13 +8,13 @@
       "id": "challenger",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "rival",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [

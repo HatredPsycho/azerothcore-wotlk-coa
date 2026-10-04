@@ -15,25 +15,25 @@
       "id": "mail",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     },
     {
       "id": "altar",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     },
     {
       "id": "gnomish",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     },
     {
       "id": "fel",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

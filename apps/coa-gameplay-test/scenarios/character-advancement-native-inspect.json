@@ -5,7 +5,7 @@
   "timeout_ms": 30000,
   "players": [
     { "id": "inspector", "race": 1, "class": 1, "level": 10 },
-    { "id": "bloodmage", "race": 1, "class": 20, "level": 80 }
+    { "id": "bloodmage", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "specialization", "label": "The target enters Eternal", "actor": "bloodmage", "id": 99 },

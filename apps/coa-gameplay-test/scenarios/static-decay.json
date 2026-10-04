@@ -7,13 +7,13 @@
       "id": "storm",
       "race": 1,
       "class": 16,
-      "level": 80
+      "level": 60
     },
     {
       "id": "control",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [

@@ -44,14 +44,14 @@
       "id": "s",
       "race": 1,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "e",
       "race": 5,
       "class": 2,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {
@@ -266,12 +266,12 @@
     },
     {
       "action": "assert",
-      "label": "DISCRIMINATING: Piercing Lightning's spell penetration is -(caster level) = -80 at level 80",
+      "label": "DISCRIMINATING: Piercing Lightning's spell penetration is -(caster level) = -60 at level 60",
       "actor": "s",
       "metric": "aura_amount",
       "spell": 578302,
       "effect": 0,
-      "equals": -80
+      "equals": -60
     },
     {
       "action": "learn",

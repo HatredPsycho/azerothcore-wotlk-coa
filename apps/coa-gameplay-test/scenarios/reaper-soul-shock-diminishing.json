@@ -4,14 +4,14 @@
   "contract": "Soul Shock 803989 (Reaper, class 30, level 8) carries Sap's data: Mechanic 30 MECHANIC_SAPPED on a SPELL_AURA_MOD_STUN effect, DurationIndex 31 = 8000 ms, RecoveryTime and CategoryRecoveryTime 0, Stances FORM_STEALTH (Underwalk 800797), SPELL_ATTR1_ONLY_PEACEFUL_TARGETS (target cannot be in combat), SPELL_ATTR1_ALLOW_WHILE_STEALTHED, SPELL_ATTR3_SUPPRESS_TARGET_PROCS (no initial aggro), SPELL_ATTR5_LIMIT_N and a TAKE_DAMAGE aura interrupt, the same restrictions as Sap 2070/6770/11297/51724. Its tooltip names no cooldown and no diminishing returns, and the client's CrowdControl.lua files 803989 under CROWD_CONTROL_TYPE_INCAPACITATE, like Sap 2070. In 3.3.5 that category diminishes only on players and player-controlled units, so on a player successive applications within 15 sec last 8, 4 and 2 sec and the fourth is immune, while an ordinary creature gets the full 8 sec on every recast for as long as it stays out of combat; damage breaks the effect and a creature in combat refuses the cast (SPELL_FAILED_TARGET_AFFECTING_COMBAT 110). Issue #197 asked for 8/4/2 on a creature; neither the tooltip nor the spell data supports creature diminishing or a cooldown, so this records the Sap-equivalent contract.",
   "timeout_ms": 120000,
   "players": [
-    { "id": "reaper", "race": 5, "class": 30, "level": 80, "spell_hit_rating": 10000 },
+    { "id": "reaper", "race": 5, "class": 30, "level": 60, "spell_hit_rating": 10000 },
     {
-      "id": "rival", "race": 1, "class": 1, "level": 80, "melee_hit_rating": 10000,
+      "id": "rival", "race": 1, "class": 1, "level": 60, "melee_hit_rating": 10000,
       "expertise_rating": 10000
     }
   ],
   "creatures": [
-    { "id": "wolf", "owner": "reaper", "entry": 299, "level": 80, "health": 100000, "distance": 3 }
+    { "id": "wolf", "owner": "reaper", "entry": 299, "level": 60, "health": 100000, "distance": 3 }
   ],
   "location": { "map": 0, "x": -9617.06, "y": -288.949, "z": 57.3053, "o": 0 },
   "steps": [

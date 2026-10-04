@@ -4,12 +4,12 @@
   "contract": "Shadowblast damages its target; Shadow Rage buffs only its pet. Frostbolt remains functional.",
   "players": [
     {"id": "caster", "race": 1, "class": 15, "level": 14, "spell_hit_rating": 10000, "ranged_hit_rating": 10000},
-    {"id": "mage", "race": 1, "class": 8, "level": 80, "spell_hit_rating": 10000}
+    {"id": "mage", "race": 1, "class": 8, "level": 60, "spell_hit_rating": 10000}
   ],
   "creatures": [
     {"id": "target", "owner": "caster", "entry": 36, "level": 14, "health": 100000, "distance": 12},
     {"id": "second", "owner": "caster", "entry": 36, "level": 14, "health": 100000, "distance": 14},
-    {"id": "frost_target", "owner": "mage", "entry": 36, "level": 80, "health": 100000, "distance": 3}
+    {"id": "frost_target", "owner": "mage", "entry": 36, "level": 60, "health": 100000, "distance": 3}
   ],
   "steps": [
     {"action": "wait", "ms": 5000},

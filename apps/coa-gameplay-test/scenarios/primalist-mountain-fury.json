@@ -14,7 +14,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -23,7 +23,7 @@
       "id": "empty",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -32,7 +32,7 @@
       "id": "behind",
       "race": 5,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -43,7 +43,7 @@
       "id": "front0",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.0
     },
@@ -51,7 +51,7 @@
       "id": "front1",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.01
     },
@@ -59,7 +59,7 @@
       "id": "front2",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 8.02
     },
@@ -67,7 +67,7 @@
       "id": "far",
       "owner": "primalist",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 20
     }
@@ -260,7 +260,7 @@
       "actor": "primalist",
       "metric": "spell_power",
       "school": 3,
-      "equals": 23
+      "equals": 17
     },
     {
       "action": "assert",
@@ -270,8 +270,9 @@
       "effect": 1,
       "target": "far",
       "relative_to": "base_damage",
-      "label": "sp23",
-      "equals": 10
+      "label": "sp17",
+      "min": 9,
+      "max": 10
     },
     {
       "action": "wait",
@@ -368,5 +369,5 @@
       "equals": 0
     }
   ],
-  "contract": "Mountain Fury uses 65% SP, 17% AP and 125% Stamina. At fixture level 80 the native level-58/max-60 helper retains its 64/80 downrank multiplier on SP: floor(23 * .65 * .8) = 11. AP and Stamina do not use that multiplier. A creature starts eight yards away and is pulled within four yards; normal creature combat movement can then close the remaining gap. The coefficient probes query the unpulled creature 'far', so normal class 887019 (-15%) and Mountain King 887085 (+1%) tuning multiply them by 0.8585: the 100 AP increase of 16-18 reads 14-16 and the 11 SP increase reads 10 (1034 x 0.8585 = 887, 1045 x 0.8585 = 897)."
+  "contract": "Mountain Fury uses 65% SP, 17% AP and 125% Stamina. At fixture level 60 the native level-58/max-60 helper loses its downrank multiplier, because (58 + 6) / 60 clamps to 1: floor(17 * .65) = 11. AP and Stamina do not use that multiplier. A creature starts eight yards away and is pulled within four yards; normal creature combat movement can then close the remaining gap. The coefficient probes query the unpulled creature 'far', so normal class 887019 (-15%) and Mountain King 887085 (+1%) tuning multiply them by 0.8585: the 100 AP increase of 16-18 reads 14-16 and the 11 SP increase reads 9 or 10 after truncation."
 }

@@ -14,56 +14,56 @@
       "id": "base",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "rank1",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "rank2",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "removed",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy0",
       "race": 5,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy1",
       "race": 5,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy2",
       "race": 5,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy3",
       "race": 5,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],

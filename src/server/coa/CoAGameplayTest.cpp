@@ -1482,7 +1482,7 @@ private:
     {
         Player* player = actor.session->GetPlayer();
         Require(player && player->IsInWorld(), "Test player left the world: " + id);
-        uint32 level = actor.definition.get<uint32>("level", 80);
+        uint32 level = actor.definition.get<uint32>("level", sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL));
         Require(level > 0 && level <= uint32(sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL)),
             "Invalid player level");
         player->GiveLevel(uint8(level));
@@ -1736,7 +1736,8 @@ private:
                 creature->SetReactState(REACT_PASSIVE);
                 creature->SetRegeneratingHealth(false);
                 creature->SetFaction(definition.get<uint32>("faction", 14));
-                creature->SetLevel(uint8(definition.get<uint32>("level", 80)));
+                creature->SetLevel(uint8(definition.get<uint32>("level",
+                    sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))));
                 uint32 const health = definition.get<uint32>("health", 100000);
                 creature->SetStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, float(health));
                 creature->SetMaxHealth(health);
@@ -4416,6 +4417,12 @@ private:
             uint32 power = step.get<uint32>("power", POWER_MANA);
             Require(power < MAX_POWERS, "Invalid power index");
             uint32 value = step.get<uint32>("value");
+            if (auto maximum = step.get_optional<uint32>("maximum"))
+            {
+                Require(*maximum > 0 && *maximum <= INT32_MAX && value <= *maximum,
+                    "Invalid maximum power fixture");
+                target->SetMaxPower(Powers(power), int32(*maximum));
+            }
             Require(value <= target->GetMaxPower(Powers(power)), "Power fixture exceeds maximum");
             target->SetPower(Powers(power), value);
         }

@@ -7,25 +7,25 @@
       "id": "opener",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "tester",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "lowbie",
       "race": 1,
       "class": 1,
-      "level": 60
+      "level": 45
     },
     {
       "id": "stuffed",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

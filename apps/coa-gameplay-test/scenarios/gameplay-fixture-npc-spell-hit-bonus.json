@@ -12,16 +12,16 @@
   ],
   "timeout_ms": 30000,
   "players": [
-    { "id": "hero", "race": 1, "class": 1, "level": 80, "allow_regeneration": false }
+    { "id": "hero", "race": 1, "class": 1, "level": 60, "allow_regeneration": false }
   ],
   "creatures": [
-    { "id": "ordinary", "owner": "hero", "entry": 36, "level": 80, "faction": 14, "distance": 5 },
+    { "id": "ordinary", "owner": "hero", "entry": 36, "level": 60, "faction": 14, "distance": 5 },
     {
-      "id": "accurate", "owner": "hero", "entry": 36, "level": 80, "faction": 14, "distance": 5,
+      "id": "accurate", "owner": "hero", "entry": 36, "level": 60, "faction": 14, "distance": 5,
       "spell_hit_bonus": 4
     },
     {
-      "id": "saturated", "owner": "hero", "entry": 36, "level": 80, "faction": 14, "distance": 5,
+      "id": "saturated", "owner": "hero", "entry": 36, "level": 60, "faction": 14, "distance": 5,
       "spell_hit_bonus": 100
     }
   ],

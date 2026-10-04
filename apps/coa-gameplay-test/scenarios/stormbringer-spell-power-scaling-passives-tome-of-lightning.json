@@ -8,19 +8,19 @@
       "id": "attacker",
       "race": 1,
       "class": 9,
-      "level": 80
+      "level": 60
     },
     {
       "id": "control",
       "race": 8,
       "class": 16,
-      "level": 80
+      "level": 60
     },
     {
       "id": "talented",
       "race": 8,
       "class": 16,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {

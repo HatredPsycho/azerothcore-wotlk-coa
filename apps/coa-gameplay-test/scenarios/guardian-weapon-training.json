@@ -7,13 +7,13 @@
       "id": "guardian",
       "race": 1,
       "class": 18,
-      "level": 80
+      "level": 60
     },
     {
       "id": "warrior",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -21,7 +21,7 @@
       "id": "enemy",
       "owner": "guardian",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "distance": 3
     }
   ],

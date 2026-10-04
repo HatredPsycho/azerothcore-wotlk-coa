@@ -14,14 +14,14 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "enemy",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [
@@ -97,7 +97,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -109,7 +110,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -199,7 +201,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -211,7 +214,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -276,7 +280,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -288,7 +293,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -369,7 +375,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -381,7 +388,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -471,7 +479,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -483,7 +492,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -548,7 +558,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -560,7 +571,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -641,7 +653,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -653,7 +666,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -743,7 +757,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -755,7 +770,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -820,7 +836,8 @@
     {
       "action": "set_health",
       "actor": "enemy",
-      "value": 7000
+      "value": 7000,
+      "maximum": 7000
     },
     {
       "action": "set_power",
@@ -832,7 +849,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",

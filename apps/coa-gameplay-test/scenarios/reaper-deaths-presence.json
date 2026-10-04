@@ -5,8 +5,8 @@
  "timeout_ms": 90000,
  "location": {"map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0},
  "players": [
-  {"id": "reaper", "race": 10, "class": 30, "level": 80},
-  {"id": "ally", "race": 1, "class": 1, "level": 80}
+  {"id": "reaper", "race": 10, "class": 30, "level": 60},
+  {"id": "ally", "race": 1, "class": 1, "level": 60}
  ],
  "steps": [
   {"action": "wait", "label": "Let the world settle", "ms": 6000},

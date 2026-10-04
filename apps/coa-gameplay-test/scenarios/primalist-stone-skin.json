@@ -7,13 +7,13 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     },
     {
       "id": "target",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "timeout_ms": 30000,

@@ -11,20 +11,20 @@
       "id": "reaper",
       "race": 10,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "victim",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "dispeller",
       "race": 1,
       "class": 8,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {
@@ -106,7 +106,7 @@
       "label": "Reaper has attack power for Soulrot scaling",
       "actor": "reaper",
       "metric": "attack_power",
-      "min": 500
+      "min": 350
     },
     {
       "action": "cast",
@@ -154,12 +154,12 @@
     },
     {
       "action": "assert",
-      "label": "Soulrot retaliation includes attack power damage",
+      "label": "Soulrot retaliation exceeds its 1200 DBC base, so attack power is included",
       "actor": "reaper",
       "metric": "spell_damage_total",
       "spell": 805089,
       "target": "dispeller",
-      "min": 2000
+      "min": 1300
     }
   ]
 }

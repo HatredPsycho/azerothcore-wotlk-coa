@@ -6,32 +6,32 @@
       "id": "bot",
       "race": 6,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "bot": true
     },
     {
       "id": "solo",
       "race": 6,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "party",
       "race": 6,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "friend",
       "race": 6,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "observer",
       "race": 6,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "name": "Named quest credit survives the original tagger leaving their party",
@@ -43,7 +43,7 @@
       "entry": 1662,
       "distance": 2,
       "health": 100000,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

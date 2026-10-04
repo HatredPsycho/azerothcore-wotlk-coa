@@ -6,10 +6,10 @@
   "location": { "map": 0, "x": -9617.06, "y": -288.949, "z": 57.3053, "o": 0 },
   "players": [
     {
-      "id": "guardian", "race": 1, "class": 18, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000,
+      "id": "guardian", "race": 1, "class": 18, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000,
       "allow_regeneration": false
     },
-    { "id": "attacker", "race": 2, "class": 1, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000 }
+    { "id": "attacker", "race": 2, "class": 1, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login and level scaling settle", "ms": 3000 },

@@ -14,7 +14,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -23,7 +23,7 @@
       "id": "empty",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -32,7 +32,7 @@
       "id": "ally",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -41,7 +41,7 @@
       "id": "enemy",
       "race": 5,
       "class": 1,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -52,7 +52,7 @@
       "id": "target",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -60,7 +60,7 @@
       "id": "target2",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 4
     },
@@ -68,7 +68,7 @@
       "id": "far",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 20
     }

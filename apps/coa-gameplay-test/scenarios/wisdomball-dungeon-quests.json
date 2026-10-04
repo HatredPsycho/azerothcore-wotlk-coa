@@ -31,13 +31,13 @@
       "id": "seeker",
       "race": 2,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "bystander",
       "race": 2,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {
@@ -210,15 +210,15 @@
       "metric": "carried_item_level",
       "item": 12544,
       "relative_to": "choice_before",
-      "min": 60
+      "min": 45
     },
     {
       "action": "assert",
       "actor": "seeker",
       "metric": "carried_item_required_level",
       "item": 12544,
-      "min": 48,
-      "label": "The actual quest reward retains at least its authored required level"
+      "min": 36,
+      "label": "The actual quest reward keeps its scaled required level, 48 authored compressed to 36"
     },
     {
       "action": "assert",

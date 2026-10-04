@@ -7,19 +7,19 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     },
     {
       "id": "outsider",
       "race": 1,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [
@@ -103,7 +103,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -188,7 +189,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -273,7 +275,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -363,7 +366,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -441,7 +445,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -519,7 +524,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -597,7 +603,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -675,7 +682,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -753,7 +761,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -831,7 +840,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -909,7 +919,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -987,7 +998,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1065,7 +1077,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1143,7 +1156,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1221,7 +1235,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1299,7 +1314,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1377,7 +1393,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1455,7 +1472,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1533,7 +1551,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1611,7 +1630,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1689,7 +1709,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1767,7 +1788,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1845,7 +1867,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -1923,7 +1946,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2001,7 +2025,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2079,7 +2104,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2157,7 +2183,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2235,7 +2262,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2313,7 +2341,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2391,7 +2420,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2469,7 +2499,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2547,7 +2578,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2625,7 +2657,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2703,7 +2736,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2781,7 +2815,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2859,7 +2894,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -2937,7 +2973,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3015,7 +3052,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3093,7 +3131,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3171,7 +3210,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3249,7 +3289,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3327,7 +3368,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3405,7 +3447,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3483,7 +3526,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3561,7 +3605,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3639,7 +3684,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3717,7 +3763,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3795,7 +3842,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3873,7 +3921,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -3951,7 +4000,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4029,7 +4079,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4107,7 +4158,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4185,7 +4237,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4263,7 +4316,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4341,7 +4395,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4419,7 +4474,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4497,7 +4553,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4575,7 +4632,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4653,7 +4711,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4731,7 +4790,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4809,7 +4869,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4887,7 +4948,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -4965,7 +5027,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5043,7 +5106,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5121,7 +5185,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5199,7 +5264,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5277,7 +5343,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5355,7 +5422,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5433,7 +5501,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5511,7 +5580,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5589,7 +5659,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5667,7 +5738,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5745,7 +5817,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5823,7 +5896,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5901,7 +5975,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -5979,7 +6054,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6057,7 +6133,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6135,7 +6212,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6213,7 +6291,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6291,7 +6370,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6369,7 +6449,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6447,7 +6528,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6525,7 +6607,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6603,7 +6686,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6681,7 +6765,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6759,7 +6844,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6837,7 +6923,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6915,7 +7002,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -6993,7 +7081,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7071,7 +7160,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7149,7 +7239,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7227,7 +7318,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7305,7 +7397,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7383,7 +7476,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7461,7 +7555,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7539,7 +7634,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7617,7 +7713,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7695,7 +7792,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7773,7 +7871,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7851,7 +7950,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -7929,7 +8029,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8007,7 +8108,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8085,7 +8187,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8163,7 +8266,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8241,7 +8345,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8319,7 +8424,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8397,7 +8503,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8475,7 +8582,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8553,7 +8661,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8631,7 +8740,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8709,7 +8819,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8787,7 +8898,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8865,7 +8977,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -8943,7 +9056,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9021,7 +9135,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9099,7 +9214,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9177,7 +9293,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9255,7 +9372,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9333,7 +9451,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9411,7 +9530,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9489,7 +9609,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9567,7 +9688,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9645,7 +9767,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9723,7 +9846,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9801,7 +9925,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9879,7 +10004,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -9957,7 +10083,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10035,7 +10162,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10113,7 +10241,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10191,7 +10320,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10269,7 +10399,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10347,7 +10478,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10425,7 +10557,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10503,7 +10636,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10581,7 +10715,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10659,7 +10794,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10737,7 +10873,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10815,7 +10952,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10893,7 +11031,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -10971,7 +11110,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11049,7 +11189,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11127,7 +11268,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11205,7 +11347,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11283,7 +11426,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11361,7 +11505,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11439,7 +11584,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11517,7 +11663,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11595,7 +11742,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11673,7 +11821,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11751,7 +11900,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11829,7 +11979,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11907,7 +12058,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -11985,7 +12137,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12063,7 +12216,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12141,7 +12295,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12219,7 +12374,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12297,7 +12453,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12375,7 +12532,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12453,7 +12611,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12531,7 +12690,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12609,7 +12769,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12687,7 +12848,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12765,7 +12927,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12843,7 +13006,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12921,7 +13085,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -12999,7 +13164,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13077,7 +13243,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13155,7 +13322,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13233,7 +13401,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13311,7 +13480,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13389,7 +13559,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13467,7 +13638,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13545,7 +13717,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13623,7 +13796,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13701,7 +13875,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13779,7 +13954,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13857,7 +14033,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -13935,7 +14112,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14013,7 +14191,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14091,7 +14270,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14169,7 +14349,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14247,7 +14428,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14325,7 +14507,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14397,13 +14580,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14482,13 +14667,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14567,13 +14754,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14652,13 +14841,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14737,13 +14928,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14822,13 +15015,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14907,13 +15102,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -14992,13 +15189,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15077,13 +15276,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15162,13 +15363,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15247,13 +15450,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15332,13 +15537,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15417,13 +15624,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15502,13 +15711,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15587,13 +15798,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15672,13 +15885,15 @@
     {
       "action": "set_health",
       "actor": "ally",
-      "value": 10000
+      "value": 10000,
+      "maximum": 10000
     },
     {
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15768,7 +15983,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15853,7 +16069,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -15938,7 +16155,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16028,7 +16246,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16087,7 +16306,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16146,7 +16366,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16205,7 +16426,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16264,7 +16486,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16323,7 +16546,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16382,7 +16606,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16441,7 +16666,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16500,7 +16726,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16559,7 +16786,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16618,7 +16846,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16677,7 +16906,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16736,7 +16966,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16795,7 +17026,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16854,7 +17086,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16913,7 +17146,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -16972,7 +17206,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17031,7 +17266,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17090,7 +17326,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17149,7 +17386,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17208,7 +17446,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17267,7 +17506,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17326,7 +17566,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17385,7 +17626,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17444,7 +17686,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17503,7 +17746,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17562,7 +17806,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17621,7 +17866,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17680,7 +17926,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17739,7 +17986,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17798,7 +18046,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -17857,7 +18106,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",

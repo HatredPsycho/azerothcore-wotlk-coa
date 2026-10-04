@@ -20,14 +20,14 @@
       "id": "c",
       "race": 1,
       "class": 26,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "ally",
       "race": 1,
       "class": 8,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000,
       "spell_hit_rating": 10000
@@ -38,7 +38,7 @@
       "id": "d",
       "owner": "ally",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "distance": 2,
       "health": 1000000
     }

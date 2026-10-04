@@ -13,7 +13,7 @@
   ],
   "timeout_ms": 150000,
   "players": [
-    { "id": "mage", "race": 1, "class": 8, "level": 80 }
+    { "id": "mage", "race": 1, "class": 8, "level": 60 }
   ],
   "steps": [
     { "action": "learn", "actor": "mage", "spell": 12472 },

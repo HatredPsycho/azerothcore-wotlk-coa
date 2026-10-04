@@ -4,7 +4,7 @@
   "contract": "A learned talent installs its passive. A usable potion consumes one item and restores health.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 8, "level": 80 }
+    { "id": "caster", "race": 1, "class": 8, "level": 60 }
   ],
   "steps": [
     { "action": "assert", "actor": "caster", "metric": "has_talent", "spell": 11070, "equals": 0 },
