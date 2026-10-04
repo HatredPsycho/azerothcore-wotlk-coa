@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "name": "Content above the cap asks for a level this realm can reach",
+  "contract": "A realm whose characters stop at 60 maps authored content onto its own bands, so what that content asks of a character has to move with it. ProgressionLayout maps an authored level through the era its own level places it in: the Burning Crusade band 58-70 onto 45-55, the Wrath band 68-80 onto 55-60. Quest 9900 Gava'xi is authored at minimum level 65 and quest 12691 at 77, so a level 60 character may take both, and the minimum level their quest query carries is the mapped one rather than the authored one - a quest the server allows must not read as out of reach. The same mapping decides an ability rank's required level, which the Book of Ascension scenarios cover where they buy a rank authored above the cap.",
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "seeker", "race": 11, "class": 12, "level": 60 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let login settle", "ms": 3000 },
+    { "action": "assert", "label": "CONTROL: the character stands at the realm's cap", "actor": "seeker", "metric": "level", "equals": 60 },
+    { "action": "assert", "label": "A quest authored at minimum level 65 can be taken at 60", "actor": "seeker", "metric": "quest_takeable", "quest": 9900, "equals": 1 },
+    { "action": "prepare_quest", "actor": "seeker", "quest": 9900, "complete": false },
+    { "action": "assert", "label": "Its quest query carries the mapped minimum level, 65 in the 58-70 band onto 45-55", "actor": "seeker", "metric": "quest_query_min_level", "quest": 9900, "equals": 51, "within_ms": 2000 },
+    { "action": "assert", "label": "A quest authored at minimum level 77 can be taken at 60", "actor": "seeker", "metric": "quest_takeable", "quest": 12691, "equals": 1 },
+    { "action": "prepare_quest", "actor": "seeker", "quest": 12691, "complete": false },
+    { "action": "assert", "label": "Its quest query carries the mapped minimum level, 77 in the 68-80 band onto 55-60", "actor": "seeker", "metric": "quest_query_min_level", "quest": 12691, "equals": 59, "within_ms": 2000 }
+  ]
+}

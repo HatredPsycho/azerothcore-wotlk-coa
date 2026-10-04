@@ -758,7 +758,8 @@ public:
     reconcile(AscensionCompatData::ClassSpells);
     if (player->getClass() == CLASS_DEMON_HUNTER)
       for (FelswornRiftGrant const& rift : FelswornHordeCapitalRifts)
-        if (rift.RequiredLevel > player->GetLevel() && player->HasSpell(rift.SpellId))
+        if (LocalLevelScaling::GetEffectiveAbilityRequiredLevel(rift.RequiredLevel) >
+                player->GetLevel() && player->HasSpell(rift.SpellId))
         {
           player->removeSpell(rift.SpellId, SPEC_MASK_ALL, false);
           ++removed;
@@ -822,7 +823,7 @@ public:
     for (AscensionProgression::Rank const& rank : AscensionProgression::Ranks)
     {
         if (!automaticProgression || rank.ClassId != player->getClass() ||
-            rank.RequiredLevel > player->GetLevel() ||
+            LocalLevelScaling::GetEffectiveAbilityRequiredLevel(rank.RequiredLevel) > player->GetLevel() ||
             !player->HasSpell(rank.FirstSpellId) || player->HasSpell(rank.SpellId))
             continue;
 
@@ -871,7 +872,8 @@ public:
                 continue;
 
             bool const allowed = specializationId == entry.SpecId &&
-                player->GetLevel() >= entry.RequiredLevel && player->HasSpell(entry.ParentSpellId);
+                player->GetLevel() >= LocalLevelScaling::GetEffectiveAbilityRequiredLevel(entry.RequiredLevel) &&
+                player->HasSpell(entry.ParentSpellId);
             if (!allowed)
             {
                 player->removeSpell(entry.SpellId, SPEC_MASK_ALL, true);
@@ -1771,11 +1773,13 @@ public:
       }
       if (item.Rank > 0)
       {
-        if (player->GetLevel() < entry->RequiredLevel)
+        uint8 const requiredLevel =
+            LocalLevelScaling::GetEffectiveAbilityRequiredLevel(entry->RequiredLevel);
+        if (player->GetLevel() < requiredLevel)
         {
           refusal = { "CA_UPDATE_ENTRIES_NOT_TRAVERSIBLE", "CA_LEARN_LOW_LEVEL", entry->EntryId, item.Rank,
                       Acore::StringFormat("Talent entry {} requires level {}.", entry->EntryId,
-                                          uint32(entry->RequiredLevel)) };
+                                          uint32(requiredLevel)) };
           return false;
         }
         if (!sSpellMgr->GetSpellInfo(entry->SpellIds[item.Rank - 1]))
@@ -8114,7 +8118,8 @@ std::vector<AscensionClassAbility> GetAscensionClassAbilities(uint8 classId)
 
         auto const specialization = specializationOf.find(rank.FirstSpellId);
         uint16 const specId = specialization != specializationOf.end() ? specialization->second : 0;
-        abilities.push_back({ rank.SpellId, rank.FirstSpellId, specId, rank.RequiredLevel });
+        abilities.push_back({ rank.SpellId, rank.FirstSpellId, specId,
+            LocalLevelScaling::GetEffectiveAbilityRequiredLevel(rank.RequiredLevel) });
     }
 
     return abilities;

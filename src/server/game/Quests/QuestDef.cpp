@@ -424,7 +424,9 @@ void Quest::InitializeQueryData()
     queryData << uint32(GetQuestId());                    // quest id
     queryData << uint32(GetQuestMethod());                // Accepted values: 0, 1 or 2. 0 == IsAutoComplete() (skip objectives/details)
     queryData << uint32(GetQuestLevel());                 // may be -1, static data, in other cases must be used dynamic level: Player::GetQuestLevel (0 is not known, but assuming this is no longer valid for quest intended for client)
-    queryData << uint32(GetMinLevel());                   // min level
+    // Cached for every client, and the gate this is drawn against is realm-wide, so the cache
+    // holds: a module owning the realm's progression installs itself before the quests load.
+    queryData << uint32(LocalLevelScaling::GetEffectiveQuestMinLevel(this)); // min level
     queryData << uint32(GetZoneOrSort());                 // zone or sort to display in quest log
 
     queryData << uint32(GetType());                       // quest type

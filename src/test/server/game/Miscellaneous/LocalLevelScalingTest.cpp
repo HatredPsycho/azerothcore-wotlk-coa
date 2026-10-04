@@ -50,3 +50,23 @@ TEST(LocalLevelScalingTest, DungeonCeilingFollowsTheOffset)
     EXPECT_EQ(ScaleDungeonCreatureLevelForViewer(40, 20, 5), 25);
     EXPECT_EQ(ScaleDungeonCreatureLevelForViewer(63, 60, 3), 63);
 }
+
+TEST(LocalLevelScalingTest, AbilityRequirementKeepsItsAuthoredLevelWithoutAnOwner)
+{
+    LocalLevelScaling::AbilityRequiredLevelOwner.store(nullptr, std::memory_order_relaxed);
+    EXPECT_EQ(LocalLevelScaling::GetEffectiveAbilityRequiredLevel(80), 80);
+}
+
+TEST(LocalLevelScalingTest, AbilityRequirementFollowsTheInstalledOwner)
+{
+    LocalLevelScaling::AbilityRequiredLevelOwner.store(
+        [](std::uint8_t requiredLevel) -> std::uint8_t
+        {
+            return requiredLevel > 60 ? 60 : requiredLevel;
+        }, std::memory_order_relaxed);
+
+    EXPECT_EQ(LocalLevelScaling::GetEffectiveAbilityRequiredLevel(80), 60);
+    EXPECT_EQ(LocalLevelScaling::GetEffectiveAbilityRequiredLevel(40), 40);
+
+    LocalLevelScaling::AbilityRequiredLevelOwner.store(nullptr, std::memory_order_relaxed);
+}

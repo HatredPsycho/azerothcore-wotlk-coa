@@ -92,6 +92,24 @@ inline std::atomic<EnchantmentRequiredLevelResolver> EnchantmentRequiredLevelOwn
 
 std::uint32_t GetEffectiveEnchantmentRequiredLevel(std::uint32_t requiredLevel);
 
+/// The level a rank of an ability asks of the character who learns it, whether that rank is sold by
+/// the Book of Ascension, granted by progression, taught by an item or picked as a talent.
+///
+/// A rank is written against the level its own progression put it at, the same way a quest or a
+/// creature is, so on a realm that maps content onto other levels it has to move with it. Left
+/// alone, the top of every chain falls off the realm: the book lists the row and refuses the
+/// purchase, progression skips it, and the character's line ends at whichever rank was authored at
+/// or below the cap. The authored level stands with nothing installed, and an owner that cannot
+/// place a rank answers with the authored level rather than putting it further out of reach.
+using AbilityRequiredLevelResolver = std::uint8_t (*)(std::uint8_t);
+inline std::atomic<AbilityRequiredLevelResolver> AbilityRequiredLevelOwner{nullptr};
+
+inline std::uint8_t GetEffectiveAbilityRequiredLevel(std::uint8_t requiredLevel)
+{
+    AbilityRequiredLevelResolver const owner = AbilityRequiredLevelOwner.load(std::memory_order_relaxed);
+    return owner ? owner(requiredLevel) : requiredLevel;
+}
+
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 

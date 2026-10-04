@@ -544,7 +544,9 @@ void PlayerMenu::SendQuestQueryResponse(Quest const* quest) const
     LOG_DEBUG("entities.player.quest", "SMSG_QUEST_QUERY_RESPONSE quest {} template level {} sent level {} player level {} min level {}",
         quest->GetQuestId(), quest->GetQuestLevel(), questLevel, _session->GetPlayer()->GetLevel(), quest->GetMinLevel());
     data << uint32(questLevel);                             // per-player level; template remains immutable
-    data << uint32(quest->GetMinLevel());                   // min level
+    // The level the client draws under "Requires level" is the one the server gates on, so a
+    // quest a character may take does not read as out of reach.
+    data << uint32(LocalLevelScaling::GetEffectiveQuestMinLevel(quest)); // min level
     data << uint32(quest->GetZoneOrSort());                 // zone or sort to display in quest log
 
     data << uint32(quest->GetType());                       // quest type

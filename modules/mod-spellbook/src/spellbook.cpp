@@ -37,6 +37,7 @@
 #include "Configuration/Config.h"
 #include "Creature.h"
 #include "GossipDef.h"
+#include "LocalLevelScaling.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "ScriptedGossip.h"
@@ -244,7 +245,7 @@ namespace
 
             Row row;
             row.SpellId = spellId;
-            row.RequiredLevel = requiredLevel;
+            row.RequiredLevel = LocalLevelScaling::GetEffectiveAbilityRequiredLevel(requiredLevel);
             row.RequiredAbility = requiredAbility;
             row.SkillLine = SkillLineForSpell(spellId);
 
@@ -805,11 +806,13 @@ namespace Spellbook
             return spells;
 
         for (SpellbookOfferData::Offer const &offer : SpellbookOfferData::Offers)
-            if (offer.ClassId == player->getClass() && offer.FirstSpellId && offer.RequiredLevel > level)
+            if (offer.ClassId == player->getClass() && offer.FirstSpellId &&
+                LocalLevelScaling::GetEffectiveAbilityRequiredLevel(offer.RequiredLevel) > level)
                 spells.push_back(offer.SpellId);
 
         for (SpellbookRankData::Rank const &rank : SpellbookRankData::Ranks)
-            if (rank.ClassId == player->getClass() && rank.RequiredLevel > level)
+            if (rank.ClassId == player->getClass() &&
+                LocalLevelScaling::GetEffectiveAbilityRequiredLevel(rank.RequiredLevel) > level)
                 spells.push_back(rank.SpellId);
 
         return spells;

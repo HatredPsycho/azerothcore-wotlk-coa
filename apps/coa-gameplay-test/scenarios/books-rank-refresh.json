@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Book of Ascension: ranks are bought in a row without the list moving",
-  "contract": "The window is the book's whole offer set. A rank the character holds stays in it as a used row, so a purchase re-publishes the same rows in the same order and the client's own restore of its selection and scroll position lands on the row the player was on. A rank whose prerequisite is missing, or whose level is above the character, is unavailable and refused by the server. Each purchase is announced exactly once: the window sends no learned-spell packet of its own, so a rank up is announced only by the core's supersede cue.",
+  "contract": "The window is the book's whole offer set. A rank the character holds stays in it as a used row, so a purchase re-publishes the same rows in the same order and the client's own restore of its selection and scroll position lands on the row the player was on. A rank whose prerequisite is missing, or whose level is above the character, is unavailable and refused by the server; at the realm's cap no authored rank of this ladder is above the character any more, because a rank asks for the level its own progression maps onto here (rank 6, authored at 68, lands at 55), so the level gate itself is shown by training-books, where a character stands below it. Each purchase is announced exactly once: the window sends no learned-spell packet of its own, so a rank up is announced only by the core's supersede cue.",
   "timeout_ms": 180000,
   "players": [
     { "id": "wh", "race": 1, "class": 15, "level": 60 }
@@ -64,7 +64,7 @@
     { "action": "assert", "actor": "wh", "metric": "spellbook_learned_alerts", "spell": 681220, "equals": 0, "label": "the top rank was announced once as well" },
     { "action": "assert", "actor": "wh", "metric": "spellbook_superseded_for", "spell": 681220, "equals": 1, "label": "rank 5 came with one supersede cue" },
     { "action": "assert", "actor": "wh", "metric": "trainer_window_state", "spell": 681220, "equals": 2, "label": "the top rank is a used row now" },
-    { "action": "assert", "actor": "wh", "metric": "trainer_window_state", "spell": 681221, "equals": 1, "label": "rank 6 is still out of reach at level 60" },
+    { "action": "assert", "actor": "wh", "metric": "trainer_window_state", "spell": 681221, "equals": 0, "label": "rank 6, authored at 68, is within reach at the cap" },
     { "action": "assert", "actor": "wh", "metric": "trainer_window_rows", "relative_to": "opened", "equals": 0, "label": "four purchases and the list never changed shape" },
     { "action": "assert", "actor": "wh", "metric": "spellbook_misannounced_buys", "equals": 0, "label": "no purchase was announced more than once" }
   ]

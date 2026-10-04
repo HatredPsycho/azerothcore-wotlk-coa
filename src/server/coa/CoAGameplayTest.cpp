@@ -115,6 +115,7 @@ constexpr uint16 KnownEntriesUploadOpcode = 0x0727;
 constexpr uint16 UpdateEntriesResultOpcode = 0x072C;
 constexpr uint32 DamageShareBlows = 8;
 constexpr uint32 TalentRequestWindowMs = 2000;
+constexpr std::size_t QuestQueryMinLevelOffset = 12;
 constexpr std::size_t QuestQueryFlagsOffset = 80;
 constexpr std::size_t QuestQueryFirstChoiceItemOffset = 136;
 
@@ -397,6 +398,7 @@ struct Actor
     std::map<uint64, std::map<uint16, uint32>> unitValues;
     std::map<uint32, uint32> creatureQueryRank;
     std::map<uint32, uint32> questQueryFlags;
+    std::map<uint32, uint32> questQueryMinLevel;
     std::map<uint32, uint32> questQueryFirstChoiceItem;
     uint32 lastQuestWindow = 0;
     uint32 lastStableResult = 0;
@@ -760,7 +762,10 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
     if (packet.GetOpcode() == SMSG_SHOW_BANK)
         ++actor.bankShows;
     if (packet.GetOpcode() == SMSG_QUEST_QUERY_RESPONSE && packet.size() >= QuestQueryFlagsOffset + sizeof(uint32))
+    {
         actor.questQueryFlags[packet.read<uint32>(0)] = packet.read<uint32>(QuestQueryFlagsOffset);
+        actor.questQueryMinLevel[packet.read<uint32>(0)] = packet.read<uint32>(QuestQueryMinLevelOffset);
+    }
     if (packet.GetOpcode() == SMSG_QUEST_QUERY_RESPONSE
         && packet.size() >= QuestQueryFirstChoiceItemOffset + sizeof(uint32))
         actor.questQueryFirstChoiceItem[packet.read<uint32>(0)] = packet.read<uint32>(QuestQueryFirstChoiceItemOffset);
@@ -1888,6 +1893,12 @@ private:
             if (itr == actor.questQueryFlags.end())
                 return -1;
             return (itr->second & AscensionQuestLog::ScaledQuestFlag) ? 1 : 0;
+        }
+        if (metric == "quest_query_min_level")
+        {
+            Actor& actor = _actors.at(step.get<std::string>("actor"));
+            auto itr = actor.questQueryMinLevel.find(step.get<uint32>("quest"));
+            return itr == actor.questQueryMinLevel.end() ? -1 : double(itr->second);
         }
         if (metric == "quest_query_reward_choice")
         {

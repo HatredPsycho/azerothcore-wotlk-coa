@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Training books restore eligible class abilities through the trainer window (#37)",
-  "contract": "A book opens the class trainer window for the viewer's own class instead of a gossip page (mod-spellbook, #4174; npcflag 48 on every class-training book). Training there restores a missing eligible class ability without teaching higher-level ranks: Venom Bolt 800869 (class spell, level 1) is listed as trainable once it is missing and is learned when trained, while its rank 2 502870 (level 8) is listed as unavailable to a level-1 character and is refused. Training again is harmless. A level-20 character holding Alkahest 504342 (the tree's rank) is sold rank 2 504714 (level 20) but not rank 3 504715 (level 26). Class abilities also remain automatic on login. Prices are charged, so both characters are given a purse.",
+  "contract": "A book opens the class trainer window for the viewer's own class instead of a gossip page (mod-spellbook, #4174; npcflag 48 on every class-training book). Training there restores a missing eligible class ability without teaching higher-level ranks: Venom Bolt 800869 (class spell, level 1) is listed as trainable once it is missing and is learned when trained, while its rank 2 502870 (level 8) is listed as unavailable to a level-1 character and is refused. Training again is harmless. A rank asks for the level this realm maps its authored one onto, so the level-20 character holding Alkahest 504342 (the tree's rank) is sold rank 2 504714 (authored 20, here 15) and rank 3 504715 (authored 26, here 20) once it holds the rank below it, while rank 4 504716 (authored 32, here 24) stays above the character and is refused. Class abilities also remain automatic on login. Prices are charged, so both characters are given a purse.",
   "players": [
     {
       "id": "beginner",
@@ -397,7 +397,7 @@
       "metric": "trainer_window_state",
       "spell": 504715,
       "equals": 1,
-      "label": "The level-26 rank is listed as unavailable"
+      "label": "The next rank stays unavailable while its own prerequisite is missing"
     },
     {
       "action": "trainer_buy",
@@ -422,8 +422,29 @@
       "actor": "veteran",
       "metric": "knows_spell",
       "spell": 504715,
+      "equals": 1,
+      "label": "The rank this realm placed at the character's own level is sold"
+    },
+    {
+      "action": "assert",
+      "actor": "veteran",
+      "metric": "trainer_window_state",
+      "spell": 504716,
+      "equals": 1,
+      "label": "The authored level-32 rank, which this realm places at 24, is above the character"
+    },
+    {
+      "action": "trainer_buy",
+      "actor": "veteran",
+      "spell": 504716
+    },
+    {
+      "action": "assert",
+      "actor": "veteran",
+      "metric": "knows_spell",
+      "spell": 504716,
       "equals": 0,
-      "label": "Level-26 rank remains locked"
+      "label": "The rank above the character remains locked"
     }
   ]
 }
