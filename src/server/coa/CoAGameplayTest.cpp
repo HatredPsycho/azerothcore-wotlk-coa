@@ -113,6 +113,7 @@ constexpr uint16 LevelScalingOpcode = 0x0667;
 constexpr uint16 ApplyAppearancesOpcode = 0x0697;
 constexpr uint16 KnownEntriesUploadOpcode = 0x0727;
 constexpr uint16 UpdateEntriesResultOpcode = 0x072C;
+constexpr uint32 DamageShareBlows = 8;
 constexpr uint32 TalentRequestWindowMs = 2000;
 constexpr std::size_t QuestQueryFlagsOffset = 80;
 constexpr std::size_t QuestQueryFirstChoiceItemOffset = 136;
@@ -3882,8 +3883,22 @@ private:
                 else if (auto damagePct = step.get_optional<int32>("damage_pct"))
                 {
                     Require(*damagePct > 0 && *damagePct < 100, "Damage share outside (0, 100)");
-                    Unit::DealDamage(player, creatures.front(), creatures.front()->CountPctFromMaxHealth(*damagePct),
-                        nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL);
+                    Creature* wounded = creatures.front();
+                    uint32 const share = wounded->CountPctFromMaxHealth(*damagePct);
+                    uint32 const spared = wounded->GetHealth() > share ? wounded->GetHealth() - share : 0;
+                    for (uint32 blow = 0; blow < DamageShareBlows && wounded->IsAlive() &&
+                        wounded->GetHealth() > spared; ++blow)
+                    {
+                        uint32 const before = wounded->GetHealth();
+                        uint32 const asked = (before - spared) << blow;
+                        Unit::DealDamage(player, wounded, spared ? std::min(asked, before - 1) : asked, nullptr,
+                            DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL);
+                        if (wounded->GetHealth() >= before)
+                            break;
+                    }
+                    Require(!wounded->IsAlive() || wounded->GetHealth() <= spared,
+                        "Damage share left " + std::to_string(wounded->GetHealth()) + " of " +
+                        std::to_string(wounded->GetMaxHealth()) + " instead of " + std::to_string(spared));
                 }
                 else
                     player->GetSession()->HandleAttackSwingOpcode(packet);
