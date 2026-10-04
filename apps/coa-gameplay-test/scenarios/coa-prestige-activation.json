@@ -32,7 +32,7 @@
     { "action": "assert", "label": "The hearthstone is bound here, away from the starting zone", "actor": "prestiger", "metric": "at_homebind", "equals": 1, "within_ms": 3000 },
 
     { "action": "gossip_hello", "actor": "prestiger", "target": "chromie", "label": "Speak to Chromie" },
-    { "action": "assert", "actor": "prestiger", "metric": "gossip_options", "equals": 3 },
+    { "action": "assert", "label": "Chromie offers at least the three buttons the Prestige window looks for, ahead of the daily label she adds beside them", "actor": "prestiger", "metric": "gossip_options", "min": 3 },
     { "action": "assert", "label": "The activation option carries the text the Prestige window looks for", "actor": "prestiger", "metric": "gossip_option_text", "index": 0, "text": "I would like to prestige!", "equals": 1 },
     { "action": "assert", "label": "So does the rewards shop", "actor": "prestiger", "metric": "gossip_option_text", "index": 1, "text": "I would like to purchase Prestige items!", "equals": 1 },
     { "action": "assert", "label": "And the experience items shop", "actor": "prestiger", "metric": "gossip_option_text", "index": 2, "text": "GOSSIP_ACTION_EXPERIENCE_ITEMS", "equals": 1 },
