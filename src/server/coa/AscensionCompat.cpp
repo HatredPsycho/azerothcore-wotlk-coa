@@ -744,7 +744,8 @@ public:
           AscensionCompatData::ClassSpells.end(), [player, spellId](auto const& entry)
           {
             return entry.ClassId == player->getClass() && entry.SpellId == spellId &&
-                   entry.RequiredLevel <= player->GetLevel();
+                   LocalLevelScaling::GetEffectiveAbilityRequiredLevel(entry.RequiredLevel) <=
+                       player->GetLevel();
           });
     };
     uint32 removed = 0;
@@ -796,7 +797,8 @@ public:
          AscensionCompatData::ClassSpells) {
       if (!automaticProgression ||
           progressionSpell.ClassId != player->getClass() ||
-          progressionSpell.RequiredLevel > player->GetLevel() ||
+          LocalLevelScaling::GetEffectiveAbilityRequiredLevel(progressionSpell.RequiredLevel) >
+              player->GetLevel() ||
           !CanGrantAscensionRacialSpell(player, progressionSpell.SpellId) ||
           player->HasSpell(progressionSpell.SpellId))
         continue;
@@ -1729,7 +1731,8 @@ public:
           AscensionCompatData::ClassSpells.end(), [player, spellId](AscensionCompatData::ClassSpell const& spell)
           {
             return spell.ClassId == player->getClass() && spell.SpellId == spellId &&
-                   spell.RequiredLevel <= player->GetLevel();
+                   LocalLevelScaling::GetEffectiveAbilityRequiredLevel(spell.RequiredLevel) <=
+                       player->GetLevel();
           });
       if (granted)
         rank = index + 1;
@@ -8100,7 +8103,8 @@ std::vector<AscensionClassAbility> GetAscensionClassAbilities(uint8 classId)
 
     for (auto const& grant : AscensionCompatData::ClassSpells)
         if (grant.ClassId == classId)
-            abilities.push_back({ grant.SpellId, grant.SpellId, 0, grant.RequiredLevel });
+            abilities.push_back({ grant.SpellId, grant.SpellId, 0,
+                LocalLevelScaling::GetEffectiveAbilityRequiredLevel(grant.RequiredLevel) });
 
     std::unordered_map<uint32, uint16> specializationOf;
     for (auto const& entry : AscensionCompatData::CoATalentEntries)

@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "A class ability asks for the level this realm places it at, at the trainer and afterwards",
+  "contract": "Divine Stand 807729 is authored at level 14: the Templar trainer's row (trainer_spell 900019, required level 14) and the class grant table (AscensionCustomClassData, {19, 14, 807729}) both say so. This realm compresses authored levels into its own bands, which puts 14 at 11, so a level 12 Templar is already past it. Brother William 50280 must therefore offer the row as available rather than grey, sell it, and the class synchronisation that runs on login and on a specialization change must leave it in place instead of taking it back - which is what made a character who had bought the book carry an ability it could not use. An ability still above the character stays refused: Avenging Wrath 500688 is authored at level 20, which this realm places at 15.",
+  "timeout_ms": 90000,
+  "location": { "map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0.0 },
+  "players": [
+    { "id": "templar", "race": 10, "class": 19, "level": 12 }
+  ],
+  "creatures": [
+    { "id": "trainer", "owner": "templar", "entry": 50280, "faction": 35, "distance": 2 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the fixture settle", "ms": 3000 },
+    { "action": "money", "actor": "templar", "copper": 100000, "label": "Fixture: a purse for the trainer's price" },
+    { "action": "assert", "label": "CONTROL: the Templar stands below the authored level of the ability", "actor": "templar", "metric": "level", "equals": 12 },
+    { "action": "assert", "label": "CONTROL: it does not know Divine Stand yet", "actor": "templar", "metric": "knows_spell", "spell": 807729, "equals": 0 },
+
+    { "action": "gossip_hello", "actor": "templar", "target": "trainer", "label": "Speak to the class trainer" },
+    { "action": "assert", "label": "CONTROL: he offers his one gossip option", "actor": "templar", "metric": "gossip_options", "equals": 1 },
+    { "action": "gossip_select", "actor": "templar", "option": 0, "label": "Ask him for training" },
+    { "action": "assert", "label": "The trainer window arrived", "actor": "templar", "metric": "trainer_list_packets", "min": 1, "within_ms": 3000 },
+    { "action": "assert", "label": "Divine Stand, authored at 14 and placed at 11, is offered as available", "actor": "templar", "metric": "trainer_window_state", "spell": 807729, "equals": 0 },
+    { "action": "assert", "label": "DISCRIMINATING: an ability authored at 20, placed at 15, stays above this character", "actor": "templar", "metric": "trainer_window_state", "spell": 500688, "equals": 1 },
+
+    { "action": "trainer_buy", "actor": "templar", "target": "trainer", "spell": 807729, "label": "Buy Divine Stand" },
+    { "action": "assert", "label": "The purchase taught it", "actor": "templar", "metric": "knows_spell", "spell": 807729, "equals": 1, "within_ms": 3000 },
+
+    { "action": "specialization", "actor": "templar", "id": 24, "label": "Run the class synchronisation" },
+    { "action": "wait", "ms": 2000 },
+    { "action": "assert", "label": "The synchronisation leaves the bought ability in place", "actor": "templar", "metric": "knows_spell", "spell": 807729, "equals": 1 },
+    { "action": "assert", "label": "DISCRIMINATING: it does not hand out the one still above the character", "actor": "templar", "metric": "knows_spell", "spell": 500688, "equals": 0 },
+    { "action": "cast", "actor": "templar", "spell": 807729, "label": "Use it" },
+    { "action": "assert", "label": "The cast was not refused", "actor": "templar", "metric": "cast_failure", "spell": 807729, "equals": 0 },
+    { "action": "assert", "label": "Divine Stand is on the Templar", "actor": "templar", "metric": "aura", "spell": 807729, "equals": 1, "within_ms": 3000 }
+  ]
+}

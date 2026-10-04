@@ -17,6 +17,7 @@
 
 #include "Trainer.h"
 #include "Creature.h"
+#include "LocalLevelScaling.h"
 #include "DBCStores.h"
 #include "NPCPackets.h"
 #include "ObjectMgr.h"
@@ -185,7 +186,10 @@ namespace Trainer
             trainerListSpell.MoneyCost = int32(trainerSpell.MoneyCost * reputationDiscount);
             trainerListSpell.PointCost[0] = 0; // spells don't cost talent points
             trainerListSpell.PointCost[1] = (primaryProfessionFirstRank ? 1 : 0);
-            trainerListSpell.ReqLevel = trainerSpell.ReqLevel;
+            // The level a trainer asks for belongs to the progression the spell was written
+            // against, so a realm that maps content onto other levels has to draw the level it
+            // actually gates on - otherwise a row refuses a character who is past it here.
+            trainerListSpell.ReqLevel = LocalLevelScaling::GetEffectiveAbilityRequiredLevel(trainerSpell.ReqLevel);
             trainerListSpell.ReqSkillLine = trainerSpell.ReqSkillLine;
             trainerListSpell.ReqSkillRank = trainerSpell.ReqSkillRank;
             std::copy(trainerSpell.ReqAbility.begin(), trainerSpell.ReqAbility.end(), trainerListSpell.ReqAbility.begin());
@@ -287,8 +291,8 @@ namespace Trainer
             if (reqAbility && !player->HasSpell(reqAbility))
                 return SpellState::Unavailable;
 
-        // check level requirement
-        if (player->GetLevel() < trainerSpell->ReqLevel)
+        // check level requirement, on the levels this realm places the content at
+        if (player->GetLevel() < LocalLevelScaling::GetEffectiveAbilityRequiredLevel(trainerSpell->ReqLevel))
             return SpellState::Unavailable;
 
         // check expansion requirement of professions, their ranks and their recipes
