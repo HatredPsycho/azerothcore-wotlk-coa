@@ -204,9 +204,9 @@
       "action": "teleport",
       "actor": "keeper",
       "map": 0,
-      "x": -9465.6,
-      "y": 16.8,
-      "z": 65.9
+      "x": -9479.0,
+      "y": -18.0,
+      "z": 57.0
     },
     {
       "action": "wait",
@@ -368,6 +368,27 @@
     {
       "action": "wait",
       "ms": 1600
+    },
+    {
+      "action": "teleport",
+      "actor": "keeper",
+      "map": 0,
+      "x": -9479.0,
+      "y": -18.0,
+      "z": 57.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "area_trigger",
+      "actor": "keeper",
+      "id": 562
+    },
+    {
+      "action": "wait",
+      "ms": 1500
     },
     {
       "action": "cast",
