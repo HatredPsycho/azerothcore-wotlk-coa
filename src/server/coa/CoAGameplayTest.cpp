@@ -55,6 +55,7 @@
 #include "StringFormat.h"
 #include "TemporarySummon.h"
 #include "Timer.h"
+#include "TypeContainerVisitor.h"
 #include "UpdateData.h"
 #include "UpdateFields.h"
 #include "World.h"
@@ -403,6 +404,7 @@ struct Actor
     std::map<uint16, uint32> extensionPackets;
     std::map<uint16, std::vector<std::string>> extensionPayloads;
     std::map<std::pair<uint16, uint32>, std::string> selectedPacketRows;
+    std::map<std::pair<uint16, uint32>, uint32> selectedPacketRowCounts;
     std::string observerError;
     std::unique_ptr<WorldSession> session;
     uint32 accountId = 0;
@@ -589,14 +591,18 @@ void ObserveExtensionPacket(Actor& actor, WorldPacket const& packet)
     {
         auto selected = actor.selectedPacketRows.find({ packet.GetOpcode(), packet.read<uint32>(0) });
         if (selected != actor.selectedPacketRows.end())
+        {
             selected->second.assign(reinterpret_cast<char const*>(packet.contents()), packet.size());
+            ++actor.selectedPacketRowCounts[selected->first];
+        }
     }
     constexpr uint16 FirstExtensionOpcode = 0x520;
     constexpr std::size_t MaxPayloadsPerOpcode = 256;
     if (packet.GetOpcode() < FirstExtensionOpcode && packet.GetOpcode() != SMSG_MOVE_SET_CAN_FLY &&
         packet.GetOpcode() != SMSG_MOVE_UNSET_CAN_FLY && packet.GetOpcode() != SMSG_CONVERT_RUNE &&
         packet.GetOpcode() != SMSG_ADD_RUNE_POWER && packet.GetOpcode() != SMSG_LEARNED_SPELL &&
-        packet.GetOpcode() != SMSG_SUPERCEDED_SPELL && packet.GetOpcode() != SMSG_REMOVED_SPELL)
+        packet.GetOpcode() != SMSG_SUPERCEDED_SPELL && packet.GetOpcode() != SMSG_REMOVED_SPELL &&
+        packet.GetOpcode() != SMSG_ITEM_QUERY_SINGLE_RESPONSE)
         return;
 
     ++actor.extensionPackets[packet.GetOpcode()];
@@ -1046,7 +1052,27 @@ public:
     void Conclude(bool passed, std::string const& message)
     {
         if (!passed)
+        {
             LOG_ERROR("coa.gameplay_test", "Scenario failed at step {}: {}", _completed, message);
+            Tree actors;
+            for (auto const& [id, actor] : _actors)
+                if (Player* player = actor.session ? actor.session->GetPlayer() : nullptr)
+                {
+                    Tree state = DescribeUnit(player);
+                    Tree combat;
+                    for (auto const& [guid, reference] : player->GetCombatManager().GetPvECombatRefs())
+                        combat.push_back({ "", DescribeUnit(reference->GetOther(player)) });
+                    for (auto const& [guid, reference] : player->GetCombatManager().GetPvPCombatRefs())
+                        combat.push_back({ "", DescribeUnit(reference->GetOther(player)) });
+                    state.put_child("combat_targets", combat);
+                    Tree controlled;
+                    for (Unit* unit : player->m_Controlled)
+                        controlled.push_back({ "", DescribeUnit(unit) });
+                    state.put_child("controlled_units", controlled);
+                    actors.put_child(id, state);
+                }
+            _report.put_child("failure_actors", actors);
+        }
         Tree failures;
         for (auto const& [id, actor] : _actors)
             for (auto const& entry : actor.castFailures)
@@ -1070,6 +1096,7 @@ public:
     bool Dismiss(bool leaveGroups)
     {
         std::set<ObjectGuid> units;
+        RemoveFixtureDescendants(units);
         for (auto const& [id, target] : _targets)
         {
             if (Map* map = sMapMgr->FindMap(target.map, target.instance))
@@ -1117,6 +1144,75 @@ public:
     }
 
 private:
+    struct FixtureSummonCollector
+    {
+        std::vector<Creature*> summons;
+
+        void Visit(std::unordered_map<ObjectGuid, Creature*>& creatures)
+        {
+            for (auto const& [guid, creature] : creatures)
+                if (creature->IsSummon())
+                    summons.push_back(creature);
+        }
+
+        template<class T>
+        void Visit(std::unordered_map<ObjectGuid, T*>&) { }
+    };
+
+    void RemoveFixtureDescendants(std::set<ObjectGuid>& units)
+    {
+        std::map<Map*, std::set<ObjectGuid>> fixtureRoots;
+        for (auto const& [id, target] : _targets)
+            if (Map* map = sMapMgr->FindMap(target.map, target.instance))
+                fixtureRoots[map].insert(target.guid);
+        for (auto& [map, parents] : fixtureRoots)
+        {
+            FixtureSummonCollector collector;
+            TypeContainerVisitor<FixtureSummonCollector, MapStoredObjectTypesContainer> visitor(collector);
+            visitor.Visit(map->GetObjectsStore());
+            std::vector<Creature*> descendants;
+            bool added;
+            do
+            {
+                added = false;
+                for (Creature* creature : collector.summons)
+                    if (parents.count(creature->GetSummonerGUID()) && parents.insert(creature->GetGUID()).second)
+                    {
+                        descendants.push_back(creature);
+                        units.insert(creature->GetGUID());
+                        added = true;
+                    }
+            } while (added);
+            for (auto creature = descendants.rbegin(); creature != descendants.rend(); ++creature)
+                (*creature)->DespawnOrUnsummon();
+        }
+    }
+
+    static Tree DescribeUnit(Unit const* unit)
+    {
+        Tree state;
+        state.put("guid", unit->GetGUID().ToString());
+        state.put("entry", unit->GetEntry());
+        state.put("phase_mask", unit->GetPhaseMask());
+        state.put("map", unit->GetMapId());
+        state.put("instance", unit->GetInstanceId());
+        state.put("x", unit->GetPositionX());
+        state.put("y", unit->GetPositionY());
+        state.put("z", unit->GetPositionZ());
+        state.put("health", unit->GetHealth());
+        state.put("combat", unit->IsInCombat());
+        state.put("casting", unit->IsNonMeleeSpellCast(false));
+        state.put("casting_state", unit->HasUnitState(UNIT_STATE_CASTING));
+        state.put("owner", unit->GetOwnerGUID().ToString());
+        state.put("victim", unit->GetVictim() ? unit->GetVictim()->GetGUID().ToString() : "");
+        state.put("moving", unit->isMoving());
+        state.put("spline_remaining_ms", unit->movespline->Finalized() ? 0 :
+            std::max(0, unit->movespline->timeElapsed()));
+        if (Creature const* creature = unit->ToCreature())
+            state.put("summoner", creature->GetSummonerGUID().ToString());
+        return state;
+    }
+
     static bool LeaveGroups(Player* player)
     {
         for (uint8 nesting = 0; nesting < 2; ++nesting)
@@ -1625,6 +1721,12 @@ private:
                 uint32 const reaction = definition.get<uint32>("reaction", REACT_PASSIVE);
                 Require(reaction <= REACT_AGGRESSIVE, "Fixture reaction outside valid range");
                 creature->SetReactState(ReactStates(reaction));
+                if (definition.get<bool>("stationary", false))
+                {
+                    creature->SetUnitFlag(UNIT_FLAG_DISABLE_MOVE);
+                    creature->StopMoving();
+                    creature->GetMotionMaster()->MoveIdle();
+                }
                 if (auto bonus = definition.get_optional<float>("spell_hit_bonus"))
                     creature->m_modSpellHitChance = *bonus;
             }
@@ -2592,6 +2694,12 @@ private:
                     double(creature->GetObjectScale());
             return 0.0;
         }
+        if (metric == "owned_creature_spell_hit_chance")
+        {
+            Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
+            Require(creature != nullptr, "Spell hit observation needs a present owned creature");
+            return creature->m_modSpellHitChance;
+        }
         if (metric == "owned_creature_weapon_damage_min")
         {
             uint32 entry = step.get<uint32>("entry");
@@ -2678,11 +2786,17 @@ private:
             auto const found = reasons.find(spell);
             return found == reasons.end() ? 0.0 : double(found->second);
         }
+        if (metric == "pet_casting")
+        {
+            Pet* pet = player->GetPet();
+            Require(pet != nullptr, "Pet cast observation needs a present pet");
+            return pet->HasUnitState(UNIT_STATE_CASTING) || pet->IsNonMeleeSpellCast(false);
+        }
         if (metric == "pet_entry" || metric == "pet_aura_stacks" || metric == "pet_aura_amount" ||
             metric == "pet_aura_amplitude_ms" || metric == "pet_aura_duration_ms" || metric == "pet_max_health" ||
             metric == "pet_attack_power" || metric == "pet_run_speed_rate" || metric == "pet_is_banker" ||
             metric == "pet_display" || metric == "pet_scale" || metric == "pet_knows_spell" ||
-            metric == "pet_distance")
+            metric == "pet_distance" || metric == "pet_spell_bar_count")
         {
             Creature* pet = player->GetGuardianPet();
             if (!pet)
@@ -2697,6 +2811,18 @@ private:
                 return pet ? pet->GetDisplayId() : 0;
             if (metric == "pet_scale")
                 return pet ? double(pet->GetObjectScale()) : 0.0;
+            if (metric == "pet_spell_bar_count")
+            {
+                Require(pet && pet->GetCharmInfo(), "Metric needs a controllable pet");
+                uint32 count = 0;
+                for (uint8 index = 0; index < MAX_UNIT_ACTION_BAR_INDEX; ++index)
+                {
+                    UnitActionBarEntry const* entry = pet->GetCharmInfo()->GetActionBarEntry(index);
+                    if (entry->IsActionBarForSpell() && entry->GetAction())
+                        ++count;
+                }
+                return count;
+            }
             if (metric == "pet_knows_spell")
                 return pet && pet->IsPet() && pet->ToPet()->HasSpell(spell);
             if (!pet && (metric == "pet_aura_stacks" || metric == "pet_aura_amount" ||
@@ -3105,7 +3231,13 @@ private:
             return player->HasAtLoginFlag(AtLoginFlags(step.get<uint32>("id"))) ? 1.0 : 0.0;
         if (metric == "server_packets")
         {
-            auto const& packets = _actors.at(step.get<std::string>("actor")).extensionPackets;
+            Actor const& actor = _actors.at(step.get<std::string>("actor"));
+            if (auto row = step.get_optional<uint32>("row"))
+            {
+                auto const found = actor.selectedPacketRowCounts.find({ uint16(step.get<uint32>("opcode")), *row });
+                return found == actor.selectedPacketRowCounts.end() ? 0.0 : double(found->second);
+            }
+            auto const& packets = actor.extensionPackets;
             auto const found = packets.find(uint16(step.get<uint32>("opcode")));
             return found == packets.end() ? 0.0 : double(found->second);
         }
@@ -3450,6 +3582,27 @@ private:
             return;
         }
         Player* player = GetPlayer(id);
+        if (action == "mapless_loot_hook")
+        {
+            std::string const storeName = step.get<std::string>("store");
+            Require(storeName == "mail" || storeName == "gameobject", "Unsupported mapless loot store");
+            LootStore const& store = storeName == "mail" ? LootTemplates_Mail : LootTemplates_Gameobject;
+            class MaplessLootPlayer : public Player
+            {
+            public:
+                explicit MaplessLootPlayer(WorldSession* session) : Player(session)
+                {
+                    Object::_Create(ObjectGuid::Empty);
+                }
+            };
+            MaplessLootPlayer mapless(player->GetSession());
+            Require(!mapless.FindMap(), "The mapless loot fixture already has a map");
+            Loot loot;
+            sScriptMgr->OnAfterLootTemplateProcess(&loot, nullptr, store, &mapless, true, true, LOOT_MODE_DEFAULT);
+            Require(loot.items.empty(), "The mapless loot hook generated an item");
+            record.put("loot_items", loot.items.size());
+            return;
+        }
         if (auto const found = _actors.find(id); found != _actors.end())
             found->second.lastBuyOrdinal = found->second.packetOrdinal;
         uint32 spell = step.get<uint32>("spell", 0);
@@ -3923,7 +4076,9 @@ private:
             Unit* recipient = player;
             if (step.get<bool>("pet", false))
                 recipient = player->GetGuardianPet();
-            Require(recipient != nullptr, "Pet aura fixture requires a current pet");
+            if (auto entry = step.get_optional<uint32>("owned_entry"))
+                recipient = GetOwnedCreature(player, *entry);
+            Require(recipient != nullptr, "Aura fixture requires its selected player, pet or owned creature");
             SpellInfo const* info = sSpellMgr->GetSpellInfo(spell);
             Require(info != nullptr, "Unknown fixture aura");
             uint32 stacks = step.get<uint32>("stacks");
