@@ -33,6 +33,7 @@ void AddSC_AscensionClosestResurrection();
 void AddSC_AscensionThreatRedirect();
 void AddSC_AscensionAdventureModeAggro();
 void AddSC_AscensionCompanionFlight();
+void AddSC_AscensionTalentDataProcs();
 void AddSC_CoALfgStartPoint();
 void AddSC_AscensionKeepersScrollSteadfast();
 void AddSC_AscensionProfessionSpellAffect();
@@ -603,6 +604,7 @@ void AddCoAScripts()
     AddSC_AscensionThreatRedirect();
     AddSC_AscensionAdventureModeAggro();
     AddSC_AscensionCompanionFlight();
+    AddSC_AscensionTalentDataProcs();
     AddSC_CoALfgStartPoint();
     AddSC_AscensionKeepersScrollSteadfast();
     AddSC_AscensionProfessionSpellAffect();
