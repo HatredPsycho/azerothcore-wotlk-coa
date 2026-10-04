@@ -3595,7 +3595,14 @@ private:
         if (action == "set_health" && !_actors.count(id))
         {
             Unit* creature = GetUnit(id);
-            uint32 health = step.get<uint32>("value");
+            uint32 health = 0;
+            if (auto share = step.get_optional<uint32>("percent"))
+            {
+                Require(*share > 0 && *share <= 100, "Health share outside (0, 100]");
+                health = creature->CountPctFromMaxHealth(*share);
+            }
+            else
+                health = step.get<uint32>("value");
             Require(health > 0 && health <= creature->GetMaxHealth(), "Health fixture outside valid range");
             creature->SetHealth(health);
             return;
