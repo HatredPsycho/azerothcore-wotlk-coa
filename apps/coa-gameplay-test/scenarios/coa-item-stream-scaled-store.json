@@ -3,7 +3,7 @@
   "name": "CoA item stream: a newly rewarded scaled item is patched once",
   "contract": [
     "Requires CoA.SendDisplayPatches=1, CoA.ItemScaling=1, DestinyWeaver.Enable=1 and CoA.QuestLevelScaling=1.",
-    "A level-32 viewer receives quest 176's Footman Tunic as a copy lifted by 20 item levels (21 rounded down to a five-level step).",
+    "A level-32 viewer receives quest 176's Footman Tunic as a copy lifted by 20 item levels. Both terms of that lift are this realm's, not the ones the content carries: quest 176 is authored at level 11 and sits at 8 here, so the distance to the viewer is 24 and the step of five rounds it down to 20, and the tunic is authored at item level 13 and sits at 10. The copy is item level 30.",
     "Storing that copy must immediately send one eight-field item patch even though it is absent from item_dbc.",
     "Repeating the world-entry notice must not send its row again."
   ],
@@ -58,10 +58,11 @@
     },
     {
       "action": "assert",
+      "label": "The copy stands 20 item levels above the realm's version of the tunic",
       "actor": "viewer",
       "metric": "carried_item_level",
       "item": 6085,
-      "equals": 33
+      "equals": 30
     },
     {
       "action": "assert",

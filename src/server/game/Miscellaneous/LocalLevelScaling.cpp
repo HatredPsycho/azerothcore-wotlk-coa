@@ -8,9 +8,39 @@
 #include "Creature.h"
 #include "CreatureData.h"
 #include "QuestDef.h"
+#include <mutex>
+#include <vector>
 
 namespace LocalLevelScaling
 {
+    namespace
+    {
+        std::mutex LevelResolvedMutex;
+        std::vector<std::pair<std::uint32_t, std::uint32_t>> LevelResolvedRanges;
+    }
+
+    void ReserveLevelResolvedItems(std::uint32_t firstEntry, std::uint32_t lastEntry)
+    {
+        if (!firstEntry || lastEntry < firstEntry)
+            return;
+
+        std::lock_guard lock(LevelResolvedMutex);
+        LevelResolvedRanges.emplace_back(firstEntry, lastEntry);
+    }
+
+    bool IsLevelResolvedItem(std::uint32_t entry)
+    {
+        if (!entry)
+            return false;
+
+        std::lock_guard lock(LevelResolvedMutex);
+        for (auto const& [first, last] : LevelResolvedRanges)
+            if (entry >= first && entry <= last)
+                return true;
+
+        return false;
+    }
+
     std::int32_t GetEffectiveQuestBaseLevel(Quest const* quest)
     {
         if (!quest)

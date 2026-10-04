@@ -16,6 +16,7 @@
 #include "Map.h"
 #include "ObjectMgr.h"
 #include "Player.h"
+#include "QuestDef.h"
 #include "ScriptMgr.h"
 #include "World.h"
 #include <algorithm>
@@ -310,13 +311,14 @@ uint32 EligibleLift(uint32 itemId, uint32 rawLift)
     return proto && Eligible(*proto) ? Registry::Instance().Acquire(itemId, lift) : itemId;
 }
 
-uint32 QuestRewardItem(Player const* player, uint32 itemId, int32 questLevel)
+uint32 QuestRewardItem(Player const* player, uint32 itemId, Quest const* quest)
 {
-    if (!player || !LocalLevelScaling::QuestScalingEnabled(player))
+    if (!player || !quest || !LocalLevelScaling::QuestScalingEnabled(player))
         return itemId;
 
-    uint8 const scaledLevel = LocalLevelScaling::ScaleQuestLevel(questLevel, player->GetLevel());
-    return EligibleLift(itemId, QuestLift(questLevel, scaledLevel));
+    int32 const baseLevel = LocalLevelScaling::GetEffectiveQuestBaseLevel(quest);
+    uint8 const scaledLevel = LocalLevelScaling::ScaleQuestLevel(baseLevel, player->GetLevel());
+    return EligibleLift(itemId, QuestLift(baseLevel, scaledLevel));
 }
 
 uint32 CreatureViewerLift(Player const* player, Creature const* creature)

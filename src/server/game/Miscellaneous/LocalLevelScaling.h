@@ -110,6 +110,18 @@ inline std::uint8_t GetEffectiveAbilityRequiredLevel(std::uint8_t requiredLevel)
     return owner ? owner(requiredLevel) : requiredLevel;
 }
 
+/// Item entries whose level is already decided by which entry they are: a catalog that ships one
+/// item per level, picked by the level its owner computed, rather than one item that is rewritten
+/// for the realm's band.
+///
+/// Such a catalog must not be rewritten again. Doing so applies the band a second time, and a module
+/// that checks its own rows against the templates it is handed reads every one of them as wrong and
+/// turns itself off. The module that owns the entries says so itself, before anything rewrites item
+/// statistics, so the two never have to know each other's numbers.
+void ReserveLevelResolvedItems(std::uint32_t firstEntry, std::uint32_t lastEntry);
+
+[[nodiscard]] bool IsLevelResolvedItem(std::uint32_t entry);
+
 using CreatureBaseLevelResolver = std::uint8_t (*)(CreatureTemplate const*, Creature const*);
 inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 
@@ -289,13 +301,19 @@ inline ItemTemplate const* ScaledItemTemplateFor(std::uint32_t entry)
 /// The item one character is offered and given for a quest's reward slot: the authored item, or a
 /// copy lifted by as many levels as the quest itself is lifted for that character. The offer, the
 /// query response and the reward all ask here, so what is shown is what is received.
-using QuestRewardItemResolver = std::uint32_t (*)(Player const*, std::uint32_t itemId, std::int32_t questLevel);
+///
+/// The quest is passed, not a level, because how far the copy is lifted and how far the item it
+/// copies was already moved have to be measured on the same scale. The owner reads the quest's
+/// effective base level, the one `Quest::XPValue` computes its reward from, so the lift is the
+/// distance from the realm's version of the quest to the character - never a distance from the
+/// level the quest was authored at added on top of an item that was already placed in a band.
+using QuestRewardItemResolver = std::uint32_t (*)(Player const*, std::uint32_t itemId, Quest const*);
 inline std::atomic<QuestRewardItemResolver> QuestRewardItemOwner{nullptr};
 
-inline std::uint32_t QuestRewardItemFor(Player const* player, std::uint32_t itemId, std::int32_t questLevel)
+inline std::uint32_t QuestRewardItemFor(Player const* player, std::uint32_t itemId, Quest const* quest)
 {
     QuestRewardItemResolver const owner = QuestRewardItemOwner.load(std::memory_order_relaxed);
-    return owner && itemId ? owner(player, itemId, questLevel) : itemId;
+    return owner && itemId ? owner(player, itemId, quest) : itemId;
 }
 }
 

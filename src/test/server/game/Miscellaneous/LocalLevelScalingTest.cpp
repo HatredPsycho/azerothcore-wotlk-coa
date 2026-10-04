@@ -70,3 +70,24 @@ TEST(LocalLevelScalingTest, AbilityRequirementFollowsTheInstalledOwner)
 
     LocalLevelScaling::AbilityRequiredLevelOwner.store(nullptr, std::memory_order_relaxed);
 }
+
+TEST(LocalLevelScalingTest, ReservedItemRangeIsRecognisedAndItsNeighboursAreNot)
+{
+    LocalLevelScaling::ReserveLevelResolvedItems(9700000, 9706399);
+
+    EXPECT_TRUE(LocalLevelScaling::IsLevelResolvedItem(9700000));
+    EXPECT_TRUE(LocalLevelScaling::IsLevelResolvedItem(9703160));
+    EXPECT_TRUE(LocalLevelScaling::IsLevelResolvedItem(9706399));
+    EXPECT_FALSE(LocalLevelScaling::IsLevelResolvedItem(9699999));
+    EXPECT_FALSE(LocalLevelScaling::IsLevelResolvedItem(9706400));
+    EXPECT_FALSE(LocalLevelScaling::IsLevelResolvedItem(0));
+}
+
+TEST(LocalLevelScalingTest, ReservingAnEmptyRangeReservesNothing)
+{
+    LocalLevelScaling::ReserveLevelResolvedItems(500, 499);
+    LocalLevelScaling::ReserveLevelResolvedItems(0, 100);
+
+    EXPECT_FALSE(LocalLevelScaling::IsLevelResolvedItem(500));
+    EXPECT_FALSE(LocalLevelScaling::IsLevelResolvedItem(50));
+}

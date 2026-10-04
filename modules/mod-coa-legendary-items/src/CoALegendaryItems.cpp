@@ -6,6 +6,7 @@
 #include "Creature.h"
 #include "Item.h"
 #include "Log.h"
+#include "LocalLevelScaling.h"
 #include "LootMgr.h"
 #include "Map.h"
 #include "ObjectAccessor.h"
@@ -469,6 +470,8 @@ void AddSC_coa_legendary_items()
     if (!sConfigMgr->GetOption<bool>("CoALegendaryItems.Enable", false))
         return;
     enabled.store(true);
+    LocalLevelScaling::ReserveLevelResolvedItems(ItemEntryBase,
+        ItemEntryBase + DesignCount * ItemEntryStride - 1);
     for (uint32 index = 0; index < DesignCount; ++index)
     {
         Ascension::ClientSpellPatches::Instance().Register(AuraEntryBase + index, {}, IsEnabled);

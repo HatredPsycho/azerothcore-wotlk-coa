@@ -524,8 +524,7 @@ bool Player::CanRewardQuest(Quest const* quest, uint32 reward, bool msg)
     ItemPosCountVec dest;
     if (quest->GetRewChoiceItemsCount() > 0)
     {
-        if (uint32 const itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardChoiceItemId[reward],
-            quest->GetQuestLevel()))
+        if (uint32 const itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardChoiceItemId[reward], quest))
         {
             InventoryResult res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId,
                 quest->RewardChoiceItemCount[reward]);
@@ -541,8 +540,7 @@ bool Player::CanRewardQuest(Quest const* quest, uint32 reward, bool msg)
     {
         for (uint32 i = 0; i < quest->GetRewItemsCount(); ++i)
         {
-            if (uint32 const itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardItemId[i],
-                quest->GetQuestLevel()))
+            if (uint32 const itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardItemId[i], quest))
             {
                 InventoryResult res = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, quest->RewardItemIdCount[i]);
                 if (res != EQUIP_ERR_OK)
@@ -754,8 +752,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
 
     if (quest->GetRewChoiceItemsCount())
     {
-        if (uint32 itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardChoiceItemId[reward],
-            quest->GetQuestLevel()))
+        if (uint32 itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardChoiceItemId[reward], quest))
         {
             ItemPosCountVec dest;
             if (CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, quest->RewardChoiceItemCount[reward]) == EQUIP_ERR_OK)
@@ -776,8 +773,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
     {
         for (uint32 i = 0; i < quest->GetRewItemsCount(); ++i)
         {
-            if (uint32 itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardItemId[i],
-                quest->GetQuestLevel()))
+            if (uint32 itemId = LocalLevelScaling::QuestRewardItemFor(this, quest->RewardItemId[i], quest))
             {
                 ItemPosCountVec dest;
                 if (CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, quest->RewardItemIdCount[i]) == EQUIP_ERR_OK)
