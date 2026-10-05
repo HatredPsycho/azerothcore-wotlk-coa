@@ -171,6 +171,22 @@
     {
       "action": "assert",
       "actor": "cleric",
+      "metric": "cast_failure",
+      "spell": 800611,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
+      "metric": "spell_damage_count",
+      "spell": 800611,
+      "target": "enemy",
+      "min": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
       "metric": "spell_damage_count",
       "spell": 800611,
       "target": "enemy",
@@ -227,6 +243,22 @@
       "actor": "cleric",
       "spell": 800611,
       "target": "enemy"
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
+      "metric": "cast_failure",
+      "spell": 800611,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
+      "metric": "spell_damage_count",
+      "spell": 800611,
+      "target": "enemy",
+      "min": 2,
+      "within_ms": 3000
     },
     {
       "action": "assert",
@@ -401,6 +433,22 @@
     {
       "action": "assert",
       "actor": "cleric",
+      "metric": "cast_failure",
+      "spell": 800611,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
+      "metric": "spell_damage_count",
+      "spell": 800611,
+      "target": "enemy",
+      "min": 3,
+      "within_ms": 3000
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
       "metric": "spell_heal_count",
       "spell": 707522,
       "target": "cleric",
@@ -458,6 +506,22 @@
       "actor": "cleric",
       "spell": 800611,
       "target": "enemy"
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
+      "metric": "cast_failure",
+      "spell": 800611,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "actor": "cleric",
+      "metric": "spell_damage_count",
+      "spell": 800611,
+      "target": "enemy",
+      "min": 4,
+      "within_ms": 3000
     },
     {
       "action": "assert",
