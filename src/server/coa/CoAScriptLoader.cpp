@@ -274,6 +274,7 @@ void AddSC_AscensionVultureCultQuests();
 void AddSC_AscensionCaravanCarts();
 void AddSC_AscensionNorthshireRuins();
 void AddSC_AscensionCainManor();
+void AddSC_AscensionThreeTotems();
 void AddSC_AscensionInnRest();
 void AddSC_AscensionReaperRuin();
 void AddSC_AscensionReaperRedshade();
@@ -547,6 +548,7 @@ void AddCoAScripts()
     AddSC_AscensionCaravanCarts();
     AddSC_AscensionNorthshireRuins();
     AddSC_AscensionCainManor();
+    AddSC_AscensionThreeTotems();
     AddSC_AscensionInnRest();
     AddSC_AscensionReaperRuin();
     AddSC_AscensionReaperRedshade();

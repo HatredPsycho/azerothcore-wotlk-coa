@@ -74,7 +74,8 @@ METRICS = {
     'who_count', 'who_class', 'player_name', 'name_lookup', 'loot_count', 'loot_entry', 'loot_received',
     'loot_gold', 'loot_bloodforged', 'loot_required_level', 'loot_item_level', 'loot_base_entry', 'loot_item_armor',
     'carried_item_level', 'carried_item_required_level',
-    'nearby_gameobject_count', 'nearby_creature_count', 'carried_money',
+    'nearby_gameobject_count', 'nearby_gameobject_quest_active', 'nearby_creature_count', 'carried_money',
+    'channel_object_entry',
     'quest_rewarded', 'has_achievement', 'has_title', 'spell_damage_taken', 'melee_damage_taken', 'spell_healing_taken',
     'spell_hit_bonus_taken', 'rooted', 'stunned', 'spell_cast_count', 'spell_go_count', 'cast_failure',
     'stealth_detection', 'can_detect',
@@ -217,6 +218,7 @@ ACTIONS = {
     'restore_charges': ({'actor', 'spell'}, {'actor', 'spell'}),
     'set_power': ({'actor', 'value'}, {'actor', 'value', 'power', 'pet', 'maximum'}),
     'teleport': ({'actor', 'map', 'x', 'y', 'z'}, {'actor', 'map', 'x', 'y', 'z', 'o'}),
+    'teleport_to_spawn': ({'actor', 'guid'}, {'actor', 'guid'}),
     'quest_accept': ({'actor', 'quest'}, {'actor', 'quest', 'entry', 'gameobject'}),
     'quest_open': ({'actor', 'quest', 'entry'}, {'actor', 'quest', 'entry'}),
     'quest_click': ({'actor', 'quest', 'entry'}, {'actor', 'quest', 'entry'}),
@@ -371,6 +373,8 @@ def validate(scenario):
                 number(destination[key], f'{where}.destination.{key}', -17000, 17000)
         if action in {'dungeon_difficulty_packet', 'ascension_dungeon_difficulty_packet'}:
             number(step['value'], f'{where}.value', 0, 2, True)
+        if action == 'teleport_to_spawn':
+            number(step['guid'], f'{where}.guid', 1, 2**32 - 1, True)
         if action == 'teleport':
             number(step['map'], f'{where}.map', 0, 2**31 - 1, True)
             for key in ('x', 'y', 'z', 'o'):
