@@ -71,6 +71,26 @@ TEST(LocalLevelScalingTest, AbilityRequirementFollowsTheInstalledOwner)
     LocalLevelScaling::AbilityRequiredLevelOwner.store(nullptr, std::memory_order_relaxed);
 }
 
+TEST(LocalLevelScalingTest, AreaContentKeepsItsAuthoredLevelWithoutAnOwner)
+{
+    LocalLevelScaling::AreaContentLevelOwner.store(nullptr, std::memory_order_relaxed);
+    EXPECT_EQ(LocalLevelScaling::GetEffectiveAreaContentLevel(495, 571, 70), 70);
+}
+
+TEST(LocalLevelScalingTest, AreaContentAsksTheOwnerWithItsAreaAndMap)
+{
+    LocalLevelScaling::AreaContentLevelOwner.store(
+        [](std::uint32_t /*areaId*/, std::uint32_t mapId, std::uint8_t authoredLevel) -> std::uint8_t
+        {
+            return mapId == 571 ? authoredLevel - 15 : authoredLevel;
+        }, std::memory_order_relaxed);
+
+    EXPECT_EQ(LocalLevelScaling::GetEffectiveAreaContentLevel(495, 571, 70), 55);
+    EXPECT_EQ(LocalLevelScaling::GetEffectiveAreaContentLevel(12, 0, 10), 10);
+
+    LocalLevelScaling::AreaContentLevelOwner.store(nullptr, std::memory_order_relaxed);
+}
+
 TEST(LocalLevelScalingTest, ReservedItemRangeIsRecognisedAndItsNeighboursAreNot)
 {
     LocalLevelScaling::ReserveLevelResolvedItems(9700000, 9706399);

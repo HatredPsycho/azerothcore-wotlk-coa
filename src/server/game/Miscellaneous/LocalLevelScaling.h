@@ -127,6 +127,21 @@ inline std::atomic<CreatureBaseLevelResolver> CreatureBaseLevelOwner{nullptr};
 
 std::uint8_t GetEffectiveCreatureBaseLevel(CreatureTemplate const* cinfo, Creature const* creature = nullptr);
 
+/// The level an area's content stands at on this realm, given the level it was written for.
+///
+/// Systems that decide where a character of some level belongs - which zone a bot travels to, which
+/// spot a teleport picks - carry tables of the levels zones were written for. On a realm that maps
+/// content onto other levels those tables send a character to the wrong expansion, so they ask here
+/// with the area the number belongs to. The authored level stands with nothing installed.
+using AreaContentLevelResolver = std::uint8_t (*)(std::uint32_t, std::uint32_t, std::uint8_t);
+inline std::atomic<AreaContentLevelResolver> AreaContentLevelOwner{nullptr};
+
+inline std::uint8_t GetEffectiveAreaContentLevel(std::uint32_t areaId, std::uint32_t mapId, std::uint8_t authoredLevel)
+{
+    AreaContentLevelResolver const owner = AreaContentLevelOwner.load(std::memory_order_relaxed);
+    return owner ? owner(areaId, mapId, authoredLevel) : authoredLevel;
+}
+
 /// The armor a creature wears. `Creature::UpdateEntry` regenerates armor from the template *after*
 /// `SelectLevel` has run, so a module that set it from the creature hook loses it again a few lines
 /// later. The core asks here instead of writing the generated value straight back; with nothing
