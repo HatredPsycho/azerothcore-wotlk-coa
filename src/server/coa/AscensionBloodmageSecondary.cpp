@@ -64,10 +64,6 @@ enum BloodmageSecondarySpells : uint32
     SPELL_CURSED_FORM_REQUIREMENT_2 = 524861,
     SPELL_VAMPIRIC_FANG_SHARE = 572373,
     SPELL_VAMPIRIC_FANG_HEAL = 572374,
-    SPELL_BLOODFANG_BITE = 800156,
-    SPELL_BITE_WOUND_TALENT = 532612,
-    SPELL_ETERNAL_CURSE_PASSIVE = 92114,
-    SPELL_BITE_WOUND = 706654,
     SPELL_VAMPIRIC_HUNGER = 802316,
     SPELL_VAMPIRIC_HUNGER_ENRAGE = 504270,
     SPELL_AORTIC_AEGIS = 704637,
@@ -342,12 +338,6 @@ public:
             spell->SetScriptValue(SPELL_ROTCLAW_ENERGIZE, 1);
             player->CastSpell(player, SPELL_ROTCLAW_ENERGIZE, true);
         }
-        if (RankOf(id, SPELL_BLOODFANG_BITE) && player->HasSpell(SPELL_ETERNAL_CURSE_PASSIVE) &&
-            !spell->GetScriptValue(SPELL_BITE_WOUND))
-        {
-            spell->SetScriptValue(SPELL_BITE_WOUND, 1);
-            player->CastSpell(target, SPELL_BITE_WOUND, true);
-        }
         if (id == SPELL_FINGER_OF_DEATH && !spell->GetScriptValue(SPELL_SHATTERED))
         {
             spell->SetScriptValue(SPELL_SHATTERED, 1);
@@ -439,60 +429,6 @@ public:
                     if (player->HasAura(SPELL_BLACK_HEART))
                         player->ModifyPower(POWER_RAGE, int32(player->GetMaxPower(POWER_RAGE)) / 5);
                 }
-    }
-};
-
-thread_local ObjectGuid BiteWoundSwingAttacker;
-thread_local ObjectGuid BiteWoundSwingVictim;
-
-bool ClaimBiteWoundSwing(Unit* attacker, Unit* victim)
-{
-    bool const claimed = BiteWoundSwingAttacker == attacker->GetGUID() &&
-        BiteWoundSwingVictim == victim->GetGUID();
-    BiteWoundSwingAttacker.Clear();
-    BiteWoundSwingVictim.Clear();
-    return claimed;
-}
-
-class bloodmage_bite_wound_leech : public UnitScript
-{
-public:
-    bloodmage_bite_wound_leech() : UnitScript("bloodmage_bite_wound_leech", true,
-        {UNITHOOK_MODIFY_MELEE_DAMAGE, UNITHOOK_ON_DAMAGE}) { }
-
-    void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32&) override
-    {
-        BiteWoundSwingAttacker.Clear();
-        BiteWoundSwingVictim.Clear();
-        Player* player = attacker ? attacker->ToPlayer() : nullptr;
-        if (!player || player->getClass() != CLASS_SON_OF_ARUGAL || !target || target == player)
-            return;
-        if (!target->GetAura(SPELL_BITE_WOUND, player->GetGUID()))
-            return;
-        BiteWoundSwingAttacker = player->GetGUID();
-        BiteWoundSwingVictim = target->GetGUID();
-    }
-
-    void OnDamage(Unit* attacker, Unit* victim, uint32& damage) override
-    {
-        if (!attacker || !victim || !ClaimBiteWoundSwing(attacker, victim) || !damage)
-            return;
-        Player* player = attacker->ToPlayer();
-        if (!player || !player->IsAlive())
-            return;
-        SpellInfo const* rate = sSpellMgr->GetSpellInfo(SPELL_BITE_WOUND_TALENT);
-        int32 const percent = rate ? rate->Effects[EFFECT_0].CalcValue(player) : 0;
-        if (percent <= 0)
-            return;
-        uint64 const restored = std::min<uint64>(uint64(damage) * uint64(percent) / 100,
-            uint64(std::numeric_limits<int32>::max()));
-        if (!restored)
-            return;
-        SpellInfo const* wound = sSpellMgr->GetSpellInfo(SPELL_BITE_WOUND);
-        if (!wound)
-            return;
-        HealInfo healInfo(player, player, uint32(restored), wound, wound->GetSchoolMask());
-        player->HealBySpell(healInfo);
     }
 };
 
@@ -1019,7 +955,6 @@ void AddSC_AscensionBloodmageSecondary()
     RegisterSpellScript(aura_ascension_bloodmage_sacrificial_rite);
     new bloodmage_secondary_casts();
     new bloodmage_kiss_periodic();
-    new bloodmage_bite_wound_leech();
     new bloodmage_plague_pools();
     new bloodmage_secondary_contracts();
     RegisterSpellScript(spell_ascension_blood_rituals_heal);
