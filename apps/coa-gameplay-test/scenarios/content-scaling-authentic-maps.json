@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "name": "Content scaling: authentic maps keep their authored levels, other maps are still scaled",
+  "contract": [
+    "Requires CoAContentScaling.Enable=1 with the TBC and WotLK packs at cap 60 (Classic 1-45) and",
+    "CoAContentScaling.AuthenticMaps listing Molten Core (409) but not the Sunken Temple (109). On an authentic map",
+    "a creature keeps its authored level, entry asks for the authored minimum level, and an item whose every",
+    "spawned source is there keeps its authored item and required level. Molten Giant 11658 is authored at 62,",
+    "Molten Core asks for 60, and Band of Sulfuras 19138 drops only from Ragnaros, an encounter-summoned boss,",
+    "at item level 70 and required level 60. Scaled, these would sit in the Classic band at 45 or below. The",
+    "Sunken Temple keeps being scaled: Atal'ai Witch Doctor 5259 (authored 49-50), its access level (35) and",
+    "Vestments of the Atal'ai Prophet 10806 (required level 50) all move below their authored values."
+  ],
+  "timeout_ms": 120000,
+  "location": { "map": 409, "x": 1096.0, "y": -467.0, "z": -104.6, "o": 0, "ignore_access": true },
+  "players": [
+    { "id": "raider", "race": 1, "class": 1, "level": 60 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 1000 },
+    { "action": "set_health", "actor": "raider", "value": 10000000, "maximum": 10000000 },
+    { "action": "set_phase", "actor": "raider", "value": 1 },
+    { "action": "teleport", "actor": "raider", "map": 409, "x": 1120.0, "y": -525.0, "z": -106.5 },
+    { "action": "wait", "ms": 1000 },
+    { "action": "assert", "label": "A Molten Core creature keeps its authored level 62", "actor": "raider",
+      "metric": "nearby_creature_level", "entry": 11658, "equals": 62, "within_ms": 5000 },
+    { "action": "assert", "label": "Molten Core asks for its authored level 60", "actor": "raider",
+      "metric": "map_access_min_level", "map": 409, "equals": 60 },
+    { "action": "add_item", "actor": "raider", "item": 19138 },
+    { "action": "assert", "label": "Band of Sulfuras keeps item level 70", "actor": "raider",
+      "metric": "carried_item_level", "item": 19138, "equals": 70, "within_ms": 2000 },
+    { "action": "assert", "label": "and required level 60", "actor": "raider",
+      "metric": "carried_item_required_level", "item": 19138, "equals": 60 },
+
+    { "action": "assert", "label": "The Sunken Temple asks for less than its authored 35", "actor": "raider",
+      "metric": "map_access_min_level", "map": 109, "max": 34 },
+    { "action": "add_item", "actor": "raider", "item": 10806 },
+    { "action": "assert", "label": "A Sunken Temple item asks for less than its authored 50", "actor": "raider",
+      "metric": "carried_item_required_level", "item": 10806, "max": 49, "within_ms": 2000 },
+    { "action": "teleport", "actor": "raider", "map": 109, "x": -370.0, "y": 10.0, "z": -148.7 },
+    { "action": "wait", "ms": 1000 },
+    { "action": "assert", "label": "A Sunken Temple creature stands below its authored 49", "actor": "raider",
+      "metric": "nearby_creature_level", "entry": 5259, "max": 48, "within_ms": 5000 }
+  ]
+}

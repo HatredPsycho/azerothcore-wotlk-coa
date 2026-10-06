@@ -401,7 +401,7 @@ public:
             return;
 
         Map* map = owner->FindMap();
-        if (!map)
+        if (!map || LocalLevelScaling::IsAuthenticMap(map->GetId()))
             return;
 
         if (&store == &LootTemplates_Creature)
