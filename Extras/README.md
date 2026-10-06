@@ -40,7 +40,8 @@ Install by copying the `CoACompanions` directory into the client's `Interface\Ad
 
 ## CoALFGMode
 
-Sets how the Dungeon Finder forms your group, from a row above its queue button:
+Sets how the Dungeon Finder forms your group, from two dropdowns beside its queue button (the button
+moves to the window's left edge to make room; ElvUI's skin is used when ElvUI skins the window):
 
 - **Group**: Matchmaking (wait for other players), Fill with bots (missing members are filled when you
   enter), or Start now (enter at once with the current group or alone, without a role check).

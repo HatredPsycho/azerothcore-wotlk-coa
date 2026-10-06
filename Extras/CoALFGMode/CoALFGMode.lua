@@ -152,28 +152,61 @@ local function HookTooltip(frame)
     frame:SetScript("OnLeave", GameTooltip_Hide)
 end
 
+local function ElvUISkins()
+    local engine = type(ElvUI) == "table" and ElvUI[1]
+    local blizzard = engine and engine.private and engine.private.skins and engine.private.skins.blizzard
+    if not blizzard or not blizzard.enable or not blizzard.lfd then
+        return nil
+    end
+    return engine:GetModule("Skins", true)
+end
+
+-- The queue button moves to the left edge so both dropdowns fit beside it. Its height above the
+-- bottom is kept, since ElvUI places it differently from the stock window.
+local function PlaceQueueButton(finder, queueButton)
+    local _, _, _, _, bottom = queueButton:GetPoint()
+    queueButton:ClearAllPoints()
+    queueButton:SetPoint("BOTTOMLEFT", finder, "BOTTOMLEFT", 8, bottom or 4)
+    queueButton:SetWidth(110)
+end
+
+-- A dropdown frame is wider than the box it draws: the box starts about 20 points in and ends
+-- short of the frame's right edge, by more in the stock template than in ElvUI's skin.
+local function CreateDropDown(name, label, previous, previousGap, skins)
+    local dropDown = CreateFrame("Frame", name, bar, "UIDropDownMenuTemplate")
+    local text = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    text:SetText(label)
+    if skins then
+        dropDown:SetPoint("LEFT", previous, "RIGHT", previousGap, 0)
+        text:SetPoint("BOTTOM", dropDown, "TOP", 6, -2)
+    else
+        dropDown:SetPoint("LEFT", previous, "RIGHT", previousGap, -2)
+        text:SetPoint("BOTTOM", dropDown, "TOP", 1, -1)
+    end
+    return dropDown, text
+end
+
 local function CreateBar(finder, queueButton)
+    local skins = ElvUISkins()
+    PlaceQueueButton(finder, queueButton)
+
     bar = CreateFrame("Frame", "CoALFGModeBar", finder)
-    bar:SetSize(400, 30)
-    bar:SetPoint("BOTTOM", queueButton, "TOP", 0, 6)
+    bar:SetPoint("BOTTOMLEFT", queueButton, "BOTTOMRIGHT", 0, -4)
+    bar:SetSize(230, 44)
     bar:SetFrameLevel(queueButton:GetFrameLevel())
 
-    modeLabel = bar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    modeLabel:SetPoint("LEFT", bar, "LEFT", 0, 2)
-    modeLabel:SetText("Group:")
+    modeDropDown, modeLabel = CreateDropDown("CoALFGModeDropDown", "Group", queueButton, -10, skins)
+    challengeDropDown, challengeLabel = CreateDropDown("CoALFGModeChallengeDropDown", "Bosses", modeDropDown,
+        skins and -12 or -26, skins)
 
-    modeDropDown = CreateFrame("Frame", "CoALFGModeDropDown", bar, "UIDropDownMenuTemplate")
-    modeDropDown:SetPoint("LEFT", modeLabel, "RIGHT", -12, -2)
-    UIDropDownMenu_SetWidth(modeDropDown, 110)
+    if skins then
+        skins:HandleDropDownBox(modeDropDown, 130)
+        skins:HandleDropDownBox(challengeDropDown, 110)
+    else
+        UIDropDownMenu_SetWidth(modeDropDown, 85)
+        UIDropDownMenu_SetWidth(challengeDropDown, 60)
+    end
     UIDropDownMenu_Initialize(modeDropDown, ModeDropDown_Initialize)
-
-    challengeLabel = bar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    challengeLabel:SetPoint("LEFT", modeDropDown, "RIGHT", -6, 2)
-    challengeLabel:SetText("Bosses:")
-
-    challengeDropDown = CreateFrame("Frame", "CoALFGModeChallengeDropDown", bar, "UIDropDownMenuTemplate")
-    challengeDropDown:SetPoint("LEFT", challengeLabel, "RIGHT", -12, -2)
-    UIDropDownMenu_SetWidth(challengeDropDown, 80)
     UIDropDownMenu_Initialize(challengeDropDown, ChallengeDropDown_Initialize)
 
     HookTooltip(bar)
