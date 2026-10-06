@@ -7,6 +7,16 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
 
+def boost_include_dir():
+    if os.environ.get('BOOST_INCLUDE_DIR'):
+        return Path(os.environ['BOOST_INCLUDE_DIR'])
+    cache = ROOT / 'build' / 'CMakeCache.txt'
+    if cache.exists():
+        for line in cache.read_text(errors='replace').splitlines():
+            if line.startswith('Boost_INCLUDE_DIR:') and not line.endswith('-NOTFOUND'):
+                return Path(line.split('=', 1)[1])
+    return Path('C:/vcpkg/installed/x64-windows-static-md/include')
+
 def main():
     header = (ROOT / 'src/server/apps/worldserver/RemoteAccess/RASession.h').read_text()
     source = (ROOT / 'src/server/apps/worldserver/RemoteAccess/RASession.cpp').read_text()
@@ -19,7 +29,7 @@ def main():
     harness = (HERE / 'harness.cpp').read_text().replace('// ACTUAL_HOLDER', holder).replace('// ACTUAL_SOURCE', source)
     compiler = shutil.which(os.environ.get('CXX', 'cl.exe' if os.name == 'nt' else 'c++'))
     assert compiler, 'A C++20 compiler is required'
-    boost = Path(os.environ.get('BOOST_INCLUDE_DIR', 'C:/vcpkg/installed/x64-windows-static-md/include'))
+    boost = boost_include_dir()
     with tempfile.TemporaryDirectory(prefix='coa-ra-shutdown-') as folder:
         out = Path(folder)
         (out / 'RASession.h').write_text(header)
