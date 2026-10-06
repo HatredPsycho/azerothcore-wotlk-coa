@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "name": "Content scaling: Heroic and Mythic Classic dungeons keep their authored levels, Normal is scaled",
+  "contract": [
+    "Requires CoAContentScaling.Enable=1 at cap 60 (Classic 1-45), CoAContentScaling.AuthenticHeroicMaps listing",
+    "the Deadmines (36) and Blackrock Depths (230), BRD also in AuthenticMaps, and AuthenticHeroicMinLevel=60.",
+    "Edwin VanCleef 639 is authored at 21 on Normal and his Heroic template 100639 at 63: Normal stays scaled below",
+    "21, Heroic keeps 63. The database asks for the Normal entry levels on every difficulty (Deadmines 10, BRD 40);",
+    "Normal Deadmines asks for its scaled level, Normal BRD for its authored 40, and the Heroic and Mythic",
+    "difficulties of both for 60."
+  ],
+  "timeout_ms": 120000,
+  "location": { "map": 0, "x": -8914, "y": -133, "z": 80.6 },
+  "players": [
+    { "id": "normal", "race": 1, "class": 1, "level": 60 },
+    { "id": "heroic", "race": 1, "class": 1, "level": 60 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 1000 },
+    { "action": "dungeon_difficulty_packet", "actor": "normal", "value": 0 },
+    { "action": "set_health", "actor": "normal", "value": 1000000, "maximum": 1000000 },
+    { "action": "set_phase", "actor": "normal", "value": 1 },
+    { "action": "dungeon_difficulty_packet", "actor": "heroic", "value": 1 },
+    { "action": "set_health", "actor": "heroic", "value": 1000000, "maximum": 1000000 },
+    { "action": "set_phase", "actor": "heroic", "value": 1 },
+
+    { "action": "assert", "label": "Normal Deadmines asks for less than its authored 10", "actor": "normal",
+      "metric": "map_access_min_level", "map": 36, "difficulty": 0, "max": 9 },
+    { "action": "assert", "label": "Mythic Deadmines asks for 60", "actor": "normal",
+      "metric": "map_access_min_level", "map": 36, "difficulty": 2, "equals": 60 },
+    { "action": "assert", "label": "Normal Blackrock Depths asks for its authored 40", "actor": "normal",
+      "metric": "map_access_min_level", "map": 230, "difficulty": 0, "equals": 40 },
+    { "action": "assert", "label": "Heroic Blackrock Depths asks for 60", "actor": "normal",
+      "metric": "map_access_min_level", "map": 230, "difficulty": 1, "equals": 60 },
+
+    { "action": "teleport", "actor": "normal", "map": 36, "x": -87.369, "y": -817, "z": 39.3004 },
+    { "action": "wait", "ms": 1500 },
+    { "action": "assert", "actor": "normal", "metric": "map_difficulty", "equals": 0, "within_ms": 5000 },
+    { "action": "assert", "label": "Normal VanCleef stands below his authored 21", "actor": "normal",
+      "metric": "nearby_creature_level", "entry": 639, "max": 20, "within_ms": 5000 },
+
+    { "action": "teleport", "actor": "heroic", "map": 36, "x": -87.369, "y": -817, "z": 39.3004 },
+    { "action": "wait", "ms": 1500 },
+    { "action": "assert", "actor": "heroic", "metric": "map_difficulty", "equals": 1, "within_ms": 5000 },
+    { "action": "assert", "actor": "heroic", "metric": "nearby_creature_template", "entry": 639, "equals": 100639 },
+    { "action": "assert", "label": "Heroic VanCleef keeps his authored 63", "actor": "heroic",
+      "metric": "nearby_creature_level", "entry": 639, "equals": 63, "within_ms": 5000 }
+  ]
+}

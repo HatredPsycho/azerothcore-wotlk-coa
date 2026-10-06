@@ -182,7 +182,7 @@ namespace
             return false;
 
         // Maps content scaling leaves at their authored levels are played there by everyone.
-        if (LocalLevelScaling::IsAuthenticMap(map->GetId()))
+        if (LocalLevelScaling::IsAuthenticMap(map->GetId(), map->GetDifficulty()))
             return false;
 
         // A world boss rolls every fight at its authored level (Creature::getLevelForTarget), so a view

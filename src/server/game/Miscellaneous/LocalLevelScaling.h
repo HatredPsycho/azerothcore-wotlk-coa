@@ -157,15 +157,16 @@ inline std::atomic<bool> QuestEnabled{false};
 inline std::atomic<bool> ContentScalingActive{false};
 inline std::atomic<std::uint8_t> CreatureOffset{3};
 
-/// Maps the content scaling module plays at their authored levels: creatures, access and loot stay as
-/// written, and no per-character view lifts them either. With nothing installed every map is scaled.
-using AuthenticMapResolver = bool (*)(std::uint32_t mapId);
+/// Maps the content scaling module plays at their authored levels on a difficulty: creatures, access
+/// and loot stay as written, and no per-character view lifts them either. With nothing installed every
+/// map is scaled.
+using AuthenticMapResolver = bool (*)(std::uint32_t mapId, std::uint8_t difficulty);
 inline std::atomic<AuthenticMapResolver> AuthenticMapOwner{nullptr};
 
-inline bool IsAuthenticMap(std::uint32_t mapId)
+inline bool IsAuthenticMap(std::uint32_t mapId, std::uint8_t difficulty)
 {
     AuthenticMapResolver const owner = AuthenticMapOwner.load(std::memory_order_relaxed);
-    return owner && owner(mapId);
+    return owner && owner(mapId, difficulty);
 }
 
 /// How much of the level-scaled reward a quest keeps when it is lifted from its own level to the
