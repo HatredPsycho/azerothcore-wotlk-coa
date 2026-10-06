@@ -2382,6 +2382,23 @@ private:
             Require(creature != nullptr, "Creature health metric needs a living nearby creature");
             return creature->GetMaxHealth();
         }
+        if (metric == "nearby_creature_level")
+        {
+            Creature* creature = player->FindNearestCreature(step.get<uint32>("entry"), 60.0f, true);
+            Require(creature != nullptr, "Creature level metric needs a living nearby creature");
+            return creature->GetLevel();
+        }
+        if (metric == "map_access_min_level")
+        {
+            uint32 const mapId = step.get<uint32>("map");
+            Difficulty const difficulty = Difficulty(step.get<uint32>("difficulty", REGULAR_DIFFICULTY));
+            DungeonProgressionRequirements const* access = sObjectMgr->GetAccessRequirement(mapId, difficulty);
+            Require(access != nullptr, "Access metric needs a map with an access requirement");
+            uint8 minLevel = access->levelMin;
+            uint8 maxLevel = access->levelMax;
+            sScriptMgr->OnResolveDungeonAccessLevels(player, mapId, difficulty, minLevel, maxLevel);
+            return minLevel;
+        }
         if (metric == "nearby_creature_template")
         {
             std::list<Creature*> creatures;
