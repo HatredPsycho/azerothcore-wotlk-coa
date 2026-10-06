@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "name": "Tinker: Overcharge on every kind of beacon at once",
+  "contract": [
+    "Overcharge (524835) overcharges each beacon the Tinker owns within 60 yards once (560711) and hands its",
+    "effect to the allies around it: Shield 50037, Replenishment 500360, Revitalize 500361 and Healing 50036.",
+    "With all four placed and a grouped ally in range, casting it twice must neither crash the server nor",
+    "overcharge a beacon twice. Reported crash: a worldserver with the Overcharge path on the stack."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    { "id": "t", "race": 1, "class": 28, "level": 60 },
+    { "id": "ally", "race": 1, "class": 8, "level": 60 }
+  ],
+  "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
+  "steps": [
+    { "action": "wait", "ms": 3000 },
+    { "action": "group", "actor": "t", "target": "ally" },
+    { "action": "learn", "actor": "t", "spell": 524834 },
+    { "action": "learn", "actor": "t", "spell": 524835 },
+    { "action": "learn", "actor": "t", "spell": 801799 },
+    { "action": "learn", "actor": "t", "spell": 801801 },
+    { "action": "learn", "actor": "t", "spell": 560750 },
+    { "action": "learn", "actor": "t", "spell": 560754 },
+    { "action": "cast", "actor": "t", "spell": 801799 },
+    { "action": "wait", "ms": 1600 },
+    { "action": "cast", "actor": "t", "spell": 801801 },
+    { "action": "wait", "ms": 1600 },
+    { "action": "cast", "actor": "t", "spell": 560750 },
+    { "action": "wait", "ms": 1600 },
+    { "action": "cast", "actor": "t", "spell": 560754 },
+    { "action": "wait", "ms": 1600 },
+    { "action": "assert", "actor": "t", "metric": "owned_creature_count", "entry": 50036, "equals": 1, "within_ms": 2000 },
+    { "action": "assert", "actor": "t", "metric": "owned_creature_count", "entry": 50037, "equals": 1, "within_ms": 2000 },
+    { "action": "assert", "actor": "t", "metric": "aura", "spell": 524834, "equals": 1 },
+    { "action": "cast", "actor": "t", "spell": 524835 },
+    { "action": "wait", "ms": 2000 },
+    { "action": "cast", "actor": "t", "spell": 524835 },
+    { "action": "wait", "ms": 3000 },
+    { "action": "assert", "label": "The Tinker is still there after Overcharge", "actor": "t", "metric": "alive", "equals": 1 },
+    { "action": "assert", "actor": "ally", "metric": "alive", "equals": 1 }
+  ]
+}
