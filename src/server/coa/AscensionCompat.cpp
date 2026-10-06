@@ -180,6 +180,7 @@ constexpr uint16 SMSG_PATCH_ITEM = 0x0932;
 constexpr uint16 SMSG_PATCH_ITEM_DISPLAY_INFO = 0x096B;
 constexpr uint16 SMSG_PATCH_SPELL = 0x092A;
 constexpr uint16 SMSG_PATCH_SUPER_TRACK = 0x06BE;
+constexpr uint16 SMSG_PATCH_SPELL_SHAPESHIFT_FORM = 0x0949;
 constexpr uint32 CUSTOM_DISPLAY_ID_FALLBACK_MIN = 652000;
 constexpr uint32 DISPLAY_PATCH_FALLBACK_DELAY_MS = 5000;
 constexpr uint32 DISPLAY_PATCH_RESEND_COOLDOWN_MS = 10000;
@@ -3605,9 +3606,9 @@ public:
     PreparedPatchRows const &rows = GetPreparedPatchRows();
     LOG_INFO("coa",
              "Prepared {} CreatureDisplayInfo, {} ItemDisplayInfo, {} Item, "
-             "{} Spell and {} SuperTrack patch rows for the client stream",
+             "{} Spell, {} SuperTrack and {} SpellShapeshiftForm patch rows for the client stream",
              rows.CreatureDisplayIds.size(), rows.ItemDisplayInfos.size(),
-             rows.Items.size(), rows.Spells.size(), rows.SuperTracks.size());
+             rows.Items.size(), rows.Spells.size(), rows.SuperTracks.size(), rows.ShapeshiftForms.size());
   }
 
   void OnPlayerLogin(Player *player) {
@@ -3752,11 +3753,14 @@ public:
     for (SuperTrackPatchRow const &row : rows.SuperTracks)
       bytes += SendSuperTrackRow(player, row);
 
+    for (ShapeshiftFormPatchRow const &row : rows.ShapeshiftForms)
+      bytes += SendShapeshiftFormRow(player, row);
+
     LOG_INFO("coa",
              "Streamed {} CreatureDisplayInfo, {} ItemDisplayInfo, {} of {} Item, "
-             "{} Spell and {} SuperTrack patch rows ({} bytes) to {} in {} ms",
+             "{} Spell, {} SuperTrack and {} SpellShapeshiftForm patch rows ({} bytes) to {} in {} ms",
              sent, rows.ItemDisplayInfos.size(), sentItems.Rows,
-             rows.Items.size(), sentSpells, rows.SuperTracks.size(), bytes,
+             rows.Items.size(), sentSpells, rows.SuperTracks.size(), rows.ShapeshiftForms.size(), bytes,
              player->GetName(), GetMSTimeDiffToNow(startTime));
   }
 
@@ -3778,6 +3782,15 @@ private:
 
   using ItemPatchRow = std::array<uint32, 8>;
   using SuperTrackPatchRow = std::array<uint32, 8>;
+
+  static constexpr uint32 SHAPESHIFT_FORM_DBC_FIELD_COUNT = 35;
+  static constexpr uint32 SHAPESHIFT_FORM_NAME_FIELD = 2;
+  static constexpr uint32 SHAPESHIFT_FORM_FIRST_NUMERIC_FIELD = 19;
+
+  struct ShapeshiftFormPatchRow {
+    std::array<uint32, 18> Values{};
+    std::string Name;
+  };
 
   struct PatchRowTally {
     uint32 Rows = 0;
@@ -3831,6 +3844,7 @@ private:
     std::unordered_map<uint32, std::size_t> ItemRowIndexById;
     std::vector<SpellPatchRow> Spells;
     std::vector<SuperTrackPatchRow> SuperTracks;
+    std::vector<ShapeshiftFormPatchRow> ShapeshiftForms;
   };
 
   static std::unordered_set<uint32> CollectOwnedItemIds(Player *player) {
@@ -3959,6 +3973,59 @@ private:
     return SendRowPacket(player, packet);
   }
 
+  std::size_t SendShapeshiftFormRow(Player *player,
+                                   ShapeshiftFormPatchRow const &row) const {
+    WorldPacket packet(SMSG_PATCH_SPELL_SHAPESHIFT_FORM,
+                       row.Values.size() * sizeof(uint32) + sizeof(uint32) + row.Name.size());
+    for (uint32 value : row.Values)
+      packet << value;
+    AppendSizedString(packet, row.Name);
+    return SendRowPacket(player, packet);
+  }
+
+  static std::vector<ShapeshiftFormPatchRow> LoadShapeshiftFormPatchRows() {
+    std::vector<ShapeshiftFormPatchRow> rows;
+    QueryResult result = WorldDatabase.Query(
+        "SELECT `ID`, `BonusActionBar` FROM `coa_client_shapeshift_form` ORDER BY `ID`");
+    if (!result)
+      return rows;
+
+    std::map<uint32, uint32> bonusBars;
+    do {
+      Field const *fields = result->Fetch();
+      bonusBars[fields[0].Get<uint32>()] = fields[1].Get<uint32>();
+    } while (result->NextRow());
+
+    ClientDBC forms;
+    std::filesystem::path const serverDbc =
+        std::filesystem::path(sWorld->GetDataPath()) / "dbc" / "SpellShapeshiftForm.dbc";
+    if (!forms.Load(serverDbc.string(), SHAPESHIFT_FORM_DBC_FIELD_COUNT))
+    {
+      LOG_ERROR("coa", "Cannot read {}; coa_client_shapeshift_form rows are not streamed", serverDbc.generic_string());
+      return rows;
+    }
+
+    for (uint32 index = 0; index < forms.GetRecordCount(); ++index)
+    {
+      ClientDBC::Record const record = forms.GetRecord(index);
+      auto const bonusBar = bonusBars.find(record.GetUInt32(0));
+      if (bonusBar == bonusBars.end())
+        continue;
+
+      ShapeshiftFormPatchRow &row = rows.emplace_back();
+      row.Values[0] = bonusBar->first;
+      row.Values[1] = bonusBar->second;
+      for (uint32 slot = 2; slot < row.Values.size(); ++slot)
+        row.Values[slot] = record.GetUInt32(SHAPESHIFT_FORM_FIRST_NUMERIC_FIELD + slot - 2);
+      row.Name = std::string(record.GetString(SHAPESHIFT_FORM_NAME_FIELD));
+      bonusBars.erase(bonusBar);
+    }
+
+    for (auto const &[form, bonusBar] : bonusBars)
+      LOG_ERROR("coa", "coa_client_shapeshift_form {} has no SpellShapeshiftForm.dbc row", form);
+    return rows;
+  }
+
   static std::vector<SuperTrackPatchRow> LoadSuperTrackPatchRows() {
     std::vector<SuperTrackPatchRow> rows;
     QueryResult result = WorldDatabase.Query(
@@ -4000,6 +4067,7 @@ private:
           [this](std::size_t left, std::size_t right) { return _rows.Items[left][0] > _rows.Items[right][0]; });
       _rows.Spells = BuildSpellPatchRows();
       _rows.SuperTracks = LoadSuperTrackPatchRows();
+      _rows.ShapeshiftForms = LoadShapeshiftFormPatchRows();
       _rowsPrepared = true;
     }
     return _rows;
