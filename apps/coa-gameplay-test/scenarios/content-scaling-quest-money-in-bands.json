@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "Content scaling: quest money follows the quest's level in the realm's bands, with scaling on and off",
+  "contract": [
+    "Requires CoAContentScaling.Enable=1 on a realm whose MaxPlayerLevel is below 70, so the TBC content is mapped",
+    "into the band below the cap, DestinyWeaver.Enable=1, DestinyWeaver.LevelScaling=1, CoA.QuestLevelScaling=1 and",
+    "Rate.RewardQuestMoney=1. Seek Out Ameer (10969) is a level-70 TBC quest that pays 4400 copper, a value of the",
+    "client's money table at level 70. Experience follows the level the quest has in the realm's bands, and so",
+    "must its money: authored TBC money on a compressed realm would pay level-70 amounts for level-60 play. Both",
+    "level-59 characters therefore receive less than 4400 copper - the one with scaling off what the quest's tier",
+    "pays at its level in the bands, the one with scaling on that value lifted to its own level less the",
+    "QuestMoneyKeepShare discount, never less than the value in the bands."
+  ],
+  "timeout_ms": 120000,
+  "location": { "map": 530, "x": -1838, "y": 5301, "z": -12.4, "o": 0 },
+  "players": [
+    { "id": "unscaled", "race": 1, "class": 1, "level": 59 },
+    { "id": "scaled", "race": 1, "class": 1, "level": 59 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 1000 },
+    { "action": "level_scaling_packet", "actor": "unscaled", "value": 0 },
+    { "action": "level_scaling_packet", "actor": "scaled", "value": 1 },
+    { "action": "wait", "ms": 500 },
+    { "action": "set_money", "actor": "unscaled", "value": 0 },
+    { "action": "set_money", "actor": "scaled", "value": 0 },
+    { "action": "prepare_quest", "actor": "unscaled", "quest": 10969 },
+    { "action": "prepare_quest", "actor": "scaled", "quest": 10969 },
+    { "action": "reward_quest", "actor": "unscaled", "quest": 10969 },
+    { "action": "reward_quest", "actor": "scaled", "quest": 10969 },
+    { "action": "assert", "label": "Scaling off: the reward is the TBC quest's money in the realm's bands",
+      "actor": "unscaled",
+      "metric": "carried_money", "min": 1, "max": 4399, "within_ms": 2000 },
+    { "action": "assert", "label": "Scaling on: lifted from the bands to the character, still below the authored value",
+      "actor": "scaled", "metric": "carried_money", "min": 1, "max": 4399, "within_ms": 2000 }
+  ]
+}

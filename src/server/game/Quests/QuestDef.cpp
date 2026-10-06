@@ -285,6 +285,36 @@ int8 Quest::FindMoneyTier() const
     return bestTier;
 }
 
+/// The authored reward moved along its own tier of the money table: to the level the quest has in this
+/// realm's bands (a content scaling module maps it; without one it is the authored level), and with
+/// `lift` on to the character's level, discounted by QuestMoneyKeepSharePercent for the levels lifted.
+/// The lift never pays less than the quest pays at its level in the bands.
+int32 Quest::TierMoney(int32 rewardedMoney, uint8 playerLevel, bool lift) const
+{
+    int8 const tier = FindMoneyTier();
+    if (tier <= 0)
+        return rewardedMoney;
+
+    int32 const mapped = LocalLevelScaling::GetEffectiveQuestBaseLevel(this);
+    uint8 const authoredLevel = uint8(std::min<int32>(Level, UINT8_MAX));
+    uint8 const ownLevel = uint8(std::clamp<int32>(mapped > 0 ? mapped : Level, 1, UINT8_MAX));
+    uint8 const effectiveLevel = lift ? LocalLevelScaling::ScaleQuestLevel(ownLevel, playerLevel) : ownLevel;
+    if (effectiveLevel == authoredLevel)
+        return rewardedMoney;
+
+    uint32 const authored = sObjectMgr->GetQuestMoneyReward(authoredLevel, uint8(tier));
+    uint32 const own = sObjectMgr->GetQuestMoneyReward(ownLevel, uint8(tier));
+    uint32 const target = sObjectMgr->GetQuestMoneyReward(effectiveLevel, uint8(tier));
+    if (!authored || !own || !target)
+        return rewardedMoney;
+
+    uint32 const moneyFloor = LocalLevelScaling::QuestMoneyKeepSharePercent.load(std::memory_order_relaxed);
+    uint32 const keepPercent = LocalLevelScaling::RewardKeepPercent(moneyFloor, ownLevel, effectiveLevel);
+    uint64 const inBands = uint64(uint32(rewardedMoney)) * own / authored;
+    uint64 const lifted = uint64(uint32(rewardedMoney)) * target * keepPercent / (uint64(authored) * 100);
+    return int32(std::min<uint64>(std::max(inBands, lifted), INT32_MAX));
+}
+
 int32 Quest::GetRewOrReqMoney(uint8 playerLevel, bool levelScaling) const
 {
     int32 rewardedMoney = RewardMoney;
@@ -320,25 +350,13 @@ int32 Quest::GetRewOrReqMoney(uint8 playerLevel, bool levelScaling) const
             //
             // Unscaled - or played below the quest's own level, where scaling leaves the level alone -
             // the ratio is one and the authored value stands untouched.
-            if (int8 const tier = FindMoneyTier(); tier > 0)
-            {
-                uint8 const ownLevel = uint8(std::min<int32>(Level, UINT8_MAX));
-                uint8 const effectiveLevel = LocalLevelScaling::ScaleQuestLevel(Level, playerLevel);
-                uint32 const base = sObjectMgr->GetQuestMoneyReward(ownLevel, uint8(tier));
-                uint32 const target = sObjectMgr->GetQuestMoneyReward(effectiveLevel, uint8(tier));
-                // Same here: with a module owning progression, the lift below is its business.
-                if (base && target && !LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
-                {
-                    uint32 const moneyFloor =
-                        LocalLevelScaling::QuestMoneyKeepSharePercent.load(std::memory_order_relaxed);
-                    uint32 const keepPercent =
-                        LocalLevelScaling::RewardKeepPercent(moneyFloor, Level, effectiveLevel);
-                    uint64 const lifted = uint64(uint32(rewardedMoney)) * target * keepPercent /
-                        (uint64(base) * 100);
-                    if (lifted > uint32(rewardedMoney))
-                        rewardedMoney = int32(std::min<uint64>(lifted, UINT32_MAX));
-                }
-            }
+            rewardedMoney = TierMoney(rewardedMoney, playerLevel, true);
+        }
+        else if (LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
+        {
+            // Content scaling maps the quest into this realm's level bands for everyone, so its money
+            // follows that level even for a character who does not play scaled quests.
+            rewardedMoney = TierMoney(rewardedMoney, playerLevel, false);
         }
     }
 
