@@ -31,6 +31,7 @@
 #include "LFGPlayerData.h"
 #include "LFGQueue.h"
 #include "Language.h"
+#include "LocalLevelScaling.h"
 #include "ObjectMgr.h"
 #include "Opcodes.h"
 #include "Player.h"
@@ -140,10 +141,14 @@ namespace lfg
                 continue;
             }
 
-            if (!maxLevel || maxLevel > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
+            // With content scaling the brackets above the level cap stay reachable: GetRandomDungeonReward looks
+            // them up by the authored level the player's level maps to, not by the player's level itself.
+            uint32 const reachableMaxLevel = LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed) ?
+                uint32(DEFAULT_MAX_LEVEL) : sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL);
+            if (!maxLevel || maxLevel > reachableMaxLevel)
             {
                 LOG_ERROR("lfg", "Level {} specified for dungeon {} in table `lfg_dungeon_rewards` can never be reached!", maxLevel, dungeonId);
-                maxLevel = sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL);
+                maxLevel = reachableMaxLevel;
             }
 
             if (!firstQuestId || !sObjectMgr->GetQuestTemplate(firstQuestId))

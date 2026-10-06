@@ -185,7 +185,7 @@ void WorldSession::HandleLfgPlayerLockInfoRequestOpcode(WorldPacket& /*recvData*
     for (lfg::LfgDungeonSet::const_iterator it = randomDungeons.begin(); it != randomDungeons.end(); ++it)
     {
         data << uint32(*it);                               // Dungeon Entry (id + type)
-        lfg::LfgReward const* reward = sLFGMgr->GetRandomDungeonReward(*it, level);
+        lfg::LfgReward const* reward = sLFGMgr->GetRandomDungeonReward(*it, level, GetPlayer());
         Quest const* quest = nullptr;
         bool done = false;
         if (reward)
