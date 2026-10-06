@@ -175,9 +175,15 @@ namespace
         if (!map || map->IsScriptedPrivateInstance())
             return false;
 
-        // Vanilla dungeons on Heroic/Mythic carry authored level-60 health (coa_dungeon_health) and
-        // Mythic+ scales it; a per-character view would scale the same health a second time.
-        if (map->IsNonRaidDungeon() && !map->IsRegularDifficulty() && DungeonHealth::IsVanillaDungeon(map->GetId()))
+        // Raids, and dungeons on Heroic or Mythic, are scaled for the group by content scaling, the raid
+        // difficulty modules, coa_dungeon_health and Mythic+; a per-character view would scale the same
+        // creature a second time. Normal five-player dungeons keep their own view rule below.
+        if (map->IsRaid() || (map->IsNonRaidDungeon() && !map->IsRegularDifficulty()))
+            return false;
+
+        // A world boss rolls every fight at its authored level (Creature::getLevelForTarget), so a view
+        // would show stats its hit and avoidance tables do not use.
+        if (creature->isWorldBoss())
             return false;
 
         return !creature->IsPet() && !creature->IsTotem() && !creature->IsTrigger() &&

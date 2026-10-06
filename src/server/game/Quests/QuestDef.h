@@ -346,6 +346,8 @@ private:
     /// The tier of the realm's per-level quest money table this quest's reward was authored from,
     /// or -1 when the quest pays nothing or has no matching tier. See the definition.
     [[nodiscard]] int8 FindMoneyTier() const;
+    /// The reward moved to the quest's level in the realm's bands, and lifted to the character's with `lift`.
+    [[nodiscard]] int32 TierMoney(int32 rewardedMoney, uint8 playerLevel, bool lift) const;
 
     uint16 _eventIdForQuest; // pussywizard
 

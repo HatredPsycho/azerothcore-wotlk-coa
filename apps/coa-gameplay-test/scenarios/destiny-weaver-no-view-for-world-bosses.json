@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "Destiny Weaver: world bosses keep their level for a character with scaling on",
+  "contract": [
+    "Requires DestinyWeaver.Enable=1, DestinyWeaver.LevelScaling=1 and DestinyWeaver.Scaling.Offset=3. A world",
+    "boss rolls every fight at its authored level (Creature::getLevelForTarget), so a view would show stats its",
+    "hit and avoidance tables do not use. Azuregos (6109, rank 3) is placed at level 40 in Elwynn Forest beside a",
+    "level-40 Mindless Zombie (1501): with scaling on, a level-60 character sees the zombie lifted to 57 and is",
+    "told the world boss's own level 40. view_level is not asked for the boss, because getLevelForTarget answers",
+    "a world boss with the viewer's level + 3 whatever is shown; sent_level, the level the client is told, is",
+    "what a view changes."
+  ],
+  "timeout_ms": 120000,
+  "location": { "map": 0, "x": -9465, "y": 64, "z": 56, "o": 0 },
+  "players": [
+    { "id": "scaled", "race": 1, "class": 1, "level": 60 }
+  ],
+  "creatures": [
+    { "id": "world_boss", "owner": "scaled", "entry": 6109, "level": 40, "distance": 6 },
+    { "id": "ordinary", "owner": "scaled", "entry": 1501, "level": 40, "distance": 3 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 1000 },
+    { "action": "level_scaling_packet", "actor": "scaled", "value": 1 },
+    { "action": "assert", "label": "Scaling on lifts an ordinary creature to 57", "actor": "scaled",
+      "metric": "view_level", "target": "ordinary", "equals": 57, "within_ms": 2000 },
+    { "action": "assert", "label": "Scaling on tells the client a world boss's own level", "actor": "scaled",
+      "metric": "sent_level", "target": "world_boss", "equals": 40, "within_ms": 2000 }
+  ]
+}

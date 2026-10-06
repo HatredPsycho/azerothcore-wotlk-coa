@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "Destiny Weaver: raid creatures keep their level for a character with scaling on",
+  "contract": [
+    "Requires DestinyWeaver.Enable=1, DestinyWeaver.LevelScaling=1 and DestinyWeaver.Scaling.Offset=3. Raids are",
+    "scaled for the group by content scaling and the raid difficulty modules; a per-character view on top would",
+    "scale the same creature twice. Molten Core (409) is a raid: a level-60 character with scaling on is shown a",
+    "level-50 Mindless Zombie (1501, the fixture the destiny-weaver-scaling scenario uses) at its own level, not",
+    "lifted to 57 as in the open world."
+  ],
+  "timeout_ms": 120000,
+  "location": { "map": 409, "x": 1096.0, "y": -467.0, "z": -104.6, "o": 0, "ignore_access": true },
+  "players": [
+    { "id": "scaled", "race": 1, "class": 1, "level": 60 }
+  ],
+  "creatures": [
+    { "id": "raid_creature", "owner": "scaled", "entry": 1501, "level": 50, "distance": 3 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 1000 },
+    { "action": "level_scaling_packet", "actor": "scaled", "value": 1 },
+    { "action": "assert", "label": "Scaling on leaves a raid creature at its own level", "actor": "scaled",
+      "metric": "view_level", "target": "raid_creature", "equals": 50, "within_ms": 2000 },
+    { "action": "assert", "label": "and tells the client that level", "actor": "scaled",
+      "metric": "sent_level", "target": "raid_creature", "equals": 50, "within_ms": 2000 }
+  ]
+}
