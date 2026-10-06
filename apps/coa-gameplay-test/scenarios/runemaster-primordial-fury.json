@@ -18,16 +18,16 @@
   "timeout_ms": 90000,
   "location": {"map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0},
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000,
+    {"id": "rm", "race": 1, "class": 32, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000,
       "spell_hit_rating": 10000}
   ],
   "creatures": [
-    {"id": "d1", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 3},
-    {"id": "d2", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 4},
-    {"id": "d3", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 5},
-    {"id": "d4", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 6},
-    {"id": "d5", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 7},
-    {"id": "d6", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 8}
+    {"id": "d1", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 3},
+    {"id": "d2", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 4},
+    {"id": "d3", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 5},
+    {"id": "d4", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 6},
+    {"id": "d5", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 7},
+    {"id": "d6", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 8}
   ],
   "steps": [
     {"action": "wait", "label": "Let spawn AI settle", "ms": 3000},

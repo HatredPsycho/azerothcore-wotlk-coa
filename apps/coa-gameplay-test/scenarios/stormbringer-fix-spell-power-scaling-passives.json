@@ -8,7 +8,7 @@
       "id": "s",
       "race": 1,
       "class": 16,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -16,7 +16,7 @@
       "id": "dummy",
       "owner": "s",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 500000,
       "distance": 3
     }

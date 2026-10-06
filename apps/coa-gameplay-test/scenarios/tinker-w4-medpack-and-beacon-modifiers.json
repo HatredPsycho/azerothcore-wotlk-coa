@@ -4,9 +4,9 @@
   "contract": "#1177, #932: Macro Designer (505230) adds +3000 ms to Med Pack (800347) and +6000 ms to the Build: Beacon family (801799), and Medical Degree (505327) adds +30000 ms of cooldown and +5 jump targets to Med Pack. Both are plain family-34 spell modifiers with no script: the native consumers must return the modified numbers, a cast Med Pack must last 9 s and chain to a second ally, and a Shield Beacon must outlive its 15 s DurationIndex.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "t", "race": 1, "class": 28, "level": 80 },
-    { "id": "a1", "race": 1, "class": 28, "level": 80 },
-    { "id": "a2", "race": 1, "class": 28, "level": 80 }
+    { "id": "t", "race": 1, "class": 28, "level": 60 },
+    { "id": "a1", "race": 1, "class": 28, "level": 60 },
+    { "id": "a2", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

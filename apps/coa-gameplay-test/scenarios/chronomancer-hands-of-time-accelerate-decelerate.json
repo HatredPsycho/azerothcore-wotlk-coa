@@ -4,8 +4,8 @@
   "contract": "Hands of Time 524856 carries SPELL_AURA_ADD_PCT_MODIFIER (108) with EffectMiscValue SPELLMOD_ALL_EFFECTS (8) and EffectSpellClassMask word2 bit 0x40000000, matching both Accelerate 572633 and Decelerate 572632's SpellFamilyFlags word2 (1073741824). EffectBasePoints 24 resolves to 25 with DieSides 1.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

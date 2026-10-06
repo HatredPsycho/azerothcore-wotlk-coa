@@ -15,19 +15,19 @@
       "id": "control",
       "race": 1,
       "class": 29,
-      "level": 80
+      "level": 60
     },
     {
       "id": "rot",
       "race": 1,
       "class": 29,
-      "level": 80
+      "level": 60
     },
     {
       "id": "cultist",
       "race": 1,
       "class": 29,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -35,7 +35,7 @@
       "id": "dummy",
       "owner": "control",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 5
     }

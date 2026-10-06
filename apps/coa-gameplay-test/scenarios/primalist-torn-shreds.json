@@ -8,7 +8,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -19,7 +19,7 @@
       "id": "target",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -27,7 +27,7 @@
       "id": "near",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 4
     }
@@ -74,7 +74,7 @@
       "action": "assert",
       "actor": "primalist",
       "metric": "level",
-      "equals": 80
+      "equals": 60
     },
     {
       "action": "assert",
@@ -82,8 +82,8 @@
       "metric": "spell_effect_value",
       "spell": 560313,
       "effect": 0,
-      "min": 62,
-      "max": 63,
+      "min": 38,
+      "max": 39,
       "label": "quarter_of_level_scaled_total"
     },
     {

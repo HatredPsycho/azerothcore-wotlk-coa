@@ -4,7 +4,7 @@
   "contract": "Cycle of Death 560727 (CharacterAdvancement 11904, Death tab, class 23) reads 'Increases your spell haste by $s1%.' Spell.dbc: a passive (SPELL_ATTR0_PASSIVE) whose only effect is aura 216 SPELL_AURA_HASTE_SPELLS on the caster, BasePoints 4 + DieSides 1 = 5. AuraEffect::HandleModCastingSpeed applies it natively to UNIT_MOD_CAST_SPEED, so the cast-speed multiplier falls to 1/1.05 = 0.95238, and a hasted magic cast such as Sacrifice Undead 805027 (SpellCastTimes 16 = 1500 ms, DmgClass magic) takes 1428 ms instead of 1500 ms. Unlearning the passive restores both.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "necro", "race": 5, "class": 23, "level": 80 }
+    { "id": "necro", "race": 5, "class": 23, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login settle", "ms": 3000 },

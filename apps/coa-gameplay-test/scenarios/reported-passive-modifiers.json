@@ -1,15 +1,15 @@
 {
   "schema": 1,
   "name": "Reported passive modifiers retain their current contracts (#87)",
-  "contract": "Current tooltips specify 5% banner haste/crit, an extra 10 percentage points of Mechsuit damage, 10% Dawn Blade damage per Pommel Smash stack (Bulwark of Darkness 680496 effect 1: BasePoints 9 + DieSides 1 in the installed Spell.dbc, read 2026-09-22; the earlier 5 was the older value), and Living Dead's 10/20% cost reductions plus 25/50% Blight refunds. Level-80 Necromancer base mana is 3856; Blight costs 28%, or 1079 mana, so refunds are 269/539. Refund comparisons subtract a matching untalented caster and allow an unequal regeneration tick.",
+  "contract": "Current tooltips specify 5% banner haste/crit, an extra 10 percentage points of Mechsuit damage, 10% Dawn Blade damage per Pommel Smash stack (Bulwark of Darkness 680496 effect 1: BasePoints 9 + DieSides 1 in the installed Spell.dbc, read 2026-09-22; the earlier 5 was the older value), and Living Dead's 10/20% cost reductions plus 25/50% Blight refunds. Level-60 Necromancer base mana is 1373; Blight costs 28%, or 384 mana, so refunds are 96/192. Refund comparisons subtract a matching untalented caster and allow +-40 mana, under two of the roughly 21-mana regeneration ticks a level-60 Necromancer gets, so the bands stay apart.",
   "players": [
-    { "id": "guardian", "race": 1, "class": 18, "level": 80 },
-    { "id": "mech", "race": 1, "class": 28, "level": 80 },
-    { "id": "augmech", "race": 1, "class": 28, "level": 80 },
-    { "id": "hunter", "race": 1, "class": 15, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000 },
-    { "id": "necro", "race": 1, "class": 23, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "livingone", "race": 1, "class": 23, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "livingtwo", "race": 1, "class": 23, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "guardian", "race": 1, "class": 18, "level": 60 },
+    { "id": "mech", "race": 1, "class": 28, "level": 60 },
+    { "id": "augmech", "race": 1, "class": 28, "level": 60 },
+    { "id": "hunter", "race": 1, "class": 15, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000 },
+    { "id": "necro", "race": 1, "class": 23, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "livingone", "race": 1, "class": 23, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "livingtwo", "race": 1, "class": 23, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
     { "id": "pommelplain", "owner": "hunter", "entry": 36, "health": 1000000 },
@@ -66,7 +66,7 @@
       "caster": "hunter", "equals": 20, "within_ms": 3000 },
     { "action": "snapshot", "actor": "necro", "metric": "spell_power_cost", "spell": 501969, "save_as": "lich_cost" },
     { "action": "snapshot", "actor": "necro", "metric": "spell_power_cost", "spell": 500965, "save_as": "crypt_cost" },
-    { "action": "assert", "actor": "necro", "metric": "spell_power_cost", "spell": 500217, "equals": 1079 },
+    { "action": "assert", "actor": "necro", "metric": "spell_power_cost", "spell": 500217, "equals": 384 },
     { "action": "learn", "actor": "livingone", "spell": 302888 },
     { "action": "learn", "actor": "livingtwo", "spell": 302920 },
     { "action": "assert", "actor": "livingone", "metric": "spell_power_cost", "spell": 501969,
@@ -97,8 +97,8 @@
     { "action": "assert", "actor": "blighttwo", "metric": "aura", "spell": 500217, "equals": 0 },
     { "action": "snapshot", "actor": "necro", "metric": "power", "power": 0, "save_as": "regen_mana" },
     { "action": "assert", "actor": "livingone", "metric": "power", "power": 0, "relative_to": "regen_mana",
-      "min": 200, "max": 340 },
+      "min": 56, "max": 136 },
     { "action": "assert", "actor": "livingtwo", "metric": "power", "power": 0, "relative_to": "regen_mana",
-      "min": 470, "max": 610 }
+      "min": 152, "max": 232 }
   ]
 }

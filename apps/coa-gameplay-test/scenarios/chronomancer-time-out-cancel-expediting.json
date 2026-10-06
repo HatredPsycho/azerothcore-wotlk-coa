@@ -9,7 +9,7 @@
   ],
   "timeout_ms": 60000,
   "players": [
-    { "id": "chrono", "race": 1, "class": 22, "level": 80, "allow_regeneration": false }
+    { "id": "chrono", "race": 1, "class": 22, "level": 60, "allow_regeneration": false }
   ],
   "creatures": [
     { "id": "attacker", "owner": "chrono", "entry": 1501, "distance": 20 }

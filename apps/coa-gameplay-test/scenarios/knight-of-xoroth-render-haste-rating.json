@@ -9,7 +9,7 @@
   ],
   "timeout_ms": 60000,
   "players": [
-    { "id": "knight", "race": 1, "class": 17, "level": 80 }
+    { "id": "knight", "race": 1, "class": 17, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login hooks and class synchronisation settle", "ms": 5000 },

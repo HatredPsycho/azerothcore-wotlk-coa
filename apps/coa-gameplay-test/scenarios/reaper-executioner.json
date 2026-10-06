@@ -4,10 +4,10 @@
   "contract": "Executioner adds 20% Strength to crit rating and ignores 30% target armor below 35% health.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "reaper", "race": 10, "class": 30, "level": 80 }
+    { "id": "reaper", "race": 10, "class": 30, "level": 60 }
   ],
   "creatures": [
-    { "id": "target", "owner": "reaper", "entry": 36, "level": 80, "health": 100000, "distance": 3 }
+    { "id": "target", "owner": "reaper", "entry": 36, "level": 60, "health": 100000, "distance": 3 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

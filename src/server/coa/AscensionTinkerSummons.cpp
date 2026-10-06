@@ -100,8 +100,8 @@ void Scale(Player* player, Creature* creature, bool initial)
     creature->SetStatFlatModifier(UNIT_MOD_STAT_INTELLECT,BASE_VALUE,intellect);
     creature->UpdateStats(STAT_STAMINA);
     creature->UpdateStats(STAT_INTELLECT);
-    creature->SetStat(STAT_STAMINA,int32(creature->GetTotalStatValue(STAT_STAMINA)));
-    creature->SetStat(STAT_INTELLECT,int32(creature->GetTotalStatValue(STAT_INTELLECT)));
+    creature->SetStat(STAT_STAMINA,int32(std::lround(creature->GetTotalStatValue(STAT_STAMINA))));
+    creature->SetStat(STAT_INTELLECT,int32(std::lround(creature->GetTotalStatValue(STAT_INTELLECT))));
     creature->SetStatFlatModifier(UNIT_MOD_HEALTH,BASE_VALUE,player->GetLevel() * 35.0f + creature->GetStat(STAT_STAMINA) * 10);
     creature->UpdateMaxHealth();
     creature->SetHealth(initial ? creature->GetMaxHealth() : std::max(1u,creature->CountPctFromMaxHealth(health)));

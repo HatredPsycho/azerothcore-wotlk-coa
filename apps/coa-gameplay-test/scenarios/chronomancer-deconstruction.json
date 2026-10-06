@@ -8,7 +8,7 @@
       "id": "control",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "spell_crit_rating": 10000
     },
@@ -16,7 +16,7 @@
       "id": "rank1",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "spell_crit_rating": 10000
     },
@@ -24,7 +24,7 @@
       "id": "rank2",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "spell_crit_rating": 10000
     }

@@ -4,7 +4,7 @@
   "contract": "Calm Under Pressure 705519 reads 'Reduces the cooldown of Stoicism by $/1000;s2 sec and Burrow Bolt by $/1000;s1 sec.' In the installed Spell.dbc (server DBC 2026-09-17; the older dbc_clientset copy differs) it is passive, family 21, effect 0 = SPELL_AURA_ADD_FLAT_MODIFIER misc 11 = SPELLMOD_COOLDOWN, BasePoints -10001 (-10000 ms), class mask word 2 = 0x40000000, and effect 1 the same aura with BasePoints -30001 (-30000 ms) and mask word 1 = 0x02000000. Burrow Bolt 802269 has flag word 2 0x40000000 and a 40000 ms cooldown, Stoicism 804802 has flag word 1 0x02000000 and 180000 ms. Player::AddSpellAndCategoryCooldowns applies SPELLMOD_COOLDOWN to the recovery and category times (Player.cpp:11451-11456), so the expected cooldowns are 30000 and 150000 ms. The scenario reads both through the spell_modifier probe and then casts Stoicism (free, no reagents) and reads its real remaining cooldown.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

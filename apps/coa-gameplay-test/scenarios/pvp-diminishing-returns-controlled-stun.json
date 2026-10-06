@@ -4,8 +4,8 @@
   "contract": "Hammer of Justice 10308 applies SPELL_AURA_MOD_STUN with mechanic stun for DurationIndex 27 = 3000 ms, which falls into DIMINISHING_CONTROLLED_STUN (DRTYPE_ALL, SpellMgr.cpp GetDiminishingReturnsGroupForSpell). A player casting it on a hostile player raises the target's level on every hit; each level halves the duration (Unit::ApplyDiminishingToDuration) until the fourth application within 15 s of the previous one ending is resisted as immune.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 24, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "enemy", "race": 2, "class": 24, "level": 80 }
+    { "id": "caster", "race": 1, "class": 24, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "enemy", "race": 2, "class": 24, "level": 60 }
   ],
   "steps": [
     { "action": "learn", "actor": "caster", "spell": 10308 },

@@ -36,14 +36,14 @@
       "id": "control",
       "race": 2,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "armed",
       "race": 2,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],

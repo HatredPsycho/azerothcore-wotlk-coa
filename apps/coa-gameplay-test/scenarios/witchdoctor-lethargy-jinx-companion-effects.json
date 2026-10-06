@@ -4,7 +4,7 @@
   "contract": "Lethargy Jinx (802065) ships its effect1 (SPELL_AURA_MOD_CRIT_CHANCE_FOR_CASTER, aura 308) and effect2 (SPELL_AURA_MOD_HOT_PCT, aura 259) with BasePoints -1 + DieSides 1 = 0, i.e. present but inert until a companion talent raises them. Will of the Serpent (300663): one effect, aura 107 (ADD_FLAT_MODIFIER), MiscValue 12 (SPELLMOD_EFFECT2), BasePoints 9 + DieSides 1 = 10, class mask (262144, 0, 0) matching exactly Lethargy Jinx's own SpellFamilyFlags word0 (262144). Jinx of Decay (681465): one effect, aura 107, MiscValue 23 (SPELLMOD_EFFECT3), BasePoints -31 + DieSides 1 = -30, same class mask word0. Unit::ApplyEffectModifiers (Unit.cpp) consumes SPELLMOD_EFFECT2 for effect_index 1 (Lethargy Jinx's crit-chance effect) and SPELLMOD_EFFECT3 for effect_index 2 (its periodic-healing-received effect) specifically, so each passive raises exactly the effect its tooltip names, from 0 to the tooltip's own number, independently of the other. Hex of Malice (501153, word0 = 0) is the negative control: neither passive's class mask reaches it. spell_modifier reads each mod against a fixed synthetic base of 0 (matching the DBC's own zeroed base value) without casting. Regression guard for behaviour that already works natively; no module code touches either spell id, and whether aura 259/308 are themselves fully implemented is out of scope for these two issues, which only ask whether the modifier is delivered.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 13, "level": 80 }
+    { "id": "caster", "race": 1, "class": 13, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

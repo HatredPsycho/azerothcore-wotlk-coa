@@ -4,8 +4,8 @@
   "contract": "Splitting Time 706130 carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SpellModOp SPELLMOD_JUMP_TARGETS (17) and EffectSpellClassMask word2 bit 0x1000, matching Crystal Cannon 560134's own SpellFamilyFlags word2 (4096). EffectBasePoints 1 resolves to 2 with DieSides 1.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

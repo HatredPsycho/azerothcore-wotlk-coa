@@ -4,8 +4,8 @@
   "contract": "Sunstorm 760379 has three engine-native aura effects, no custom handler needed. Effect 0 is SPELL_AURA_PERIODIC_TRIGGER_SPELL (23), EffectTriggerSpell 572848 (Justice), EffectAmplitude 1000 ms, DurationIndex 32 (SpellDuration.dbc row 32 = 6000 ms, matching 'for the next 6 sec'); AttributesEx5 512 = SPELL_ATTR5_EXTRA_INITIAL_PERIOD ('Immediately do periodic tick on apply', SharedDefines.h:632), so the first Justice cast fires immediately and AuraEffect::HandlePeriodicTriggerSpellAuraTick (SpellAuraEffects.cpp) repeats it every 1000 ms for 6000 ms (6 casts). Effect 2 is SPELL_AURA_ALLOW_ONLY_ABILITY (263, AuraEffect::HandleAuraAllowOnlyAbility), which sets PLAYER_ALLOW_ONLY_ABILITY; Spell::CheckCast (Spell.cpp:5754) then fails any further non-triggered, non-melee-swing player cast with SPELL_FAILED_SPELL_IN_PROGRESS, while HandlePeriodicTriggerSpellAuraTick casts Justice with TRIGGERED_FULL_MASK (includes TRIGGERED_IGNORE_CASTER_AURASTATE), which bypasses that same check -- matching 'you can move but cannot perform any other abilities'. Effect 1 (SPELL_AURA_MECHANIC_IMMUNITY_MASK, 147, MiscValue 1733) is likewise handled natively by AuraEffect::HandleModStateImmunityMask and is not separately asserted here. This scenario proves the two clearly testable clauses: the periodic self-cast and the ability lockout, both delivered with zero script/SQL.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "control", "race": 1, "class": 27, "level": 80 },
-    { "id": "test", "race": 1, "class": 27, "level": 80 }
+    { "id": "control", "race": 1, "class": 27, "level": 60 },
+    { "id": "test", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

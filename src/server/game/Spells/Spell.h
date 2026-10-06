@@ -547,8 +547,10 @@ public:
     void HandleThreatSpells();
 
     // The item whose numbers this cast carries, whether it was cast from the item or inherited the
-    // trail from it: both answer the same question about where the flat values were written.
-    [[nodiscard]] Item const* GetValueOriginItem() const;
+    // trail from it: both answer the same question about where the flat values were written. It is
+    // the template entry, taken when the cast starts, so a consumable used up on the way (the last
+    // food of a stack) still names its template.
+    [[nodiscard]] uint32 GetValueOriginItemEntry() const { return m_castItemEntry; }
 
     SpellInfo const* const m_spellInfo;
     Item* m_CastItem;
@@ -557,6 +559,7 @@ public:
     // The guid above was inherited from the aura that triggered this cast rather than naming an
     // item this cast consumes, so nothing may require the caster to still be holding it.
     bool m_castItemOrigin{false};
+    uint32 m_castItemEntry{0};
     uint8 m_cast_count;
     uint32 m_glyphIndex;
     uint32 m_preCastSpell;

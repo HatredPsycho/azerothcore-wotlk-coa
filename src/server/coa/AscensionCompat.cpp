@@ -1849,6 +1849,13 @@ public:
     uint32 const activeSpecialization = GetActiveSpecialization(player);
     uint32 const targetSpec = requestedSpec.value_or(uploaded.SpecId ? uploaded.SpecId : activeSpecialization);
     bool const switching = targetSpec != activeSpecialization;
+    if (switching)
+      if (std::string reason = SpecializationSwitchRefusal(player, activeSpecialization, targetSpec); !reason.empty())
+      {
+        refusal = SpecializationSwitchRefused(targetSpec, std::move(reason));
+        return false;
+      }
+
     std::unordered_map<uint32, uint32> wanted;
     std::unordered_set<uint32> received;
     std::unordered_set<uint32> selectedGroups;

@@ -4,10 +4,10 @@
   "contract": "Reprisal 800316 (SPELL_GUARDIAN_REPRISAL) requires the Reprisal Ready buff 504885 (Valiant Effort's proc, SPELL_GUARDIAN_REPRISAL_READY) to cast. A successful cast should consume that buff, not leave it up for the next Reprisal.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "knight", "race": 1, "class": 18, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000 }
+    { "id": "knight", "race": 1, "class": 18, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000 }
   ],
   "creatures": [
-    { "id": "target", "owner": "knight", "entry": 36, "level": 80, "health": 1000000, "distance": 3 }
+    { "id": "target", "owner": "knight", "entry": 36, "level": 60, "health": 1000000, "distance": 3 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

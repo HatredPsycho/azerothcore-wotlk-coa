@@ -4,8 +4,8 @@
   "contract": "Scroll of Retreat: Stormwind (1175626) is Alliance only and Scroll of Retreat: Orgrimmar (1175627) Horde only. A character of the other faction is told so in the middle of the screen and in chat, the scroll is not cast, no cooldown starts and the scroll stays; a repeat within three seconds is not announced again. The scroll's own side casts spell 84289 or 84288 (10 second cast) onto the Stone of Retreat landing: Stormwind map 0 (-8833.38, 628.628), Orgrimmar map 1 (1629.85, -4373.64). The item spell carries a 12 hour cooldown and no charges, so the scroll is kept.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "alliance", "race": 1, "class": 12, "level": 80 },
-    { "id": "horde", "race": 2, "class": 12, "level": 80 }
+    { "id": "alliance", "race": 1, "class": 12, "level": 60 },
+    { "id": "horde", "race": 2, "class": 12, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let both characters settle", "ms": 3000 },

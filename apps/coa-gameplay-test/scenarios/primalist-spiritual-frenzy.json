@@ -13,7 +13,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -32,7 +32,7 @@
       "id": "target",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -40,7 +40,7 @@
       "id": "extra1",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3.2
     },
@@ -48,7 +48,7 @@
       "id": "extra2",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3.4
     },
@@ -56,7 +56,7 @@
       "id": "extra3",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3.6
     },
@@ -64,7 +64,7 @@
       "id": "extra4",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3.8
     },
@@ -72,7 +72,7 @@
       "id": "extra5",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 4.0
     },
@@ -80,7 +80,7 @@
       "id": "far",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 20
     }

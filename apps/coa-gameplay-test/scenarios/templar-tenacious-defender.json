@@ -4,8 +4,8 @@
  "contract": "Libram of Tenacity 801461 effect 1 is a percent-of-maximum-health heal whose base value is zero; its description only promises the heal while Tenacious Defender 707385 is known. That talent is a +20 flat SPELLMOD_EFFECT1 passive on the Libram's family mask, so the talented Templar's effect value is 20.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "defender", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "defender", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

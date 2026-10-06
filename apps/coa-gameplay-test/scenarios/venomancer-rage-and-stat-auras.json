@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "name": "Venomancer: Pendo's Charm and Acute Senses work natively (#1272, #1711)",
-  "contract": "#1272, #1711: both are stock aura types. Acute Senses (300664 rank 1, 300665 rank 2) effects 0 and 2 are SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE on Intellect (misc 3) and Agility (misc 1) with bp 4/9 so 5/10 percent; its effect 1 is SPELL_EFFECT_DUMMY (3) carrying a Spirit misc value, so it applies no aura and Spirit must not move (the tooltip names only Intellect and Agility). Pendo's Charm (504400) is SPELL_AURA_MOD_RAGE_FROM_DAMAGE_DEALT (aura 213) of bp 14 so +15 percent, read in Unit::RewardRage. That function is reached only when HasActivePowerType(POWER_RAGE) holds; a Venomancer is a Mana class whose Rage pool exists in Beetle Form (Player::InitDataForForm sets POWER_RAGE for FORM_VENOMANCER_BEETLE), so the scenario asserts the aura amount and that melee in Beetle Form builds Rage. The exact 1.15 ratio has no deterministic metric (rage per hit follows the weapon damage roll), so it is asserted by amount, not by rate.",
+  "contract": "#1272, #1711: both are stock aura types. Acute Senses (300664 rank 1, 300665 rank 2) effects 0 and 2 are SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE on Intellect (misc 3) and Agility (misc 1) with bp 4/9 so 5/10 percent (Player::UpdateStats truncates the stat to an integer, so at level 60 Intellect 93 becomes 97/102 and Agility 53 becomes 55/58, ratios 1.043/1.097 and 1.038/1.094); its effect 1 is SPELL_EFFECT_DUMMY (3) carrying a Spirit misc value, so it applies no aura and Spirit must not move (the tooltip names only Intellect and Agility). Pendo's Charm (504400) is SPELL_AURA_MOD_RAGE_FROM_DAMAGE_DEALT (aura 213) of bp 14 so +15 percent, read in Unit::RewardRage. That function is reached only when HasActivePowerType(POWER_RAGE) holds; a Venomancer is a Mana class whose Rage pool exists in Beetle Form (Player::InitDataForForm sets POWER_RAGE for FORM_VENOMANCER_BEETLE), so the scenario asserts the aura amount and that melee in Beetle Form builds Rage. The exact 1.15 ratio has no deterministic metric (rage per hit follows the weapon damage roll), so it is asserted by amount, not by rate.",
   "timeout_ms": 90000,
   "players": [
     {
       "id": "v",
       "race": 1,
       "class": 29,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     }
@@ -98,7 +98,7 @@
       "metric": "stat",
       "stat": 1,
       "ratio_to": "agi0",
-      "min": 1.04,
+      "min": 1.03,
       "max": 1.06
     },
     {

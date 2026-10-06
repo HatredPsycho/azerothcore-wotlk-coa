@@ -11,9 +11,9 @@
     "o": 0
   },
   "players": [
-    { "id": "base", "race": 8, "class": 16, "level": 80 },
-    { "id": "rank1", "race": 8, "class": 16, "level": 80 },
-    { "id": "rank2", "race": 8, "class": 16, "level": 80 }
+    { "id": "base", "race": 8, "class": 16, "level": 60 },
+    { "id": "rank1", "race": 8, "class": 16, "level": 60 },
+    { "id": "rank2", "race": 8, "class": 16, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 3000 },

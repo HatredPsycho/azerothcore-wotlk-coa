@@ -11,11 +11,11 @@
     "o": 0
   },
   "players": [
-    { "id": "chronomancer", "race": 1, "class": 22, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "chronomancer", "race": 1, "class": 22, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "golem", "owner": "chronomancer", "entry": 36, "level": 80, "health": 1000000, "distance": 10 },
-    { "id": "bystander", "owner": "chronomancer", "entry": 36, "level": 80, "health": 1000000, "distance": 13 }
+    { "id": "golem", "owner": "chronomancer", "entry": 36, "level": 60, "health": 1000000, "distance": 10 },
+    { "id": "bystander", "owner": "chronomancer", "entry": 36, "level": 60, "health": 1000000, "distance": 13 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

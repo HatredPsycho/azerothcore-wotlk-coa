@@ -7,7 +7,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [
@@ -116,7 +116,7 @@
       "metric": "aura_amount",
       "spell": 500935,
       "effect": 1,
-      "equals": 60
+      "equals": 45
     },
     {
       "action": "assert",
@@ -197,7 +197,7 @@
       "metric": "aura_amount",
       "spell": 500935,
       "effect": 1,
-      "equals": 90
+      "equals": 67
     },
     {
       "action": "assert",
@@ -278,7 +278,7 @@
       "metric": "aura_amount",
       "spell": 500935,
       "effect": 1,
-      "equals": 60
+      "equals": 45
     },
     {
       "action": "assert",

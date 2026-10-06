@@ -8,7 +8,7 @@
       "id": "caster",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -22,7 +22,7 @@
       "action": "assert", "label": "SETUP: the probe's health cost fits inside the 4000 fixture health",
       "actor": "caster", "metric": "spell_power_cost", "spell": 572795, "max": 3999
     },
-    { "action": "set_health", "actor": "caster", "value": 4000 },
+    { "action": "set_health", "actor": "caster", "value": 4000, "maximum": 4000 },
     { "action": "snapshot", "actor": "caster", "metric": "spell_damage_count", "spell": 572795, "target": "dummy", "save_as": "control_hits" },
     { "action": "cast", "actor": "caster", "spell": 572795, "target": "dummy" },
     {
@@ -38,7 +38,7 @@
     { "action": "assert", "actor": "caster", "metric": "aura", "spell": 806944, "equals": 1, "within_ms": 3000 },
     { "action": "wait", "label": "Let the first cast's global cooldown expire", "ms": 1600 },
     { "action": "reset_cooldown", "actor": "caster", "spell": 572795 },
-    { "action": "set_health", "actor": "caster", "value": 4000 },
+    { "action": "set_health", "actor": "caster", "value": 4000, "maximum": 4000 },
     { "action": "snapshot", "actor": "caster", "metric": "spell_damage_total", "spell": 572795, "target": "dummy", "save_as": "vv_before" },
     { "action": "cast", "actor": "caster", "spell": 572795, "target": "dummy" },
     {

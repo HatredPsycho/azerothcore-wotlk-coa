@@ -4,7 +4,7 @@
   "contract": "Torture 504071's native effect 0 is SPELL_AURA_ADD_PCT_MODIFIER and already applies Vampiric Feast's 50% leech modifier. Its effect 1 has ProcFlags 0 and references helper 561152, whose native effect adds 5000 ms to Transgression 801076. Vampiric Fang ranks are handled in AscensionBloodmageSecondary.cpp and consume Thirst 706613 only after a successful hit. Verify that eight stacks are consumed without extending Transgression and nine stacks are consumed while extending it by five seconds.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "bloodmage", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "bloodmage", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
     { "id": "enemy", "owner": "bloodmage", "entry": 36, "health": 1000000, "distance": 5 }

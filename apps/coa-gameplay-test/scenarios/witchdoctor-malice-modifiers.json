@@ -4,7 +4,7 @@
   "contract": "Prolonged Malice 704505 (#2297): effect0 aura 107 (ADD_FLAT_MODIFIER), MiscValue 1 (SPELLMOD_DURATION), BasePoints 5999 + DieSides 1 = 6000 ms, EffectSpellClassMask (0, 33554432, 0) matching exactly Hex of Malice's (501153) own SpellFamilyFlags word1 = 33554432. effect1 aura 107, MiscValue 5 (SPELLMOD_RANGE), BasePoints 5 + 1 = 6 yd, class mask (263432, 33850368, 32), whose word0 bit 262144 and word2 bit 32 both match Lethargy Jinx's (802065) SpellFamilyFlags [262144, 4096, 32]; word1 does not match Lethargy Jinx (4096), so the duration mod must not touch it. Zalazane's Malice 705902 (#2886): effect0 aura 108 (ADD_PCT_MODIFIER), MiscValue 22 (SPELLMOD_DOT), BasePoints 14 + 1 = 15%, class mask (0, 33554432, 0) again exactly Hex of Malice's word1; effect1 aura 108, MiscValue 1 (SPELLMOD_DURATION), BasePoints 1999 + 1 = 2000 ms, class mask (0, 0, 32) exactly Lethargy Jinx's word2 (the Jinx family bit); Hex of Malice's own word2 is 0, so this duration mod must not touch it. Player::ApplySpellMod (Player.cpp) / AuraEffect::CalculateSpellMod (SpellAuraEffects.cpp) apply these generically; SPELLMOD_DOT is read in Unit::SpellDamageBonusDone for every periodic tick. spell_modifier reads each mod against a fixed synthetic base without casting. Regression guard for behaviour that already works natively; no module code touches either spell.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 13, "level": 80 }
+    { "id": "caster", "race": 1, "class": 13, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

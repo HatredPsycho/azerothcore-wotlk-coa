@@ -6,21 +6,21 @@
   "location": {"map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0},
   "players": [
     {"id": "low_blast", "race": 1, "class": 20, "level": 12, "spell_hit_rating": 10000},
-    {"id": "blast", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "rupture", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "vengeance", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "calamity", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "hemostasis", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "veil", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000}
+    {"id": "blast", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "rupture", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "vengeance", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "calamity", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "hemostasis", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "veil", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000}
   ],
   "creatures": [
     {"id": "low_blast_target", "owner": "low_blast", "entry": 36, "level": 12, "health": 1000000, "distance": 15},
-    {"id": "blast_target", "owner": "blast", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "rupture_target", "owner": "rupture", "entry": 36, "level": 80, "health": 1000000, "distance": 3},
-    {"id": "vengeance_target", "owner": "vengeance", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "calamity_target", "owner": "calamity", "entry": 36, "level": 80, "health": 1000000, "distance": 3},
-    {"id": "hemostasis_target", "owner": "hemostasis", "entry": 123, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "rupture_second", "owner": "rupture", "entry": 36, "level": 80, "health": 1000000, "distance": 5}
+    {"id": "blast_target", "owner": "blast", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "rupture_target", "owner": "rupture", "entry": 36, "level": 60, "health": 1000000, "distance": 3},
+    {"id": "vengeance_target", "owner": "vengeance", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "calamity_target", "owner": "calamity", "entry": 36, "level": 60, "health": 1000000, "distance": 3},
+    {"id": "hemostasis_target", "owner": "hemostasis", "entry": 123, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "rupture_second", "owner": "rupture", "entry": 36, "level": 60, "health": 1000000, "distance": 5}
   ],
   "steps": [
     {"action": "set_health", "actor": "low_blast_target", "value": 999999},

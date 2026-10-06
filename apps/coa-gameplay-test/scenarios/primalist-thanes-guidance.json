@@ -14,7 +14,7 @@
       "id": "baseline",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -23,7 +23,7 @@
       "id": "talented",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -32,7 +32,7 @@
       "id": "removed",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -43,7 +43,7 @@
       "id": "baseline_target",
       "owner": "baseline",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -51,7 +51,7 @@
       "id": "talented_target",
       "owner": "talented",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -59,7 +59,7 @@
       "id": "removed_target",
       "owner": "removed",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     }

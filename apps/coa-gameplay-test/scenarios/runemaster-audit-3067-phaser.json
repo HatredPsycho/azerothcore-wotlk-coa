@@ -4,7 +4,7 @@
   "contract": "Phaser 706518 effect 0 is SPELL_AURA_ADD_FLAT_MODIFIER, EffectMiscValue 11 (SPELLMOD_COOLDOWN), EffectBasePoints -30001 + DieSides 1 = -30000; effect 1 is SPELL_AURA_ADD_PCT_MODIFIER, EffectMiscValue 14 (SPELLMOD_COST), EffectBasePoints -101 + 1 = -100%. Both effects' EffectSpellClassMask word 0 is 64. Phase Out 500671 has SpellFamilyName 38, SpellFamilyFlags word 0 bit 6 (64) - an exact classmask match. Player::ApplySpellMod must therefore subtract 30000ms from any op-11 query and zero out any op-14 query against 500671 once 706518 is learned.",
   "timeout_ms": 90000,
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80}
+    {"id": "rm", "race": 1, "class": 32, "level": 60}
   ],
   "steps": [
     {"action": "wait", "ms": 3000},

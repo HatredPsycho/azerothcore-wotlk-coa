@@ -5,15 +5,15 @@
     "Original 500639 and db.exil.es/spell/500639 specify target mana drained equal to 50% of the next direct",
     "Magic damage within six seconds. Helper 807818 is native POWER_DRAIN, with mana type 0 and transfer",
     "multiplier 1.",
-    "Use the original level-80 mage creature 27747 with its native mana pool, passive fixture AI and ample",
+    "Use the original mage creature 27747 at level 60 with its native mana pool, passive fixture AI and ample",
     "health. The caster has sufficient missing mana for a full transfer. Measure a normal actual magic hit, the",
     "native drain/transfer, helper count and one-use consumption.",
     "A following normal magic hit cannot repeat the helper or its native mana-transfer event. Creature mana",
     "regeneration is not used to infer whether the helper repeats.",
     "Primordial Blast 800732 is a normal direct magic probe. Reset its 8-second cooldown and restore caster mana",
     "before each separate hit to isolate the one-use Sigil behavior.",
-    "POWER_DRAIN floors 50 percent of damage to whole mana. With a triggering hit of at least 100, the exact",
-    "ratio lies between 0.49 and 0.50; a 115-point hit must steal and transfer 57 mana."
+    "POWER_DRAIN floors 50 percent of damage to whole mana. With a triggering hit of at least 80, the exact",
+    "ratio lies between 0.4875 and 0.50; an 85-point hit must steal and transfer 42 mana."
   ],
   "timeout_ms": 120000,
   "players": [
@@ -21,7 +21,7 @@
       "id": "rm",
       "race": 1,
       "class": 32,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "allow_regeneration": false
     }
@@ -204,8 +204,8 @@
       "spell": 800732,
       "target": "enemy",
       "relative_to": "damage_before",
-      "min": 100,
-      "label": "The probe hit bounds whole-mana rounding error to at most 1 percent"
+      "min": 80,
+      "label": "The probe hit bounds whole-mana rounding error to at most 1.25 percent"
     },
     {
       "action": "assert",
@@ -215,7 +215,7 @@
       "relative_to": "mana_before",
       "ratio_to": "trigger_hit",
       "min": -0.5001,
-      "max": -0.49,
+      "max": -0.4875,
       "label": "The enemy loses half of the measured triggering damage as mana"
     },
     {
@@ -224,7 +224,7 @@
       "metric": "spell_energize_total",
       "spell": 807818,
       "ratio_to": "trigger_hit",
-      "min": 0.49,
+      "min": 0.4875,
       "max": 0.5001,
       "label": "The native POWER_DRAIN transfer equals the measured mana stolen"
     },
@@ -303,7 +303,7 @@
       "id": "enemy",
       "owner": "rm",
       "entry": 27747,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

@@ -14,7 +14,7 @@
     "effect value by 20% over a 1000 base."
   ],
   "timeout_ms": 60000,
-  "players": [{"id": "rm", "race": 1, "class": 32, "level": 80}],
+  "players": [{"id": "rm", "race": 1, "class": 32, "level": 60}],
   "steps": [
     {"action": "wait", "label": "Let the character settle", "ms": 3000},
     {"action": "snapshot", "label": "Base attack time", "actor": "rm", "metric": "attack_time_ms",

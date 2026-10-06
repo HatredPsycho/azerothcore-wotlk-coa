@@ -4,7 +4,7 @@
   "contract": "Dark Ranger 705465 (rank 1) and 707861 (rank 2) read 'Increases the Shadow damage dealt by your Shadow Hounds by $s2%.' In the installed Spell.dbc both are passive, family 21, with effect 0 a self MOD_DAMAGE_PERCENT_DONE placeholder worth 0 and effect 1 = 190 (SPELL_EFFECT_ASCENSION_APPLY_AURA_TO_SUMMONS, SharedDefines.h) carrying SPELL_AURA_MOD_DAMAGE_PERCENT_DONE (79), misc 32 (Shadow), BasePoints 4 and 9 (DieSides 1, so 5% and 10%, matching $s2), radius index 12 = 100 yd. No script or SQL names either id; the delivery is native: effect 190 is an area-aura effect and UnitAura::FillTargetMap (SpellAuras.cpp) adds every summon in the owner's controlled set, which is the same mechanism scenarios/tinker-w3-summon-health-aura.json already pins for Clockwork Ingenuity 505336. The Shadowhound is the entry 50124 summoned by Houndmaster's Whistle 801343 (effect 56, misc 50124). The scenario summons it, checks that it has no Dark Ranger aura, learns rank 1 and expects the aura on the hound with amount 5, swaps to rank 2 and expects amount 10, and unlearning must take the aura off the hound. The amounts come from the DBC, not from the code.",
   "timeout_ms": 90000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

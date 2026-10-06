@@ -11,11 +11,11 @@
     "o": 0
   },
   "players": [
-    { "id": "necromancer", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "necromancer", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "golem", "owner": "necromancer", "entry": 36, "level": 80, "health": 1000000, "distance": 10 },
-    { "id": "clean_golem", "owner": "necromancer", "entry": 36, "level": 80, "health": 1000000, "distance": 12 }
+    { "id": "golem", "owner": "necromancer", "entry": 36, "level": 60, "health": 1000000, "distance": 10 },
+    { "id": "clean_golem", "owner": "necromancer", "entry": 36, "level": 60, "health": 1000000, "distance": 12 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -260,7 +260,7 @@
       "actor": "primalist",
       "metric": "spell_power",
       "school": 3,
-      "equals": 17
+      "equals": 23
     },
     {
       "action": "assert",
@@ -270,9 +270,9 @@
       "effect": 1,
       "target": "far",
       "relative_to": "base_damage",
-      "label": "sp17",
-      "min": 9,
-      "max": 10
+      "label": "sp23",
+      "min": 12,
+      "max": 13
     },
     {
       "action": "wait",
@@ -369,5 +369,5 @@
       "equals": 0
     }
   ],
-  "contract": "Mountain Fury uses 65% SP, 17% AP and 125% Stamina. At fixture level 60 the native level-58/max-60 helper loses its downrank multiplier, because (58 + 6) / 60 clamps to 1: floor(17 * .65) = 11. AP and Stamina do not use that multiplier. A creature starts eight yards away and is pulled within four yards; normal creature combat movement can then close the remaining gap. The coefficient probes query the unpulled creature 'far', so normal class 887019 (-15%) and Mountain King 887085 (+1%) tuning multiply them by 0.8585: the 100 AP increase of 16-18 reads 14-16 and the 11 SP increase reads 9 or 10 after truncation."
+  "contract": "Mountain Fury uses 65% SP, 17% AP and 125% Stamina. At fixture level 60 the native level-58/max-60 helper loses its downrank multiplier, because (58 + 6) / 60 clamps to 1: floor(23 * .65) = 14. The 23 SP come from Briarwood Reed 12930, which keeps its authored stats on this realm because its only source is Blackrock Spire (map 229), an authentic map of the content scaling. AP and Stamina do not use that multiplier. A creature starts eight yards away and is pulled within four yards; normal creature combat movement can then close the remaining gap. The coefficient probes query the unpulled creature 'far', so normal class 887019 (-15%) and Mountain King 887085 (+1%) tuning multiply them by 0.8585: the 100 AP increase of 16-18 reads 14-16 and the 14 SP increase reads 12 or 13 after truncation (14 x 0.8585 = 12.02)."
 }

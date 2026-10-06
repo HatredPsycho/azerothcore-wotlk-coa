@@ -4,7 +4,7 @@
   "contract": "301315 has two ADD_PCT_MODIFIER (108) effects, natively applied by Player::ApplySpellMod (Player.cpp:10219), keyed by SpellModOp==EffectMiscValue and matched to a target spell through SpellInfo::IsAffectedBySpellMod (SpellInfo.cpp:1472), which compares the modifier's per-effect classmask against the target's own top-level SpellFamilyFlags. Effect[0]: Misc=22=SPELLMOD_DOT (SpellDefines.h:98), BasePoints 29+1=+30%, classmask word B bit21 (2097152) == Darkwither's (502213) own SpellFamilyFlags[1]=2097152 exactly. Effect[1]: Misc=0=SPELLMOD_DAMAGE (SpellDefines.h:76), BasePoints 14+1=+15%, classmask word C bit19 (524288) == Eldritch Shock's (808043) own SpellFamilyFlags[2]=524288 exactly. The harness's spell_modifier metric calls this same player->ApplySpellMod(spell, op, base) path directly on a fixed base, so it observes the exact mechanism without submitting a cast. Negative controls swap op and target to confirm the match is exact, not merely same-family: Darkwither's own SPELLMOD_DAMAGE stays unmodified (Dread only grants it SPELLMOD_DOT) and Eldritch Shock's SPELLMOD_DOT stays unmodified (Dread only grants it SPELLMOD_DAMAGE). Regression guard for behaviour that already works natively.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cultist", "race": 1, "class": 25, "level": 80 }
+    { "id": "cultist", "race": 1, "class": 25, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "ms": 3000 },

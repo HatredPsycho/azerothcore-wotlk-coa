@@ -4,8 +4,8 @@
   "contract": "Conduction Burst 804452 carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SPELLMOD_EFFECT2 (12) and EffectSpellClassMask word2 bit 0x8, the shared 'Continuum spell' identity tag also carried by Aether Compression 804436 (SpellFamilyFlags word2 8). This raises Aether Compression's own effect index 1 (its ADD_PCT_MODIFIER on Shatter Echo) from its baseline of 0 by 20 (EffectBasePoints 19 resolves to 20 with DieSides 1), which is how 'Shatter Echo deals more damage while a Continuum spell is active' is implemented: Aether Compression's effect 1 only contributes to Player::m_spellMods while that aura is applied to the caster.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

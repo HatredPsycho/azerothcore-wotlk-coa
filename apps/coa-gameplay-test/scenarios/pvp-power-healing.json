@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "PvP Power raises periodic healing",
-  "contract": "Requires PvpPower.Enable = 1. A High-Risk level 60 priest wearing two PvP Power +42 pieces (84 x 0.02% = 1.68%) heals more with Renew than the same gear does with PvP Power disabled: 129/105 of the naked total against 127/105 without the script (measured with PvpPower.Enable = 0). Each tick is floored, so the gain shows as about 2 of 105 rather than the full 1.68%.",
+  "contract": "Requires PvpPower.Enable = 1. A High-Risk level 60 priest wearing two PvP Power +42 pieces (84 x 0.02% = 1.68%) heals more with Renew than the same gear does with PvP Power disabled. Each piece's authored 30 spell power is cut by the content scaling: both are Classic item level 74 without a generated profile, so the RAID_MID band (69-75 -> 52-58) puts them at 57 and 30 x 57/74 rounds to 23. The PvP Power +42 comes from the spell id and is not cut. 46 x 0.376 = 17.3 more per tick gives 122/105 of the naked total without the script and floor(122 x 1.0168) = 124/105 = 1.181 with it. Each tick is floored, so the gain shows as 2 of 105 rather than the full 1.68%.",
   "players": [
     {
       "id": "p",
@@ -121,13 +121,13 @@
     },
     {
       "action": "assert",
-      "label": "PvP Power adds to the gear's own spell power on Renew ticks",
+      "label": "PvP Power adds to the gear's own spell power on Renew ticks (124/105, 122/105 without it)",
       "actor": "p",
       "metric": "health",
       "relative_to": "h1",
       "ratio_to": "heal_base",
-      "min": 1.222,
-      "max": 1.235
+      "min": 1.176,
+      "max": 1.186
     }
   ]
 }

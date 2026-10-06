@@ -26,13 +26,13 @@
       "id": "ziggi",
       "race": 1,
       "class": 28,
-      "level": 80
+      "level": 60
     },
     {
       "id": "bear",
       "race": 1,
       "class": 28,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -41,7 +41,7 @@
       "id": "golem",
       "owner": "ziggi",
       "entry": 36,
-      "level": 70,
+      "level": 50,
       "distance": 5,
       "health": 1000000
     },
@@ -49,7 +49,7 @@
       "id": "bruiser",
       "owner": "bear",
       "entry": 36,
-      "level": 90,
+      "level": 70,
       "distance": 5,
       "health": 1000000
     }

@@ -4,7 +4,7 @@
   "contract": "706190 (SpellFamilyName 31, self-target) has three stock 3.3.5a auras with no CoA-specific handler: effect0 SPELL_AURA_MOD_INCREASE_SPEED (31) BasePoints=14 -> CalcValue 15; effect1 SPELL_AURA_MOD_MOUNTED_SPEED_NOT_STACK (172) BasePoints=14 -> CalcValue 15; effect2 SPELL_AURA_MOD_INCREASE_ENERGY_PERCENT (132) MiscValue=0 (POWER_MANA) BasePoints=14 -> CalcValue 15. run_speed_rate and max_power (README's metric table) directly observe effect0 and effect2. The harness has no mounted-speed metric, so effect1 is asserted through aura_amount instead, per the README's fallback for mechanisms without a dedicated metric. Regression guard for behaviour that already works natively.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "c", "race": 1, "class": 25, "level": 80 }
+    { "id": "c", "race": 1, "class": 25, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

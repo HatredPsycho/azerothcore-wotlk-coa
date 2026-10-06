@@ -15,13 +15,13 @@
       "id": "caster",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

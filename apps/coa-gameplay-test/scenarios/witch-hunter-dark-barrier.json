@@ -4,7 +4,7 @@
   "contract": "Dark Barrier 705520 reads 'Increases the duration of Stoicism by $/1000;s1 sec and increases its effectiveness by $s2%.' In the installed Spell.dbc (server DBC 2026-09-17; the older dbc_clientset copy has only the duration effect) it is passive, family 21, effect 0 = SPELL_AURA_ADD_FLAT_MODIFIER misc 1 = SPELLMOD_DURATION BasePoints 4999 (+5000 ms) and effect 1 = SPELL_AURA_ADD_PCT_MODIFIER misc 8 = SPELLMOD_ALL_EFFECTS BasePoints 24 (+25%), both with class mask word 1 = 0x02000000, which is Stoicism 804802's flag word. Stoicism has SpellDuration index 31 = 8000 ms and two auras: effect 0 dodge (aura 49) and effect 1 parry (aura 47), BasePoints 29 (DieSides 1, so 30 each). Aura::CalcMaxDuration applies SPELLMOD_DURATION (SpellAuras.cpp:812) so the duration is 13000 ms, and Unit::ApplyEffectModifiers (Unit.cpp:12149) applies ALL_EFFECTS so each amount is 30 * 1.25 = 37.5, truncated to 37 (SpellInfo.cpp:582). The scenario reads the probes before and after learning, then casts Stoicism and reads the real aura.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

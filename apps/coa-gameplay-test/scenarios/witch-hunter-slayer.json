@@ -8,19 +8,19 @@
       "id": "hunter",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     },
     {
       "id": "receiver",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [

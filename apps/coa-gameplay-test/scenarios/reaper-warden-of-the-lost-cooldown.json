@@ -12,10 +12,10 @@
   ],
   "timeout_ms": 120000,
   "players": [
-    { "id": "reaper", "race": 5, "class": 30, "level": 80 }
+    { "id": "reaper", "race": 5, "class": 30, "level": 60 }
   ],
   "creatures": [
-    { "id": "enemy", "owner": "reaper", "entry": 1601, "level": 80, "health": 4000000 }
+    { "id": "enemy", "owner": "reaper", "entry": 1601, "level": 60, "health": 4000000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

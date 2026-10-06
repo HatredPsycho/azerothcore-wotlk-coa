@@ -8,7 +8,7 @@
       "id": "p",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -16,7 +16,7 @@
       "id": "whitemane",
       "owner": "p",
       "entry": 3977,
-      "level": 84,
+      "level": 64,
       "health": 100000,
       "distance": 3
     },
@@ -24,7 +24,7 @@
       "id": "mograine",
       "owner": "p",
       "entry": 3976,
-      "level": 84,
+      "level": 64,
       "health": 100000,
       "distance": 5
     }

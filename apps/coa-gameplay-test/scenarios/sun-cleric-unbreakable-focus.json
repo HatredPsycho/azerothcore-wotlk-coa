@@ -4,8 +4,8 @@
   "contract": "Unbreakable Focus 704945 (SpellFamilyName 33) has one live effect: SPELL_AURA_ADD_PCT_MODIFIER (108) with EffectMiscValue 11 (SPELLMOD_COOLDOWN) and EffectBasePoints -21 -> real -20, and EffectSpellClassMask word 2 bits 0x20|0x40 (96). Every 'Gavel' (Gavel of Light 800611, Gavel of Grace 800614, Gavel of Wrath 800617) carries SpellFamilyFlags_2 0x20, and Horusath Blast (500154) carries SpellFamilyFlags_2 0x40 -- together exactly the shipped mask, so both named abilities are affected. Gavel of Light has no RecoveryTime, only CategoryRecoveryTime 5000 (its own tooltip: 'Shares a cooldown with other Gavels'); Horusath Blast has RecoveryTime and CategoryRecoveryTime both 25000. Player::SendSpellCooldown applies SPELLMOD_COOLDOWN to whichever of rec/catrec is nonzero via ApplySpellMod, a PCT-type op that multiplies the base by (100 + mod)/100 -- 25000 -> 20000 and 5000 -> 4000. The 'spell_modifier' query metric calls this same native Player::ApplySpellMod(spell, SPELLMOD_COOLDOWN, base) path directly, without casting or needing a target. Native handlers only; regression scenario for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 27, "level": 80 },
-    { "id": "talent", "race": 1, "class": 27, "level": 80 }
+    { "id": "control", "race": 1, "class": 27, "level": 60 },
+    { "id": "talent", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

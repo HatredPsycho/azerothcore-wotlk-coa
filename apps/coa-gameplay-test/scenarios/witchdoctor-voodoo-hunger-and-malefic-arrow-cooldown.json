@@ -4,9 +4,9 @@
   "contract": "Improved Malefic Arrow (707855) cuts Malefic Arrow's (801674) 8000 ms cooldown by 2000 ms through the generic SPELLMOD_COOLDOWN spell-modifier system (no module code). Voodoo Hunger (705942) gates a stack of the Voodoo Hunger buff (807213, +10% per stack, 8000 ms duration, 10 max stacks) onto every 500 ms tick of Shadowstalker's StalkerSpeed (807214) periodic trigger, but only while the caster knows 705942 and still has Shadowstalker (807040) or Mirage (501136) active; AscensionWitchDoctorAuras.cpp's lifecycle Tick() intercepts the native trigger and applies that gate.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "arrow_caster", "race": 1, "class": 13, "level": 80 },
-    { "id": "hunger_caster", "race": 1, "class": 13, "level": 80 },
-    { "id": "hunger_control", "race": 1, "class": 13, "level": 80 }
+    { "id": "arrow_caster", "race": 1, "class": 13, "level": 60 },
+    { "id": "hunger_caster", "race": 1, "class": 13, "level": 60 },
+    { "id": "hunger_control", "race": 1, "class": 13, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "ms": 4000 },

@@ -4,13 +4,13 @@
   "contract": "#1215, #780: both are native ADD_FLAT_MODIFIER (aura 107) passives, so neither needs a script. Maniacal 706375 has one effect, EffectMiscValue 11 SPELLMOD_COOLDOWN, BasePoints -2001 DieSides 1 (-2000 ms), EffectSpellClassMask (0,33554688,0) = bits 57 and 40, i.e. Sticky Bomb 500232 (flags (0,33554432,0)) plus Deploy Blast Mine 801718 (flags (0,256,0)). Bombs? BOMBS! 705789 has three effects, all on mask (0,33554432,0), so they reach Sticky Bomb only: MiscValue 11 SPELLMOD_COOLDOWN -2000 ms, MiscValue 19 SPELLMOD_ACTIVATION_TIME -1000 ms and MiscValue 1 SPELLMOD_DURATION -1000 ms. Sticky Bomb 500232 has Category 742, RecoveryTime 0, CategoryRecoveryTime 12000, DurationIndex 28 (SpellDuration.dbc row 28 = 5000 ms) and effect 1 SPELL_AURA_PERIODIC_TRIGGER_SPELL_WITH_VALUE with Amplitude 4800; Deploy Blast Mine 801718 has RecoveryTime 10000 and CategoryRecoveryTime 0. Player::AddSpellAndCategoryCooldowns applies SPELLMOD_COOLDOWN to both the recovery and the category-recovery field, and neither spell carries SPELL_ATTR6_NO_CATEGORY_COOLDOWN_MODS or a SpellCharges.dbc row, so the expected results are 12000 -> 10000 ms, 10000 -> 8000 ms, tick 4800 -> 3800 ms and aura 5000 -> 4000 ms.",
   "timeout_ms": 120000,
   "players": [
-    { "id": "control", "race": 1, "class": 28, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "maniacal", "race": 1, "class": 28, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "bombs", "race": 1, "class": 28, "level": 80 }
+    { "id": "control", "race": 1, "class": 28, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "maniacal", "race": 1, "class": 28, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "bombs", "race": 1, "class": 28, "level": 60 }
   ],
   "creatures": [
-    { "id": "d_control", "owner": "control", "entry": 36, "level": 80, "health": 1000000, "distance": 3 },
-    { "id": "d_maniacal", "owner": "maniacal", "entry": 36, "level": 80, "health": 1000000, "distance": 3 }
+    { "id": "d_control", "owner": "control", "entry": 36, "level": 60, "health": 1000000, "distance": 3 },
+    { "id": "d_maniacal", "owner": "maniacal", "entry": 36, "level": 60, "health": 1000000, "distance": 3 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

@@ -8,7 +8,7 @@
       "id": "t",
       "race": 1,
       "class": 28,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -17,7 +17,7 @@
       "id": "d",
       "owner": "t",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "distance": 3
     }
   ],

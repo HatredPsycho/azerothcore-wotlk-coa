@@ -15,13 +15,13 @@
       "id": "cleric",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     },
     {
       "id": "control",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

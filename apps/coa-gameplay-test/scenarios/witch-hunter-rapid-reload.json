@@ -8,19 +8,19 @@
       "id": "one",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     },
     {
       "id": "two",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     },
     {
       "id": "three",
       "race": 1,
       "class": 15,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

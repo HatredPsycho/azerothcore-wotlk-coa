@@ -107,7 +107,7 @@
       "actor": "primalist",
       "metric": "spell_power",
       "school": 3,
-      "equals": 17
+      "equals": 23
     },
     {
       "action": "assert",
@@ -116,9 +116,8 @@
       "spell": 804002,
       "target": "dummy",
       "relative_to": "base_damage",
-      "label": "sp17",
-      "min": 4,
-      "max": 5
+      "label": "sp23",
+      "equals": 7
     },
     {
       "action": "set_power",
@@ -171,5 +170,5 @@
       "equals": 0
     }
   ],
-  "contract": "Geode 804002 adds 34.9% generic Spell Power and 8.5% Attack Power; the physical hit grants five Rage (50 internal units) to its caster. The coefficient probes query a creature, so the normal Primalist class tuning 887019 (-15% at level 60+) multiplies them: 100 AP adds 8 or 9 before tuning and 7 or 8 after truncation (1014 x 0.85 = 861, 1023 x 0.85 = 869); 17 SP adds floor(17 x 0.349) = 5 before tuning and 4 or 5 after truncation. The Rage cast still targets the enemy player."
+  "contract": "Geode 804002 adds 34.9% generic Spell Power and 8.5% Attack Power; the physical hit grants five Rage (50 internal units) to its caster. The coefficient probes query a creature, so the normal Primalist class tuning 887019 (-15% at level 60+) multiplies them: 100 AP adds 8 or 9 before tuning and 7 or 8 after truncation (1014 x 0.85 = 861, 1023 x 0.85 = 869); Briarwood Reed 12930 keeps its authored 23 Spell Power on this realm because its only source is Blackrock Spire (map 229), an authentic map of the content scaling; 23 SP adds floor(23 x 0.349) = 8 before tuning and 7 after it (1010 x 0.85 = 858, 1018 x 0.85 = 865). The Rage cast still targets the enemy player."
 }

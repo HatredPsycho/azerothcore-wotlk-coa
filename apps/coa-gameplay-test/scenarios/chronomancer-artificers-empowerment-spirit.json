@@ -4,8 +4,8 @@
   "contract": "Artificer's Empowerment 806167 carries SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE (137) with EffectMiscValue Stats::STAT_SPIRIT (4) and EffectBasePoints 7 (resolves to 8 with DieSides 1). AuraEffect::HandleModTotalPercentStat is native and recalculates Player::GetStat on apply.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

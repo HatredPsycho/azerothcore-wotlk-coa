@@ -13,7 +13,7 @@
       "id": "reaper",
       "race": 10,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -21,9 +21,9 @@
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "creatures": [
-    { "id": "healthy", "owner": "reaper", "entry": 36, "level": 80, "distance": 2, "health": 1000000 },
-    { "id": "dying", "owner": "reaper", "entry": 36, "level": 80, "distance": 2, "health": 1000000 },
-    { "id": "dying_high", "owner": "reaper", "entry": 36, "level": 80, "distance": 2, "health": 1000000 }
+    { "id": "healthy", "owner": "reaper", "entry": 36, "level": 60, "distance": 2, "health": 1000000 },
+    { "id": "dying", "owner": "reaper", "entry": 36, "level": 60, "distance": 2, "health": 1000000 },
+    { "id": "dying_high", "owner": "reaper", "entry": 36, "level": 60, "distance": 2, "health": 1000000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI settle", "ms": 5000 },

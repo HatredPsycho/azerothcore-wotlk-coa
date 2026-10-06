@@ -4,7 +4,7 @@
  "contract": "Righteous Lunge 570233 (rank 8) grants Oath: Righteous Lunge 804904, Condemn 567541 (rank 10) grants Oath: Condemn 804922 and Holy Cleave 573049 (rank 9) grants Oath: Holy Cleave 804903. A later Follow Up adds its Oath next to the ones already held; none is removed until the Oath Chain 704576 ends or a Breaker consumes them.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "templar", "race": 1, "class": 19, "level": 80, "melee_hit_rating": 10000, "spell_hit_rating": 10000, "expertise_rating": 10000 }
+  { "id": "templar", "race": 1, "class": 19, "level": 60, "melee_hit_rating": 10000, "spell_hit_rating": 10000, "expertise_rating": 10000 }
  ],
  "creatures": [
   { "id": "dummy", "owner": "templar", "entry": 36, "health": 1000000, "distance": 3 }

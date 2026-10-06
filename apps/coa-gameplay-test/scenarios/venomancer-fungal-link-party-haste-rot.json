@@ -4,9 +4,9 @@
   "contract": "#3909: Fungal Link 300959 (Spell.dbc, read for this scenario) is a passive with three effects: effect 0 SPELL_EFFECT 65 (apply area aura raid) ImplicitTargetA 1 (caster), radius index 287 (100 yd), aura 216 SPELL_AURA_HASTE_SPELLS, BasePoints 2 DieSides 1 (+3%); effect 1 aura 108 (ADD_PCT_MODIFIER) MiscValue 5 SPELLMOD_RANGE BasePoints 19 (+20%); effect 2 aura 108 MiscValue 2 SPELLMOD_THREAT BasePoints -21 (-20%). Effects 1 and 2 carry EffectSpellClassMask (8256, 16777384, 8) = (0x2040, 0x1000028, 0x8) with SpellFamilyName 35; Spore 804983 is family 35 with SpellFamilyFlags (0, 8, 0), so it matches the mask through the second word, and its range index is 4 (30 yd). No script or spell_proc handles 300959 (the id only appears in the stock-coefficient list, the spellbook tables and the non-stacking spell_group 2000182 row of pending_db_world rev_20260908_05_guardian_completion.sql): the effects are native aura handlers. This is a regression scenario, it makes no code change. Learning the passive applies its self aura; the raid area aura reaches a grouped member, and a bystander outside the group is the negative control. Haste is read as the native cast-speed multiplier (UNIT_MOD_CAST_SPEED, 1/1.03 = 0.9709) against each player's own pre-aura snapshot. The stacking rule with Wrath of Air and similar effects is not asserted here (it is a pending SQL row and needs those spells).",
   "timeout_ms": 90000,
   "players": [
-    { "id": "venomancer", "race": 1, "class": 29, "level": 80 },
-    { "id": "mate", "race": 1, "class": 29, "level": 80 },
-    { "id": "outsider", "race": 1, "class": 29, "level": 80 }
+    { "id": "venomancer", "race": 1, "class": 29, "level": 60 },
+    { "id": "mate", "race": 1, "class": 29, "level": 60 },
+    { "id": "outsider", "race": 1, "class": 29, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

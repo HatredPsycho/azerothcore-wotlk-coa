@@ -4,8 +4,8 @@
   "contract": "Impartial 704942 (SpellFamilyName 33) carries three effects, all EffectImplicitTargetA_1 self: effect 0 is SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE (137) with EffectMiscValue 0 (STAT_STRENGTH) and EffectBasePoints 4 -> real 5, handled natively by AuraEffect::HandleModTotalPercentStat via Player::UpdateStatPercentAuras/ApplyStatPercentBuffMod; effect 1 is SPELL_AURA_MOD_EXPERTISE (240) with EffectBasePoints 4 -> real 5, handled by AuraEffect::HandleAuraModExpertise; effect 2 is SPELL_AURA_MOD_INCREASE_ENERGY_PERCENT (132) with EffectMiscValue 0 (POWER_MANA) and EffectBasePoints 4 -> real 5, handled by AuraEffect::HandleAuraModIncreaseEnergyPercent. All three match the tooltip's 'Strength and maximum mana by 5% and your expertise by 5' exactly, and are ordinary generic stat/resource auras with no per-spell-id dispatch needed. Native handlers only; regression scenario for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 27, "level": 80 },
-    { "id": "talent", "race": 1, "class": 27, "level": 80 }
+    { "id": "control", "race": 1, "class": 27, "level": 60 },
+    { "id": "talent", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -4,7 +4,7 @@
   "contract": "Spell.dbc 807964 (\"Soul of Light\", SpellFamilyName 33, Passive) effect 0 is SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue 11 (SPELLMOD_COOLDOWN), EffectBasePoints -60001 (amount -60000 ms), and EffectSpellClassMask word 2 = 33554432, which a repository-wide Spell.dbc scan for family-33 spells shows matches exactly one spell: 804058 \"An'she's Blessing\". Effect 1 is SPELL_AURA_ADD_PCT_MODIFIER (108) with EffectMiscValue 8 (SPELLMOD_ALL_EFFECTS), EffectBasePoints 99 (amount 100), and EffectSpellClassMask word 3 = 536870912, which the same scan shows matches exactly one spell: 807750 \"Vow of Light\" (SLS Inherit Aura). Player::ApplySpellMod (Player.cpp:10219): a single -60000 flat COOLDOWN modifier on base 0 reads back exactly -60000 (the tooltip's 'Reduces the cooldown of An'she's Blessing by 60 sec'); a single +100% ALL_EFFECTS pct modifier makes totalmul = 2.0, so base 1000 reads back 2000 (the tooltip's 'the value of Vow of Light is doubled'). This is a fully generic native pipeline; no server script exists or is needed.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cleric", "race": 1, "class": 27, "level": 80 }
+    { "id": "cleric", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

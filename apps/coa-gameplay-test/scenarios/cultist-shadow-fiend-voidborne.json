@@ -4,7 +4,7 @@
   "contract": "680487 has two ADD_FLAT_MODIFIER (107) effects, both classmask word C bit31 (2147483648), matching Voidborne's (681104) own SpellFamilyFlags[2]=2147483648 exactly. Effect[0]: Misc=11=SPELLMOD_COOLDOWN (SpellDefines.h:87), BasePoints -90001+1=-90000 ms. Effect[1]: Misc=1=SPELLMOD_DURATION (SpellDefines.h:77), BasePoints 4999+1=+5000 ms. Both are consumed through the same native Player::ApplySpellMod (Player.cpp:10219) that every other spell mod in this chunk uses, keyed by SpellInfo::IsAffectedBySpellMod's classmask match (SpellInfo.cpp:1472); the harness's spell_modifier metric calls this function directly on Voidborne's own verified base values (RecoveryTime/CategoryRecoveryTime=180000 ms, DurationIndex 8 = 15000 ms), so 180000-90000=90000 ('reduces the cooldown by 90 sec', exactly halving it) and 15000+5000=20000 ('+5 sec') are read without any cast. A negative control confirms the match is exact: Darkwither (502213, a different family-31 spell with a different classmask) does not have its cooldown op touched by this talent. Regression guard for behaviour that already works natively.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cultist", "race": 1, "class": 25, "level": 80 }
+    { "id": "cultist", "race": 1, "class": 25, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "ms": 3000 },

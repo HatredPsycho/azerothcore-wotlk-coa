@@ -4,9 +4,9 @@
   "contract": "#1305, #1253: both passives are native spell modifiers and aura types, so neither needs a script. Enhanced Procedures 506819 (passive, DurationIndex 21) carries two ADD_PCT_MODIFIER (aura 108) effects on EffectSpellClassMask (0,0,32768): MiscValue 1 SPELLMOD_DURATION BasePoints 99 DieSides 1 (+100%) and MiscValue 22 SPELLMOD_DOT BasePoints 74 DieSides 1 (+75%). Med Pack 502533 has SpellFamilyName 34, SpellFamilyFlags (0,0,32768), DurationIndex 32 (SpellDuration.dbc row 32 = 6000 ms) and effect 0 SPELL_AURA_PERIODIC_HEAL with Amplitude 1000, so the duration becomes 12000 ms and SPELLMOD_DOT turns a 1000 base tick into 1750. Emergency Circumvented 805303 carries ADD_FLAT_MODIFIER MiscValue 7 SPELLMOD_CRITICAL_CHANCE BasePoints 14 DieSides 1 (+15) on mask (2147483648,0,0), which in family 34 resolves to the Emergency Heal rows (575027 has SpellFamilyFlags (2147483648,2,0)), plus SPELL_AURA_ABILITY_PERIODIC_CRIT (286) on mask (0,0,32768), which makes Med Pack's periodic heal roll for critical hits. Native paths only: Player::ApplySpellMod, Aura::CalcMaxDuration, Unit::SpellHealingBonusDone (SPELLMOD_DOT for damagetype DOT), Unit::SpellDoneCritChance and AuraEffect::CalcPeriodicCritChance. Neither Med Pack nor Emergency Heal carries SPELL_ATTR3_IGNORE_CASTER_MODIFIERS.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "control", "race": 1, "class": 28, "level": 80 },
-    { "id": "procedures", "race": 1, "class": 28, "level": 80 },
-    { "id": "circumvent", "race": 1, "class": 28, "level": 80 }
+    { "id": "control", "race": 1, "class": 28, "level": 60 },
+    { "id": "procedures", "race": 1, "class": 28, "level": 60 },
+    { "id": "circumvent", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

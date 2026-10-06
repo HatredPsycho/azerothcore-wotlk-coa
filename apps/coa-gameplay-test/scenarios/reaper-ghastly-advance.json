@@ -4,15 +4,15 @@
   "contract": "The active client gives Ghastly Advance rank 1 (805192) +5 yards and +5 displayed Runic Power, and rank 2 (807885) +10 yards and +10 displayed Runic Power. For the level-80 Spectre Stride rank 802428, the maximum range must be 25/30/35 yards and a landed cast must grant 200/250/300 internal Runic Power with no talent/rank 1/rank 2. Passive talent spells are learned as fixture setup. Underwalk 800797 supplies Spectre Stride's required stealth stance; only Spectre Stride is cast at an enemy. Querying the modified 359504 helper checks authored data, while the power assertion checks the actual cast.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "control", "race": 10, "class": 30, "level": 80, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false },
-    { "id": "first", "race": 10, "class": 30, "level": 80, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false },
-    { "id": "second", "race": 10, "class": 30, "level": 80, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false }
+    { "id": "control", "race": 10, "class": 30, "level": 60, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false },
+    { "id": "first", "race": 10, "class": 30, "level": 60, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false },
+    { "id": "second", "race": 10, "class": 30, "level": 60, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false }
   ],
   "location": { "map": 530, "x": 10349.6, "y": -6357.29, "z": 33.4026, "o": 5.31605 },
   "creatures": [
-    { "id": "control_enemy", "owner": "control", "entry": 36, "level": 80, "distance": 3, "health": 1000000 },
-    { "id": "first_enemy", "owner": "first", "entry": 36, "level": 80, "distance": 3, "health": 1000000 },
-    { "id": "second_enemy", "owner": "second", "entry": 36, "level": 80, "distance": 3, "health": 1000000 }
+    { "id": "control_enemy", "owner": "control", "entry": 36, "level": 60, "distance": 3, "health": 1000000 },
+    { "id": "first_enemy", "owner": "first", "entry": 36, "level": 60, "distance": 3, "health": 1000000 },
+    { "id": "second_enemy", "owner": "second", "entry": 36, "level": 60, "distance": 3, "health": 1000000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let creature AI and level scaling settle", "ms": 5000 },

@@ -4,8 +4,8 @@
   "contract": "The Bieko Effect 706099 (Spell.dbc, family 28, passive) reads 'While Hasten is active the cooldowns of Dimensional Divergence, Temporal Anomaly, and Temporal Focus are reduced by $707312s1% every $712371t1 sec.' Its only effect is aura 42 triggering 712371 (TARGET_UNIT_CASTER, aura 23 every 2000 ms for DurationIndex 29 = 12000 ms, the same duration as Hasten 801304), which triggers 707312. 707312 carries three effects of the custom type 192 with BasePoints 9 + DieSides 1 = 10 and MiscValue 802790 Dimensional Divergence, 806315 Temporal Anomaly and 806165 Temporal Focus. Effect 192 is 'reduce the remaining cooldown of MiscValue by BasePoints percent' (Profound Enlightenment 680953: 'reducing the remaining cooldown of Testaments by $s1%'). Before the fix 706099 had ProcFlags 0 and no spell_proc row, so casting Hasten applied nothing, and effect 192 was EffectNULL. Expected: casting Hasten applies 712371 to the Chronomancer (fails before the fix), and its six ticks each cut the remaining cooldown of Temporal Focus and Temporal Anomaly by 10%: with every cooldown started together, the talented caster's remaining cooldown ends at 0.9^6 of a remaining cooldown that already runs 12 sec behind, about 0.51 of the control's (5 ticks would give about 0.56, 7 about 0.46). Timeguard 804441 is a negative control: the stale Hasten text names it, but 707312 does not, so its cooldown must match the control's. Dimensional Divergence needs a second player to swap with and is not cast here.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

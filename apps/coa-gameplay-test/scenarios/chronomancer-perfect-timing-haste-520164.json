@@ -4,8 +4,8 @@
   "contract": "Spell.dbc gives Perfect Timing 520164, the level-12 rank of the same talent as 520874, three self-targeted APPLY_AURA effects: aura 216 SPELL_AURA_HASTE_SPELLS (EffectBasePoints 3, DieSides 1 -> 4), aura 192 SPELL_AURA_MOD_MELEE_RANGED_HASTE (3 -> 4) and aura 149 SPELL_AURA_REDUCE_PUSHBACK (34 -> 35). The bindmysoul talent snapshot renders it verbatim as 'Increases your haste by 4% and reduces your spell pushback suffered from damaging attacks by 35%'. Native handlers: AuraEffect::HandleModCastingSpeed -> Unit::ApplyCastTimePercentMod divides UNIT_MOD_CAST_SPEED by 1.04, AuraEffect::HandleModMeleeRangedSpeedPct -> Unit::ApplyAttackTimePercentMod divides UNIT_FIELD_BASEATTACKTIME by 1.04, and aura 149 is read by Spell::Delayed/Spell::DelayedChannel. No script or SQL is needed; this is a regression scenario for behaviour that already works. COVERAGE LIMIT: as for 520874, the pushback half of the tooltip is NOT covered behaviourally - the harness has no pushback metric and cannot interrupt a cast in progress. Only the aura's presence and its effect-2 amount of 35 are asserted for that half.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talented", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talented", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

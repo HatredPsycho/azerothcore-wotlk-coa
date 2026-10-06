@@ -4,8 +4,8 @@
   "contract": "Intuition 807589 carries SPELL_AURA_MOD_CRIT_DAMAGE_BONUS (163) with EffectMiscValue school mask 127 (all schools) and EffectBasePoints 24, resolving to 25 with DieSides 1. This aura type is consumed natively by Unit::SpellCriticalDamageBonus and Unit::MeleeDamageBonusDone via GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_CRIT_DAMAGE_BONUS, schoolMask) (Unit.cpp), generic core machinery not specific to this class.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

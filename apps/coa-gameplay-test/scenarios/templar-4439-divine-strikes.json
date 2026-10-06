@@ -4,8 +4,8 @@
  "contract": "Divine Strikes 705255's Description reads \"Damage dealt by Scourgebane now increases the damage of Argent Blade by X% for Y, stacking N times.\" AscensionTemplarAbilities.cpp's OnSpellHitResult casts 803372 (StackAmount 10, a self-targeted stacking aura) unconditionally whenever Scourgebane 801832 (Argent Blade's own guaranteed trigger, per the existing templar-argent-blade-scourgebane.json scenario) deals damage and the player knows 705255 - no chance roll, so one Argent Blade cast is deterministic.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80, "melee_hit_rating": 10000, "spell_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false },
-  { "id": "talent", "race": 1, "class": 19, "level": 80, "melee_hit_rating": 10000, "spell_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false }
+  { "id": "control", "race": 1, "class": 19, "level": 60, "melee_hit_rating": 10000, "spell_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false },
+  { "id": "talent", "race": 1, "class": 19, "level": 60, "melee_hit_rating": 10000, "spell_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false }
  ],
  "creatures": [
   { "id": "dummy_control", "owner": "control", "entry": 36, "health": 1000000, "distance": 3 },

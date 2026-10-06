@@ -14,7 +14,6 @@
 #include <cmath>
 #include <limits>
 #include <list>
-#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -67,8 +66,6 @@ enum BloodmageSecondarySpells : uint32
     SPELL_VAMPIRIC_HUNGER_ENRAGE = 504270,
     SPELL_AORTIC_AEGIS = 704637,
     SPELL_AORTIC_AEGIS_HEAL = 681029,
-    SPELL_ATHERANN_ANGUISH = 680680,
-    SPELL_INFUSE = 681403,
     SPELL_FINGER_OF_DEATH = 806178,
     SPELL_SHATTERED = 804447,
     SPELL_TALDARAM_TORMENT = 800772,
@@ -78,7 +75,6 @@ enum BloodmageSecondarySpells : uint32
     SPELL_BITE_WOUND_PERCENT = 532612
 };
 
-constexpr uint32 AtherannPooledPercent = 30;
 constexpr uint32 TORTURE_MINIMUM_THIRST_STACKS = 9;
 constexpr uint32 VampiricFangRanks[] = {804726, 504093, 504094, 504095, 504096, 504097, 553271, 553272};
 constexpr std::array<uint32, 10> BLOODMOON_BLAST_RANKS = {
@@ -428,75 +424,6 @@ public:
                     if (player->HasAura(SPELL_BLACK_HEART))
                         player->ModifyPower(POWER_RAGE, int32(player->GetMaxPower(POWER_RAGE)) / 5);
                 }
-    }
-};
-
-std::mutex PlagueMutex;
-std::unordered_map<uint64, uint64> PlaguePools;
-
-uint64 PlagueKey(ObjectGuid caster, ObjectGuid victim)
-{
-    return (uint64(caster.GetCounter()) << 32) | uint64(victim.GetCounter());
-}
-
-void BankPlague(ObjectGuid caster, ObjectGuid victim, uint64 amount)
-{
-    if (!amount)
-        return;
-    std::lock_guard<std::mutex> lock(PlagueMutex);
-    uint64& pool = PlaguePools[PlagueKey(caster, victim)];
-    pool = std::min<uint64>(pool + amount, uint64(std::numeric_limits<int32>::max()));
-}
-
-uint64 TakePlague(ObjectGuid caster, ObjectGuid victim)
-{
-    std::lock_guard<std::mutex> lock(PlagueMutex);
-    auto pool = PlaguePools.find(PlagueKey(caster, victim));
-    if (pool == PlaguePools.end())
-        return 0;
-    uint64 const amount = pool->second;
-    PlaguePools.erase(pool);
-    return amount;
-}
-
-bool FeedsInfuse(Player* owner, Unit* attacker)
-{
-    Unit* source = attacker->GetCharmerOrOwnerOrSelf();
-    Player* player = source ? source->ToPlayer() : nullptr;
-    return player && (player == owner || player->IsInSameRaidWith(owner));
-}
-
-class bloodmage_plague_pools : public UnitScript
-{
-public:
-    bloodmage_plague_pools() : UnitScript("bloodmage_plague_pools", true,
-        {UNITHOOK_ON_DAMAGE}) { }
-
-    void OnDamage(Unit* attacker, Unit* victim, uint32& damage) override
-    {
-        Bank(attacker, victim, damage);
-    }
-
-private:
-    static void Bank(Unit* attacker, Unit* victim, uint32 damage)
-    {
-        if (!attacker || !victim || !damage)
-            return;
-        for (auto const& pair : victim->GetAppliedAuras())
-        {
-            uint32 const mark = pair.second->GetBase()->GetId();
-            if (mark != SPELL_ATHERANN_ANGUISH && mark != SPELL_INFUSE)
-                continue;
-            Unit* caster = pair.second->GetBase()->GetCaster();
-            Player* owner = caster ? caster->ToPlayer() : nullptr;
-            if (!owner || owner->getClass() != CLASS_SON_OF_ARUGAL)
-                continue;
-            if (mark == SPELL_ATHERANN_ANGUISH && attacker == owner)
-                BankPlague(owner->GetGUID(), victim->GetGUID(),
-                    uint64(damage) * AtherannPooledPercent / 100);
-            else if (mark == SPELL_INFUSE && FeedsInfuse(owner, attacker))
-                BankPlague(owner->GetGUID(), victim->GetGUID(), uint64(damage));
-        }
     }
 };
 
@@ -890,31 +817,6 @@ class aura_ascension_bloodmage_darkfallen_lament : public AuraScript
     }
 };
 
-class aura_ascension_bloodmage_plague_mark : public AuraScript
-{
-    PrepareAuraScript(aura_ascension_bloodmage_plague_mark);
-
-    void Burst(AuraEffect const* effect, AuraEffectHandleModes)
-    {
-        Unit* target = GetTarget();
-        Unit* caster = GetCaster();
-        Player* owner = caster ? caster->ToPlayer() : nullptr;
-        if (!target || !owner || owner->getClass() != CLASS_SON_OF_ARUGAL)
-            return;
-        uint64 const pooled = TakePlague(owner->GetGUID(), target->GetGUID());
-        uint32 const burst = effect->GetSpellInfo()->Effects[EFFECT_0].TriggerSpell;
-        if (!pooled || !burst || !ExpiringBloodmage(this) || !target->IsAlive() || !owner->IsAlive())
-            return;
-        owner->CastCustomSpell(burst, SPELLVALUE_BASE_POINT0, int32(pooled), target, TRIGGERED_FULL_MASK);
-    }
-
-    void Register() override
-    {
-        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_plague_mark::Burst,
-            EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
-    }
-};
-
 void SyncRunningWildJourneyman(Player* player)
 {
     bool const runningWild = player->HasSpell(SPELL_RUNNING_WILD);
@@ -954,7 +856,6 @@ void AddSC_AscensionBloodmageSecondary()
     RegisterSpellScript(aura_ascension_bloodmage_sacrificial_rite);
     new bloodmage_secondary_casts();
     new bloodmage_kiss_periodic();
-    new bloodmage_plague_pools();
     new bloodmage_secondary_contracts();
     RegisterSpellScript(spell_ascension_blood_rituals_heal);
     RegisterSpellScript(spell_ascension_blood_feast_corpses);
@@ -968,6 +869,5 @@ void AddSC_AscensionBloodmageSecondary()
     RegisterSpellScript(spell_ascension_bloodmage_excision);
     RegisterSpellScript(aura_ascension_bloodmage_blood_veil);
     RegisterSpellScript(aura_ascension_bloodmage_darkfallen_lament);
-    RegisterSpellScript(aura_ascension_bloodmage_plague_mark);
     new bloodmage_running_wild_journeyman();
 }

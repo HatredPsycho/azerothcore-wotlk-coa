@@ -10,7 +10,7 @@
     "z": 55.5
   },
   "players": [
-    { "id": "owner", "race": 1, "class": 15, "level": 80 }
+    { "id": "owner", "race": 1, "class": 15, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "ms": 5000 },

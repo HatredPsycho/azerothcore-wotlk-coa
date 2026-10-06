@@ -14,13 +14,13 @@
       "id": "rapid",
       "race": 1,
       "class": 12,
-      "level": 80
+      "level": 60
     },
     {
       "id": "bloody",
       "race": 1,
       "class": 12,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

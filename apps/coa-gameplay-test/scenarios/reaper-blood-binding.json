@@ -20,7 +20,7 @@
       "id": "control",
       "race": 10,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
       "expertise_rating": 10000
@@ -29,7 +29,7 @@
       "id": "binder",
       "race": 10,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
       "expertise_rating": 10000
@@ -38,7 +38,7 @@
       "id": "untalented",
       "race": 10,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
       "expertise_rating": 10000
@@ -49,7 +49,7 @@
       "id": "control_cull",
       "owner": "control",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 8
     },
@@ -57,7 +57,7 @@
       "id": "control_rush",
       "owner": "control",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 20
     },
@@ -65,7 +65,7 @@
       "id": "binder_cull",
       "owner": "binder",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 8
     },
@@ -73,7 +73,7 @@
       "id": "binder_rush",
       "owner": "binder",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 20
     },
@@ -81,7 +81,7 @@
       "id": "untalented_cull",
       "owner": "untalented",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 8
     },
@@ -89,7 +89,7 @@
       "id": "untalented_rush",
       "owner": "untalented",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 20
     }

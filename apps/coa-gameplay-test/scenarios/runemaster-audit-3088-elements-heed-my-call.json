@@ -4,7 +4,7 @@
   "contract": "Elements, Heed My Call! 706670 effect 0 is SPELL_AURA_ADD_PCT_MODIFIER, EffectMiscValue 15 (SPELLMOD_CRIT_DAMAGE_BONUS), EffectBasePoints 14 + DieSides 1 = +15, EffectSpellClassMask word 0 = 8389376 (bits 8, 9, 23). Hurricane 645435 (SpellFamilyFlags word 0 bit 8, 256), Smolder 801087 (bit 9, 512) and Hoarfrost 801104 (bit 23, 8388608) sum to exactly 8389376 - all three named targets resolved and classmask-matched byte for byte. Player::ApplySpellMod must therefore raise any op-15 query against all three spells by 15% once 706670 is learned.",
   "timeout_ms": 90000,
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80}
+    {"id": "rm", "race": 1, "class": 32, "level": 60}
   ],
   "steps": [
     {"action": "wait", "ms": 3000},

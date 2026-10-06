@@ -10,7 +10,7 @@
   ],
   "timeout_ms": 60000,
   "hour": 0,
-  "players": [{ "id": "stalker", "race": 1, "class": 20, "level": 80 }],
+  "players": [{ "id": "stalker", "race": 1, "class": 20, "level": 60 }],
   "steps": [
     { "action": "wait", "label": "Let character setup settle", "ms": 5000 },
     { "action": "set_aura", "actor": "stalker", "spell": 808013, "stacks": 0 },

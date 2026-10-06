@@ -4,7 +4,7 @@
   "contract": "Alchemical Research 705498 (rank 1) and 707862 (rank 2) read 'Increases the effectiveness of your Tonics by $s1%.' In the installed Spell.dbc both are passive, family 21, effect 0 = SPELL_AURA_ADD_PCT_MODIFIER (108), misc 8 = SPELLMOD_ALL_EFFECTS, class mask word 2 = 0x200, BasePoints 24 and 49 (DieSides 1, so 25% and 50%). Every Tonic carries family 21 and flag word 2 0x200 (Vampiric Tonic 802276, Pyro Tonic 802277 ...), so the stock chain applies with no script: SpellEffectInfo::CalcValue (SpellInfo.cpp:520) calls Unit::ApplyEffectModifiers (Unit.cpp:12149), which applies SPELLMOD_ALL_EFFECTS through Player::ApplySpellMod (Player.cpp:10219). The base values are DBC BasePoints + 1: Vampiric Tonic effect 0 = 39 + 1 = 40 (the Tonic contract only turns its aura type into a dummy, AscensionWitchHunterTonics.cpp), Pyro Tonic effect 0 = 29 + 1 = 30. The result is int32-truncated (SpellInfo.cpp:582), so 40 becomes 50 and 60, and 30 becomes 37 (37.5) and 45. The scenario reads the resolved effect values with the spell_effect_value probe, then checks the live aura amount of a real Vampiric Tonic cast.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

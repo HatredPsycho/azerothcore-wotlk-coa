@@ -4,8 +4,8 @@
  "contract": "Final Prayer 705268 doubles Testament healing two ways: a +100% SPELLMOD_EFFECT1 on Testament of Fortitude (500678), whose first effect restores 5% of maximum health per tick, and SPELL_AURA_MOD_HEALING_RECEIVED at +100% on the Testament of Faith mask. The core applies the second one in Unit::SpellHealingBonusTaken, and only when the healer is the unit that cast the aura, which matches the talent's wording 'healing done to you'. The harness measures the healing done by a caster, not the amount a victim receives, so that effect is proved by the applied aura amount.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "prayer", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "prayer", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

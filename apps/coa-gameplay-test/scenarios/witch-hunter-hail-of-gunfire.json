@@ -4,7 +4,7 @@
   "contract": "Hail of Gunfire 804187 reads 'Increases your ranged haste by $s1%.' In the installed Spell.dbc it is a passive, family 21, with one effect: SPELL_AURA_MOD_RANGED_HASTE (140), BasePoints 9 (DieSides 1, so 10%), self target, no class mask. AuraEffect::HandleAuraModRangedHaste (SpellAuraEffects.cpp:5012) calls Unit::ApplyAttackTimePercentMod(RANGED_ATTACK), which divides the ranged attack time by 1.10 (Unit.cpp:14145), so the expected ratio 1/1.10 = 0.9091 comes from the DBC amount. The module never touches 804187. The stale hidden-aura tooltip that mentions Quickdraw is client-only and not asserted.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

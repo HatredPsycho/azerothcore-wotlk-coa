@@ -8,14 +8,14 @@
       "id": "eureka",
       "race": 1,
       "class": 28,
-      "level": 80,
+      "level": 60,
       "spell_crit_rating": 100000
     },
     {
       "id": "plain",
       "race": 1,
       "class": 28,
-      "level": 80,
+      "level": 60,
       "spell_crit_rating": 100000
     }
   ],

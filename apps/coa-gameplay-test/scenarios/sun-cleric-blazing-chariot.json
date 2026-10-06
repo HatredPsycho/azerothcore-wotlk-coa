@@ -4,10 +4,10 @@
   "contract": "300350 is ADD_PCT_MODIFIER (aura 108), MiscValue 0 = SPELLMOD_DAMAGE, EffectSpellClassMask word 0 = 0x80000000. Radiance's cast spell (800038) carries that exact bit in its own SpellFamilyFlags word 0 (0x80000000, a top-bit encoding). SpellInfo::IsAffectedBySpellMod's generic flag96 AND matches. BasePoints 124 resolves to 125 (DieSides 1), matching 'Increases the healing and damage of Radiance by 125%'. SPELLMOD_DAMAGE is applied inside both Unit::SpellHealingBonusDone (effect 0, SPELL_EFFECT_HEAL) and Unit::SpellDamageBonusDone (effect 1, SPELL_EFFECT_SCHOOL_DAMAGE), which is why the same modifier boosts both halves of a hybrid heal/damage spell. Native only, no server code needed.",
   "timeout_ms": 30000,
   "players": [
-    { "id": "caster", "race": 1, "class": 27, "level": 80 }
+    { "id": "caster", "race": 1, "class": 27, "level": 60 }
   ],
   "creatures": [
-    { "id": "target", "owner": "caster", "entry": 36, "level": 80, "health": 100000, "distance": 10 }
+    { "id": "target", "owner": "caster", "entry": 36, "level": 60, "health": 100000, "distance": 10 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

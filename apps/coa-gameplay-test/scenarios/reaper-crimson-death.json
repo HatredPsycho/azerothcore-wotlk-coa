@@ -16,7 +16,7 @@
       "id": "control",
       "race": 5,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
       "expertise_rating": 10000,
@@ -26,7 +26,7 @@
       "id": "crimson",
       "race": 5,
       "class": 30,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
       "expertise_rating": 10000,
@@ -38,7 +38,7 @@
       "id": "control_target",
       "owner": "control",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 2
     },
@@ -46,7 +46,7 @@
       "id": "crimson_target",
       "owner": "crimson",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 2
     }

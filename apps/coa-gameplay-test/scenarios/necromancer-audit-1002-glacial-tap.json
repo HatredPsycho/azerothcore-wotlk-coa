@@ -4,7 +4,7 @@
   "contract": "Glacial Tap 805369 (CharacterAdvancement 29787, Class tab, class 23) reads 'Tap into necrotic energies, instantly regenerating $/10;s1 Runic Power.' with an instant cast and 12 sec cooldown. Spell.dbc: CastingTimeIndex 1 (instant), RecoveryTime 12000, effect 0 SPELL_EFFECT_ENERGIZE (30) on the caster, MiscValue 6 (Runic Power), BasePoints 299 + DieSides 1 = 300 (Runic Power is stored in tenths, so 30). The Necromancer's display power is Runic Power (ChrClasses 23 power type 6, maximum 1000), so Spell::EffectEnergize applies it natively. From 0 Runic Power one cast logs a 300 energize and leaves 27-30 Runic Power (one out-of-combat decay tick at most), starts a cooldown of at most 12 s, and a second cast during that cooldown is refused without another energize.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "necro", "race": 5, "class": 23, "level": 80 }
+    { "id": "necro", "race": 5, "class": 23, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login settle", "ms": 3000 },

@@ -4,8 +4,8 @@
   "contract": "Timekeeper 680845 carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SPELLMOD_CHARGES (4) and EffectSpellClassMask word2 134217730 (0x8000002); EffectBasePoints 1 resolves to 2 with DieSides 1, matching the tooltip \"Adds $s1 additional charges to Timeguard.\" Timeguard 804441 has SpellFamilyFlags word2 134217728 (0x8000000) and Spell.dbc ProcCharges 3, so the modified count is 5. Native path only: AuraEffect::CalculateSpellMod builds the modifier and Aura::CalcMaxCharges applies SPELLMOD_CHARGES from the caster's spell-mod owner before Aura's constructor stores m_procCharges. The probe uses the same native Player::ApplySpellMod on the record's own ProcCharges, so it needs no cast.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -4,7 +4,7 @@
   "contract": "Summoner 706953 (CharacterAdvancement 30487, ClassType 25 = class 23) reads 'Reduces the mana cost and cooldown of Sacrifice Undead by 20%.' Spell.dbc: effect 0 is SPELL_AURA_ADD_PCT_MODIFIER (108) MiscValue 11 (SPELLMOD_COOLDOWN) and effect 1 is the same aura MiscValue 14 (SPELLMOD_COST), each EffectBasePoints -21 + DieSides 1 = -20, both with EffectSpellClassMask word 2 = 0x4000000 in SpellFamilyName 29 -- exactly Sacrifice Undead's family flags (805027, 807938-807941; RecoveryTime 30000 ms, PowerType 0 mana, ManaCostPercentage 20). SpellInfo::CalcPowerCost (SpellInfo.cpp:3091) applies `modOwner->ApplySpellMod(Id, SPELLMOD_COST, powerCost, spell)` unconditionally after computing the percentage-derived mana cost, and cooldown application applies SPELLMOD_COOLDOWN the same way; both are generic native spellmod paths, no CoA script needed. The issue's 'zero occurrences in source' is true but irrelevant: this is the class of false positive the audit brief warns about. No code change; this scenario proves the tooltip contract by reading the resolved spell_modifier value directly, with and without the passive.",
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
-  "players": [ { "id": "n", "race": 5, "class": 23, "level": 80 } ],
+  "players": [ { "id": "n", "race": 5, "class": 23, "level": 60 } ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI settle", "ms": 3000 },
     {

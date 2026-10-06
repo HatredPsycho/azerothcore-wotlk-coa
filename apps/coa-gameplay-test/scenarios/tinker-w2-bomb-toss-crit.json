@@ -4,8 +4,8 @@
   "contract": "#1232: Boom Hour 802963 is a native ADD_FLAT_MODIFIER (aura 107) passive, EffectMiscValue 7 SPELLMOD_CRITICAL_CHANCE, BasePoints 9 DieSides 1 (+10), EffectSpellClassMask (0,0,128). Unit::SpellDoneCritChance consumes SPELLMOD_CRITICAL_CHANCE through Player::ApplySpellMod. The CoA route for this modifier is already in the core: SpellInfo::IsAffectedBySpellMod has `case 802963: return root == 801005 || Id == 500601;` in its SpellFamilyName 34 branch, which keeps the modifier on the whole Bomb Toss rank chain and adds Firepot 500601, whose SpellFamilyFlags (0,0,0) the raw mask could never reach. spell_ranks declares the chain root of 502510 (rank 2) and 547209 (rank 8) as 801005. The only other family-34 row carrying mask bit (0,0,128) is the unreferenced duplicate Bomb Toss 561107, which is not in that chain and which the route therefore excludes; asserting zero on it is the regression guard for the route itself.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 28, "level": 80 },
-    { "id": "boom", "race": 1, "class": 28, "level": 80 }
+    { "id": "control", "race": 1, "class": 28, "level": 60 },
+    { "id": "boom", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

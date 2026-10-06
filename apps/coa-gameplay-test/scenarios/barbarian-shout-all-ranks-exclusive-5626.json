@@ -14,19 +14,19 @@
       "id": "high",
       "race": 1,
       "class": 12,
-      "level": 65
+      "level": 60
     },
     {
       "id": "other",
       "race": 1,
       "class": 12,
-      "level": 65
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 12,
-      "level": 65
+      "level": 60
     }
   ],
   "steps": [

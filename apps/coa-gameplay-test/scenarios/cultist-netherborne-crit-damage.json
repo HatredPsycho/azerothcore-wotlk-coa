@@ -5,10 +5,10 @@
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "caster", "race": 1, "class": 25, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "caster", "race": 1, "class": 25, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "target", "owner": "caster", "entry": 36, "level": 80, "health": 100000, "distance": 3 }
+    { "id": "target", "owner": "caster", "entry": 36, "level": 60, "health": 100000, "distance": 3 }
   ],
   "steps": [
     { "action": "wait", "ms": 5000, "label": "Let spawn AI and level scaling settle" },

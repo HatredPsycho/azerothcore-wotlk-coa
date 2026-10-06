@@ -4,8 +4,8 @@
   "contract": "With Maker of Realities, casting Hasten reduces healing cast times by 20% for 12 seconds.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "maker", "race": 1, "class": 22, "level": 80 },
-    { "id": "ally", "race": 1, "class": 22, "level": 80 }
+    { "id": "maker", "race": 1, "class": 22, "level": 60 },
+    { "id": "ally", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "learn", "actor": "maker", "spell": 801304 },

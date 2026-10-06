@@ -7,19 +7,19 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     },
     {
       "id": "outsider",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     }
   ],
   "timeout_ms": 120000,

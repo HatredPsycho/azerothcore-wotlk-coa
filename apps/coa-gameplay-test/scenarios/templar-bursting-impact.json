@@ -4,7 +4,7 @@
  "contract": "Bursting Impact 705276 applies SPELL_AURA_MOD_OFFHAND_DAMAGE_PCT for 25, which the core's HandleModOffhandDamagePercent applies to off-hand weapon damage. The harness has no off-hand damage metric, so the proof is that the aura is applied with amount 25.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "bursting", "race": 1, "class": 19, "level": 80 }
+  { "id": "bursting", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

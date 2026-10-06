@@ -4,7 +4,7 @@
   "contract": "Consolidation 706603 ships two SPELL_EFFECT_APPLY_AURA effects in Spell.dbc, both with BasePoints 4 + DieSides 1 = 5%: aura 216 SPELL_AURA_HASTE_SPELLS (AuraEffect::HandleModCastingSpeed) and aura 192 SPELL_AURA_MOD_MELEE_RANGED_HASTE (AuraEffect::HandleModMeleeRangedSpeedPct). Together those are the tooltip's \"your haste\". cast_speed_multiplier reads the native cast-time multiplier and attack_time_ms the hasted swing time, so both are divided by 1.05. Two sibling records also named Consolidation exist (706604, 706609); this scenario covers only the 706603 the issue names.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

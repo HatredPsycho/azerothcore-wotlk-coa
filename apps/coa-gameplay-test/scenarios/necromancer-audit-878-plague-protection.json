@@ -5,12 +5,12 @@
   "timeout_ms": 90000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "control", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "protected", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "control", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "protected", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "control_golem", "owner": "control", "entry": 36, "level": 80, "health": 1000000, "distance": 10 },
-    { "id": "protected_golem", "owner": "protected", "entry": 36, "level": 80, "health": 1000000, "distance": 10 }
+    { "id": "control_golem", "owner": "control", "entry": 36, "level": 60, "health": 1000000, "distance": 10 },
+    { "id": "protected_golem", "owner": "protected", "entry": 36, "level": 60, "health": 1000000, "distance": 10 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI, level scaling and the Necromancer auras settle", "ms": 5000 },

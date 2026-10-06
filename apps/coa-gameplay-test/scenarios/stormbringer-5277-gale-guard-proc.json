@@ -4,7 +4,7 @@
   "contract": "Gale Guard (500923) tooltip: 'enemies who damage you [are] struck with a gust of wind and knocked back... Lasts for $d or 3 attacks.' It carries a live SPELL_AURA_PROC_TRIGGER_SPELL (aura 42) effect (EffectTriggerSpell 504872), but Spell.dbc gives it ProcFlags 0 and no spell_proc row existed, so it never proc'd: no knockback on any hit taken. Physical knockback motion is not assertable by this harness, so this proves the triggered cast instead (spell_proc_count, which the README defines as counting the casts an aura's own proc fired). The new spell_proc row (PROC_FLAG_TAKEN_DAMAGE, Charges 3, since Spell.dbc's own ProcCharges is 0/unlimited) makes it reachable and caps it at 3 attacks, matching the tooltip. Self-applied Corruption rank 8 (27216) supplies controlled 150-damage ticks every 3 sec as taken damage, the same fixture stormbringer-fix-stormcloak-family.json uses for the same PROC_FLAG_TAKEN_DAMAGE class.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "storm", "race": 1, "class": 16, "level": 80 }
+    { "id": "storm", "race": 1, "class": 16, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 3000 },

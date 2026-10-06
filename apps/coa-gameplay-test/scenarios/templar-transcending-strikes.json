@@ -4,10 +4,10 @@
  "contract": "Transcending Strikes reaches Divine Force through helper 804918, an Ascension cooldown modifier of -30000 ms whose misc value names Divine Force rank 2 (807800). ModifyAscensionCooldown acts on that exact spell id and Divine Force has no spell_ranks chain, so a Templar holding rank 1 (806153) must still have its cooldown shortened for the talent to do what its description promises. The helper is learned as fixture setup and cast directly, because the session cast handler only accepts spells the character knows; the talent's own proc path is not exercised here.",
  "timeout_ms": 120000,
  "players": [
-  { "id": "templar", "race": 1, "class": 19, "level": 80 }
+  { "id": "templar", "race": 1, "class": 19, "level": 60 }
  ],
  "creatures": [
-  { "id": "enemy", "owner": "templar", "entry": 1601, "level": 80 }
+  { "id": "enemy", "owner": "templar", "entry": 1601, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 6000 },

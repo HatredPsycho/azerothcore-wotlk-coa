@@ -4,7 +4,7 @@
   "contract": "#468 and #574: both are native. Skin Shedder (705949) effect 2 is a PCT SPELLMOD_COST (op 14) of -50% with class mask (0,0,0x20), which selects the form spells (Spider 800841, Beetle 803183, Sea Serpent 803212, Weaver 804980, Vizier 800912, both Venomwing rows 520307 and 520330); the modifier and Beetle Form's real spell_power_cost are checked against the same run's baseline. Hallucinogenic Venom (560188) is SPELL_AURA_MOD_MANA_REGEN_INTERRUPT with 50, read by Player::UpdateManaRegen; the harness has no mana regeneration metric, so only the applied aura and its amount are asserted, not the regenerated mana.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "v", "race": 1, "class": 29, "level": 80}
+    {"id": "v", "race": 1, "class": 29, "level": 60}
   ],
   "location": {"map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0},
   "steps": [

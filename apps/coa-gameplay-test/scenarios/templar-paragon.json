@@ -4,7 +4,7 @@
  "contract": "Paragon 706357 applies SPELL_AURA_MOD_STAT for 10 Stamina and SPELL_AURA_ASCENSION_MOD_STAT_FROM_STAT granting a further 10% of Agility as Stamina, so the Templar's Stamina rises by 10 plus a tenth of its Agility.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "paragon", "race": 1, "class": 19, "level": 80 }
+  { "id": "paragon", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

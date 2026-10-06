@@ -8,13 +8,13 @@
       "id": "control",
       "race": 5,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "scythe",
       "race": 5,
       "class": 30,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {
@@ -29,7 +29,7 @@
       "id": "target",
       "owner": "scythe",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

@@ -8,7 +8,7 @@
    "id": "keeper",
    "race": 1,
    "class": 19,
-   "level": 80
+   "level": 60
   }
  ],
  "creatures": [
@@ -16,7 +16,7 @@
    "id": "enemy",
    "owner": "keeper",
    "entry": 1601,
-   "level": 80
+   "level": 60
   }
  ],
  "steps": [

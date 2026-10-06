@@ -4,11 +4,11 @@
   "contract": "Fearmonger 501132 carries two ADD_PCT_MODIFIER (aura 108) effects on classmask (0,0,2097152), the same 8-rank Taldaram's Torment mask as #577/#981: MiscValue 19 (SPELLMOD_ACTIVATION_TIME) BasePoints -31 (real -30%) and MiscValue 14 (SPELLMOD_COST) BasePoints 29 (real +30%). AuraEffect::CalculatePeriodic (SpellAuraEffects.cpp) applies SPELLMOD_ACTIVATION_TIME to the periodic amplitude only at aura-application time, so recasting Torment on the same, still-active target only refreshes its duration rather than recomputing the tick rate; two separate dummies (one cast before, one after learning Fearmonger) isolate a fresh application each, with a wait between the two casts to clear the caster's global cooldown. SpellInfo::CalcPowerCost applies SPELLMOD_COST generically and needs only a query. 802580 (level 56) is the rank a level-80 character owns.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "dummy_baseline", "owner": "caster", "entry": 36, "level": 80, "health": 1000000, "distance": 3 },
-    { "id": "dummy_boosted", "owner": "caster", "entry": 36, "level": 80, "health": 1000000, "distance": 6 }
+    { "id": "dummy_baseline", "owner": "caster", "entry": 36, "level": 60, "health": 1000000, "distance": 3 },
+    { "id": "dummy_boosted", "owner": "caster", "entry": 36, "level": 60, "health": 1000000, "distance": 6 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

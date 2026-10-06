@@ -7,19 +7,19 @@
       "id": "v",
       "race": 8,
       "class": 29,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally_low",
       "race": 8,
       "class": 29,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally_high",
       "race": 8,
       "class": 29,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -27,7 +27,7 @@
       "id": "low",
       "owner": "v",
       "entry": 27228,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -35,7 +35,7 @@
       "id": "high",
       "owner": "v",
       "entry": 27228,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 6
     }

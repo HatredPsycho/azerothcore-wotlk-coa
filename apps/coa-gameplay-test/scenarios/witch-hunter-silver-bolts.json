@@ -8,7 +8,7 @@
       "id": "wh",
       "race": 1,
       "class": 15,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -17,7 +17,7 @@
       "id": "undead",
       "owner": "wh",
       "entry": 201,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -25,7 +25,7 @@
       "id": "demon",
       "owner": "wh",
       "entry": 49,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 6
     },
@@ -33,7 +33,7 @@
       "id": "plain",
       "owner": "wh",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 9
     }

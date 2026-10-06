@@ -5,20 +5,20 @@
   "timeout_ms": 150000,
   "location": {"map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0},
   "players": [
-    {"id": "no_passive", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "wrong_class", "race": 1, "class": 14, "level": 80, "spell_hit_rating": 10000},
-    {"id": "free_helper", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "failed_cost", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "rage_cast", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000},
-    {"id": "unlearned", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000}
+    {"id": "no_passive", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "wrong_class", "race": 1, "class": 14, "level": 60, "spell_hit_rating": 10000},
+    {"id": "free_helper", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "failed_cost", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "rage_cast", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000},
+    {"id": "unlearned", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000}
   ],
   "creatures": [
-    {"id": "no_passive_target", "owner": "no_passive", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "wrong_class_target", "owner": "wrong_class", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "free_helper_target", "owner": "free_helper", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "failed_cost_target", "owner": "failed_cost", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "rage_cast_target", "owner": "rage_cast", "entry": 36, "level": 80, "health": 1000000, "distance": 15},
-    {"id": "unlearned_target", "owner": "unlearned", "entry": 36, "level": 80, "health": 1000000, "distance": 15}
+    {"id": "no_passive_target", "owner": "no_passive", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "wrong_class_target", "owner": "wrong_class", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "free_helper_target", "owner": "free_helper", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "failed_cost_target", "owner": "failed_cost", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "rage_cast_target", "owner": "rage_cast", "entry": 36, "level": 60, "health": 1000000, "distance": 15},
+    {"id": "unlearned_target", "owner": "unlearned", "entry": 36, "level": 60, "health": 1000000, "distance": 15}
   ],
   "steps": [
     {"action": "set_health", "actor": "no_passive_target", "value": 999999},

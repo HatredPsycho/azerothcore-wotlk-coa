@@ -15,7 +15,7 @@
       "id": "caster",
       "race": 1,
       "class": 24,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -24,7 +24,7 @@
       "id": "target",
       "owner": "caster",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     }

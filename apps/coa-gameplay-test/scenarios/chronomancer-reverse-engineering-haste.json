@@ -16,7 +16,7 @@
       "id": "chronomancer",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     }
   ],
@@ -54,7 +54,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -348,7 +349,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -642,7 +644,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -936,7 +939,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -1230,7 +1234,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -1524,7 +1529,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -1818,7 +1824,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -2112,7 +2119,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -2406,7 +2414,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -2700,7 +2709,8 @@
     {
       "action": "set_power",
       "actor": "chronomancer",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",

@@ -4,9 +4,9 @@
  "contract": "Sacred Style 705278 applies SPELL_AURA_MOD_HEALING_PCT and SPELL_AURA_MOD_HEALING_DONE_PERCENT for 8% on the Holy school. Testament of Faith rank 1 (801478) is a Holy heal, so a Templar with the talent heals for 8% more.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "stylish", "race": 1, "class": 19, "level": 80 },
-  { "id": "patient", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "stylish", "race": 1, "class": 19, "level": 60 },
+  { "id": "patient", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

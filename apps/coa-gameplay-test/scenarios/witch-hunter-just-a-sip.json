@@ -4,7 +4,7 @@
   "contract": "Just A Sip 705533 reads 'Drinking Tonics now also restores $680616s1% of your maximum health and mana.' In the installed Spell.dbc it is a passive (attribute 0xc0), family 21, with one effect: SPELL_AURA_PROC_TRIGGER_SPELL (42) triggering 680616, whose effect 0 is SPELL_EFFECT_ENERGIZE_PCT (137, mana) and effect 1 SPELL_EFFECT_HEAL_PCT (136), both BasePoints 4 (DieSides 1, so 5%), both aimed at the caster. The proc conditions are the spell_proc row in data/sql/updates/pending_db_world/rev_20260907_12_witch_hunter_tonic_procs.sql (family 21, SpellFamilyMask2 512, ProcFlags 81920, SpellTypeMask 7, SpellPhaseMask 4, Chance 100), which matches every Tonic (flag word 2 0x200, DmgClass 1). Vampiric Tonic 802276 is used because it heals nothing itself, so the 5% is not mixed with a Tonic heal. With the maximum health fixed at 10000 and current health at 5000 the heal is exactly 5% of 10000 = 500 (HEAL_PCT uses maximum health). The mana half is asserted positive and equal to the native energize log entry, because the character's maximum mana is not fixed by the scenario. A control cast without the talent must restore nothing.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80, "allow_regeneration": false}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60, "allow_regeneration": false}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

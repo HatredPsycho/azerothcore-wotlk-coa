@@ -4,11 +4,11 @@
   "contract": "Item 898070 casts Learning (55884), teaching spell 898070 and spending the item. Spell 898070 is an instant SPELL_EFFECT_THREAT on TARGET_UNIT_SRC_AREA_ENEMY around the caster with radius index 10 (30 yards) and a 45 second recovery, so an enemy 10 yards away enters combat with the caster and one 45 yards away does not.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "horn", "race": 1, "class": 12, "level": 80 }
+    { "id": "horn", "race": 1, "class": 12, "level": 60 }
   ],
   "creatures": [
-    { "id": "near", "owner": "horn", "entry": 36, "level": 80, "health": 100000, "distance": 10 },
-    { "id": "far", "owner": "horn", "entry": 36, "level": 80, "health": 100000, "distance": 45 }
+    { "id": "near", "owner": "horn", "entry": 36, "level": 60, "health": 100000, "distance": 10 },
+    { "id": "far", "owner": "horn", "entry": 36, "level": 60, "health": 100000, "distance": 45 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI settle", "ms": 5000 },

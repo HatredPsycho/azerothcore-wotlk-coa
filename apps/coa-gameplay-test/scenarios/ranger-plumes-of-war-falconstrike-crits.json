@@ -31,7 +31,7 @@
       "id": "ranger",
       "race": 1,
       "class": 21,
-      "level": 80,
+      "level": 60,
       "ranged_hit_rating": 10000,
       "ranged_crit_rating": 100000,
       "allow_regeneration": false,
@@ -46,7 +46,7 @@
       "id": "golem",
       "owner": "ranger",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 100000000,
       "distance": 10
     }

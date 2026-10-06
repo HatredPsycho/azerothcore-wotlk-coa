@@ -4,7 +4,7 @@
   "contract": "Mechanized Crossbows 705514 reads 'Increases your ranged attack power by $s1% and the range of your ranged abilities by $s2 yds.' In the installed Spell.dbc it is passive, family 21, effect 0 = SPELL_AURA_MOD_RANGED_ATTACK_POWER_PCT (167) BasePoints 9 (10%), effect 1 = SPELL_AURA_ADD_FLAT_MODIFIER (107) misc 5 = SPELLMOD_RANGE, BasePoints 4 (+5 yd), class mask (0x40011000, 0x400800, 0x90000030). Heartseeking Bolt 805754 (flags word 1 0x800) and Tormentor 800162 (flags word 2 0x10000000) match that mask, Smite Evil 802004 (flags word 1 0x40000000) does not. Their SpellRange index 114 is 35 yd and Smite Evil's index 2 is 5 yd (SpellRange.dbc). SpellInfo::GetMaxRange applies SPELLMOD_RANGE through Player::ApplySpellMod (SpellInfo.cpp:2924), so the probe reads 40 for the two bolts and stays 35 before the talent, and 5 for the control both times. The ranged attack power is multiplied by the stock total percentage modifier, so the ratio is 1.10 within integer rounding. The item is a crossbow so ranged attack power is a real weapon-backed value.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

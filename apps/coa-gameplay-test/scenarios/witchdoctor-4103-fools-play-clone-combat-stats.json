@@ -17,7 +17,7 @@
       "id": "witchdoctor",
       "race": 1,
       "class": 13,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -26,7 +26,7 @@
       "id": "enemy0",
       "owner": "witchdoctor",
       "entry": 11262,
-      "level": 80,
+      "level": 60,
       "distance": 4,
       "health": 1000000
     }

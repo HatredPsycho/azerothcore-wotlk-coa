@@ -11,9 +11,9 @@
   ],
   "timeout_ms": 90000,
   "players": [
-    { "id": "r1", "race": 1, "class": 22, "level": 80, "allow_regeneration": false },
-    { "id": "r2", "race": 1, "class": 22, "level": 80, "allow_regeneration": false },
-    { "id": "r3", "race": 1, "class": 22, "level": 80, "allow_regeneration": false }
+    { "id": "r1", "race": 1, "class": 22, "level": 60, "allow_regeneration": false },
+    { "id": "r2", "race": 1, "class": 22, "level": 60, "allow_regeneration": false },
+    { "id": "r3", "race": 1, "class": 22, "level": 60, "allow_regeneration": false }
   ],
   "creatures": [
     { "id": "attacker", "owner": "r1", "entry": 1501, "distance": 20 }

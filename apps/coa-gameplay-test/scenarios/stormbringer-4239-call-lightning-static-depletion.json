@@ -4,10 +4,10 @@
   "contract": "Spell.dbc 500040 description reads 'Depletes 50 Static'. AscensionCustomResourceData.h ResourceCostRules already carries {16, 500040, 500040, 803102, 50, Fixed}, so AscensionCompat.cpp OnSpellCast deducts it. Regression guard: seed Static to 100 (above the spell's native 50-Static CasterAuraSpell 707050 gate) and confirm a single cast drops it to exactly 50.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "storm", "race": 1, "class": 16, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "storm", "race": 1, "class": 16, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "dummy", "owner": "storm", "entry": 36, "level": 80, "health": 1000000, "distance": 10 }
+    { "id": "dummy", "owner": "storm", "entry": 36, "level": 60, "health": 1000000, "distance": 10 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 3000 },

@@ -4,9 +4,9 @@
   "contract": "Time Wizard 706779 (rank 1) and 707829 (rank 2) are passives whose only effect is SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue 7 = SPELLMOD_CRITICAL_CHANCE; EffectBasePoints 7 resolves to 8 and 14 resolves to 15 with DieSides 1. Their shared EffectSpellClassMask [4,2048,1] intersects the SpellFamilyName 28 family flags of exactly the three tooltip spells: Epoch 501779 ([4,0,0]), Correct the Mistake 572352 ([0,2048,0]) and Reverse Wound 501805 ([0,131072,1]). SPELLMOD_CRITICAL_CHANCE is consumed natively inside Unit::SpellDoneCritChance, which ends in modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_CRITICAL_CHANCE, crit_chance) (Unit.cpp), and Player::ApplySpellMod has dedicated flat handling for the op. All three spells are SPELL_DAMAGE_CLASS_MAGIC with a SPELL_EFFECT_HEAL, so SpellInfo::IsCritCapable is true and the crit path is reached. Native handlers only; no script or DB row is involved. Note that Orderly Protector 707602/712444 shares the [0,2048,0] bit and therefore also receives the bonus, which is what the shipped Spell.dbc asks for. Regression scenario for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "rank1", "race": 1, "class": 22, "level": 80 },
-    { "id": "rank2", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "rank1", "race": 1, "class": 22, "level": 60 },
+    { "id": "rank2", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

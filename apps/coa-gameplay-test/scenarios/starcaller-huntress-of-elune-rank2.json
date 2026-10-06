@@ -11,8 +11,8 @@
     "o": 0
   },
   "players": [
-    { "id": "caster", "race": 1, "class": 26, "level": 80 },
-    { "id": "victim", "race": 1, "class": 26, "level": 80 }
+    { "id": "caster", "race": 1, "class": 26, "level": 60 },
+    { "id": "victim", "race": 1, "class": 26, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

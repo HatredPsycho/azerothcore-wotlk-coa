@@ -673,12 +673,12 @@ namespace
     // rewrote the item for this realm answers for the numbers written into its spells too. An
     // equipped item that sets a spell off through its aura wrote those numbers just as much as one
     // the cast names directly, so the origin decides, not how the cast was started.
-    int32 ScaleItemSpellValue(Item const* originItem, int32 value)
+    int32 ScaleItemSpellValue(uint32 originItemEntry, int32 value)
     {
-        if (!originItem || !value)
+        if (!originItemEntry || !value)
             return value;
 
-        return LocalLevelScaling::GetEffectiveItemEffectValue(originItem->GetEntry(), value);
+        return LocalLevelScaling::GetEffectiveItemEffectValue(originItemEntry, value);
     }
 }
 void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
@@ -1012,7 +1012,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
             if (damage < 0)
                 damage = 0;
 
-            damage = ScaleItemSpellValue(GetValueOriginItem(), damage);
+            damage = ScaleItemSpellValue(GetValueOriginItemEntry(), damage);
             damage = m_originalCaster->SpellDamageBonusDone(unitTarget, m_spellInfo, (uint32)damage, SPELL_DIRECT_DAMAGE, effIndex);
             damage = unitTarget->SpellDamageBonusTaken(m_originalCaster, m_spellInfo, (uint32)damage, SPELL_DIRECT_DAMAGE);
         }
@@ -1727,7 +1727,7 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
         return;
 
     // add spell damage bonus
-    damage = ScaleItemSpellValue(GetValueOriginItem(), damage);
+    damage = ScaleItemSpellValue(GetValueOriginItemEntry(), damage);
     damage = m_caster->SpellDamageBonusDone(unitTarget, m_spellInfo, uint32(damage), SPELL_DIRECT_DAMAGE, effIndex);
     damage = unitTarget->SpellDamageBonusTaken(m_caster, m_spellInfo, uint32(damage), SPELL_DIRECT_DAMAGE);
 
@@ -1932,7 +1932,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
         }
         else if (m_spellInfo->Id != 33778) // not lifebloom
         {
-            addhealth = ScaleItemSpellValue(GetValueOriginItem(), addhealth);
+            addhealth = ScaleItemSpellValue(GetValueOriginItemEntry(), addhealth);
             addhealth = caster->SpellHealingBonusDone(unitTarget, m_spellInfo, addhealth, HEAL, effIndex);
             m_damageBeforeTakenMods -= addhealth;
             addhealth = unitTarget->SpellHealingBonusTaken(caster, m_spellInfo, addhealth, HEAL);
@@ -1998,7 +1998,7 @@ void Spell::EffectHealthLeech(SpellEffIndex  effIndex)
     if (!unitTarget || !unitTarget->IsAlive() || damage < 0)
         return;
 
-    damage = ScaleItemSpellValue(GetValueOriginItem(), damage);
+    damage = ScaleItemSpellValue(GetValueOriginItemEntry(), damage);
     damage = m_caster->SpellDamageBonusDone(unitTarget, m_spellInfo, uint32(damage), SPELL_DIRECT_DAMAGE, effIndex);
     damage = unitTarget->SpellDamageBonusTaken(m_caster, m_spellInfo, uint32(damage), SPELL_DIRECT_DAMAGE);
 

@@ -4,8 +4,8 @@
   "contract": "Spell.dbc gives Perfect Timing 520874 three self-targeted APPLY_AURA effects: aura 216 SPELL_AURA_HASTE_SPELLS (EffectBasePoints 7, DieSides 1 -> 8), aura 192 SPELL_AURA_MOD_MELEE_RANGED_HASTE (7 -> 8) and aura 149 SPELL_AURA_REDUCE_PUSHBACK (69 -> 70). The tooltip reads 'Increases your haste by $s1% and reduces your spell pushback suffered from damaging attacks by $s3%', i.e. 8% haste and 70% pushback reduction. All three aura types have real handlers: AuraEffect::HandleModCastingSpeed -> Unit::ApplyCastTimePercentMod divides UNIT_MOD_CAST_SPEED by 1.08, AuraEffect::HandleModMeleeRangedSpeedPct -> Unit::ApplyAttackTimePercentMod divides UNIT_FIELD_BASEATTACKTIME by 1.08, and aura 149 is read by Spell::Delayed/Spell::DelayedChannel. No script or SQL is needed; this is a regression scenario for behaviour that already works. COVERAGE LIMIT: the pushback half of the tooltip is NOT covered behaviourally. Pushback only happens when an incoming hit interrupts a cast already in progress, and this harness exposes no pushback metric and cannot make one actor damage another mid-cast. Only the aura's presence and its effect-2 amount of 70 are asserted for that half; proving the 70% reduction needs a Ghost e2e test that starts a cast, takes a hit from a second actor and compares the remaining cast time with and without the talent.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talented", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talented", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

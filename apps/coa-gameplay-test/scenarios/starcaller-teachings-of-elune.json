@@ -8,25 +8,25 @@
       "id": "control",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "rank1",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "rank2",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "patient",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

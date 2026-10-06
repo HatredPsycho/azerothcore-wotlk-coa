@@ -4,7 +4,7 @@
   "contract": "Singularity Core 804438, Paradox Cannon 806203, Flux Emitter 804435 and Aether Compression 804436 all end their own Description[enUS] with the identical line 'Can only have 1 Continuum spell active at a time', but no spell_group row existed for any of them, so all four could be active together. The new group (id 1141, SPELL_GROUP_STACK_RULE_EXCLUSIVE_FROM_SAME_CASTER) makes each new cast remove the caster's previous one. All four require CasterAuraSpell 804455 (Echo Fragment) to cast, so the fixture re-applies one stack before each cast rather than relying on any one cast's own generation/consumption. Fails before the fix (all three stay up at once), passes after.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "chronomancer", "race": 1, "class": 22, "level": 80 }
+    { "id": "chronomancer", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -4,9 +4,9 @@
   "contract": "Sanguinary Offering is one stamina buff in a single-target rank chain (first spell 706630, ranks 706630-707339, plus Rank 6 707340 which has no spell_ranks row) and a raid-wide Greater form (680299) that grants the same buff. All are spell family 26, effect 0 SPELL_EFFECT_APPLY_AURA with aura 29 (MOD_STAT), MiscValue 2 (stamina) and DurationIndex 30, and none carries a stack rule, so a target that receives both the single-target and the raid-wide version holds both auras and their stamina stacks. #6448 reports exactly that at level 60. Expected: one Sanguinary Offering buff per target -- a weaker cast is refused while an equal or stronger offering is present, and an equal or stronger cast replaces the weaker one. Expected before the fix: the second cast stacks (both auras present). Expected after the fix: only the higher offering remains, in both directions.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 },
-    { "id": "marked", "race": 1, "class": 20, "level": 80 },
-    { "id": "fresh", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 },
+    { "id": "marked", "race": 1, "class": 20, "level": 60 },
+    { "id": "fresh", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI settle", "ms": 3000 },

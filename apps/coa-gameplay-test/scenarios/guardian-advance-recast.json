@@ -4,10 +4,10 @@
   "contract": "Advance 500170 (requires Line Formation 803130, 5 s duration, 90 s cooldown) says: after a short delay you can recast the ability to stomp the ground, dealing Physical damage to nearby enemies; if not recast, you stomp at the end of the duration. The stomp is Advance (Damage) 500673, an 8 yd enemy area. Once Advance has run at least 500 ms the button offers 500673; recasting it deals the stomp, ends Advance and restores the Advance button without leaving 500673 known. Letting Advance expire casts the stomp once and restores the button the same way. The learn/unlearn announcements #408 reports are recorded as snapshots only: their expected live presentation is unresolved.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "guardian", "race": 1, "class": 18, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000 }
+    { "id": "guardian", "race": 1, "class": 18, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000 }
   ],
   "creatures": [
-    { "id": "golem", "owner": "guardian", "entry": 36, "level": 80, "health": 100000, "distance": 3 }
+    { "id": "golem", "owner": "guardian", "entry": 36, "level": 60, "health": 100000, "distance": 3 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

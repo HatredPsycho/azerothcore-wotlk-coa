@@ -8,13 +8,13 @@
       "id": "control",
       "race": 1,
       "class": 19,
-      "level": 80
+      "level": 60
     },
     {
       "id": "talent",
       "race": 1,
       "class": 19,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [

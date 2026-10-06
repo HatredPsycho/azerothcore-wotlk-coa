@@ -5,7 +5,10 @@
     "rev_20261004_90_coa_belduna_vendor makes Belduna 161838 a Food & Drink vendor: Roasted Kodo Meat 5474 and Strider",
     "Stew 5477, which leave the eater Well Fed, the 13 meats of Kaga Mistrunner 3025 and six drinks of Moodan Sungrain",
     "3883. Expected: her shop opens with 21 items, and a player who eats her kodo meat for over 10 seconds is Well Fed",
-    "(19705)."
+    "(19705). Well Fed is cut by the content-scaling multiplier of the item it came from: Roasted Kodo Meat is item",
+    "level 4, mapped through Classic band 1-60 -> 1-45 to 3, multiplier 0.75, so its 2 Stamina and 2 Spirit stay",
+    "lround(2 * 0.75) = 2. Strider Stew is item level 15 -> 11, multiplier 0.733, so its Well Fed 19706 grants",
+    "lround(4 * 0.733) = 3 Stamina and 3 Spirit instead of 4."
   ],
   "timeout_ms": 60000,
   "location": {"map": 1, "x": -2712.6, "y": 19.0, "z": 14.5, "o": 0},

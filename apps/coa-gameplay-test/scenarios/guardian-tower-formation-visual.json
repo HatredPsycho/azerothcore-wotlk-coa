@@ -4,7 +4,7 @@
   "contract": "Each Guardian formation has one client visual. Line Formation 803130 and Assault Formation 803417 carry it on the main spell (SpellVisual 1000211 and 1000, cast kits with a head effect and sound). Tower Formation 800317 has SpellVisual 0; its visual is the separate helper 803941 'Tower Formation (Visual)': a 1.5 s dummy aura (DurationIndex 65) whose SpellVisual 2011 state kit 3252 attaches cfx_warrior_spellreflect_impactplayername, a shield above the character's name, with a sound. No DBC effect triggers 803941, so selecting Tower Formation must cast it. The visual flashes once per activation, expires while the formation stays active, and is not cast by the other formations.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "guardian", "race": 1, "class": 18, "level": 80 }
+    { "id": "guardian", "race": 1, "class": 18, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login state settle", "ms": 5000 },

@@ -23,7 +23,7 @@
       "id": "ranger",
       "race": 1,
       "class": 21,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -31,7 +31,7 @@
       "id": "applier",
       "owner": "ranger",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 7,
       "faction": 1

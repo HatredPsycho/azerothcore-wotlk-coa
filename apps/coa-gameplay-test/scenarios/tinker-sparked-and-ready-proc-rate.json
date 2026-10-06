@@ -8,7 +8,7 @@
       "id": "t",
       "race": 1,
       "class": 28,
-      "level": 80,
+      "level": 60,
       "ranged_hit_rating": 1000
     }
   ],
@@ -17,7 +17,7 @@
       "id": "d",
       "owner": "t",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 30
     }
@@ -59,7 +59,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -74,7 +75,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -89,7 +91,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -104,7 +107,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -119,7 +123,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -134,7 +139,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -149,7 +155,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -164,7 +171,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -179,7 +187,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -194,7 +203,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -209,7 +219,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -224,7 +235,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -239,7 +251,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -254,7 +267,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -269,7 +283,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -284,7 +299,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -299,7 +315,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -314,7 +331,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -329,7 +347,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -344,7 +363,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -359,7 +379,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -374,7 +395,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -389,7 +411,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -404,7 +427,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -419,7 +443,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -434,7 +459,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -449,7 +475,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -464,7 +491,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -479,7 +507,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -494,7 +523,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -509,7 +539,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -524,7 +555,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -539,7 +571,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -554,7 +587,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -569,7 +603,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -584,7 +619,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -599,7 +635,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -614,7 +651,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -629,7 +667,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -644,7 +683,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -659,7 +699,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -674,7 +715,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -689,7 +731,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -704,7 +747,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -719,7 +763,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -734,7 +779,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -749,7 +795,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -764,7 +811,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -779,7 +827,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -794,7 +843,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -809,7 +859,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -824,7 +875,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -839,7 +891,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -854,7 +907,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -869,7 +923,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -884,7 +939,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -899,7 +955,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -914,7 +971,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -929,7 +987,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -944,7 +1003,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -959,7 +1019,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -974,7 +1035,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -989,7 +1051,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1004,7 +1067,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1019,7 +1083,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1034,7 +1099,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1049,7 +1115,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1064,7 +1131,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1079,7 +1147,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1094,7 +1163,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1109,7 +1179,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1124,7 +1195,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1139,7 +1211,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1154,7 +1227,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1169,7 +1243,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1184,7 +1259,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1199,7 +1275,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1214,7 +1291,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1229,7 +1307,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1244,7 +1323,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1259,7 +1339,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1274,7 +1355,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1289,7 +1371,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1304,7 +1387,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1319,7 +1403,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1334,7 +1419,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1349,7 +1435,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1364,7 +1451,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1379,7 +1467,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1394,7 +1483,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1409,7 +1499,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1424,7 +1515,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1439,7 +1531,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1454,7 +1547,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1469,7 +1563,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1484,7 +1579,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1499,7 +1595,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1514,7 +1611,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1529,7 +1627,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1544,7 +1643,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1559,7 +1659,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1574,7 +1675,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1589,7 +1691,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1604,7 +1707,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1619,7 +1723,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1634,7 +1739,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1649,7 +1755,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1664,7 +1771,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1679,7 +1787,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1694,7 +1803,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1709,7 +1819,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1724,7 +1835,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1739,7 +1851,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1754,7 +1867,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1769,7 +1883,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1784,7 +1899,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1799,7 +1915,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1814,7 +1931,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1829,7 +1947,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1844,7 +1963,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1859,7 +1979,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1874,7 +1995,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1889,7 +2011,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1904,7 +2027,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1919,7 +2043,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1934,7 +2059,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1949,7 +2075,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1964,7 +2091,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1979,7 +2107,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -1994,7 +2123,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2009,7 +2139,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2024,7 +2155,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2039,7 +2171,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2054,7 +2187,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2069,7 +2203,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2084,7 +2219,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2099,7 +2235,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2114,7 +2251,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2129,7 +2267,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2144,7 +2283,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2159,7 +2299,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2174,7 +2315,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2189,7 +2331,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2204,7 +2347,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2219,7 +2363,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2234,7 +2379,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2249,7 +2395,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2264,7 +2411,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2279,7 +2427,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",
@@ -2294,7 +2443,8 @@
     {
       "action": "set_power",
       "actor": "t",
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "cast",

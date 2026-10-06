@@ -24,7 +24,7 @@
       "id": "top",
       "race": 1,
       "class": 12,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     },
@@ -32,7 +32,7 @@
       "id": "dual",
       "race": 1,
       "class": 12,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     }
@@ -58,7 +58,7 @@
       "id": "top_enemy",
       "owner": "top",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 500000,
       "distance": 3
     },
@@ -66,7 +66,7 @@
       "id": "dual_enemy",
       "owner": "dual",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 500000,
       "distance": 3
     }

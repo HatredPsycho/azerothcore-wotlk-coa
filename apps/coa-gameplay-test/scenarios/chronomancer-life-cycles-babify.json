@@ -4,8 +4,8 @@
   "contract": "Life Cycles 680808 carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SPELLMOD_CASTING_TIME (10) and EffectBasePoints -251, plus SPELL_AURA_ADD_PCT_MODIFIER (108) with EffectMiscValue SPELLMOD_COST (14) and EffectBasePoints -16; both use EffectSpellClassMask word0 bit 0x200000 and resolve to -250 and -15% with DieSides 1, matching the tooltip \"Reduces the cast time of your Babify by 0.25 sec and its mana cost by $s2%.\" Babify 804461 has SpellFamilyFlags word0 2097152, CastingTimeIndex 16 (SpellCastTimes.dbc row 16 = 1500ms), ManaCost 25 with ManaCostPercentage 17, DmgClass 1 and AttributesEx3 0. Native path only: Unit::ModSpellCastTime applies the flat modifier inside SpellInfo::CalcCastTime before the haste multiplier, and SpellInfo::CalcPowerCost applies SPELLMOD_COST after summing the percentage-of-base-mana component. Both fixtures share race, class and level, so their haste and base mana are identical.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

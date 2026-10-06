@@ -8,14 +8,14 @@
       "id": "p1",
       "race": 8,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "ally",
       "race": 8,
       "class": 16,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {

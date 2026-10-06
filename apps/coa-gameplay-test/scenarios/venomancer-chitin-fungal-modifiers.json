@@ -4,7 +4,7 @@
   "contract": "#610 and #669: both are native spell modifiers. Chitinous Surge (705973) is a flat SPELLMOD_COOLDOWN of -3000 (effect 0) and a PCT SPELLMOD_DAMAGE of +15% (effect 1), both with class mask (0,0,0x2000000), which selects every rank of Chitin Rush (803570, 803641-803644; Spell.dbc cooldown 15000 ms, a melee-class spell so the damage path is Unit::MeleeDamageBonusDone). Captivation (503930) is a flat SPELLMOD_EFFECT2 of +5 with class mask (0,0,0x80000000) on Fungal Growth (804971), whose second effect (aura 271, damage from caster, Mycosis) reads 20 in Spell.dbc and must read 25 as cast. Each value is compared with the same run's value without the passive.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "v", "race": 1, "class": 29, "level": 80, "spell_hit_rating": 10000}
+    {"id": "v", "race": 1, "class": 29, "level": 60, "spell_hit_rating": 10000}
   ],
   "creatures": [
     {"id": "dummy", "owner": "v", "entry": 36, "health": 10000000, "distance": 3}

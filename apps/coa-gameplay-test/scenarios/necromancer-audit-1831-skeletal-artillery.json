@@ -5,8 +5,8 @@
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "rank1", "race": 5, "class": 23, "level": 80 },
-    { "id": "rank2", "race": 5, "class": 23, "level": 80 }
+    { "id": "rank1", "race": 5, "class": 23, "level": 60 },
+    { "id": "rank2", "race": 5, "class": 23, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let the Life Force aura synchronize", "ms": 3000 },

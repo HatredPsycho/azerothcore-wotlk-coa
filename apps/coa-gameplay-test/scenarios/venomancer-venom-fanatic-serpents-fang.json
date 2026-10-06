@@ -8,14 +8,14 @@
       "id": "control",
       "race": 1,
       "class": 29,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "fanatic",
       "race": 1,
       "class": 29,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],

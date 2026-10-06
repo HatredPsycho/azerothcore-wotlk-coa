@@ -4,7 +4,7 @@
   "contract": "Eternal Hunt 804201 ships two SPELL_EFFECT_APPLY_AURA effects in Spell.dbc: aura 133 SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT with BasePoints 9 + DieSides 1 = 10% (AuraEffect::HandleAuraModIncreaseHealthPercent) and aura 72 SPELL_AURA_MOD_POWER_COST_SCHOOL_PCT with BasePoints -11 + DieSides 1 = -10%, MiscValue 127 (all schools), consumed by SpellInfo::CalcPowerCost through AuraEffect::HandleModPowerCostPCT. 804201 is the only Eternal Hunt record in Spell.dbc. Bloodbolt 578305 is the probe for the cost half: it is the rank a level-80 character owns, its PowerType is 1 and its shipped cost is 300, and its SchoolMask 32 is inside the aura's 127. The bindmysoul snapshot says 5% on both effects while the shipped Spell.dbc says 10%; the installed DBC wins, so 10% is what is asserted here.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },
