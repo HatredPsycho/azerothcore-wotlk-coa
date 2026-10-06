@@ -1,0 +1,7 @@
+## Interface: 30300
+## Title: CoA LFG Mode
+## Notes: Choose how the Dungeon Finder forms your group: matchmaking, bots, or your current group. Needs mod-coa-content-scaling on the server.
+## Author: HatredPsycho
+## Version: 1.0
+
+CoALFGMode.lua

@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: CoA Companions
+## Notes: Unit frames for summoned companions. Left click targets, right click releases.
+## Author: HatredPsycho
+## Version: 1.0
+## SavedVariables: CoACompanionsDB
+
+CoACompanions.lua
