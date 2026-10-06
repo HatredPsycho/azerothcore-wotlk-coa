@@ -26,7 +26,7 @@
       "id": "p",
       "race": 1,
       "class": 29,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
@@ -39,7 +39,7 @@
       "id": "t",
       "owner": "p",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 15
     }

@@ -4,8 +4,8 @@
  "contract": "Spiritual 560833 applies SPELL_AURA_MOD_POWER_REGEN_PERCENT for Energy at 20%, which the core multiplies into the Energy regeneration rate. Starting both Templars at zero Energy, the talented one recovers about 20% more over the same window.",
  "timeout_ms": 120000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "spiritual", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "spiritual", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

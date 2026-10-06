@@ -8,7 +8,7 @@
       "id": "bloodmage",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -71,7 +71,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -87,7 +88,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -103,7 +105,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -119,7 +122,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -135,7 +139,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -151,7 +156,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -167,7 +173,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -183,7 +190,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -199,7 +207,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -215,7 +224,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -231,7 +241,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -247,7 +258,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -263,7 +275,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -279,7 +292,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -295,7 +309,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -311,7 +326,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",
@@ -327,7 +343,8 @@
     {
       "action": "set_health",
       "actor": "bloodmage",
-      "value": 4000
+      "value": 4000,
+      "maximum": 4000
     },
     {
       "action": "cast",

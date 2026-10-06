@@ -3,7 +3,7 @@
  "name": "Soul Tap generates 50 Runic Power",
  "contract": "Soul Tap 807397 promises 50 Runic Power on cast. Its single effect is native SPELL_EFFECT_ENERGIZE (30) with MiscValue 6 (POWER_RUNIC_POWER), EffectBasePoints 499 and DieSides 1 (range 499-500). Spell::EffectEnergize (SpellEffects.cpp) adds this value directly to the unit's power with no CoA registration required; AscensionCompat.cpp:2734 divides the internally stored value by 10 for the client display, so 499-500 internal matches the tooltip's 50. #3712 reported no CoA source references 807397 - true, and expected: the effect is entirely core-handled, so no script or contract row is needed. PR #3946 already sampled this at runtime and could not reproduce the reported failure (Runic Power was granted).",
  "timeout_ms": 90000,
- "players": [{"id": "reaper", "race": 10, "class": 30, "level": 80}],
+ "players": [{"id": "reaper", "race": 10, "class": 30, "level": 60}],
  "steps": [
   {"action": "wait", "label": "Let the world settle", "ms": 6000},
   {"action": "learn", "actor": "reaper", "spell": 807397},

@@ -8,43 +8,43 @@
       "id": "caster",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "m1",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "m2",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "m3",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "m4",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "m5",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "m6",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -4,7 +4,7 @@
   "contract": "Spider Lord (704264) 'Augments Beetle Form into a Spider Lord'. Beetle Form (803183) is SPELL_AURA_MOD_SHAPESHIFT form 53, whose SpellShapeshiftForm display is the beetle 110063; neither 704264 nor its helper 805139 carries a model effect. On live the Spider Lord is the blue cryptlord2 with purple armor, which the shipped client only has at full size (display 139094, duplicated as 139099-139101), shrunk to a quarter. The talented Beetle Form must show 139094 at object scale 0.25 while keeping the player's combat reach, and every other state the ordinary model at scale 1.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "v", "race": 1, "class": 29, "level": 80}
+    {"id": "v", "race": 1, "class": 29, "level": 60}
   ],
   "location": {"map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0},
   "steps": [

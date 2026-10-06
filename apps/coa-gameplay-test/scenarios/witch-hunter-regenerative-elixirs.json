@@ -4,7 +4,7 @@
   "contract": "Regenerative Elixirs 705528 reads 'Drinking Tonics now also restores $/10;521232s1 Rage.' In the installed Spell.dbc it is a passive, family 21, with one effect: SPELL_AURA_PROC_TRIGGER_SPELL (42) triggering 521232 ('Energize +30 Rage': SPELL_EFFECT_ENERGIZE, misc 1 = Rage, BasePoints 299, DieSides 1, so 300 in the core's tenths of Rage, i.e. the 30 in the text). The proc conditions live in data/sql/updates/pending_db_world/rev_20260907_12_witch_hunter_tonic_procs.sql: family 21, SpellFamilyMask2 512, ProcFlags 81920 (DONE_SPELL_MAGIC_DMG_CLASS_POS | NEG), SpellTypeMask 7, SpellPhaseMask 4 (finish), Chance 100. Dark Tonic 680491 carries family 21, flag word 2 0x200 and DmgClass 1 (magic), so it matches. Whether a self-cast Tonic reaches the finish-phase proc with the caster as target was only read, not run, so this scenario is the proof: a Tonic without the talent must energize nothing, and with it exactly one 300-point Rage energize by 521232 with one proc counted. The energize is read from the native energize log (spell_energize_total) rather than from the Rage bar, which decays out of combat.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

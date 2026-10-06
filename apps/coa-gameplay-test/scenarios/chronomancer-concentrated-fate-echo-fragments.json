@@ -4,8 +4,8 @@
   "contract": "Concentrated Fate 706122 carries SPELL_AURA_ADD_PCT_MODIFIER (108) with EffectMiscValue SPELLMOD_ALL_EFFECTS (8) and EffectSpellClassMask0 word0 bit 0x10, which matches Echo Fragment 804455's own SpellFamilyFlags word0 (16). Native Player::ApplySpellMod should scale any effect of Echo Fragment by +20% (EffectBasePoints 19 resolves to 20 with DieSides 1).",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

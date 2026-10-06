@@ -4,10 +4,10 @@
   "contract": "#1120: Mechanical Enhancements (506632) is a plain self aura pair on stock types 255 and 232, both scoped to MECHANIC_BLEED with -20. Both native incoming-damage consumers must return 80% of the unbuffed value for a spell whose mechanic really is 15 (Rend, 772), and must leave a family-34 spell with no mechanic (Gear Grind, 505160) untouched.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "t", "race": 1, "class": 28, "level": 80 }
+    { "id": "t", "race": 1, "class": 28, "level": 60 }
   ],
   "creatures": [
-    { "id": "a", "owner": "t", "entry": 299, "level": 80, "distance": 5 }
+    { "id": "a", "owner": "t", "entry": 299, "level": 60, "distance": 5 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

@@ -4,8 +4,8 @@
   "contract": "Timeless 706131 is a passive whose only effect is SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue 12 = SPELLMOD_EFFECT2 and EffectBasePoints -4, resolving to -3 with DieSides 1. Its EffectSpellClassMask [0,0,8388608] selects exactly one SpellFamilyName 28 spell: Endless Sands 806728 (SpellFamilyFlags [0,0,8388608], StackAmount 5). Endless Sands effect 1 is SPELL_AURA_MOD_POWER_COST_SCHOOL_PCT (72) with EffectMiscValue 127 (all schools) and EffectBasePoints -1, resolving to 0, so untalented the effect is worth nothing. SPELLMOD_EFFECT2 is folded into that effect's value by Unit::ApplyEffectModifiers through SpellEffectInfo::CalcValue, and AuraEffect::CalculateAmount then multiplies by the stack amount (SpellAuraEffects.cpp), which is the tooltip's 'per stack'. AuraEffect::HandleModPowerCostPCT writes UNIT_FIELD_POWER_COST_MULTIPLIER per school, and SpellInfo::CalcPowerCost multiplies the cost by (1 + multiplier). Endless Sands carries AttributesEx3 0x40010000 (SUPPRESS_CASTER_PROCS | DO_NOT_DISPLAY_RANGE), not SPELL_ATTR3_IGNORE_CASTER_MODIFIERS 0x20000000, so the modifier is not blocked. Epoch 501779 is used as the priced spell: PowerType 0 with ManaCostPercentage 18 and SchoolMask 80, whose first school is 4, one of the schools Endless Sands covers. Native handlers only. Regression scenario for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

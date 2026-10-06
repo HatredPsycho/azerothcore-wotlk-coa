@@ -3,7 +3,7 @@
   "name": "Stormbringer: Bursting raises Drowning's stack value, Washed Away shortens Drown's cooldown (#842, #3688)",
   "timeout_ms": 60000,
   "players": [
-    { "id": "s", "race": 8, "class": 16, "level": 80 }
+    { "id": "s", "race": 8, "class": 16, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

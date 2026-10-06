@@ -4,7 +4,7 @@
   "contract": "To The Skies! 301365 (Ranger Survival talent, CharacterAdvancement 3924, SpellFamilyName 27, SPELL_ATTR0_PASSIVE) reads 'Reduces the cooldown of Bushcraft Glider by $/1000;s1 sec.' Its effect 0 carries MiscValue 11 = SPELLMOD_COOLDOWN with BasePoints -30001 + DieSides 1 = -30000, rendered as 30 sec only because the tooltip divides it by 1000: a flat millisecond amount. EffectSpellClassMask (0, 0, 0x40000000) selects Bushcraft Glider 803648 (family 27, SpellFamilyFlags word 2 0x40000000). Spell.dbc files the effect as SPELL_AURA_ADD_PCT_MODIFIER (108) instead of SPELL_AURA_ADD_FLAT_MODIFIER (107), the only cooldown modifier in the client data below -100%, so Player::ApplySpellMod adds -300 to the multiplier and every positive glider cooldown turns negative and is clamped to zero. Expected: any glider cooldown is shortened by exactly 30000 ms, so 60000 becomes 30000 and 120000 becomes 90000 (a percentage cannot map both), while Adrenaline Rush 520578 (family 27 word 1 0x20, outside the mask) keeps its cooldown. Effects 1 and 2 are proc triggers with no proc flags and no spell_proc row and stay inert. The glider's own cooldown comes from its item, so the modifier is measured through spell_modifier op 11, the Player::ApplySpellMod call Player::AddSpellAndCategoryCooldowns makes. Before the fix the 60000 ms reading is -17940000.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "ranger", "race": 1, "class": 21, "level": 80 }
+    { "id": "ranger", "race": 1, "class": 21, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let the character settle", "ms": 3000 },

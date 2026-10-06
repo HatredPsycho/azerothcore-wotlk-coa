@@ -8,14 +8,14 @@
       "id": "knight",
       "race": 1,
       "class": 17,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000
     }
   ],
   "creatures": [
-    { "id": "dummy", "owner": "knight", "entry": 36, "level": 80, "health": 1000000, "distance": 3 },
-    { "id": "summoner", "owner": "knight", "entry": 11582, "faction": 14, "level": 80, "health": 1000000, "distance": 4 }
+    { "id": "dummy", "owner": "knight", "entry": 36, "level": 60, "health": 1000000, "distance": 3 },
+    { "id": "summoner", "owner": "knight", "entry": 11582, "faction": 14, "level": 60, "health": 1000000, "distance": 4 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -5,7 +5,7 @@
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "doctor", "race": 1, "class": 13, "level": 80 }
+    { "id": "doctor", "race": 1, "class": 13, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let the character settle", "ms": 3000 },

@@ -21,8 +21,8 @@
     "a 30 mana-regen-interrupt amount; rank2 raises it by ~6% and stores 60."
   ],
   "timeout_ms": 60000,
-  "players": [{"id": "rm", "race": 1, "class": 32, "level": 80}],
-  "creatures": [{"id": "dummy", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 3}],
+  "players": [{"id": "rm", "race": 1, "class": 32, "level": 60}],
+  "creatures": [{"id": "dummy", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 3}],
   "steps": [
     {"action": "wait", "label": "Let spawn AI settle", "ms": 3000},
     {"action": "assert", "label": "SETUP: Focusing Crystals is not active before it is learned", "actor": "rm",

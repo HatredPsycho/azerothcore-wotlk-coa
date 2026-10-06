@@ -4,8 +4,8 @@
   "contract": "Gravedigger 704715 (CharacterAdvancement 29865, Class tab, class 23) reads 'Reduces the cast time of Sacrifice Undead by $/1000;S1 sec.' Spell.dbc: a passive whose effect 0 is aura 107 (ADD_FLAT_MODIFIER) op 10 (SPELLMOD_CASTING_TIME), BasePoints -501 + DieSides 1 = -500 ms, class mask word 2 0x4000000 in family 29. Sacrifice Undead 805027 and its ranks 807938-807941 are family 29 with SpellFamilyFlags word 2 0x4000000 and SpellCastTimes 16 = 1500 ms. Unit::ModSpellCastTime applies SPELLMOD_CASTING_TIME natively, so the talented cast takes 1000 ms and the untalented one 1500 ms; the talented cast finishes (and starts the 30 s cooldown) while an untalented cast begun just after it is still in progress.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "plain", "race": 5, "class": 23, "level": 80 },
-    { "id": "digger", "race": 5, "class": 23, "level": 80 }
+    { "id": "plain", "race": 5, "class": 23, "level": 60 },
+    { "id": "digger", "race": 5, "class": 23, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login settle", "ms": 3000 },

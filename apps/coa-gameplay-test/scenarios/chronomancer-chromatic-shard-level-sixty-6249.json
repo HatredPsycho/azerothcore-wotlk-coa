@@ -2,9 +2,11 @@
   "schema": 1,
   "name": "chronomancer-chromatic-shard-level-sixty-6249",
   "contract": [
-    "Chromatic Shard 567544 is the authored level-60 ninth rank after 567543 at level 56. A normal bot session at",
-    "59 receives rank eight through class progression; native GiveLevel to 60 must grant rank nine, which must",
-    "cast normally and deal damage."
+    "Chromatic Shard 567544 is the authored level-60 ninth rank after 567543 at level 56. On this level-60 realm",
+    "the content-scaling layout (Classic 1-45, TBC 45-55, WotLK 55-60) maps authored 60 through the TBC band",
+    "(58-70 -> 45-55) to effective level 47 and authored 56 through the Classic band (1-60 -> 1-45) to 42. A normal",
+    "bot session at 46 receives rank eight through class progression; native GiveLevel to 47 must grant rank nine,",
+    "which must cast normally and deal damage."
   ],
   "timeout_ms": 120000,
   "location": {
@@ -19,7 +21,7 @@
       "id": "p",
       "race": 1,
       "class": 22,
-      "level": 59,
+      "level": 46,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "ranged_hit_rating": 10000,
@@ -33,7 +35,7 @@
       "id": "t",
       "owner": "p",
       "entry": 299,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }
@@ -73,7 +75,7 @@
     {
       "action": "set_level",
       "actor": "p",
-      "value": 60
+      "value": 47
     },
     {
       "action": "assert",

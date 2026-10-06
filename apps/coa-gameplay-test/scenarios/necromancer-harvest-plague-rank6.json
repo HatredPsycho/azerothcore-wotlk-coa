@@ -3,7 +3,7 @@
   "name": "Necromancer Harvest Plague rank 6 leeches the enemy",
   "contract": "Harvest Plague rank 6 (spell 583256) siphons health from the enemy every 3s like ranks 1-5. Its Spell.dbc row carries no implicit target on effect 0, so the periodic leech reached nobody until the spell load supplies TARGET_UNIT_TARGET_ENEMY. The caster heal of the same effect is not asserted here: every family 29 leech record ships EffectValueMultiplier 0.0, so no rank heals and the intended fraction is undecided.",
   "timeout_ms": 120000,
-  "players": [ { "id": "n", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 } ],
+  "players": [ { "id": "n", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 } ],
   "creatures": [ { "id": "dummy", "owner": "n", "entry": 36, "level": 10, "distance": 8, "health": 1000000 } ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

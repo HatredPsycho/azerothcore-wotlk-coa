@@ -15,7 +15,7 @@
       "id": "bloodmage",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000,
@@ -25,7 +25,7 @@
       "id": "victim",
       "race": 5,
       "class": 1,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

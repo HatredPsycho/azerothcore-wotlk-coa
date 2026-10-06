@@ -4,20 +4,20 @@
   "contract": "Blood Shards 804849: 'Shadow Damage dealt now generates 1 Blood Shard, plus 1 additional if it critically strikes, for $505349d, up to 8.' The count is the stack of 505366 and each shard has an orbiting visual (505349-505356). A killing blow still counts: the hook runs after the damage, when the target is already dead. 505366 is a plain positive aura a player can cancel, and its visuals must go with it. Battleweaver 801963 ('Dealing damage with Bloodbolt will launch 1 Blood Shard') and Bloodchaser 523721 ('While active, Bloodfang Bite now launches 1 Blood Shard') spend a stored shard: the client wires both to 506639 'Bloodmage Blood Shard Consume 1', so with no shard nothing launches. Bloodbolt is Shadow, so with Blood Shards a Battleweaver Bloodbolt spends one shard and then generates at least one: one shard hits and the count does not drop. Everlasting Hunt 804686: 'Damage dealt by Blood Shards now reduces the cooldown of Veinburst and Reave by 1.5 sec' (802497, effect 165 -1500 ms on 504260). Shards are built with Bloodbolt, the way a player builds them.",
   "timeout_ms": 120000,
   "players": [
-    { "id": "crit", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000, "spell_crit_rating": 100000 },
-    { "id": "killer", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "weaver", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "chaser", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000 },
-    { "id": "hunter", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "control", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "crit", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000, "spell_crit_rating": 100000 },
+    { "id": "killer", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "weaver", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "chaser", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000, "melee_hit_rating": 10000, "expertise_rating": 10000 },
+    { "id": "hunter", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "control", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "d_crit", "owner": "crit", "entry": 299, "level": 80, "distance": 5, "health": 1000000 },
-    { "id": "d_kill", "owner": "killer", "entry": 299, "level": 80, "distance": 5, "health": 1 },
-    { "id": "d_weave", "owner": "weaver", "entry": 299, "level": 80, "distance": 5, "health": 1000000 },
-    { "id": "d_chase", "owner": "chaser", "entry": 299, "level": 80, "distance": 2, "health": 1000000 },
-    { "id": "d_hunt", "owner": "hunter", "entry": 299, "level": 80, "distance": 5, "health": 1000000 },
-    { "id": "d_control", "owner": "control", "entry": 299, "level": 80, "distance": 5, "health": 1000000 }
+    { "id": "d_crit", "owner": "crit", "entry": 299, "level": 60, "distance": 5, "health": 1000000 },
+    { "id": "d_kill", "owner": "killer", "entry": 299, "level": 60, "distance": 5, "health": 1 },
+    { "id": "d_weave", "owner": "weaver", "entry": 299, "level": 60, "distance": 5, "health": 1000000 },
+    { "id": "d_chase", "owner": "chaser", "entry": 299, "level": 60, "distance": 2, "health": 1000000 },
+    { "id": "d_hunt", "owner": "hunter", "entry": 299, "level": 60, "distance": 5, "health": 1000000 },
+    { "id": "d_control", "owner": "control", "entry": 299, "level": 60, "distance": 5, "health": 1000000 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

@@ -4,7 +4,7 @@
   "contract": "804939 'Excessive But Necessary' reads 'Reduces the cooldown of Elude and Knockout by $/1000;s1 sec.' It is a single SPELL_AURA_ADD_FLAT_MODIFIER, MiscValue 11 = SPELLMOD_COOLDOWN, BasePoints -4001+1=-4000 ms, class mask (32, 8, 0) = word0 bit 5, word1 bit 3. Elude 801345 has SpellFamilyFlags (0, 8, 16384) = word1 bit 3, a direct match; Knockout 801435 (RecoveryTime 18000 ms) has SpellFamilyFlags (32, 0, 268435456) = word0 bit 5, also a direct match (the family-flags-all-zero Elude/Knockout duplicates 800701, 803853, 706763 are untouched, moot). Player::AddSpellCooldown/SendSpellCooldown (src/server/game/Entities/Player/Player.cpp) apply ApplySpellMod(spellInfo->Id, SPELLMOD_COOLDOWN, recovery, spell) generically, so no script is needed.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "ranger", "race": 1, "class": 21, "level": 80 }
+    { "id": "ranger", "race": 1, "class": 21, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let the character settle", "ms": 3000 },

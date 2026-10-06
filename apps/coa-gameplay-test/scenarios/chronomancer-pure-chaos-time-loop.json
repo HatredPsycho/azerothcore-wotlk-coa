@@ -21,7 +21,7 @@
       "id": "chronomancer",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -30,7 +30,7 @@
       "id": "chrono2",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -39,7 +39,7 @@
       "id": "chrono3",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -48,7 +48,7 @@
       "id": "chrono4",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -57,7 +57,7 @@
       "id": "chrono5",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -66,7 +66,7 @@
       "id": "chrono6",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -75,7 +75,7 @@
       "id": "chrono7",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -84,7 +84,7 @@
       "id": "chrono8",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -95,7 +95,7 @@
       "id": "dummy1",
       "owner": "chronomancer",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -103,7 +103,7 @@
       "id": "dummy2",
       "owner": "chrono2",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -111,7 +111,7 @@
       "id": "dummy3",
       "owner": "chrono3",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -119,7 +119,7 @@
       "id": "dummy4",
       "owner": "chrono4",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -127,7 +127,7 @@
       "id": "dummy5",
       "owner": "chrono5",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -135,7 +135,7 @@
       "id": "dummy6",
       "owner": "chrono6",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -143,7 +143,7 @@
       "id": "dummy7",
       "owner": "chrono7",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -151,7 +151,7 @@
       "id": "dummy8",
       "owner": "chrono8",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

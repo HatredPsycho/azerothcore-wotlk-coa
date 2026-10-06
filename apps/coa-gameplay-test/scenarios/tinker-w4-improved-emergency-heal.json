@@ -4,10 +4,10 @@
   "contract": "#1158: Improved Emergency Heal (504918) is a pair of percent spell modifiers whose class mask (0x80000000,0,0) selects only the Emergency Heal ranks. With it known, the native cost consumer must return 80% of the unmodified mana cost and the native healing consumer 120% of the unmodified heal.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "t", "race": 1, "class": 28, "level": 80 }
+    { "id": "t", "race": 1, "class": 28, "level": 60 }
   ],
   "creatures": [
-    { "id": "d", "owner": "t", "entry": 299, "level": 80, "distance": 5 }
+    { "id": "d", "owner": "t", "entry": 299, "level": 60, "distance": 5 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

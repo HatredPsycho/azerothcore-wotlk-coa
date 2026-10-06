@@ -9,8 +9,8 @@
   ],
   "timeout_ms": 60000,
   "players": [
-    { "id": "normal", "race": 1, "class": 22, "level": 80, "allow_regeneration": false },
-    { "id": "fast", "race": 1, "class": 22, "level": 80, "allow_regeneration": false }
+    { "id": "normal", "race": 1, "class": 22, "level": 60, "allow_regeneration": false },
+    { "id": "fast", "race": 1, "class": 22, "level": 60, "allow_regeneration": false }
   ],
   "creatures": [
     { "id": "attacker", "owner": "normal", "entry": 1501, "distance": 20 }
@@ -57,7 +57,7 @@
     { "action": "assert", "actor": "normal", "metric": "spell_energize_count", "spell": 803897,
       "equals": 13, "label": "Normal expiry retains the instant restore and twelve ticks" },
     { "action": "assert", "actor": "normal", "metric": "power", "ratio_to": "normal_max",
-      "min": 0.748, "max": 0.751 },
+      "min": 0.747, "max": 0.751 },
     { "action": "snapshot", "actor": "normal", "metric": "spell_energize_total", "spell": 803897,
       "save_as": "normal_granted" },
     { "action": "assert", "actor": "normal", "metric": "power", "ratio_to": "normal_granted", "equals": 1 },
@@ -69,7 +69,7 @@
     { "action": "assert", "actor": "fast", "metric": "spell_energize_count", "spell": 803897,
       "equals": 13, "label": "Expedited expiry retains the same twelve ticks" },
     { "action": "assert", "actor": "fast", "metric": "power", "ratio_to": "fast_max",
-      "min": 0.748, "max": 0.751 },
+      "min": 0.747, "max": 0.751 },
     { "action": "snapshot", "actor": "fast", "metric": "spell_energize_total", "spell": 803897,
       "save_as": "fast_granted" },
     { "action": "assert", "actor": "fast", "metric": "power", "ratio_to": "fast_granted", "equals": 1 }

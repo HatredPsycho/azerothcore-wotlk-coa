@@ -3,7 +3,7 @@
  "name": "Masochistic Rage suffers self damage and enrages",
  "contract": "Masochistic Rage 803030 promises a 1 sec delay then self damage and a 20% damage-dealt buff for 15 sec. Its single effect is native SPELL_EFFECT_ASCENSION_TRIGGER_SPELL_DELAYED (183, SpellEffects.cpp:499 Spell::EffectAscensionTriggerSpellDelayed), which triggers 570097 after the delay. 570097 is itself fully native: EFFECT_0 SPELL_EFFECT_SCHOOL_DAMAGE (self, EffectBasePoints 419 + DieSides 19 => matches $AP*0.36 formula) and EFFECT_1 SPELL_EFFECT_APPLY_AURA SPELL_AURA_MOD_DAMAGE_PERCENT_DONE (EffectBasePoints 19 + DieSides 1 = 20%). Effect 183 and both native effects on 570097 need no CoA registration; #3712-style zero-hits-in-source is expected here too.",
  "timeout_ms": 90000,
- "players": [{"id": "reaper", "race": 10, "class": 30, "level": 80}],
+ "players": [{"id": "reaper", "race": 10, "class": 30, "level": 60}],
  "steps": [
   {"action": "wait", "label": "Let the world settle", "ms": 6000},
   {"action": "learn", "actor": "reaper", "spell": 803030},

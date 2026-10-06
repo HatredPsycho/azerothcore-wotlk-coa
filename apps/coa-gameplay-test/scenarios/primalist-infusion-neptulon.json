@@ -7,7 +7,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -16,7 +16,7 @@
       "id": "ally",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -25,7 +25,7 @@
       "owner": "primalist",
       "entry": 28168,
       "health": 500000,
-      "level": 80,
+      "level": 60,
       "distance": 3
     }
   ],
@@ -79,7 +79,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "reset_cooldown",
@@ -142,7 +143,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "reset_cooldown",
@@ -390,7 +392,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "reset_cooldown",
@@ -455,7 +458,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "reset_cooldown",

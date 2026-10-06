@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "name": "Bright Flames raises Inferno Barrier's retaliation damage (#1764)",
-  "contract": "#1764: Bright Flames 300759 (rank 1) and 301351 (rank 2): effect 2 is ADD_PCT_MODIFIER (aura 108) on SPELLMOD_DAMAGE (misc 0), base 14 -> +15% and 29 -> +30%, class mask {0, 0, 0x400} = Inferno Barrier (504380, 535650, 535651, 582762-582764; SpellFamilyFlags {0, 0, 1024}); tooltip: increases the damage it deals by $s2% (Spell.dbc served file). Inferno Barrier reads 'attackers take ${$m2+0+$spi*0.1} Fire damage each time they deal damage to them'. The module turns the barrier's PROC_TRIGGER_DAMAGE into a dummy and deals the retaliation itself as Lucifron's Rage 524623 (family 30, empty flags) with the amount R = effect 2 of 504380 (Spell.dbc base 3, die sides 1, value 4) + Spirit * 0.1, truncated to an integer, so the SPELLMOD_DAMAGE modifier matched neither 524623 nor that amount; the fix runs the caster's SPELLMOD_DAMAGE modifiers for the barrier rank on R. Lucifron's Rage adds a fixed part F that Bright Flames does not touch (its RealPointsPerLevel; 14 was measured for a player target with no tuning), and the caster's class tuning multiplies the whole hit: against a player the PvP twin 887112 (-30% at level 80) applies, against a creature the normal aura 887012 (-20%). The retaliation used to land on a second, PvP-flagged Pyromancer, so #250's PvP tuning shrank the three samples to 25, 27 and 29 and put rank 2 (1.16) next to its 1.15 bound. The barrier now takes Void Spike 638089 (37 Shadow damage, SPELL_ATTR7_NO_ATTACK_MISS, so the creature's spell cannot miss the Pyromancer) from a Harvest Golem, so the retaliation lands on a creature, and the Pyromancer wears Maghia's Misguided Quill 49686 (+1000 Spirit, base item_template), so R is about 122 and the fixed part and integer truncation hardly move the ratios: with Spirit 1186, R = 122.6, rank 1 = 140.99 -> 140, rank 2 = 159.38 -> 159, so rank 1 = (140 + F) / (122 + F) and rank 2 = (159 + F) / (122 + F), 1.139 and 1.278 with F = 14 and the -20% creature tuning. For any Spirit from 1050 to 1450, F from 8 to 23 and a tuning multiplier from 0.5 to 1.2, each total truncated, rank 1 stays within 1.108..1.160 and rank 2 within 1.233..1.303, hence the bounds 1.09..1.18 and 1.21..1.33; unfixed is 1.0 and rank 2 scaled like rank 1 stays below 1.17. Lucifron's Rage can critically hit, so the golem casts Blessed Resilience 33143 (SPELL_AURA_MOD_ATTACKER_SPELL_AND_WEAPON_CRIT_CHANCE, -1000) on itself before each hit: Unit::SpellTakenCritChance adds it for every negative spell, so each stage yields its one noncritical sample without changing any amount. The barrier absorbs the Void Spike; the retaliation fires on damage or absorb. Not covered: the absorb half (aura 317), which already worked.",
+  "contract": "#1764: Bright Flames 300759 (rank 1) and 301351 (rank 2): effect 2 is ADD_PCT_MODIFIER (aura 108) on SPELLMOD_DAMAGE (misc 0), base 14 -> +15% and 29 -> +30%, class mask {0, 0, 0x400} = Inferno Barrier (504380, 535650, 535651, 582762-582764; SpellFamilyFlags {0, 0, 1024}); tooltip: increases the damage it deals by $s2% (Spell.dbc served file). Inferno Barrier reads 'attackers take ${$m2+0+$spi*0.1} Fire damage each time they deal damage to them'. The module turns the barrier's PROC_TRIGGER_DAMAGE into a dummy and deals the retaliation itself as Lucifron's Rage 524623 (family 30, empty flags) with the amount R = effect 2 of 504380 (Spell.dbc base 3, die sides 1, value 4) + Spirit * 0.1, truncated to an integer, so the SPELLMOD_DAMAGE modifier matched neither 524623 nor that amount; the fix runs the caster's SPELLMOD_DAMAGE modifiers for the barrier rank on R. Lucifron's Rage adds a fixed part F that Bright Flames does not touch (its RealPointsPerLevel 0.25; 14 was measured at level 80 for a player target with no tuning, so about 9 at level 60), and the caster's class tuning multiplies the whole hit: against a player the PvP twin 887112 (-30% at level 60, its MaxLevel) applies, against a creature the normal aura 887012 (-20%). The retaliation used to land on a second, PvP-flagged Pyromancer, so #250's PvP tuning shrank the three samples to 25, 27 and 29 and put rank 2 (1.16) next to its 1.15 bound. The barrier now takes Void Spike 638089 (37 Shadow damage, SPELL_ATTR7_NO_ATTACK_MISS, so the creature's spell cannot miss the Pyromancer) from a Harvest Golem, so the retaliation lands on a creature, and the Pyromancer wears QA Test Finger 1000 Spirit 57751 (+1000 Spirit, ItemLevel 0, so the level-60 item budget leaves it unscaled, unlike Maghia's Misguided Quill 49686 whose ItemLevel 277 is cut to roughly a third), so R is about 120 and the fixed part and integer truncation hardly move the ratios: with level-60 base Spirit 127 (player_class_stats) plus 1000, times the human 3%, Spirit is 1160.8, R = 120.08 -> 120, rank 1 = 138.09 -> 138, rank 2 = 156.10 -> 156, so rank 1 = (138 + F) / (120 + F) and rank 2 = (156 + F) / (120 + F), 1.136 and 1.282 with F = 9 and the -20% creature tuning. For any Spirit from 1050 to 1450, F from 8 to 23 and a tuning multiplier from 0.5 to 1.2, each total truncated, rank 1 stays within 1.108..1.160 and rank 2 within 1.233..1.303, hence the bounds 1.09..1.18 and 1.21..1.33; unfixed is 1.0 and rank 2 scaled like rank 1 stays below 1.17. Lucifron's Rage can critically hit, so the golem casts Blessed Resilience 33143 (SPELL_AURA_MOD_ATTACKER_SPELL_AND_WEAPON_CRIT_CHANCE, -1000) on itself before each hit: Unit::SpellTakenCritChance adds it for every negative spell, so each stage yields its one noncritical sample without changing any amount. The barrier absorbs the Void Spike; the retaliation fires on damage or absorb. Not covered: the absorb half (aura 317), which already worked.",
   "timeout_ms": 180000,
   "players": [
     {
       "id": "pyro",
       "race": 1,
       "class": 24,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -17,7 +17,7 @@
       "id": "attacker",
       "owner": "pyro",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     }
@@ -43,14 +43,14 @@
     {
       "action": "add_item",
       "actor": "pyro",
-      "item": 49686
+      "item": 57751
     },
     {
       "action": "equip",
-      "label": "Maghia's Misguided Quill: +1000 Spirit",
+      "label": "QA Test Finger 1000 Spirit: +1000 Spirit, unscaled at ItemLevel 0",
       "actor": "pyro",
-      "item": 49686,
-      "slot": 12
+      "item": 57751,
+      "slot": 10
     },
     {
       "action": "wait",

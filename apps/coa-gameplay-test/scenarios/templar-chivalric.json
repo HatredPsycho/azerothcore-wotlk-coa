@@ -4,7 +4,7 @@
  "contract": "Chivalric 705272 applies SPELL_AURA_MOD_CRIT_DAMAGE_BONUS for 15 on the Holy school, which the core adds to critical damage bonuses. The harness has no critical-damage-bonus metric, so the proof is that the aura is applied with amount 15.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "chivalric", "race": 1, "class": 19, "level": 80 }
+  { "id": "chivalric", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -4,7 +4,7 @@
   "contract": "Spell.dbc 804339 (\"Valorous Champion\", SpellFamilyName 33, self-targeted) effect 0 is SPELL_AURA_MOD_ATTACK_POWER_PCT (166) with EffectBasePoints 24 (amount 25); AuraEffect::HandleAuraModAttackPowerPercent (SpellAuraEffects.cpp:231) calls target->SetStatPctModifier(UNIT_MOD_ATTACK_POWER, TOTAL_PCT, GetTotalAuraMultiplier(...)), a pure native stat-percent modifier, so total attack power becomes exactly 1.25x the unbuffed value. Effect 1 is SPELL_AURA_MOD_RATING_FROM_STAT (220) with EffectBasePoints 4 (amount 5), EffectMiscValue 128 = 1<<7 = CR_HIT_SPELL, and EffectMiscValueB 0 = STAT_STRENGTH — the same native Player::UpdateRating path (PlayerUpdates.cpp:650-661) as Solar Discernment, granting spell hit rating equal to 5% of Strength; the raw amount (5) is pinned directly via aura_amount since the scenario validator only allows relative_to/ratio_to between snapshots of the same metric. Both are generic engine paths already wired into the AuraEffect handler table; no server script exists or is needed.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cleric", "race": 1, "class": 27, "level": 80 }
+    { "id": "cleric", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

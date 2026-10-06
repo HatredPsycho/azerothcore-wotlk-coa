@@ -8,18 +8,18 @@
     "client's spec choice card; no CharacterAdvancement entry, trainer or script grants it. The spec's granted",
     "identity passive is ChrSpecs field 28, CharacterAdvancement 4063 = Riftblade 92154 (Rank 'Specialization'),",
     "with the same text. Runeblade 707141 has 3 charges and a 6 sec recharge; 500466 energizes 30 + 1 + int(5.95 x",
-    "level) mana (506 at level 80) plus 30% of attack power. Expected: without 92154 Primordial Blast 800732",
+    "level) mana (387 at level 60) plus 30% of attack power. Expected: without 92154 Primordial Blast 800732",
     "leaves a spent Runeblade charge spent; with it, Primordial Blast and Smolder 801087 each give the charge back",
-    "well inside the 6 sec recharge, two Runeblades restore no mana and the third restores at least 506 mana once."
+    "well inside the 6 sec recharge, two Runeblades restore no mana and the third restores at least 387 mana once."
   ],
   "timeout_ms": 120000,
   "location": {"map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0},
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80, "melee_hit_rating": 10000, "spell_hit_rating": 10000,
+    {"id": "rm", "race": 1, "class": 32, "level": 60, "melee_hit_rating": 10000, "spell_hit_rating": 10000,
       "expertise_rating": 10000}
   ],
   "creatures": [
-    {"id": "dummy", "owner": "rm", "entry": 36, "level": 80, "health": 1000000, "distance": 3}
+    {"id": "dummy", "owner": "rm", "entry": 36, "level": 60, "health": 1000000, "distance": 3}
   ],
   "steps": [
     {"action": "wait", "label": "Let spawn AI settle", "ms": 3000},
@@ -83,8 +83,8 @@
       "equals": 4, "within_ms": 2000},
     {"action": "assert", "label": "CONTRACT: the third Runeblade restores mana once", "actor": "rm",
       "metric": "spell_energize_count", "spell": 500466, "equals": 1, "within_ms": 1000},
-    {"action": "assert", "label": "CONTRACT: at least the level 80 base of 506 mana", "actor": "rm",
-      "metric": "spell_energize_total", "spell": 500466, "power": 0, "min": 506},
+    {"action": "assert", "label": "CONTRACT: at least the level 60 base of 387 mana", "actor": "rm",
+      "metric": "spell_energize_total", "spell": 500466, "power": 0, "min": 387},
     {"action": "assert", "label": "CONTRACT: the Runeblade counter starts over", "actor": "rm", "metric": "aura",
       "spell": 500468, "equals": 0}
   ]

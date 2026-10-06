@@ -8,13 +8,13 @@
    "id": "t",
    "race": 1,
    "class": 28,
-   "level": 80
+   "level": 60
   },
   {
    "id": "c",
    "race": 1,
    "class": 28,
-   "level": 80
+   "level": 60
   }
  ],
  "creatures": [
@@ -22,14 +22,14 @@
    "id": "d",
    "owner": "t",
    "entry": 299,
-   "level": 80,
+   "level": 60,
    "distance": 3
   },
   {
    "id": "dc",
    "owner": "c",
    "entry": 299,
-   "level": 80,
+   "level": 60,
    "distance": 15
   }
  ],

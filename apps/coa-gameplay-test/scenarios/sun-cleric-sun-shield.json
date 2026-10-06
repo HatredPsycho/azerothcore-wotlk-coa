@@ -4,7 +4,7 @@
   "contract": "300348 is a plain APPLY_AURA SPELL_AURA_MOD_ATTACKER_SPELL_HIT_CHANCE (aura 186) with no EffectSpellClassMask and no family filter, a stock WotLK generic self-buff needing no per-ability routing at all. BasePoints -4 resolves to -3 (DieSides 1), matching 'Reduces your chance to be hit by spells by 3%'. Learning a passive spell auto-applies its own aura (as with every other 'Rank: Passive' family-33 talent in this class), so the aura and its authored amount are present natively with no server code needed.",
   "timeout_ms": 30000,
   "players": [
-    { "id": "caster", "race": 1, "class": 27, "level": 80 }
+    { "id": "caster", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 3000 },

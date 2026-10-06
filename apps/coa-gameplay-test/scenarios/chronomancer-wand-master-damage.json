@@ -4,9 +4,9 @@
   "contract": "Wand Master rank 1 (707551, EffectBasePoints 9 -> 10%) and rank 2 (707831, EffectBasePoints 19 -> 20%) both carry SPELL_AURA_ADD_PCT_MODIFIER (108) on SPELLMOD_DAMAGE (0) with EffectSpellClassMask word0 bit 0x1000000 and word2 bit 0x200, matching Wand of Time 520175 (SpellFamilyFlags word0 includes 0x1000000) and Artificer's Wand's damaging rank 561064 (SpellFamilyFlags word2 512).",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "rank1", "race": 1, "class": 22, "level": 80 },
-    { "id": "rank2", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "rank1", "race": 1, "class": 22, "level": 60 },
+    { "id": "rank2", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

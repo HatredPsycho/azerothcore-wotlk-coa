@@ -12,7 +12,7 @@
       "id": "hunter",
       "race": 1,
       "class": 15,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -21,7 +21,7 @@
       "id": "trigger",
       "owner": "hunter",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "distance": 1,
       "health": 1000000
     },
@@ -29,7 +29,7 @@
       "id": "outside",
       "owner": "hunter",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "distance": 8,
       "health": 1000000
     }

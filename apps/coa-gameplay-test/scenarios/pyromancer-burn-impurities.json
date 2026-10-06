@@ -15,25 +15,25 @@
       "id": "caster",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     },
     {
       "id": "a",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     },
     {
       "id": "b",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     },
     {
       "id": "far",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

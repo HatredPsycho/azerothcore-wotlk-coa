@@ -7,7 +7,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -19,14 +19,14 @@
       "owner": "primalist",
       "entry": 28168,
       "health": 500000,
-      "level": 80,
+      "level": 60,
       "distance": 3
     },
     {
       "id": "extra1",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 500000,
       "distance": 3.3
     },
@@ -34,7 +34,7 @@
       "id": "extra2",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 500000,
       "distance": 3.6
     }

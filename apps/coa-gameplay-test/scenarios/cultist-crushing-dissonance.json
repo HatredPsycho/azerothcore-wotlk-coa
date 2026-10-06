@@ -24,7 +24,7 @@
       "id": "cultist",
       "race": 1,
       "class": 25,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -34,7 +34,7 @@
       "owner": "cultist",
       "entry": 11582,
       "faction": 14,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -43,7 +43,7 @@
       "owner": "cultist",
       "entry": 11582,
       "faction": 14,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 20
     }

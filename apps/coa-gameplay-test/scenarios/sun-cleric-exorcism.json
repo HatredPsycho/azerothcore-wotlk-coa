@@ -4,7 +4,7 @@
   "contract": "300341 is ADD_FLAT_MODIFIER (aura 107), MiscValue 8 = SPELLMOD_ALL_EFFECTS, EffectSpellClassMask word 1 = 0x4000. Sanctify (524968) carries that exact bit in its own SpellFamilyFlags word 1 (0x4000). SpellInfo::IsAffectedBySpellMod's generic flag96 AND matches. Its own BasePoints is unset (0), resolving to 1 (DieSides 1), matching 'Sanctify now dispels 1 additional effect'. Unit::ApplyEffectModifiers applies SPELLMOD_ALL_EFFECTS unconditionally before any per-index modifier, so the +1 lands on all three of Sanctify's SPELL_EFFECT_DISPEL effects (indices 0, 1, 2), each removing one more affliction of its own dispel type. Native only, no server code needed.",
   "timeout_ms": 30000,
   "players": [
-    { "id": "caster", "race": 1, "class": 27, "level": 80 }
+    { "id": "caster", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 3000 },

@@ -4,9 +4,9 @@
   "contract": "Solar Might has two rank spell IDs, both SpellFamilyName 33, self-targeted, using SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE (137) on two effects: rank 1 (704916) effect 0 has EffectMiscValue 0 (STAT_STRENGTH) and EffectBasePoints 4 -> real 5, effect 1 has EffectMiscValue 3 (STAT_INTELLECT) and EffectBasePoints 4 -> real 5; rank 2 (570120) is the same shape with EffectBasePoints 9 -> real 10 on both effects. AuraEffect::HandleModTotalPercentStat (via Player::UpdateStatPercentAuras) applies both generically, matching the tooltip's 'Strength and Intellect by 5%/10%' exactly, with no per-spell-id dispatch needed. Native handlers only; regression scenario for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 27, "level": 80 },
-    { "id": "rank1", "race": 1, "class": 27, "level": 80 },
-    { "id": "rank2", "race": 1, "class": 27, "level": 80 }
+    { "id": "control", "race": 1, "class": 27, "level": 60 },
+    { "id": "rank1", "race": 1, "class": 27, "level": 60 },
+    { "id": "rank2", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

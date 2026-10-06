@@ -4,8 +4,8 @@
  "contract": "Grace of Aman'thul 301059 is a flat SPELLMOD_COST passive: effect 1 (-5) covers Righteous Lunge, effect 2 (-10) covers Sacred Swing. Righteous Lunge rank 1 (801443) costs 40 Energy and Sacred Swing rank 1 (705293) costs 20, so the talented Templar pays 35 and 10.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "graced", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "graced", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

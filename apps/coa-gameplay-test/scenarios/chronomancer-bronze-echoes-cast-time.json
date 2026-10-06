@@ -4,8 +4,8 @@
   "contract": "Bronze Echoes 520800 carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SPELLMOD_CASTING_TIME (10) and EffectSpellClassMask word0 bit 0x20, matching Artificer's Wand's real castable rank 561284 (SpellFamilyFlags word0 32, CastingTimeIndex 5, a non-instant cast). EffectBasePoints -201 resolves to -200 with DieSides 1.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

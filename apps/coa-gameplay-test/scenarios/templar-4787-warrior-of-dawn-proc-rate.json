@@ -4,7 +4,7 @@
  "contract": "Warrior of Dawn 560648's Description reads \"Melee damage dealt now has a $h% chance to...\", rendered from its own DBC ProcChance = 10. Its spell_proc row (rev_20260909_04_templar_completion.sql) sets Chance to 0, which SpellMgr::LoadSpellProcs defers to the DBC ProcChance (rev_20260919_20_coa_proc_chance_parity.sql's documented intent), so the effective proc chance is 10%, not 0%. Over enough real melee hits the proc (561156, cast directly by the aura's own Proc() handler, so spell_cast_count is the metric per the README) must fire at least once.",
  "timeout_ms": 180000,
  "players": [
-  { "id": "t", "race": 1, "class": 19, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false }
+  { "id": "t", "race": 1, "class": 19, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000, "allow_regeneration": false }
  ],
  "creatures": [
   { "id": "dummy", "owner": "t", "entry": 36, "health": 100000000, "distance": 3 }

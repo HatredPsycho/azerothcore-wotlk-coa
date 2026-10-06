@@ -4,7 +4,7 @@
   "contract": "Dawn 807440 (the buff aura EffectTriggerSpell[0] of the cast spell 804584) carries Attributes 2214658048 in the DBC, decoding to SPELL_ATTR0_NOT_SHAPESHIFTED, SPELL_ATTR0_AURA_IS_DEBUFF and SPELL_ATTR0_NO_AURA_CANCEL (coa-dbc-viewer record --id 807440 against /home/fab/CoaServer/dbc_clientset). SPELL_ATTR0_AURA_IS_DEBUFF is not merely descriptive: SpellInfo::_IsPositiveEffect (SpellInfo.cpp) returns false whenever it is set, and Unit::_ApplyAura/AuraApplication (SpellAuras.cpp) computes the AFLAG_NEGATIVE vs AFLAG_POSITIVE byte sent to the client from that same IsPositive() result, so the client's buff/debuff placement is server-driven for this aura, not decided from the client's own local DBC copy. A self-only beneficial Solar Power buff was therefore always sent to the client flagged negative. AscensionSunClericContracts.cpp ApplyContracts now clears SPELL_ATTR0_AURA_IS_DEBUFF for id == Dawn alongside its existing dummy(0)/ProcCharges=10 correction, so the server reports the aura positive. Casting Dawn (804584) must leave a helpful 807440 aura on the caster.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "cleric", "race": 1, "class": 27, "level": 80 }
+    { "id": "cleric", "race": 1, "class": 27, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 3000 },

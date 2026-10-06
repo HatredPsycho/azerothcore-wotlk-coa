@@ -8,19 +8,19 @@
       "id": "base",
       "race": 1,
       "class": 13,
-      "level": 80
+      "level": 60
     },
     {
       "id": "handler",
       "race": 1,
       "class": 13,
-      "level": 80
+      "level": 60
     },
     {
       "id": "spirit",
       "race": 1,
       "class": 13,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -8,7 +8,7 @@
       "id": "guardian",
       "race": 1,
       "class": 18,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "spell_hit_rating": 10000,
       "expertise_rating": 10000
@@ -17,7 +17,7 @@
       "id": "ally",
       "race": 1,
       "class": 18,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {
@@ -32,7 +32,7 @@
       "id": "target",
       "owner": "guardian",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

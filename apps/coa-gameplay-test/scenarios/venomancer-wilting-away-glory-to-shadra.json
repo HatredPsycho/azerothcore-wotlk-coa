@@ -15,14 +15,14 @@
       "id": "wilter",
       "race": 1,
       "class": 29,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "glory",
       "race": 1,
       "class": 29,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -30,7 +30,7 @@
       "id": "a1",
       "owner": "wilter",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 5
     },
@@ -38,7 +38,7 @@
       "id": "b1",
       "owner": "wilter",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 6
     },
@@ -46,7 +46,7 @@
       "id": "a2",
       "owner": "wilter",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 18
     },
@@ -54,7 +54,7 @@
       "id": "b2",
       "owner": "wilter",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 19
     },
@@ -62,7 +62,7 @@
       "id": "c2",
       "owner": "wilter",
       "entry": 12142,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 21.5
     }

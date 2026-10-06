@@ -8,20 +8,20 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "ally",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     },
     {
       "id": "full",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -4,8 +4,8 @@
   "contract": "#710: Modulator 707832 is a native ADD_PCT_MODIFIER (aura 108) passive with one effect, EffectMiscValue 8 SPELLMOD_ALL_EFFECTS, BasePoints 19 DieSides 1 (+20%), EffectSpellClassMask (524288,0,0) = family-34 flag bit 19, which every Module row carries. Power Module rank 7 is 707688: SpellFamilyName 34, SpellFamilyFlags (524288,0,0), AttributesEx3 1048832 (ALLOW_AURA_WHILE_DEAD | ONLY_ON_PLAYER, no modifier gate), effect 0 SPELL_AURA_MOD_ATTACK_POWER and effect 1 SPELL_AURA_MOD_RANGED_ATTACK_POWER, both BasePoints 231 DieSides 1 and EffectRealPointsPerLevel 0, so each resolves to 232 and to 278 with the talent (232 * 1.20 = 278.4, truncated by int32). Unit::ApplyEffectModifiers applies SPELLMOD_ALL_EFFECTS to every effect index and is reached from SpellEffectInfo::CalcValue, which is also what AuraEffect::CalculateAmount uses, so the applied aura amounts and the player's attack power move with it. The modifier belongs to the caster, so each fixture applies its own Power Module rather than receiving a pre-applied buff.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 28, "level": 80 },
-    { "id": "modulator", "race": 1, "class": 28, "level": 80 }
+    { "id": "control", "race": 1, "class": 28, "level": 60 },
+    { "id": "modulator", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

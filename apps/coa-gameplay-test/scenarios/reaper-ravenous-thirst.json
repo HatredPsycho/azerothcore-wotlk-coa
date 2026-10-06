@@ -12,13 +12,13 @@
       "id": "control",
       "race": 5,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ravenous",
       "race": 5,
       "class": 30,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

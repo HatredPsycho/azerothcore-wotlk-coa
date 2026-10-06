@@ -5,11 +5,11 @@
   "timeout_ms": 90000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "doctor", "race": 1, "class": 13, "level": 80, "spell_hit_rating": 10000, "ranged_hit_rating": 10000 }
+    { "id": "doctor", "race": 1, "class": 13, "level": 60, "spell_hit_rating": 10000, "ranged_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "hostile", "owner": "doctor", "entry": 36, "faction": 14, "level": 80, "health": 1000000, "distance": 12 },
-    { "id": "neutral", "owner": "doctor", "entry": 36, "faction": 7, "level": 80, "health": 1000000, "distance": 12 }
+    { "id": "hostile", "owner": "doctor", "entry": 36, "faction": 14, "level": 60, "health": 1000000, "distance": 12 },
+    { "id": "neutral", "owner": "doctor", "entry": 36, "faction": 7, "level": 60, "health": 1000000, "distance": 12 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 4000 },

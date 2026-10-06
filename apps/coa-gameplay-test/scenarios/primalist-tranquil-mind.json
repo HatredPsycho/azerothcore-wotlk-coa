@@ -8,7 +8,7 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -17,7 +17,7 @@
       "id": "target",
       "owner": "primalist",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     }
@@ -58,7 +58,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -148,7 +149,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -243,7 +245,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",
@@ -333,7 +336,8 @@
       "action": "set_power",
       "actor": "primalist",
       "power": 0,
-      "value": 5000
+      "value": 5000,
+      "maximum": 5000
     },
     {
       "action": "snapshot",

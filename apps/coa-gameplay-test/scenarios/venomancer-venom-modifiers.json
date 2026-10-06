@@ -4,7 +4,7 @@
   "contract": "#573 and #575: both passives are native spell modifiers, so no script is needed. Venomizer (680794) is a flat SPELLMOD_CHANCE_OF_SUCCESS (op 18) of +10 with class mask (0,0,0x10000000), which selects the six Venom activation auras (630868, 805731, 805775, 805776, 805777, 805778); their proc chance comes from Spell.dbc through spell_proc Chance 0 and Aura::CalcProcChance applies the modifier. Master of Venoms (504326) is a PCT SPELLMOD_DURATION (op 1) of +50% with class mask (0,0x8000,0) selecting the six payload auras. Each figure is asserted against the same run's unmodified value; the payload durations are the Spell.dbc durations (6000 and 8000 ms).",
   "timeout_ms": 60000,
   "players": [
-    {"id": "v", "race": 1, "class": 29, "level": 80}
+    {"id": "v", "race": 1, "class": 29, "level": 60}
   ],
   "location": {"map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0},
   "steps": [

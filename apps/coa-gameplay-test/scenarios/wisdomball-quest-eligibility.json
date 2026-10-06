@@ -4,7 +4,7 @@
   "contract": "AscensionWisdomball.cpp lists a dungeon's quests by map alone and accepts them through Player::CanAddQuest (log space and source item only), skipping Player::SatisfyQuestRace. Blackfathom Deeps quests 1200 (AllowableRaces 1101, Alliance) and 6561 (AllowableRaces 690, Horde) are the same 'Blackfathom Villainy' objective for the two factions; a Horde character must never be offered or granted 1200. Ragefire Chasm quests 5722 ('Searching for the Lost Satchel', starter Rahauro 11833, ender Maur Grimtotem 11834) and 5724 ('Returning the Lost Satchel', starter 11834, StartItem 14381, ender 11833) have no RequiredNpcOrGo/RequiredItemId/RequiredPlayerKills objective at all: granting either through the ball leaves it satisfied on the spot, without the player doing anything. Until a real per-quest fix exists, the ball must stop offering exactly these two quest IDs; quest 5723, a real Ragefire Chasm quest with an objective, stays offered as a control.",
   "timeout_ms": 180000,
   "players": [
-    { "id": "raider", "race": 10, "class": 13, "level": 80 }
+    { "id": "raider", "race": 10, "class": 13, "level": 60 }
   ],
   "location": {
     "map": 48,

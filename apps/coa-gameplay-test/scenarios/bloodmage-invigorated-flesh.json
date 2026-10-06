@@ -4,8 +4,8 @@
   "contract": "Invigorated Flesh 704632 has a single effect in Spell.dbc: SPELL_EFFECT_APPLY_AREA_AURA_RAID with aura 333 SPELL_AURA_ASCENSION_MOD_HIT_CHANCE_ALL_PCT, BasePoints 0 + DieSides 1 = 1, radius index 12 (100 yards) and TargetA 1. Its native handler AuraEffect::HandleAscensionModHitChanceAll calls both HandleModHitChance (m_modMeleeHitChance) and HandleModSpellHitChance (m_modSpellHitChance), which is exactly the tooltip's \"all spells and attacks\". relative_to is used rather than an absolute value because base hit chance depends on level and gear.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 },
-    { "id": "ally", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 },
+    { "id": "ally", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

@@ -4,7 +4,7 @@
   "contract": "Darkfallen's Embrace's two ranks (560261 rank 1, 561348 rank 2) are self-cast (effect 0 target caster) with two effects: SPELL_AURA_HASTE_SPELLS (aura 216, unrestricted classmask - applies to all of the caster's own casts) with BasePoints 2/5 (real 3%/6%), and ADD_FLAT_MODIFIER (aura 107) MiscValue 5 (SPELLMOD_RANGE) BasePoints 4/9 (real +5/+10 yards) on classmask (33951874,663552,2097176), which a full 3-word OR enumeration confirmed matches only 16 named Bloodmage/Sanguine spells including Bloodbolt, no unrelated spell. AuraEffect::HandleModCastingSpeed (SpellAuraEffects.cpp) and the generic SPELLMOD_RANGE path (SpellInfo.cpp/Spell.cpp) consume these. Learning is a passive-flagged spell, so it auto-applies the self-aura; aura_amount reads the live haste percentage directly, and spell_max_range/spell_cast_time_ms are pure queries needing no ownership of Bloodbolt. 578305 (level 60) is the Bloodbolt rank a level-80 character owns.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

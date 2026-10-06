@@ -4,7 +4,7 @@
  "contract": "Gift of Fervor 572629, Greater Gift of Fervor 572630, Gift of Zeal 706634 and Greater Gift of Zeal 680306 share spell_group 1160 with an exclusive stack rule: casting a later one removes any earlier one already held, so a Templar never carries more than one of the four at once.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "templar", "race": 1, "class": 19, "level": 80 }
+  { "id": "templar", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

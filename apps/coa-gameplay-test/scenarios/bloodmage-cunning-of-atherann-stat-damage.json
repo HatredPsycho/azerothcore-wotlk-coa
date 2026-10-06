@@ -4,7 +4,7 @@
   "contract": "Cunning of Atherann 706599 carries two SPELL_AURA_MOD_SPELL_DAMAGE_OF_STAT_PERCENT (aura 174) effects, BasePoints 24 (real +25%, EffectDieSides=1), MiscValue 126 (all magic schools), MiscValueB Stamina(2) on effect 0 and Spirit(4) on effect 1 (confirmed via the installed Spell.dbc). AuraEffect::HandleModSpellDamagePercentFromStat (SpellAuraEffects.cpp) is consumed generically by Unit::SpellBaseDamageBonusDone (Unit.cpp:9508-9517). This is a passive-flagged spell, so learning auto-applies the self-aura, and aura_amount reads its live percentage directly. A spell_damage_done probe was tried first (Frostbolt, Bloodbolt, Vampiric Fang, Keleseth's Calamity, Valanar's Vengeance, Atherann's Anguish): every one of them returned the unmodified 1000 baseline in this harness, because Unit::SpellDamageBonusDone only adds the stat-bonus term when the target spell's own damage coefficient (spell_bonus_data or the effect's BonusMultiplier, Unit.cpp:9284) is nonzero, and that coefficient is zero/unpopulated for every spell probed on this harness's isolated world data - a harness data limitation, not a Cunning of Atherann defect. aura_amount is used instead to assert the tooltip's exact 25%/25% values directly.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

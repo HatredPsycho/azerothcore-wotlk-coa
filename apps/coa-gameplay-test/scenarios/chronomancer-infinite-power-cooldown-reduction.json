@@ -31,7 +31,7 @@
       "id": "control",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "ranged_hit_rating": 10000
     },
@@ -39,7 +39,7 @@
       "id": "talent",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "ranged_hit_rating": 10000
     }

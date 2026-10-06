@@ -8,7 +8,7 @@
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [
     { "action": "wait", "label": "Let login hooks and class synchronisation settle", "ms": 5000 },
-    { "action": "command", "actor": "n", "command": ".localspec 34" },
+    { "action": "specialization", "actor": "n", "id": 34 },
     { "action": "assert", "label": "Death grants its identity Crypt Plague", "actor": "n", "metric": "knows_spell", "spell": 92121, "equals": 1, "within_ms": 3000 },
     { "action": "learn", "actor": "n", "spell": 800343 },
     { "action": "cast", "actor": "n", "spell": 800343, "target": "dummy" },

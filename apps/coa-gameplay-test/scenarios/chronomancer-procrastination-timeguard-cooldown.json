@@ -4,8 +4,8 @@
   "contract": "Procrastination 520854 carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SPELLMOD_COOLDOWN (11) and EffectSpellClassMask word2 134217728 (0x8000000); EffectBasePoints -30001 resolves to -30000 with DieSides 1, matching the Description \"Reduces the cooldown of Timeguard by $/1000;s1 sec.\" Timeguard 804441 has SpellFamilyFlags word2 134217728 and RecoveryTime 120000, so 120 sec becomes 90 sec. The record's ProcChance 0 is irrelevant: Attributes 0xc0 makes 520854 a hidden passive, not a proc. Its stale AuraDescription naming Buy Time is not the contract - Buy Time 520188 carries SpellFamilyFlags word2 268435456, which the mask does not reach. Native path only: AuraEffect::CalculateSpellMod and Player::AddSpellAndCategoryCooldowns.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

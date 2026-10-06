@@ -13,7 +13,7 @@
       "id": "templar",
       "race": 1,
       "class": 19,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -22,7 +22,7 @@
       "id": "enemy",
       "owner": "templar",
       "entry": 1601,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -8,15 +8,15 @@
       "id": "p",
       "race": 1,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
   "creatures": [
-    { "id": "marked", "owner": "p", "entry": 36, "level": 80, "health": 1000000, "distance": 3 },
-    { "id": "shocked", "owner": "p", "entry": 36, "level": 80, "health": 1000000, "distance": 15 },
-    { "id": "armed", "owner": "p", "entry": 36, "level": 80, "health": 1000000, "distance": 26 },
-    { "id": "control", "owner": "p", "entry": 36, "level": 80, "health": 1000000, "distance": 32 }
+    { "id": "marked", "owner": "p", "entry": 36, "level": 60, "health": 1000000, "distance": 3 },
+    { "id": "shocked", "owner": "p", "entry": 36, "level": 60, "health": 1000000, "distance": 15 },
+    { "id": "armed", "owner": "p", "entry": 36, "level": 60, "health": 1000000, "distance": 26 },
+    { "id": "control", "owner": "p", "entry": 36, "level": 60, "health": 1000000, "distance": 32 }
   ],
   "location": {
     "map": 0,

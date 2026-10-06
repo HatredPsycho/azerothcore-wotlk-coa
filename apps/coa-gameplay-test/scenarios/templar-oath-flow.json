@@ -4,8 +4,8 @@
  "contract": "Oath Chain 704576 lasts 15000 ms. Oath Flow 705283 is a +20% SPELLMOD_DURATION passive on its family mask, so the talented Templar's chain lasts 18000 ms.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "flowing", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "flowing", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

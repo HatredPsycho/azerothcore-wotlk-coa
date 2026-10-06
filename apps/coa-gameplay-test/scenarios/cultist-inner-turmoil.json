@@ -4,7 +4,7 @@
   "contract": "706722 is SpellFamilyName 31, effect0 ADD_PCT_MODIFIER (108), MiscValue=0 (SPELLMOD_DAMAGE), BasePoints=24 -> CalcValue 25, SpellClassMask [0,32,0] (dword1 bit5). Wrath of the Black Empire's ranks (500724, 502156, 502172, 504904, 800413) are SpellFamilyName 31 with SpellFamilyFlags[1] carrying bit5 (32 or 288), an exact classmask match. Player::ApplySpellMod resolves a percent SPELLMOD_DAMAGE mod multiplicatively (totalmul *= 1.25) with zero custom C++ (Player.cpp ~10272-10273). Regression guard for behaviour that already works natively.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "c", "race": 1, "class": 25, "level": 80 }
+    { "id": "c", "race": 1, "class": 25, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

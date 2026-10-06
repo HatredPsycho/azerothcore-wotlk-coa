@@ -4,10 +4,10 @@
   "contract": "Vindicator (704938 rank 1, 707773 rank 2, SpellFamilyName 33) shipped as SPELL_AURA_ADD_FLAT_MODIFIER / SPELLMOD_EFFECT2 (12) with EffectSpellClassMask (0, 0, 0x100000). Scanning every family-33 record for that bit finds only Holy Form (805301) and Vow of the Valkyr (807751) -- never Glorious Execution (800626, SpellFamilyFlags (0, 0x1000, 4)) -- so the shipped mod could never match its own named target, and even a corrected classMask would still be an unconditional SpellMod with no way to gate on another aura's presence. ApplyAscensionSunClericRadianceContracts retargets both ranks onto SPELL_AURA_ASCENSION_MOD_IGNORE_ARMOR_PCT (338) with Glorious Execution's own family-flag classMask (0, 4096, 4); Unit::CalcArmorReducedDamage already reads this aura via AuraEffect::IsAffectedOnSpell(spellInfo) and applies armor = AddPct(armor, -ignoreArmorPct), so less mitigated armor means more of a fixed base damage gets through. The shipped raw BasePoints (-11/-21, real -10/-20 through the old flat-modifier sign) are stored positive by the patch (+9/+19, real +10/+20) to match that convention. aura_ascension_vindicator_vow_gate (registered on 704938, 707773 and Vow of the Valkyr 807749) keeps the cached amount at 0 unless Vow of the Valkyr is currently applied, using AscensionSunCleric::SetAmount/Amount the same way AscensionSunCleric::Refresh() already toggles other conditional talents. 'armor_reduced_damage' queries Unit::CalcArmorReducedDamage on a fixed base of 1000 without executing an attack, so it observes exactly this mechanism deterministically.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "control", "race": 1, "class": 27, "level": 80 },
-    { "id": "vindicator", "race": 1, "class": 27, "level": 80 },
-    { "id": "vindicator_vow", "race": 1, "class": 27, "level": 80 },
-    { "id": "vindicator2_vow", "race": 1, "class": 27, "level": 80 }
+    { "id": "control", "race": 1, "class": 27, "level": 60 },
+    { "id": "vindicator", "race": 1, "class": 27, "level": 60 },
+    { "id": "vindicator_vow", "race": 1, "class": 27, "level": 60 },
+    { "id": "vindicator2_vow", "race": 1, "class": 27, "level": 60 }
   ],
   "creatures": [
     { "id": "dummy", "owner": "control", "entry": 36, "distance": 3 }

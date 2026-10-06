@@ -30,7 +30,7 @@
       "id": "storm",
       "race": 8,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -39,7 +39,7 @@
       "id": "dummy",
       "owner": "storm",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

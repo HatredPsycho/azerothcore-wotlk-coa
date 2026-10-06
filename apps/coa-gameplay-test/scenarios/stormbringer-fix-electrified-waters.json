@@ -8,13 +8,13 @@
       "id": "s",
       "race": 1,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "spell_crit_rating": 10000
     }
   ],
   "creatures": [
-    { "id": "e", "owner": "s", "entry": 36, "level": 80, "health": 1000000, "distance": 10 }
+    { "id": "e", "owner": "s", "entry": 36, "level": 60, "health": 1000000, "distance": 10 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

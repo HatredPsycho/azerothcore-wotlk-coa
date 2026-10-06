@@ -8,8 +8,8 @@
     { "id": "control", "race": 1, "class": 17, "level": 60 }
   ],
   "creatures": [
-    { "id": "webber", "owner": "knight", "entry": 36, "level": 80, "health": 100000, "distance": 3 },
-    { "id": "control_webber", "owner": "control", "entry": 36, "level": 80, "health": 100000, "distance": 3 }
+    { "id": "webber", "owner": "knight", "entry": 36, "level": 60, "health": 100000, "distance": 3 },
+    { "id": "control_webber", "owner": "control", "entry": 36, "level": 60, "health": 100000, "distance": 3 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

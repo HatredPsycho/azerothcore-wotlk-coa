@@ -29,7 +29,7 @@
       "id": "rm",
       "race": 1,
       "class": 32,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -38,7 +38,7 @@
       "id": "dummy",
       "owner": "rm",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 5000000,
       "distance": 10
     }

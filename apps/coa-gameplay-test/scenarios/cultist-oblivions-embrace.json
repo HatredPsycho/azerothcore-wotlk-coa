@@ -4,10 +4,10 @@
   "contract": "Oblivion's Embrace 680500 reads 'Increases the critical damage of your Hammer of Twilight and Eldritch Shock by 25%.' In the installed Spell.dbc it is passive, family 31, effect 1 is SPELL_AURA_ADD_PCT_MODIFIER (108) misc 15 = SPELLMOD_CRIT_DAMAGE_BONUS, BasePoints 24 / DieSides 1 = +25%, class mask dword 2 = 540672 = 0x84000 (bits 14 and 19). Effect 0 is an inert Dummy scaffold effect and does not gate the aura. Hammer of Twilight rank 805116 and Eldritch Shock rank 808043 (family 31) carry SpellFamilyFlags[2] 16384 (bit 14) and 524288 (bit 19) respectively -- exact matches; the unranked name-only row 254852 carries no family flags and is not itself castable, so ranks are probed directly. Unit::SpellCriticalDamageBonus (Unit.cpp:9926-9965) starts a magic spell's crit bonus at 50% of the hit (crit_bonus = damage/2 = 500 for a 1000 base), applies Player::ApplySpellMod(spellId, SPELLMOD_CRIT_DAMAGE_BONUS, crit_bonus) at line 9960, then folds the bonus back onto the base (line 9956/9962). Without the talent this gives 1000+500=1500; with the 25% PCT mod it gives 1000+500*1.25=1625. Player::ApplySpellMod (Player.cpp:10219-10323) is fully generic: any op/classmask-matching aura is picked up without a dedicated script. Grasp of Zek'voz 573028 (family 31, SpellFamilyFlags[0]=2) shares neither bit and is the control.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "c", "race": 1, "class": 25, "level": 80}
+    {"id": "c", "race": 1, "class": 25, "level": 60}
   ],
   "creatures": [
-    {"id": "dummy", "owner": "c", "entry": 36, "level": 80, "health": 1000000, "distance": 3}
+    {"id": "dummy", "owner": "c", "entry": 36, "level": 60, "health": 1000000, "distance": 3}
   ],
   "steps": [
     {"action": "wait", "label": "Let the fixtures settle", "ms": 5000},

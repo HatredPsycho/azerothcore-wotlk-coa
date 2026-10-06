@@ -4,7 +4,7 @@
   "contract": "Dark Frenzy 704644's second clause is 'while a Cursed Form is active, your global cooldowns are reduced by $804845s3%'. 804845 carries a stock aura 108 (SPELL_AURA_ADD_PCT_MODIFIER) effect, MiscValue 21 (SPELLMOD_GLOBAL_COOLDOWN) and BasePoints -26 (GetAmount -25), applied to the caster; Spell::TriggerGlobalCooldown consumes it through Player::ApplySpellMod. The talent aura itself only ships the raid spell-haste effect and a dummy, so the form gate lives in AscensionBloodmageTalents.cpp: SyncDarkFrenzy keeps 804845 applied while any Cursed Form is up and removes it when the last one falls. Bloodbolt 578305 is instant with StartRecoveryCategory 133 and StartRecoveryTime 1500, so its category-133 global cooldown is the measurable 1500 ms default; with the helper up it must read 1500 * 0.75 = 1125 ms. The engine's xinef guard in Player::ApplySpellMod ('backdraft gcd reduce ... dont affect gcd if cast time was not applied') only makes sense for auras that also modify casting time; a helper whose only modifier is the gcd reduction must not be swallowed by it.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "bm", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "bm", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
     { "id": "dummy", "owner": "bm", "entry": 36, "level": 1, "health": 1000000, "distance": 12 }

@@ -4,8 +4,8 @@
   "contract": "#689: Cutting Edge Technology 707398 is a native ADD_PCT_MODIFIER (aura 108) passive with two effects, both on EffectSpellClassMask (1048576,0,0) = family-34 flag bit 20: EffectMiscValue 22 SPELLMOD_DOT with BasePoints 19 DieSides 1 (+20%) and EffectMiscValue 19 SPELLMOD_ACTIVATION_TIME with BasePoints -21 DieSides 1 (-20%). Nanobot Reconstruction rank 13 is 502563: SpellFamilyName 34, SpellFamilyFlags (1048576,0,0), effect 0 SPELL_AURA_PERIODIC_HEAL with Amplitude 1000 and DurationIndex 3 (SpellDuration.dbc row 3 = 60000 ms). Unit::SpellHealingBonusDone selects SPELLMOD_DOT when damagetype is DOT, and AuraEffect::CalculatePeriodic applies SPELLMOD_ACTIVATION_TIME to the tick period at aura application, so the period becomes 800 ms and each tick heals 20% more. Its AttributesEx3 268435456 is SPELL_ATTR3_IGNORE_CASTER_AND_TARGET_RESTRICTIONS, not SPELL_ATTR3_IGNORE_CASTER_MODIFIERS, so the IsAffectedBySpellMods gate does not reject these modifiers. The talent has no SPELLMOD_DURATION effect, so the 60 sec duration must stay unchanged.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 28, "level": 80 },
-    { "id": "cutting", "race": 1, "class": 28, "level": 80 }
+    { "id": "control", "race": 1, "class": 28, "level": 60 },
+    { "id": "cutting", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

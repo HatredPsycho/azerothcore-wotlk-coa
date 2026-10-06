@@ -5,7 +5,7 @@
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "necro", "race": 5, "class": 23, "level": 80 }
+    { "id": "necro", "race": 5, "class": 23, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login settle", "ms": 3000 },

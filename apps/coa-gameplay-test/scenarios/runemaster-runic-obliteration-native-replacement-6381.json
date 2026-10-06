@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Runic Obliteration proc buff transforms the actual Blast and restores it (#6381)",
-  "contract": "An owned Runic Obliteration buff replaces known Primordial Blast. A normal cast through the original button fires three native missiles and generates Frost, Flame and Arcane glyphs, consumes the buff and restores the parent. Natural expiry, unlearning/relearning and a real relog also restore routing while preserving an independently owned child. Native Elemental Burst proc acquisition is covered by runemaster-audit-2734-runic-obliteration. Before equipping the independently authored 145-SP staff, calculate a native damage control from 63 base damage, the integer contribution of 44% of 145. With the staff equipped, a zero-base missile must match that control through the same damage modifiers. No glyph talents are active during this coefficient check.",
+  "contract": "An owned Runic Obliteration buff replaces known Primordial Blast. A normal cast through the original button fires three native missiles and generates Frost, Flame and Arcane glyphs, consumes the buff and restores the parent. Natural expiry, unlearning/relearning and a real relog also restore routing while preserving an independently owned child. Native Elemental Burst proc acquisition is covered by runemaster-audit-2734-runic-obliteration. Before equipping the independently authored staff, calculate a native damage control from 48 base damage, the integer contribution of 44% of its 111 spell power on this realm: Brimstone Staff 22800 is authored with 145 at Classic item level 86 without a generated profile, so the content scaling's RAID_PINNACLE band (84-92 -> 65-70) puts it at 66 and 145 x 66/86 rounds to 111. With the staff equipped, a zero-base missile must match that control through the same damage modifiers. No glyph talents are active during this coefficient check.",
   "timeout_ms": 120000,
   "location": {
     "map": 0,
@@ -98,7 +98,7 @@
       "actor": "p",
       "metric": "spell_damage_done",
       "spell": 807014,
-      "base": 63,
+      "base": 48,
       "target": "enemy",
       "save_as": "expected_staff_contribution"
     },
@@ -113,7 +113,7 @@
       "actor": "p",
       "metric": "spell_power",
       "school": 4,
-      "equals": 145
+      "equals": 111
     },
     {
       "action": "assert",

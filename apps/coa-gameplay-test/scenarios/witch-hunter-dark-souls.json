@@ -4,7 +4,7 @@
   "contract": "Dark Souls 802011 reads 'Increases the duration of Tonics by $/1000;s2 sec.' In the installed Spell.dbc it is passive, family 21, with effect 0 a SPELLMOD_EFFECT2 placeholder worth 0 on Dark Tonic (BasePoints -1, mask word 1 0x04000000) and effect 1 = SPELL_AURA_ADD_FLAT_MODIFIER misc 1 = SPELLMOD_DURATION, BasePoints 4999 (+5000 ms), class mask word 2 = 0x200, which every Tonic carries (Vampiric 802276 and Pyro 802277 among them). Tonics have SpellDuration index 1 = 10000 ms. Aura::CalcMaxDuration applies SPELLMOD_DURATION (SpellAuras.cpp:812), so a Tonic lasts 15000 ms. No script overrides Tonic durations. The scenario reads the probe on two Tonics and a control spell outside the mask (Smite Evil), then drinks a real Vampiric Tonic before and after the talent and reads the live aura duration. The aura is removed between casts so the second cast creates a fresh aura instead of refreshing. The second drink is only sent once the Tonic's global cooldown reads 0: measured on slot 3, 434 ms of it were still running when the fixed 2.5 s wait ended, the cast was refused and no aura appeared (aura_duration_ms 0); after a further 1 s wait the same cast produced a 15000 ms aura.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "hunter", "race": 1, "class": 15, "level": 80}
+    {"id": "hunter", "race": 1, "class": 15, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let level scaling settle", "ms": 5000},

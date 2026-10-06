@@ -4,7 +4,7 @@
   "contract": "#1370: Searing Power 680959 (family 30, CharacterAdvancement 29552, class 24 Incineration tab) reads 'Increases the spell power scaling of Flare Bolt by $s1%' with s1 = 20. Its effect 0 is the native aura 108 (SPELL_AURA_ADD_PCT_MODIFIER), MiscValue 24 (SPELLMOD_BONUS_MULTIPLIER), BasePoints 19 + DieSides 1 = +20%, mask (0, 0x2, 0), which in family 30 matches exactly the Flare Bolt chain 800790 and 502011-502019 (and the unlisted 807202). Flare Bolt reads '${$m1+0+$spfi*.571} Fire damage': its stock coefficient is zeroed (AscensionStockCoefficientData / spell_bonus_data) and pyromancer_scaling::ModifySpellEffectBaseValue adds the 0.571 spell power term to effect 0's base value, so the stock SpellDamageBonusDone never ran the BONUS_MULTIPLIER modifier on it. Only Lava Shard (803950, Searing Flames #1904) had that modifier applied to the module coefficient. Expected: with Searing Power the spell power term becomes 0.571 x 1.20 = 0.6852 of fire spell power; the talented term divided by the untalented one is 1.20 (1.00 before the fix). The term is isolated as value minus the value with no spell power. Every spell_effect_value sample rolls the effect's 1..6 die sides, so with at least 2000 spell power (Drink Fel Infusion 44505) the ratio stays within 1.20 +/- 0.01 for ranks 1 and 2, while an unaffected ratio stays within 1.00 +/- 0.01. Lava Shard's term (0.95, die 1..7) is a control that Searing Power does not change.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "caster", "race": 1, "class": 24, "level": 80 }
+    { "id": "caster", "race": 1, "class": 24, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

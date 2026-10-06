@@ -4,8 +4,8 @@
   "contract": "#735: Mechanosoldier 705827 is a native ADD_FLAT_MODIFIER (aura 107) passive. Effect 0 is EffectMiscValue 3 SPELLMOD_EFFECT1, BasePoints -11 DieSides 1 (-10); effect 1 is EffectMiscValue 1 SPELLMOD_DURATION, BasePoints 1999 DieSides 1 (+2000 ms); both carry EffectSpellClassMask (0,0,1024) = family-34 flag bit 74. Kinetic Shield 806224 has SpellFamilyName 34, SpellFamilyFlags (0,0,1024), AttributesEx3 0, DurationIndex 31 (SpellDuration.dbc row 31 = 8000 ms) and effect 0 SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN with BasePoints -41 DieSides 1 and EffectRealPointsPerLevel 0, i.e. -40. SPELLMOD_EFFECT1 is a flat term applied to effect index 0 in Unit::ApplyEffectModifiers, so the amount becomes -50, and Aura::CalcMaxDuration applies SPELLMOD_DURATION, so the aura lasts 10000 ms. The live calculator snapshot renders the tooltip literally as \"by -10% and its duration by 2 sec\", which confirms the negative flat amount is the authored contract. Effect 2 (SPELL_AURA_DUMMY, EffectMiscValue 1, amount 6000, mask (0,2,0)) is undescribed and has no native handler; it is deliberately not asserted.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 28, "level": 80 },
-    { "id": "soldier", "race": 1, "class": 28, "level": 80 }
+    { "id": "control", "race": 1, "class": 28, "level": 60 },
+    { "id": "soldier", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

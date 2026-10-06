@@ -4,7 +4,7 @@
  "contract": "Martial Paladin rank 2 (705251) applies SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE on Agility for 10% and SPELL_AURA_ASCENSION_MOD_HIT_CHANCE_ALL_PCT for 6 percentage points, as its description states.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "martial", "race": 1, "class": 19, "level": 80 }
+  { "id": "martial", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

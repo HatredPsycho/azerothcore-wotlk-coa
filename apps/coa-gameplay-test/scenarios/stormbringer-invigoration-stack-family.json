@@ -3,7 +3,7 @@
   "name": "Stormbringer: Everlasting Invigoration extends the Air Elemental buff natively (#3078)",
   "timeout_ms": 60000,
   "players": [
-    { "id": "p1", "race": 8, "class": 16, "level": 80 }
+    { "id": "p1", "race": 8, "class": 16, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

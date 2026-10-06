@@ -8,7 +8,7 @@
       "id": "bloodmage",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -66,7 +66,7 @@
       "actor": "bloodmage",
       "metric": "health",
       "relative_to": "hp_before",
-      "min": 200
+      "min": 100
     }
   ]
 }

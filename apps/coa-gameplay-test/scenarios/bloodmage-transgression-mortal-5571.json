@@ -18,7 +18,7 @@
       "id": "unique",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -27,7 +27,7 @@
       "id": "ordinary",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
@@ -38,7 +38,7 @@
       "id": "unique_target",
       "owner": "unique",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -46,7 +46,7 @@
       "id": "ordinary_target",
       "owner": "ordinary",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

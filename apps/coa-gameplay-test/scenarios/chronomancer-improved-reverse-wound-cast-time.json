@@ -4,8 +4,8 @@
   "contract": "Improved Reverse Wound 706053 (Spell.dbc, SpellFamilyName 28) carries SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue SPELLMOD_CASTING_TIME (10) and EffectSpellClassMask word1 bit 0x20000; EffectBasePoints -301 resolves to -300 with DieSides 1, matching the tooltip \"Reduces the cast time of Reverse Wound by $/1000;S1 sec.\" Reverse Wound's level-80 rank 572628 has SpellFamilyFlags word1 131072, CastingTimeIndex 19 (2500ms) and AttributesEx3 0, so nothing blocks caster modifiers. Native path only: AuraEffect::CalculateSpellMod builds the SpellModifier, SpellInfo::IsAffectedBySpellMod admits it on the shared family and mask, and Unit::ModSpellCastTime subtracts it inside SpellInfo::CalcCastTime before the haste multiplier. Both fixtures are the same race, class and level with no ratings, so their cast-speed multipliers are identical and only the flat modifier can move the difference.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

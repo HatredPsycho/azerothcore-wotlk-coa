@@ -8,7 +8,7 @@
       "id": "p",
       "race": 1,
       "class": 24,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -45,7 +45,8 @@
     {
       "action": "set_power",
       "actor": "p",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "cast",
@@ -103,7 +104,8 @@
     {
       "action": "set_power",
       "actor": "p",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "set_aura",

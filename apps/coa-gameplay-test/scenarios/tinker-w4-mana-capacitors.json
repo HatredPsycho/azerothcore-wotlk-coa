@@ -4,7 +4,7 @@
   "contract": "#888: Mana Capacitors (506818 rank 1, 506825 rank 2) share their class mask with Makeshift Dynamite and Gear Grind, so SpellInfo::IsAffectedBySpellMod routes them by hand to Overcharge (524835) alone. Overcharge's cost and cooldown modifiers must fall 15%/10% at rank 1 and 30%/20% at rank 2, while the mask's other family-34 spells stay unmodified.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "t", "race": 1, "class": 28, "level": 80 }
+    { "id": "t", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

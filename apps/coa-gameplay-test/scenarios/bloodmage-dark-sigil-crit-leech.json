@@ -8,7 +8,7 @@
       "id": "caster",
       "race": 1,
       "class": 20,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000,
       "spell_crit_rating": 10000
     }
@@ -34,7 +34,7 @@
       "actor": "caster", "metric": "combat", "equals": 1, "within_ms": 9000
     },
     { "action": "wait", "ms": 3000 },
-    { "action": "set_health", "actor": "caster", "value": 4000 },
+    { "action": "set_health", "actor": "caster", "value": 4000, "maximum": 4000 },
     { "action": "snapshot", "actor": "caster", "metric": "health", "save_as": "control_health" },
     { "action": "set_power", "actor": "caster", "power": 1, "value": 1000 },
     { "action": "cast", "actor": "caster", "spell": 572795, "target": "dummy" },
@@ -58,7 +58,7 @@
       "actor": "caster", "metric": "spell_crit_chance", "relative_to": "crit_before",
       "min": 2.9, "max": 3.1, "within_ms": 5000
     },
-    { "action": "set_health", "actor": "caster", "value": 4000 },
+    { "action": "set_health", "actor": "caster", "value": 4000, "maximum": 4000 },
     { "action": "set_power", "actor": "caster", "power": 1, "value": 1000 },
     { "action": "cast", "actor": "caster", "spell": 572795, "target": "dummy" },
     { "action": "wait", "label": "Let the 6 sec cast, its health cost and its critical hit resolve", "ms": 9000 },

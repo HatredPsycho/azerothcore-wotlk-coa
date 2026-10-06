@@ -11,10 +11,10 @@
     "o": 0
   },
   "players": [
-    { "id": "ranger", "race": 1, "class": 21, "level": 80, "ranged_hit_rating": 10000, "allow_regeneration": false }
+    { "id": "ranger", "race": 1, "class": 21, "level": 60, "ranged_hit_rating": 10000, "allow_regeneration": false }
   ],
   "creatures": [
-    { "id": "dummy", "owner": "ranger", "entry": 36, "level": 80, "health": 1000000, "distance": 15 }
+    { "id": "dummy", "owner": "ranger", "entry": 36, "level": 60, "health": 1000000, "distance": 15 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

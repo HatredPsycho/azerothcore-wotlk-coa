@@ -8,19 +8,19 @@
       "id": "caster1",
       "race": 1,
       "class": 20,
-      "level": 80
+      "level": 60
     },
     {
       "id": "caster2",
       "race": 1,
       "class": 20,
-      "level": 80
+      "level": 60
     },
     {
       "id": "ally",
       "race": 1,
       "class": 20,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

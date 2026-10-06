@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "PvP Power raises absorb shields",
-  "contract": "Requires PvpPower.Enable = 1. A High-Risk level 60 priest wearing a robe with PvP Power (+42) gets 42 x 0.02% = 0.84% more Power Word: Shield on top of the robe's own spell power (+1.90% on this rank, measured with PvpPower.Enable = 0).",
+  "contract": "Requires PvpPower.Enable = 1. A High-Risk level 60 priest wearing a robe with PvP Power (+42) gets 42 x 0.02% = 0.84% more Power Word: Shield on top of the robe's own spell power. The robe's authored 30 spell power is cut by the content scaling: it is Classic item level 74 without a generated profile, so the RAID_MID band (69-75 -> 52-58) puts it at 57 and 30 x 57/74 rounds to 23. The PvP Power +42 comes from the spell id and is not cut. 1265 + int(23 x 0.8068) = 1283 (+1.42%) without the script, floor(1283 x 1.0084) = 1293 = 1.0221 of the 1265 base with it.",
   "players": [
     {
       "id": "p",
@@ -100,13 +100,13 @@
     },
     {
       "action": "assert",
-      "label": "Robe stats (+1.90%) and PvP Power +42 (+0.84%) compound on the shield",
+      "label": "Robe spell power 23 (+1.42%) and PvP Power +42 (+0.84%) compound on the shield (1293/1265)",
       "actor": "p",
       "metric": "aura_amount",
       "spell": 25218,
       "ratio_to": "shield_base",
-      "min": 1.0255,
-      "max": 1.0295
+      "min": 1.0200,
+      "max": 1.0240
     }
   ]
 }

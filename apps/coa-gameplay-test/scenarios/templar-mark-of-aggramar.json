@@ -4,8 +4,8 @@
  "contract": "Mark of Aggramar 804928 is a -50% SPELLMOD_COST passive on the Testament family mask. Testament of Faith rank 1 (801478) costs 50 Energy and Testament of Fortitude (500678) costs 15, so the talented Templar pays 25 and 7.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "marked", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "marked", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

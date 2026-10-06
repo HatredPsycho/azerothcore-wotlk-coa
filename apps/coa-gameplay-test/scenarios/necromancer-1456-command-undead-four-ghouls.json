@@ -5,10 +5,10 @@
   "timeout_ms": 90000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "n", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "n", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "golem", "owner": "n", "entry": 36, "level": 80, "health": 1000000, "distance": 4 }
+    { "id": "golem", "owner": "n", "entry": 36, "level": 60, "health": 1000000, "distance": 4 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and the Life Force aura settle", "ms": 3000 },

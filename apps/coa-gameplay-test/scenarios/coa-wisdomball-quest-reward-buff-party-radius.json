@@ -8,13 +8,13 @@
       "id": "hero",
       "race": 10,
       "class": 13,
-      "level": 80
+      "level": 60
     },
     {
       "id": "other",
       "race": 10,
       "class": 12,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [

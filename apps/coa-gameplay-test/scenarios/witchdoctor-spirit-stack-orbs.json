@@ -4,7 +4,7 @@
   "contract": "Spirit 561136 (5 stacks) periodically triggers 'Spirit Visual Stack Checker' 561298 every 0.5 sec, described in the client as 'Will check for amount of stacks and do some crazy visual stuff'. The client data holds the visuals it drives: 'Spirit One/Two/Three/Four/Five Stack Visual' 561378-561382 are hidden 1 sec dummy auras whose SpellVisuals 60003/60002/60004/60001/60005 each attach one 8fx_generic_shadow_orb (with an arcane orb and smoke) through SpellVisualKitModelAttach at a distinct point of an arc behind the character (-0.8/0, -0.69/+-0.40, -0.40/+-0.69). With N Spirits the first N stack visuals must therefore be active and the others absent; they must outlive their own 1 sec duration while the stacks remain, follow stack changes and disappear with the Spirits. Rendering is client-side and not observed here; the scenario observes the server-side auras the client draws.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "doctor", "race": 1, "class": 13, "level": 80 }
+    { "id": "doctor", "race": 1, "class": 13, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let the character settle", "ms": 3000 },

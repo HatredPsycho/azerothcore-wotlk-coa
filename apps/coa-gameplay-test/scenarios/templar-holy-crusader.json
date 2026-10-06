@@ -4,8 +4,8 @@
  "contract": "Holy Crusader 524747 is a flat SPELLMOD_COOLDOWN passive of -30000 ms on the Divine Force family mask, so a 60000 ms base cooldown becomes 30000 ms for the talented Templar.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "crusader", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "crusader", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

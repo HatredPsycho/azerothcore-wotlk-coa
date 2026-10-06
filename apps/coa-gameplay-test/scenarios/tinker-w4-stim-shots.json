@@ -4,7 +4,7 @@
   "contract": "#1140: Stim Shots (808009) is a flat SPELLMOD_EFFECT1 of +10 whose class mask (0,0,0x4000000) selects only Stim Augmentation (653240). The scripted aura reads its own effect amount, so the effect value the Tinker would cast must move from 20 to 30 and the applied aura must carry 30.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "t", "race": 1, "class": 28, "level": 80 }
+    { "id": "t", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

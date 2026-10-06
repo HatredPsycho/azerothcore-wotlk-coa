@@ -4,9 +4,9 @@
   "contract": "Two passives must keep delivering their crit modifiers through the stock spell-modifier path, with no module binding. #2845 Arclight Adept (705788) is an ADD_PCT_MODIFIER of SPELLMOD_CRIT_DAMAGE_BONUS worth +15, routed to the Mechsuit set by the family-34 override in SpellInfo::IsAffectedBySpellMod, so the crit bonus of Combustion (801388) is multiplied by 1.15: the harness probe feeds 1000 base damage, a ranged-class spell doubles it to 2000, and the +15% applies to the 1000 bonus half only, giving 2150 (2149 when the float product truncates). #3116 Short Fuse (707246) is an ADD_FLAT_MODIFIER of SPELLMOD_EFFECT1 worth +20 that raises effect 0 of Sparked and Ready! (537247) from 0 to 20, turning its otherwise no-op SPELLMOD_CRITICAL_CHANCE modifier into +20 percentage points for Rocket Launcher (500220). A second Tinker carries 537247 without Short Fuse and must measure 0.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "adept", "race": 1, "class": 28, "level": 80 },
-    { "id": "fuse", "race": 1, "class": 28, "level": 80 },
-    { "id": "plain", "race": 1, "class": 28, "level": 80 }
+    { "id": "adept", "race": 1, "class": 28, "level": 60 },
+    { "id": "fuse", "race": 1, "class": 28, "level": 60 },
+    { "id": "plain", "race": 1, "class": 28, "level": 60 }
   ],
   "creatures": [
     { "id": "dummy", "owner": "adept", "entry": 36, "health": 1000000 }

@@ -7,14 +7,14 @@
       "id": "primalist",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "allow_regeneration": false
     },
     {
       "id": "ally",
       "race": 1,
       "class": 31,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {

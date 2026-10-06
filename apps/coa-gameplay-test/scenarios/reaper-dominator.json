@@ -8,13 +8,13 @@
       "id": "control",
       "race": 5,
       "class": 30,
-      "level": 80
+      "level": 60
     },
     {
       "id": "dominator",
       "race": 5,
       "class": 30,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

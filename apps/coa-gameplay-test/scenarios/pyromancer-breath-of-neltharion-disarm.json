@@ -8,7 +8,7 @@
       "id": "caster",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     }
   ],
   "location": {
@@ -23,7 +23,7 @@
       "id": "near",
       "owner": "caster",
       "entry": 46,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -31,7 +31,7 @@
       "id": "far",
       "owner": "caster",
       "entry": 46,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 15
     }

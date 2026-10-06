@@ -4,9 +4,9 @@
  "contract": "Serendipity 300929 applies a party area aura of SPELL_AURA_MOD_DAMAGE_PERCENT_DONE for 3% and, on the caster, SPELL_AURA_MOD_POWER_COST_SCHOOL_PCT for -5%. Righteous Lunge rank 1 (801443) costs 40 Energy, so the talented Templar pays 38. The harness has no group action, so only the caster's own share is measured.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "lucky", "race": 1, "class": 19, "level": 80 },
-  { "id": "victim", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "lucky", "race": 1, "class": 19, "level": 60 },
+  { "id": "victim", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

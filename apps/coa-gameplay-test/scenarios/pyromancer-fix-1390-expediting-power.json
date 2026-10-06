@@ -8,13 +8,13 @@
       "id": "control",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     },
     {
       "id": "talent",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -90,7 +90,8 @@
     {
       "action": "set_power",
       "actor": "control",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "set_aura",
@@ -107,7 +108,8 @@
     {
       "action": "set_power",
       "actor": "talent",
-      "value": 3000
+      "value": 3000,
+      "maximum": 3000
     },
     {
       "action": "set_aura",

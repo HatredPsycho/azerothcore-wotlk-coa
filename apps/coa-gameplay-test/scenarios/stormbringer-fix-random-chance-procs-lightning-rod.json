@@ -8,7 +8,7 @@
       "id": "s",
       "race": 8,
       "class": 16,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -17,7 +17,7 @@
       "id": "primary",
       "owner": "s",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 4
     },
@@ -25,7 +25,7 @@
       "id": "neighbor",
       "owner": "s",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 6
     }

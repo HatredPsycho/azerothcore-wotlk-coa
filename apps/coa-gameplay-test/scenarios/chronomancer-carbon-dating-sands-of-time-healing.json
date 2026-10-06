@@ -4,8 +4,8 @@
   "contract": "Carbon Dating 706102 is a passive whose only effect is SPELL_AURA_ADD_FLAT_MODIFIER (107) with EffectMiscValue 23 = SPELLMOD_EFFECT3 and EffectBasePoints 9, resolving to 10 with DieSides 1. Its EffectSpellClassMask [16384,0,0] selects exactly one SpellFamilyName 28 spell: Sands of Time 804488 (SpellFamilyFlags [16384,0,0]). Sands of Time effect 2 is SPELL_AURA_ADD_PCT_MODIFIER (108) with EffectMiscValue 0 = SPELLMOD_DAMAGE and EffectSpellClassMask [4,0,0], which is Epoch (SpellFamilyFlags [4,0,0]); its EffectBasePoints -1 resolves to 0, so untalented the modifier is worth nothing. SPELLMOD_EFFECT3 is folded into that effect's value by Unit::ApplyEffectModifiers through SpellEffectInfo::CalcValue, and AuraEffect::CalculateAmount then multiplies the result by the stack amount (SpellAuraEffects.cpp), which is what the tooltip's 'each stack' means. The module forces Sands of Time's StackAmount to 5 (AscensionChronomancerTime.cpp ApplyTimeContracts). Unit::SpellHealingBonusDone applies SPELLMOD_DAMAGE to heals, and Sands of Time carries AttributesEx3 0x0, so SPELL_ATTR3_IGNORE_CASTER_MODIFIERS does not block it. Native handlers only: no spell_proc, spell_script_names or module script is involved. Regression scenario for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 1, "class": 22, "level": 80 },
-    { "id": "talent", "race": 1, "class": 22, "level": 80 }
+    { "id": "control", "race": 1, "class": 22, "level": 60 },
+    { "id": "talent", "race": 1, "class": 22, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

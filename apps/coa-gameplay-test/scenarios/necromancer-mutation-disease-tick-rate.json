@@ -5,11 +5,11 @@
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "necro", "race": 5, "class": 23, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "necro", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "old_golem", "owner": "necro", "entry": 36, "level": 80, "health": 1000000, "distance": 8 },
-    { "id": "fresh_golem", "owner": "necro", "entry": 36, "level": 80, "health": 1000000, "distance": 11 }
+    { "id": "old_golem", "owner": "necro", "entry": 36, "level": 60, "health": 1000000, "distance": 8 },
+    { "id": "fresh_golem", "owner": "necro", "entry": 36, "level": 60, "health": 1000000, "distance": 11 }
   ],
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

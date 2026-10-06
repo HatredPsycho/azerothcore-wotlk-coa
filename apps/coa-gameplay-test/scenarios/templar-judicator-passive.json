@@ -4,8 +4,8 @@
  "contract": "Judicator 706359 applies SPELL_AURA_MOD_PARRY_PERCENT and SPELL_AURA_MOD_DODGE_PERCENT for 3 percentage points each. Dodge is compared against an identical control Templar; the parry field only exists for a character the server has already marked able to parry, so that effect is proved by the applied aura amount.",
  "timeout_ms": 90000,
  "players": [
-  { "id": "control", "race": 1, "class": 19, "level": 80 },
-  { "id": "judicator", "race": 1, "class": 19, "level": 80 }
+  { "id": "control", "race": 1, "class": 19, "level": 60 },
+  { "id": "judicator", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

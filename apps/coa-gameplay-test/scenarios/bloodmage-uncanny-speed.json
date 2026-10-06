@@ -4,7 +4,7 @@
   "contract": "Uncanny Speed 807491 ships three SPELL_EFFECT_APPLY_AURA effects in Spell.dbc: aura 31 SPELL_AURA_MOD_INCREASE_SPEED with BasePoints 19 + DieSides 1 = 20% (AuraEffect::HandleAuraModIncreaseSpeed), aura 172 SPELL_AURA_MOD_MOUNTED_SPEED_NOT_STACK with the same 20% (HandleAuraModIncreaseMountedSpeed), and aura 138 SPELL_AURA_MOD_MELEE_HASTE with BasePoints 4 + DieSides 1 = 5% (HandleModMeleeSpeedPct). All three have real handlers. The aura is passive and hidden from the client (Attributes 0xc0), so it never appears on a buff bar; that is shipped behaviour, not a defect. attack_time_ms reads the hasted swing time, so 5% melee haste divides it by 1.05. This is the coa-gameplay-test port of the Ghost e2e check recorded in .agents/plans/coa-aura-handler-reports/observations.md, which measured run speed 8.40 = 7.0 * 1.20.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

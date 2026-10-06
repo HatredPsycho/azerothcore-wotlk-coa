@@ -3,10 +3,10 @@
   "name": "Stormbringer: Invigoration grants the Air Elemental a stack from Aeroblast (#2805)",
   "timeout_ms": 180000,
   "players": [
-    { "id": "p1", "race": 8, "class": 16, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "p1", "race": 8, "class": 16, "level": 60, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "t1", "owner": "p1", "entry": 36, "level": 80, "health": 500000, "distance": 5 }
+    { "id": "t1", "owner": "p1", "entry": 36, "level": 60, "health": 500000, "distance": 5 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

@@ -8,8 +8,8 @@
     "implemented sigil and must preserve Elements of Fury additional charges.",
     "Primordial Blast 800732 is a normal direct magic probe. Reset its 8-second cooldown and restore caster mana",
     "before each separate hit to isolate the one-use Sigil behavior.",
-    "The 8 percent payload floors its magnitude to whole points. A triggering hit of at least 100 limits",
-    "the ratio error to less than 0.01; the percentage assertion includes only that integer-rounding interval."
+    "The 8 percent payload floors its magnitude to whole points. A triggering hit of at least 80 limits",
+    "the ratio error to less than 0.0125; the percentage assertion includes only that integer-rounding interval."
   ],
   "timeout_ms": 120000,
   "players": [
@@ -17,7 +17,7 @@
       "id": "rm",
       "race": 1,
       "class": 32,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -179,8 +179,8 @@
       "spell": 800732,
       "target": "dummy",
       "relative_to": "before_hit",
-      "min": 100,
-      "label": "The probe hit bounds whole-point rounding error to at most 1 percent"
+      "min": 80,
+      "label": "The probe hit bounds whole-point rounding error to at most 1.25 percent"
     },
     {
       "action": "assert",
@@ -188,7 +188,7 @@
       "metric": "aura_amount",
       "spell": 807819,
       "ratio_to": "trigger_hit",
-      "min": 0.07,
+      "min": 0.0675,
       "max": 0.0801,
       "label": "The Arcane hit copies 8% of the actual triggering damage",
       "caster": "rm",
@@ -261,7 +261,7 @@
       "id": "dummy",
       "owner": "rm",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

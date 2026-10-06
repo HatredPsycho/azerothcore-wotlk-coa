@@ -4,11 +4,11 @@
   "contract": "Inhumane 807488: 'Dealing damage with Aortic Assault will now launch 1 Blood Shard, dealing ${$504115m1+$504115ppl1+$AP*0.15+$SP*.35} Spellshadow damage to your target.' The client wires the talent to 506639 'Bloodmage Blood Shard Consume 1', so each launch spends a stored shard (505366). Aortic Assault 806212 (requires Cursed Form 524861) is aura 227 with a 500 ms amplitude that triggers 806502 against every enemy in front of the caster, so with two dummies each tick is two hits. Expected: with no stored shard no 504115 hit at all; with shards stored by Bloodbolt beforehand, one shard hit per stored shard in total, after which the count is 0.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "b", "race": 1, "class": 20, "level": 80, "melee_hit_rating": 10000, "expertise_rating": 10000, "spell_hit_rating": 10000 }
+    { "id": "b", "race": 1, "class": 20, "level": 60, "melee_hit_rating": 10000, "expertise_rating": 10000, "spell_hit_rating": 10000 }
   ],
   "creatures": [
-    { "id": "d1", "owner": "b", "entry": 299, "level": 80, "distance": 2, "health": 1000000 },
-    { "id": "d2", "owner": "b", "entry": 299, "level": 80, "distance": 3, "health": 1000000 }
+    { "id": "d1", "owner": "b", "entry": 299, "level": 60, "distance": 2, "health": 1000000 },
+    { "id": "d2", "owner": "b", "entry": 299, "level": 60, "distance": 3, "health": 1000000 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [

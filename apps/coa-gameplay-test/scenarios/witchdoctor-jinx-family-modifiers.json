@@ -4,7 +4,7 @@
   "contract": "Shadow Enchantments rank 1 (300662) and rank 2 (301361), and Blatant Curse (301297), all share EffectSpellClassMask (0, 0, 32) on their Jinx-facing effects, exactly the module's own Jinx(SpellInfo*) predicate (AscensionWitchDoctorAuras.cpp: Family(info, 2, 32)) and Lethargy Jinx's (802065) own SpellFamilyFlags word2 (32). Shadow Enchantments: effect0 aura 108 (ADD_PCT_MODIFIER), MiscValue 8 (SPELLMOD_ALL_EFFECTS), BasePoints 24/49 + DieSides 1 = 25%/50%; effect1 aura 108, MiscValue 1 (SPELLMOD_DURATION), same BasePoints/DieSides = 25%/50%. Both ranks share the identical class mask and op pair, so they are asserted with the first unlearned before the second, matching how the ranks actually replace each other on a character. Blatant Curse: effect0 aura 108, MiscValue 8 (SPELLMOD_ALL_EFFECTS), BasePoints -1 + DieSides 1 = 0% (an inert DBC slot; the tooltip promises only the cost reduction, so a zero value here is not a missing mechanic), effect1 aura 108, MiscValue 14 (SPELLMOD_COST), BasePoints -26 + 1 = -25%. Unit::ApplyEffectModifiers (Unit.cpp) consumes SPELLMOD_ALL_EFFECTS unconditionally for every Jinx-family effect base value; SpellInfo::CalculatePowerCost consumes SPELLMOD_COST. Hex of Malice (501153, word2 = 0) is the negative control: none of these three passives' class masks reach it. spell_modifier reads each mod against a fixed synthetic base without casting. Regression guard for behaviour that already works natively; no module code touches any of these three spell ids.",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 13, "level": 80 }
+    { "id": "caster", "race": 1, "class": 13, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

@@ -8,49 +8,49 @@
       "id": "witchdoctor",
       "race": 1,
       "class": 13,
-      "level": 80
+      "level": 60
     },
     {
       "id": "cultist",
       "race": 1,
       "class": 25,
-      "level": 80
+      "level": 60
     },
     {
       "id": "felsworn",
       "race": 1,
       "class": 14,
-      "level": 80
+      "level": 60
     },
     {
       "id": "pyromancer",
       "race": 1,
       "class": 24,
-      "level": 80
+      "level": 60
     },
     {
       "id": "starcaller",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "suncleric",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     },
     {
       "id": "venomancer",
       "race": 1,
       "class": 29,
-      "level": 80
+      "level": 60
     },
     {
       "id": "knight",
       "race": 1,
       "class": 17,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -58,7 +58,7 @@
       "id": "witchdoctor_dummy",
       "owner": "witchdoctor",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -66,7 +66,7 @@
       "id": "cultist_dummy",
       "owner": "cultist",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -74,7 +74,7 @@
       "id": "felsworn_dummy",
       "owner": "felsworn",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -82,7 +82,7 @@
       "id": "pyromancer_dummy",
       "owner": "pyromancer",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -90,7 +90,7 @@
       "id": "starcaller_dummy",
       "owner": "starcaller",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -98,7 +98,7 @@
       "id": "suncleric_dummy",
       "owner": "suncleric",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -106,7 +106,7 @@
       "id": "venomancer_dummy",
       "owner": "venomancer",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -114,7 +114,7 @@
       "id": "knight_dummy",
       "owner": "knight",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

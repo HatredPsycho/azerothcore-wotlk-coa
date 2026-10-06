@@ -17,14 +17,14 @@
       "id": "control",
       "race": 1,
       "class": 14,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "oppressive",
       "race": 1,
       "class": 14,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -35,7 +35,7 @@
       "entry": 36,
       "health": 1000000,
       "distance": 3,
-      "level": 80
+      "level": 60
     },
     {
       "id": "dummy_oppressive",
@@ -43,7 +43,7 @@
       "entry": 36,
       "health": 1000000,
       "distance": 3,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

@@ -8,19 +8,19 @@
       "id": "control",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "r1",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     },
     {
       "id": "r2",
       "race": 1,
       "class": 26,
-      "level": 80
+      "level": 60
     }
   ],
   "creatures": [
@@ -28,7 +28,7 @@
       "id": "dummy",
       "owner": "control",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

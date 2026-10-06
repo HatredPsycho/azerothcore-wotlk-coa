@@ -8,14 +8,14 @@
       "id": "conduit",
       "race": 1,
       "class": 27,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "plain",
       "race": 1,
       "class": 27,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],

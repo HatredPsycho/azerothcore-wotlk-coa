@@ -4,7 +4,7 @@
  "contract": "Light's Chosen 301310 promises spell power from 50% of Agility, critical strike rating from 15% of Intellect, and spell penetration from 10% of Intellect. The first two are native stat auras. The third runs through a 5-second periodic trigger of 301369, whose own effect carries a fixed amount, so the talent's 10% of Intellect must reach it. A level 80 Templar has well over 20 Intellect, so the applied amount must exceed 2.",
  "timeout_ms": 120000,
  "players": [
-  { "id": "chosen", "race": 1, "class": 19, "level": 80 }
+  { "id": "chosen", "race": 1, "class": 19, "level": 60 }
  ],
  "steps": [
   { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },

@@ -4,14 +4,14 @@
   "contract": "Gatling Gun's shot (500577) deals 80% Ranged Weapon Damage plus a level bonus, also inside the Mechsuit form. One channel with a gun must out-damage the same channel with no ranged weapon: at least 3 times at level 80 with BRK-1000 (609-1001) and 1.4 times at level 15 with Ol' Blunderbuss (25-38). Crits make one channel vary, so the margins stay well clear of the old form-damage ratios (1.17 and 1.03).",
   "timeout_ms": 60000,
   "players": [
-    {"id": "bare80", "race": 1, "class": 28, "level": 80, "ranged_hit_rating": 10000},
-    {"id": "gun80", "race": 1, "class": 28, "level": 80, "ranged_hit_rating": 10000},
+    {"id": "bare80", "race": 1, "class": 28, "level": 60, "ranged_hit_rating": 10000},
+    {"id": "gun80", "race": 1, "class": 28, "level": 60, "ranged_hit_rating": 10000},
     {"id": "bare15", "race": 1, "class": 28, "level": 15, "ranged_hit_rating": 10000},
     {"id": "gun15", "race": 1, "class": 28, "level": 15, "ranged_hit_rating": 10000}
   ],
   "creatures": [
-    {"id": "d_bare80", "owner": "bare80", "entry": 36, "level": 80, "health": 5000000, "distance": 10},
-    {"id": "d_gun80", "owner": "gun80", "entry": 36, "level": 80, "health": 5000000, "distance": 10},
+    {"id": "d_bare80", "owner": "bare80", "entry": 36, "level": 60, "health": 5000000, "distance": 10},
+    {"id": "d_gun80", "owner": "gun80", "entry": 36, "level": 60, "health": 5000000, "distance": 10},
     {"id": "d_bare15", "owner": "bare15", "entry": 36, "level": 15, "health": 500000, "distance": 10},
     {"id": "d_gun15", "owner": "gun15", "entry": 36, "level": 15, "health": 500000, "distance": 10}
   ],

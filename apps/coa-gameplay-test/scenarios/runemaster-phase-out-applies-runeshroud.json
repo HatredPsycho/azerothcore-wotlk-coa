@@ -4,7 +4,7 @@
   "contract": "Phase Out 500671 reads 'Disappear from sight, entering an improved stealth for $560269d and applying Runeshroud.' It triggers 560269, whose effects are a movement-speed aura and stealth. Effect 2 is SPELL_EFFECT_ASCENSION_MODIFY_COOLDOWN on Runeshroud 500288 with base points 0 and die sides 1, so the cast changes that cooldown by 1 ms and never applies aura 500288. #5772 reports that Phase Out does not apply Runeshroud. Expected: after Phase Out, the Runemaster has both the improved-stealth aura 560269 and Runeshroud 500288.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "rm", "race": 1, "class": 32, "level": 80}
+    {"id": "rm", "race": 1, "class": 32, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let the character settle", "ms": 3000},

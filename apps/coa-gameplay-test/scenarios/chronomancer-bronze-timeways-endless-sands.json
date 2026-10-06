@@ -8,7 +8,7 @@
       "id": "chronomancer",
       "race": 1,
       "class": 22,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -25,7 +25,7 @@
       "caster": "chronomancer",
       "equals": 0
     },
-    { "action": "set_health", "actor": "chronomancer", "value": 2000 },
+    { "action": "set_health", "actor": "chronomancer", "value": 2000, "maximum": 2000 },
     { "action": "cast", "actor": "chronomancer", "spell": 572360 },
     {
       "action": "assert",

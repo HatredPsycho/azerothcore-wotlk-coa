@@ -8,21 +8,21 @@
       "id": "control",
       "race": 1,
       "class": 26,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "early",
       "race": 1,
       "class": 26,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "late",
       "race": 1,
       "class": 26,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],

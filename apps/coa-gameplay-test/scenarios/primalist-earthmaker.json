@@ -14,21 +14,21 @@
       "id": "baseline",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "talented",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     },
     {
       "id": "removed",
       "race": 1,
       "class": 31,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -37,7 +37,7 @@
       "id": "target_baseline",
       "owner": "baseline",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -45,7 +45,7 @@
       "id": "target_talented",
       "owner": "talented",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     },
@@ -53,7 +53,7 @@
       "id": "target_removed",
       "owner": "removed",
       "entry": 28168,
-      "level": 80,
+      "level": 60,
       "health": 100000,
       "distance": 3
     }

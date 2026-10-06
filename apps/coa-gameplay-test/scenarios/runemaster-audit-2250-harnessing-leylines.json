@@ -17,7 +17,7 @@
     "stays active (permanent aura, GetDuration() == -1) rather than expiring while the character remains idle."
   ],
   "timeout_ms": 60000,
-  "players": [{"id": "rm", "race": 1, "class": 32, "level": 80}],
+  "players": [{"id": "rm", "race": 1, "class": 32, "level": 60}],
   "steps": [
     {"action": "wait", "label": "Let the character settle", "ms": 3000},
     {"action": "assert", "label": "SETUP: no Harnessed Leylines before the talent", "actor": "rm",

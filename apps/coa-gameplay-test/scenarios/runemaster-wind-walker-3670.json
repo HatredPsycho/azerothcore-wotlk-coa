@@ -16,9 +16,9 @@
   "timeout_ms": 90000,
   "location": {"map": 0, "x": -8949.95, "y": -132.493, "z": 83.5312, "o": 0},
   "players": [
-    {"id": "control", "race": 1, "class": 32, "level": 80},
-    {"id": "talent", "race": 1, "class": 32, "level": 80},
-    {"id": "no_air", "race": 1, "class": 32, "level": 80}
+    {"id": "control", "race": 1, "class": 32, "level": 60},
+    {"id": "talent", "race": 1, "class": 32, "level": 60},
+    {"id": "no_air", "race": 1, "class": 32, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let the characters settle", "ms": 3000},

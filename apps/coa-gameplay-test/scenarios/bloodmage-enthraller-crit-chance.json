@@ -4,7 +4,7 @@
   "contract": "Enthraller 706619 carries ADD_FLAT_MODIFIER (aura 107), MiscValue 7 (SPELLMOD_CRITICAL_CHANCE), BasePoints 9 (real value 10, EffectDieSides=1), classmask (393216,0,0), which matches exactly 13 spells in family 26: the Keleseth's Calamity ranks (560249, 561175-561179) and the Valanar's Vengeance ranks (560315, 561027-561029, 572793-572795), no remainder. spell_modifier applies the player's live spell modifiers to a supplied base number for a given SpellModOp without submitting a cast, so this needs no ownership of the target spells. 561179 and 572795 are the ranks a level-80 character owns per AscensionSpellProgressionData.h (levels 58 and 56).",
   "timeout_ms": 90000,
   "players": [
-    { "id": "caster", "race": 1, "class": 20, "level": 80 }
+    { "id": "caster", "race": 1, "class": 20, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let level scaling settle", "ms": 5000 },

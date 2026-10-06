@@ -8,7 +8,7 @@
       "id": "plain",
       "race": 1,
       "class": 12,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     },
@@ -16,7 +16,7 @@
       "id": "rapid",
       "race": 1,
       "class": 12,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     },
@@ -24,7 +24,7 @@
       "id": "bloody",
       "race": 1,
       "class": 12,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000
     }
@@ -346,7 +346,7 @@
       "id": "enemy",
       "owner": "plain",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     }

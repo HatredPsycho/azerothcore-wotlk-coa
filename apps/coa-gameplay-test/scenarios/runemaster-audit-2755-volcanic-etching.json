@@ -14,7 +14,7 @@
     "15%); with the talent both rise by 5 points (35% and 20%); unlearning restores Fire Engraving's base chance."
   ],
   "timeout_ms": 60000,
-  "players": [{"id": "rm", "race": 1, "class": 32, "level": 80}],
+  "players": [{"id": "rm", "race": 1, "class": 32, "level": 60}],
   "steps": [
     {"action": "wait", "label": "Let the character settle", "ms": 3000},
     {"action": "assert", "label": "SETUP: Fire Engraving rolls 30% before the talent", "actor": "rm",

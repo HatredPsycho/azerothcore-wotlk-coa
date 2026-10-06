@@ -8,7 +8,7 @@
       "id": "ranger",
       "race": 1,
       "class": 21,
-      "level": 80,
+      "level": 60,
       "melee_hit_rating": 10000,
       "expertise_rating": 10000,
       "ranged_hit_rating": 10000
@@ -19,7 +19,7 @@
       "id": "melee_dummy",
       "owner": "ranger",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 3
     },
@@ -27,7 +27,7 @@
       "id": "deadshot_dummy",
       "owner": "ranger",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 20
     }

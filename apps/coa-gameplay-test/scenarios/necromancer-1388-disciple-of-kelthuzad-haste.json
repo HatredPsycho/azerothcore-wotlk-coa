@@ -4,9 +4,9 @@
   "contract": "Disciple of Kel'thuzad (CharacterAdvancement 33784, Class tab, class 23; Talent 35767) has two ranks whose description reads 'Increases your spell haste by $s1%.' Spell.dbc: 560615 (rank 1) and 560616 (rank 2) are passive family-29 spells whose only effect is APPLY_AURA SPELL_AURA_HASTE_SPELLS (216) on the caster, EffectBasePoints 3 and 7 with DieSides 1, so 4% and 8%. The audit's 'no handler' finding does not apply: aura 216 is handled natively by AuraEffect::HandleModCastingSpeed, which divides UNIT_MOD_CAST_SPEED by 1 + amount/100, and Unit::ModSpellCastTime multiplies family-29 cast times by that field. The Necromancer contract only turns aura 42/354 effects into dummies and does not touch these ranks. Against an untalented Necromancer, rank 1 must give a cast speed multiplier of 1/1.04 = 0.962 and cut Raise: Lesser Skeletal Warrior 500970 (SpellCastTimes 5 = 2000 ms) to 1923 ms; rank 2 must give 1/1.08 = 0.926 and 1852 ms. This is evidence for behaviour that already works.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "control", "race": 5, "class": 23, "level": 80 },
-    { "id": "rank1", "race": 5, "class": 23, "level": 80 },
-    { "id": "rank2", "race": 5, "class": 23, "level": 80 }
+    { "id": "control", "race": 5, "class": 23, "level": 60 },
+    { "id": "rank1", "race": 5, "class": 23, "level": 60 },
+    { "id": "rank2", "race": 5, "class": 23, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login settle", "ms": 3000 },

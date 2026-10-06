@@ -4,7 +4,7 @@
   "contract": "Deadeye 300700 (Ranger Archery talent, CharacterAdvancement 29447, SpellFamilyName 27) reads 'Increases the range of your ranged abilities and Auto Shot by $s1 yds.' Its only effect is SPELL_AURA_ADD_FLAT_MODIFIER (107) with MiscValue 5 = SPELLMOD_RANGE and BasePoints 4 + DieSides 1 = +5, masked to family 27 words (1081480, 210305041, 18882688), which covers the Ranger's shots such as Quick Shot 500074 (family 27, flags 0/1/0, SpellRange 54 = 30 yds). The Auto Shot every Ranger learns at level 1 (AscensionCustomClassData {21, 1, 75}) is spell 75, SpellFamilyName 9 with flags (1, 0, 0) and SpellRange 114 = 35 yds, so the family-27 mask can never select it and SpellInfo::IsAffectedBySpellMod leaves it at 35 yds. The tooltip names Auto Shot explicitly, so with Deadeye learned Auto Shot must reach 35 + 5 = 40 yds, Quick Shot 30 + 5 = 35 yds, and the melee Flank 804940 (SpellRange 2 = 5 yds, outside the mask) must stay unchanged. spell_max_range is SpellInfo::GetMaxRange with the player's SPELLMOD_RANGE modifiers, the same Player::ApplySpellMod call Spell::CheckRange makes. Before the fix the Auto Shot assertion reads +0.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "ranger", "race": 1, "class": 21, "level": 80 }
+    { "id": "ranger", "race": 1, "class": 21, "level": 60 }
   ],
   "steps": [
     { "action": "wait", "label": "Let the character settle", "ms": 3000 },
