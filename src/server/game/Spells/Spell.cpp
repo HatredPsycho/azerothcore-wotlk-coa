@@ -3199,7 +3199,8 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
             bool refresh = false;
             bool refreshPeriodic = m_spellInfo->StackAmount < 2 && !HasTriggeredCastFlag(TRIGGERED_NO_PERIODIC_RESET);
             m_spellAura = Aura::TryRefreshStackOrCreate(aurSpellInfo, effectMask, unit, m_originalCaster,
-                          (aurSpellInfo == m_spellInfo) ? &m_spellValue->EffectBasePoints[0] : &basePoints[0], m_CastItem, ObjectGuid::Empty, &refresh, refreshPeriodic);
+                          (aurSpellInfo == m_spellInfo) ? &m_spellValue->EffectBasePoints[0] : &basePoints[0], m_CastItem, ObjectGuid::Empty, &refresh, refreshPeriodic,
+                          m_castItemEntry);
 
             // xinef: if aura was not refreshed, add proc ex
             if (!refresh)
@@ -3503,27 +3504,15 @@ bool Spell::UpdateChanneledTargetList()
     return channelTargetEffectMask == 0;
 }
 
-Item const* Spell::GetValueOriginItem() const
-{
-    if (m_CastItem)
-        return m_CastItem;
-
-    if (!m_castItemOrigin || !m_castItemGUID)
-        return nullptr;
-
-    if (Player const* owner = m_caster ? m_caster->ToPlayer() : nullptr)
-        return owner->GetItemByGuid(m_castItemGUID);
-
-    return nullptr;
-}
-
 SpellCastResult Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggeredByAura)
 {
     if (m_CastItem)
     {
         m_castItemGUID = m_CastItem->GetGUID();
+        m_castItemEntry = m_CastItem->GetEntry();
     }
-    else if (triggeredByAura && triggeredByAura->GetBase() && triggeredByAura->GetBase()->GetCastItemGUID())
+    else if (triggeredByAura && triggeredByAura->GetBase() &&
+             (triggeredByAura->GetBase()->GetCastItemGUID() || triggeredByAura->GetBase()->GetCastItemEntry()))
     {
         // A spell an item set off keeps coming from that item, however many steps the chain takes:
         // scripts pass the triggering aura rather than the item, so without this the trail ends at
@@ -3533,11 +3522,13 @@ SpellCastResult Spell::prepare(SpellCastTargets const* targets, AuraEffect const
         // to. CheckItems reads a guid without an item as "the item is gone" and refuses the cast,
         // which is right for a real item cast and wrong for a trail.
         m_castItemGUID = triggeredByAura->GetBase()->GetCastItemGUID();
+        m_castItemEntry = triggeredByAura->GetBase()->GetCastItemEntry();
         m_castItemOrigin = true;
     }
     else
     {
         m_castItemGUID = ObjectGuid::Empty;
+        m_castItemEntry = 0;
         m_castItemOrigin = false;
     }
 
@@ -8116,7 +8107,9 @@ bool Spell::UpdatePointers()
     {
         m_CastItem = m_caster->ToPlayer()->GetItemByGuid(m_castItemGUID);
         // cast item not found, somehow the item is no longer where we expected
-        if (!m_CastItem)
+        // An inherited trail names where the spell came from, not an item this cast needs: the last
+        // food of a stack is gone by the time its Well Fed is cast.
+        if (!m_CastItem && !m_castItemOrigin)
             return false;
     }
     else
