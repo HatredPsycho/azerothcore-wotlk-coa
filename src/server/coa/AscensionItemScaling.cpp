@@ -448,6 +448,7 @@ std::optional<ClientItemRow> ClientRow(uint32 entry)
 void AddSC_AscensionItemScaling()
 {
     LocalLevelScaling::ScaledItemTemplateOwner.store(&ItemScaling::ScaledTemplate, std::memory_order_relaxed);
+    LocalLevelScaling::ScaledItemBaseOwner.store(&ItemScaling::BaseEntry, std::memory_order_relaxed);
     LocalLevelScaling::QuestRewardItemOwner.store(&ItemScaling::QuestRewardItem, std::memory_order_relaxed);
     new ItemScaling::Configuration();
     new ItemScaling::ScaledLoot();

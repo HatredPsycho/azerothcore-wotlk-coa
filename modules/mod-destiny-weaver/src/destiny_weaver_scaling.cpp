@@ -874,6 +874,10 @@ public:
                                                         std::memory_order_relaxed);
         LocalLevelScaling::CreatureViewMaxHealthOwner.store(available ? &ViewMaxHealthForCore : nullptr,
                                                             std::memory_order_relaxed);
+        // What a character who turned scaling off is no longer given by creatures far below them (the note
+        // the Weaver shows when the switch is thrown off).
+        LocalLevelScaling::UnscaledQuestCreditGap.store(available ? DestinyWeaver::QuestCreditGap() : -1,
+                                                        std::memory_order_relaxed);
 
         LOG_INFO("module.destiny_weaver",
                  "open world scaling: creatures per character, level - {} and every stat row with it "
@@ -903,6 +907,7 @@ public:
     void OnShutdown() override
     {
         LocalLevelScaling::QuestScalingOwner.store(nullptr);
+        LocalLevelScaling::UnscaledQuestCreditGap.store(-1);
         LocalLevelScaling::CreatureViewArmorOwner.store(nullptr);
         LocalLevelScaling::CreatureViewLevelOwner.store(nullptr);
         LocalLevelScaling::CreatureViewMaxHealthOwner.store(nullptr);

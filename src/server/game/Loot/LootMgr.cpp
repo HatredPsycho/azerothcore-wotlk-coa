@@ -26,6 +26,7 @@
 #include "DisableMgr.h"
 #include "Group.h"
 #include "ItemEnchantmentMgr.h"
+#include "LocalLevelScaling.h"
 #include "Log.h"
 #include "ObjectMgr.h"
 #include "Creature.h"
@@ -500,6 +501,13 @@ bool LootItem::AllowedForPlayer(Player const* player, ObjectGuid source) const
     {
         if (needs_quest && !player->HasQuestForItem(itemid))
             return false;
+
+        // A character who turned open-world scaling off gets no quest drops from creatures far below them.
+        if (needs_quest && source.IsCreatureOrVehicle())
+            if (Map* map = player->FindMap())
+                if (Creature const* creature = map->GetCreature(source))
+                    if (LocalLevelScaling::WithholdsQuestCredit(player, player->GetLevel(), creature->GetLevel()))
+                        return false;
 
         // Hide quest starter items when quest is already started/rewarded,
         // when unique count is already reached, or when prerequisite is missing.

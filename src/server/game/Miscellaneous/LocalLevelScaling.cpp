@@ -7,12 +7,24 @@
 #include "LocalLevelScaling.h"
 #include "Creature.h"
 #include "CreatureData.h"
+#include "Formulas.h"
 #include "QuestDef.h"
 #include <mutex>
 #include <vector>
 
 namespace LocalLevelScaling
 {
+    bool WithholdsQuestCredit(Player const* player, std::uint8_t playerLevel, std::uint8_t creatureLevel)
+    {
+        std::int32_t const gap = UnscaledQuestCreditGap.load(std::memory_order_relaxed);
+        if (gap < 0 || !player || ScalingChoiceEnabled(player))
+            return false;
+
+        if (gap == 0)
+            return creatureLevel <= Acore::XP::GetGrayLevel(playerLevel);
+        return int32(creatureLevel) + gap <= int32(playerLevel);
+    }
+
     namespace
     {
         std::mutex LevelResolvedMutex;

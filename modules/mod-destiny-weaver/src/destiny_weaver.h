@@ -63,6 +63,11 @@ namespace DestinyWeaver
     /// own switches are checked by the core before this is asked.
     bool ResolveQuestScaling(Player const* player);
 
+    /// DestinyWeaver.Scaling.QuestCreditGap: what a character with scaling off is no longer given by
+    /// creatures far below them. -1 everything is given, 0 nothing from a grey creature, N > 0 nothing
+    /// from a creature N or more levels below the character.
+    int32 QuestCreditGap();
+
     /// Queues the client's level-scaling choice without accessing a Player on the network thread.
     /// Returns true when the packet was consumed,
     /// which is what both callers - the compat module's opcode dispatch and this module's own

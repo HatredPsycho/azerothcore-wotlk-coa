@@ -80,6 +80,20 @@ DestinyWeaver.Scaling.QuestMoneyKeepShare = 60
 #        Reloadable:  yes (.reload config)
 DestinyWeaver.Scaling.QuestXpKeepShare = 100
 
+#    DestinyWeaver.Scaling.QuestCreditGap
+#        Description: What a character who turned open world scaling off is no longer given by
+#                     creatures far below them: no kill credit for quests and no quest items from
+#                     their loot. The Weaver names the rule when the switch is thrown off. The live
+#                     realm's message says grey creatures; its character creation screen says
+#                     "Enemies 5 or more levels below you", which is 5.
+#                     Characters with scaling on, or in a group whose leader has it on, are not
+#                     affected: no creature is grey to them.
+#        Range:       -1 = no such rule, 0 = creatures grey to the character,
+#                     1 or more = creatures that many levels or more below the character
+#        Default:     0
+#        Reloadable:  yes (.reload config)
+DestinyWeaver.Scaling.QuestCreditGap = 0
+
 #    DestinyWeaver.ExperienceBonusControl
 #        Description: Whether the Experience Bonus Control service exists at all. A character who
 #                     turns it on stops receiving the bonus experience sources - Potions of
