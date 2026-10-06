@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "name": "Destiny Weaver: with scaling off, grey creatures award no quest credit",
+  "contract": [
+    "Requires DestinyWeaver.Enable=1, DestinyWeaver.LevelScaling=1, DestinyWeaver.Scaling.Offset=3 and",
+    "DestinyWeaver.Scaling.QuestCreditGap=0 (the default: creatures grey to the character). The character creation",
+    "screen and the Weaver both promise that a character who turns open world scaling off gets no quest items or",
+    "credit from creatures far below them. Kobold Camp Cleanup (7) asks for 8 Kobold Vermin (6). For a level-20",
+    "character the grey level is 13 (Acore::XP::GetGrayLevel), so with scaling off a level-2 vermin awards no",
+    "kill credit while a level-15 one still does. With scaling on the level-2 vermin is viewed at level 17 and",
+    "awards the credit. Quest drops follow the same rule in LootItem::AllowedForPlayer; this scenario covers the",
+    "kill credit only."
+  ],
+  "timeout_ms": 120000,
+  "location": { "map": 0, "x": -9465, "y": 64, "z": 56, "o": 0 },
+  "players": [
+    { "id": "unscaled", "race": 1, "class": 1, "level": 20, "melee_hit_rating": 10000, "expertise_rating": 10000 },
+    { "id": "scaled", "race": 1, "class": 1, "level": 20, "melee_hit_rating": 10000, "expertise_rating": 10000 }
+  ],
+  "creatures": [
+    { "id": "grey_vermin", "owner": "unscaled", "entry": 6, "level": 2, "health": 1, "distance": 2 },
+    { "id": "green_vermin", "owner": "unscaled", "entry": 6, "level": 15, "health": 1, "distance": 2 },
+    { "id": "scaled_vermin", "owner": "scaled", "entry": 6, "level": 2, "health": 1, "distance": 2 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let spawn AI settle", "ms": 2000 },
+    { "action": "prepare_quest", "actor": "unscaled", "quest": 7, "complete": false },
+    { "action": "prepare_quest", "actor": "scaled", "quest": 7, "complete": false },
+    { "action": "level_scaling_packet", "actor": "unscaled", "value": 0 },
+    { "action": "level_scaling_packet", "actor": "scaled", "value": 1 },
+    { "action": "assert", "label": "Scaling off shows the vermin at its own level", "actor": "unscaled",
+      "metric": "view_level", "target": "grey_vermin", "equals": 2, "within_ms": 2000 },
+    { "action": "assert", "label": "Scaling on lifts the vermin to 17", "actor": "scaled",
+      "metric": "view_level", "target": "scaled_vermin", "equals": 17, "within_ms": 2000 },
+
+    { "action": "attack", "actor": "unscaled", "target": "grey_vermin" },
+    { "action": "assert", "actor": "grey_vermin", "metric": "alive", "equals": 0, "within_ms": 30000 },
+    { "action": "wait", "ms": 500 },
+    { "action": "assert", "label": "Scaling off: a grey vermin awards no kill credit", "actor": "unscaled",
+      "metric": "quest_objective_count", "quest": 7, "index": 0, "equals": 0 },
+
+    { "action": "attack", "actor": "unscaled", "target": "green_vermin" },
+    { "action": "assert", "actor": "green_vermin", "metric": "alive", "equals": 0, "within_ms": 30000 },
+    { "action": "assert", "label": "Scaling off: a vermin above the grey level still counts", "actor": "unscaled",
+      "metric": "quest_objective_count", "quest": 7, "index": 0, "equals": 1, "within_ms": 2000 },
+
+    { "action": "attack", "actor": "scaled", "target": "scaled_vermin" },
+    { "action": "assert", "actor": "scaled_vermin", "metric": "alive", "equals": 0, "within_ms": 30000 },
+    { "action": "assert", "label": "Scaling on: the lifted vermin counts", "actor": "scaled",
+      "metric": "quest_objective_count", "quest": 7, "index": 0, "equals": 1, "within_ms": 2000 }
+  ]
+}

@@ -57,6 +57,7 @@
 
 #include "AscensionCompatOpcodes.h"
 
+#include <algorithm>
 #include <mutex>
 #include <optional>
 #include <unordered_map>
@@ -258,6 +259,11 @@ void SetLevelScaling(Player* player, bool enabled)
     RefreshScalingClients(player);
 }
 
+int32 QuestCreditGap()
+{
+    return std::max<int32>(-1, sConfigMgr->GetOption<int32>("DestinyWeaver.Scaling.QuestCreditGap", 0));
+}
+
 bool ResolveQuestScaling(Player const* player)
 {
     // The realm switches are the core's business and it has already checked them; all this answers
@@ -311,13 +317,17 @@ void NotifyPersonalScaling(Player* player, bool enabled)
         (enabled ? "|cff00ff00enabled|r" : "|cffff0000disabled|r") +
         "|cffffff00 open world creature scaling!|r";
 
-    if (!enabled)
+    int32 const gap = QuestCreditGap();
+    if (!enabled && gap >= 0)
     {
         // The reason the switch matters, sent *first*: the client stacks centre-screen notifications
         // with the newest line on top, so the sentence about what just happened is the one written
-        // last and the note reads underneath it - the order the live realm showed.
-        std::string const note =
-            "|cffffff00Quest items and credits will not be awarded if creatures are grey level.|r";
+        // last and the note reads underneath it - the order the live realm showed. It states the rule
+        // the realm applies (DestinyWeaver.Scaling.QuestCreditGap).
+        std::string const note = gap == 0
+            ? "|cffffff00Quest items and credits will not be awarded if creatures are grey level.|r"
+            : "|cffffff00Quest items and credits will not be awarded by creatures " + std::to_string(gap) +
+              " or more levels below you.|r";
         SendCentered(player, note);
         SendCentered(player, line);
         ChatHandler(player->GetSession()).SendSysMessage(line);

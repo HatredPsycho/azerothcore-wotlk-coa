@@ -193,6 +193,14 @@ inline bool ScalingChoiceEnabled(Player const* player)
     return owner && owner(player);
 }
 
+/// What a character who turned open-world scaling off is still given by creatures far below them: -1 quest
+/// credit and quest drops from every creature, 0 none from a creature that is grey to them, N > 0 none from a
+/// creature N or more levels below them. The module that owns the choice sets it; the default withholds nothing.
+inline std::atomic<std::int32_t> UnscaledQuestCreditGap{-1};
+
+/// Whether a kill of, or quest drop from, a creature at `creatureLevel` is withheld from this character.
+bool WithholdsQuestCredit(Player const* player, std::uint8_t playerLevel, std::uint8_t creatureLevel);
+
 inline bool QuestScalingEnabled(Player const* player)
 {
     if (!QuestEnabled.load(std::memory_order_relaxed))
@@ -311,6 +319,17 @@ inline ItemTemplate const* ScaledItemTemplateFor(std::uint32_t entry)
 {
     ScaledItemTemplateResolver const owner = ScaledItemTemplateOwner.load(std::memory_order_relaxed);
     return owner ? owner(entry) : nullptr;
+}
+
+/// The authored item a lifted copy was made from, or the entry itself for any other item. Whatever a
+/// content scaling module keeps per authored item (how far it was cut) applies to its copies through this.
+using ScaledItemBaseResolver = std::uint32_t (*)(std::uint32_t entry);
+inline std::atomic<ScaledItemBaseResolver> ScaledItemBaseOwner{nullptr};
+
+inline std::uint32_t BaseItemEntry(std::uint32_t entry)
+{
+    ScaledItemBaseResolver const owner = ScaledItemBaseOwner.load(std::memory_order_relaxed);
+    return owner ? owner(entry) : entry;
 }
 
 /// The item one character is offered and given for a quest's reward slot: the authored item, or a

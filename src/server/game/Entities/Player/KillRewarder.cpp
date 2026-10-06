@@ -19,6 +19,7 @@
 #include "Creature.h"
 #include "Formulas.h"
 #include "Group.h"
+#include "LocalLevelScaling.h"
 #include "Pet.h"
 #include "Player.h"
 #include "ScriptMgr.h"
@@ -217,7 +218,9 @@ void KillRewarder::_RewardKillCredit(Player* player)
     if (!_group || player->IsAlive() || !player->GetCorpse())
         if (Creature* target = _victim->ToCreature())
         {
-            player->KilledMonster(target->GetCreatureTemplate(), target->GetGUID());
+            // A character who turned open-world scaling off gets no quest credit from creatures far below them.
+            if (!LocalLevelScaling::WithholdsQuestCredit(player, player->GetLevel(), target->GetLevel()))
+                player->KilledMonster(target->GetCreatureTemplate(), target->GetGUID());
             player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE_TYPE, target->GetCreatureType(), 1, target);
         }
 }
