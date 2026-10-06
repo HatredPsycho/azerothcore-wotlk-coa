@@ -8,7 +8,7 @@
     "Loaf 772065 and perch 772066: item level 25 -> 19, stat multiplier 0.76, required level 15 -> 11, rating",
     "multiplier 0.76 * (11/15)^2 = 0.409. Loaf Well Fed 19733 grants lround(3 * 0.76) = 2 Strength, 2 Stamina and",
     "lround(2 * 0.409) = 1 expertise rating; perch Well Fed 19741 grants 2 Agility, 2 Stamina and 1 expertise rating.",
-    "Egg 6888: item level 4 -> 3, multiplier 0.75, so Well Fed 19705 keeps lround(2 * 0.75) = 2 Stamina and 2 Spirit."
+    "Egg 6888: item level 4 -> 3, multiplier 0.75, so Well Fed 19705 keeps lround(2 * 0.75) = 2 Stamina and 2 Spirit. The human warrior's Spirit carries The Human Spirit's +3% and is rounded: 48 * 1.03 = 49.44 -> 49 without the egg, 50 * 1.03 = 51.5 -> 52 with it, so Spirit reads +3."
   ],
   "timeout_ms": 180000,
   "players": [
@@ -142,7 +142,7 @@
     },
     {
       "action": "assert", "actor": "eater", "metric": "stat", "stat": 4,
-      "relative_to": "spirit", "equals": 2
+      "relative_to": "spirit", "equals": 3
     },
     {
       "action": "assert", "actor": "eater", "metric": "combat_rating", "rating": 23,

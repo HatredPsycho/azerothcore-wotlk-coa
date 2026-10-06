@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Bells of Light increases Agility, Intellect and hit chance (#1176)",
-  "contract": "Bells of Light increases Agility, Intellect and hit chance by 3% (rank 1, 801204) or 6% (rank 2, 803842). Effects 0 and 2 are SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE on Agility and Intellect and Player::UpdateStats truncates the stat to an integer. At level 60 the Templar has 132 Agility (135 and 139 with the ranks, ratios 1.023 and 1.053) but only 32 Intellect: rank 1 gives 32.96, which truncates back to 32, so rank 1's Intellect bonus is checked through its stored aura amount, and rank 2 gives 33 (ratio 1.031).",
+  "contract": "Bells of Light increases Agility, Intellect and hit chance by 3% (rank 1, 801204) or 6% (rank 2, 803842). Effects 0 and 2 are SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE on Agility and Intellect and Player::UpdateStats rounds the stat to the nearest integer. At level 60 the Templar has 132 Agility (135.96 and 139.92 with the ranks round to 136 and 140, ratios 1.030 and 1.061) and 32 Intellect: rank 1 gives 32.96, rounded 33 (ratio 1.031), and rank 2 gives 33.92, rounded 34 (ratio 1.0625).",
   "timeout_ms": 90000,
   "players": [
     {
@@ -87,12 +87,13 @@
     },
     {
       "action": "assert",
-      "label": "Rank 1 Intellect aura stores +3% (3% of 32 Intellect truncates away at level 60)",
+      "label": "Rank 1 Intellect",
       "actor": "rank_one",
-      "metric": "aura_amount",
-      "spell": 801204,
-      "effect": 2,
-      "equals": 3
+      "metric": "stat",
+      "stat": 3,
+      "ratio_to": "intellect",
+      "min": 1.02,
+      "max": 1.04
     },
     {
       "action": "assert",
@@ -101,8 +102,8 @@
       "metric": "stat",
       "stat": 3,
       "ratio_to": "intellect",
-      "min": 1.025,
-      "max": 1.04
+      "min": 1.05,
+      "max": 1.07
     },
     {
       "action": "assert",
