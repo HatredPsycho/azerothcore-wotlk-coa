@@ -33,6 +33,7 @@ void AddSC_AscensionQuestLog();
 void AddSC_AscensionRestingBuff();
 void AddSC_AscensionClosestResurrection();
 void AddSC_AscensionDungeonRelease();
+void AddSC_AscensionRaidRelease();
 void AddSC_AscensionThreatRedirect();
 void AddSC_AscensionAdventureModeAggro();
 void AddSC_AscensionCompanionFlight();
@@ -625,6 +626,7 @@ void AddCoAScripts()
     AddSC_AscensionRestingBuff();
     AddSC_AscensionClosestResurrection();
     AddSC_AscensionDungeonRelease();
+    AddSC_AscensionRaidRelease();
     AddSC_AscensionThreatRedirect();
     AddSC_AscensionAdventureModeAggro();
     AddSC_AscensionCompanionFlight();

@@ -2297,6 +2297,11 @@ private:
             });
             return objects.size();
         }
+        if (metric == "nearby_gameobject_state")
+        {
+            GameObject* object = player->FindNearestGameObject(step.get<uint32>("entry"), 20.0f);
+            return object ? uint32(object->GetGoState()) : 99;
+        }
         if (metric == "loot_bloodforged")
         {
             Loot* window = nullptr;
@@ -3188,10 +3193,14 @@ private:
         {
             uint32 cache = step.get<uint32>("cache");
             std::string table = step.get<std::string>("table", "prestigious");
-            Require(table == "callboard" || table == "prestigious", "Unknown cache reward table");
+            Require(table == "callboard" || table == "prestigious" || table == "fire_lord",
+                "Unknown cache reward table");
+            Require(table != "fire_lord" || cache == 2400040, "The fire_lord table holds Cache of the Fire Lord only");
             uint32 wanted = step.get<uint32>("item", 0);
-            std::string query = "SELECT `RewardItemId` FROM `ascension_" + table +
-                "_cache_reward` WHERE `CacheItemId` = " + std::to_string(cache);
+            std::string query = table == "fire_lord" ?
+                std::string("SELECT `ItemEntry` FROM `coa_mc_fire_lord_cache_pool`") :
+                "SELECT `RewardItemId` FROM `ascension_" + table + "_cache_reward` WHERE `CacheItemId` = " +
+                    std::to_string(cache);
             uint32 rows = 0;
             bool present = false;
             if (QueryResult result = WorldDatabase.Query(query.c_str()))
@@ -3277,14 +3286,20 @@ private:
             {
                 uint32 cache = step.get<uint32>("cache");
                 std::string table = step.get<std::string>("table", "prestigious");
-                Require(table == "callboard" || table == "prestigious", "Unknown cache reward table");
+                Require(table == "callboard" || table == "prestigious" || table == "loot",
+                    "Unknown cache reward table");
                 std::string key = table + ":" + std::to_string(cache);
                 auto found = pools.find(key);
                 if (found == pools.end())
                 {
                     std::unordered_set<uint32> ids;
-                    std::string query = "SELECT `RewardItemId` FROM `ascension_" + table +
-                        "_cache_reward` WHERE `CacheItemId` = " + std::to_string(cache);
+                    std::string const entry = std::to_string(cache);
+                    std::string query = table == "loot"
+                        ? "SELECT `Item` FROM `item_loot_template` WHERE `Reference` = 0 AND `Entry` = " + entry +
+                            " UNION SELECT `r`.`Item` FROM `reference_loot_template` `r` JOIN `item_loot_template` `i`"
+                            " ON `r`.`Entry` = `i`.`Reference` WHERE `r`.`Reference` = 0 AND `i`.`Entry` = " + entry
+                        : "SELECT `RewardItemId` FROM `ascension_" + table + "_cache_reward` WHERE `CacheItemId` = " +
+                            entry;
                     if (QueryResult result = WorldDatabase.Query(query.c_str()))
                         do
                         {
@@ -3296,12 +3311,17 @@ private:
                 pool = &found->second;
             }
             auto excluded = step.get_optional<uint32>("exclude");
+            uint32 const minRequiredLevel = step.get<uint32>("min_required_level", 0);
+            uint32 const maxRequiredLevel = step.get<uint32>("max_required_level", STRONG_MAX_LEVEL);
             uint32 count = 0;
-            auto countItem = [pool, &count, &excluded](Item* item)
+            auto countItem = [pool, &count, &excluded, minRequiredLevel, maxRequiredLevel](Item* item)
             {
                 if (excluded && item->GetEntry() == *excluded)
                     return;
-                if (!pool || pool->count(item->GetEntry()))
+                uint32 const requiredLevel = item->GetTemplate()->RequiredLevel;
+                if (requiredLevel < minRequiredLevel || requiredLevel > maxRequiredLevel)
+                    return;
+                if (!pool || pool->count(ItemScaling::BaseEntry(item->GetEntry())))
                     count += item->GetCount();
             };
             for (uint8 slot = EQUIPMENT_SLOT_START; slot < INVENTORY_SLOT_ITEM_END; ++slot)
@@ -4468,6 +4488,12 @@ private:
                 Item* item = player->GetItemByEntry(*targetItem);
                 Require(item != nullptr, "Target item is missing");
                 targets.SetItemTarget(item);
+            }
+            else if (auto targetObject = step.get_optional<uint32>("target_gameobject"))
+            {
+                GameObject* object = player->FindNearestGameObject(*targetObject, 20.0f);
+                Require(object != nullptr, "Target gameobject is not nearby");
+                targets.SetGOTarget(object);
             }
             else
                 targets.SetUnitTarget(target);
