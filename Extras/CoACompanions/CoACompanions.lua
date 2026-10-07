@@ -50,7 +50,7 @@ local FREE_AURA = 525004
 local HEALTH_TOKENS = { "pet", "target", "focus", "mouseover", "targettarget", "pettarget" }
 
 local ROW_HEIGHT = 26
-local ROW_WIDTH = 190
+local ROW_WIDTH = 260
 local UPDATE_INTERVAL = 0.15
 
 local bySpell = {}
@@ -285,13 +285,17 @@ local function CreateRow(entry)
     row.healthBackground:SetAllPoints(row.health)
     row.healthBackground:SetTexture(0, 0, 0, 0.6)
 
-    row.label = row.health:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    row.label:SetPoint("LEFT", row.health, "LEFT", 4, 0)
-    row.label:SetJustifyH("LEFT")
-
     row.value = row.health:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     row.value:SetPoint("RIGHT", row.health, "RIGHT", -4, 0)
     row.value:SetJustifyH("RIGHT")
+
+    -- The name ends where the health value begins; a name too long for the space left is cut
+    -- short with an ellipsis instead of running under the value.
+    row.label = row.health:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    row.label:SetPoint("LEFT", row.health, "LEFT", 4, 0)
+    row.label:SetPoint("RIGHT", row.value, "LEFT", -6, 0)
+    row.label:SetHeight(12)
+    row.label:SetJustifyH("LEFT")
 
     local targetSlash = SLASH_TARGET_EXACT1 or SLASH_TARGET1 or "/target"
     local cancelSlash = SLASH_CANCELAURA1 or "/cancelaura"
@@ -354,11 +358,9 @@ local function Refresh()
             row:SetAlpha(1)
             row.icon:SetTexture(live.icon)
 
-            if live.count > 1 then
-                row.label:SetText(string.format("%s |cffffd100x%d|r", live.name, live.count))
-            else
-                row.label:SetText(live.name)
-            end
+            -- The count stands with the health value, so a long name cut short never takes it along.
+            row.label:SetText(live.name)
+            local count = live.count > 1 and string.format("|cffffd100x%d|r  ", live.count) or ""
 
             -- A companion that has just been summoned is at full health, so start there rather
             -- than with an empty bar the client cannot fill until the unit is targeted.
@@ -381,7 +383,7 @@ local function Refresh()
                 lastHealth[entry.spell] = fraction
                 row.health:SetValue(fraction)
                 row.health:SetStatusBarColor(0.15, 0.70, 0.15)
-                row.value:SetText(string.format("%d%%", math.floor(fraction * 100 + 0.5)))
+                row.value:SetText(count .. string.format("%d%%", math.floor(fraction * 100 + 0.5)))
                 row.value:SetTextColor(1, 1, 1)
             else
                 -- Dimmed green, not grey: the reading is stale rather than the companion being
@@ -390,7 +392,7 @@ local function Refresh()
                 local remembered = lastHealth[entry.spell]
                 row.health:SetValue(remembered)
                 row.health:SetStatusBarColor(0.16, 0.38, 0.16)
-                row.value:SetText(string.format("%d%% *", math.floor(remembered * 100 + 0.5)))
+                row.value:SetText(count .. string.format("%d%% *", math.floor(remembered * 100 + 0.5)))
                 row.value:SetTextColor(0.72, 0.72, 0.72)
             end
         end
