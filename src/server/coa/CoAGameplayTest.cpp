@@ -854,6 +854,20 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
         actor.clientSpellbookCopies.erase(removed);
     }
 
+    if (packet.GetOpcode() == SMSG_SEND_UNLEARN_SPELLS)
+    {
+        WorldPacket list(packet);
+        uint32 count = 0;
+        list >> count;
+        for (uint32 index = 0; index < count; ++index)
+        {
+            uint32 spell = 0;
+            list >> spell;
+            actor.clientSpells.erase(spell);
+            actor.clientSpellbookCopies.erase(spell);
+        }
+    }
+
     if (packet.GetOpcode() == SMSG_SUPERCEDED_SPELL)
     {
         ++actor.supersededPackets;

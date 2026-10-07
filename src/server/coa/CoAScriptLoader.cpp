@@ -53,6 +53,7 @@ void AddSC_AscensionKeepersScrollZoneBuff();
 void AddAscensionStockCoefficientScripts();
 void AddAscensionScalingBaseScripts();
 void AddCoABugReportScripts();
+void AddAscensionArenaQueueScripts();
 void AddCoAPlayerTicketScripts();
 void AddAscensionWildcardScripts();
 void AddSC_AscensionWildcardRecuperate();
@@ -604,6 +605,7 @@ void AddCoAScripts()
     AddAscensionVenomancerVenomPayloadScripts();
     AddAscensionTinkerCombatSymbiosisScripts();
     AddCoABugReportScripts();
+    AddAscensionArenaQueueScripts();
     AddCoAPlayerTicketScripts();
     AddAscensionWildcardScripts();
     AddSC_AscensionWildcardRecuperate();
