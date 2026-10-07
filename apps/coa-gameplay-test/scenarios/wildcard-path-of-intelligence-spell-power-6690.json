@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Path of Intelligence doubles equipment spell power (#6690)",
-  "contract": "The original Path of Intelligence84866 description explicitly doubles spell power from items and effects. Compare the contribution of the same spell-power ring without the path and with it.",
+  "contract": "The original Path of Intelligence84866 description explicitly doubles spell power from items and effects. Compare the contribution of the same spell-power ring without the path and with it. On this realm item scaling gives the ring 23 spell power instead of its authored 33, so the path doubles it to 46.",
   "timeout_ms": 90000,
   "players": [
     {
@@ -83,7 +83,7 @@
       "metric": "spell_power",
       "school": 6,
       "relative_to": "path_geared",
-      "equals": -66
+      "equals": -46
     },
     {
       "action": "add_item",
@@ -114,7 +114,7 @@
       "metric": "spell_power",
       "school": 6,
       "relative_to": "double",
-      "equals": -33
+      "equals": -23
     }
   ]
 }
