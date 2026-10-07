@@ -8,13 +8,13 @@
       "id": "buyer",
       "race": 2,
       "class": 7,
-      "level": 80
+      "level": 60
     },
     {
       "id": "skipped",
       "race": 2,
       "class": 7,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [

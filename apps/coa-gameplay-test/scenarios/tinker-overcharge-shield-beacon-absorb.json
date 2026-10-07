@@ -8,7 +8,7 @@
   ],
   "timeout_ms": 60000,
   "players": [
-    { "id": "t", "race": 1, "class": 28, "level": 80 }
+    { "id": "t", "race": 1, "class": 28, "level": 60 }
   ],
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "steps": [
@@ -20,7 +20,7 @@
     { "action": "assert", "label": "The Shield Beacon is out", "actor": "t", "metric": "owned_creature_count",
       "entry": 50036, "equals": 1, "within_ms": 3000 },
     { "action": "wait", "ms": 1600 },
-    { "action": "set_power", "actor": "t", "power": 0, "value": 100000 },
+    { "action": "set_power", "actor": "t", "power": 0, "value": 100000, "maximum": 100000 },
     { "action": "cast", "actor": "t", "spell": 524835 },
     { "action": "assert", "label": "The Tinker receives the Overcharge shield", "actor": "t", "metric": "aura",
       "spell": 560709, "equals": 1, "within_ms": 3000 },
