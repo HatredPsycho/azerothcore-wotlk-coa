@@ -33,7 +33,8 @@ MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
 METRICS = {
     'mana_regen', 'mana_regen_interrupted', 'resting',
     'sent_mana_regen', 'sent_mana_regen_interrupted',
-    'moving', 'spline_remaining_ms', 'spline_speed', 'water_walk', 'forced_forward', 'distance_2d',
+    'moving', 'spline_remaining_ms', 'spline_speed', 'water_walk', 'in_water', 'terrain_in_water', 'ground_height',
+    'forced_forward', 'distance_2d',
     'point_distance_2d', 'cast_remaining_ms', 'cast_pushback_ms',
     'melee_damage_count', 'melee_damage_total',
     'pet_power', 'pet_max_power', 'spell_energize_count', 'spell_energize_total',
@@ -56,7 +57,8 @@ METRICS = {
     'bank_bag_slots', 'bank_shows',
     'system_messages',
     'system_message_contains', 'whispers_received', 'challenge_start_responses', 'challenge_start_code',
-    'owned_creature_scale', 'owned_creature_visible', 'unit_scale', 'combat_reach', 'token_count', 'item_sell_price', 'item_market_value', 'creature_model_scale', 'creature_model_display',
+    'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display', 'unit_scale', 'combat_reach',
+    'token_count', 'item_sell_price', 'item_market_value', 'creature_model_scale', 'creature_model_display',
     'taxi_node', 'in_flight', 'taxi_destination', 'stabled_pet_count', 'stable_result', 'pet_rows', 'instance_binds_listed', 'pet_entry', 'pet_aura_stacks', 'pet_aura_duration_ms', 'pet_is_banker', 'pet_display',
     'pet_scale', 'pet_knows_spell', 'pet_distance', 'pet_casting', 'pet_loading', 'pet_spell_bar_count',
     'owned_creature_count', 'owned_creature_weapon_damage_min',
@@ -524,12 +526,13 @@ def validate(scenario):
             for index, field in enumerate(fields):
                 require(isinstance(field, dict) and len(field) == 1, f'{where}.fields[{index}]: expected one typed value')
                 (kind, value), = field.items()
-                require(kind in {'u8', 'u32', 'u64', 'string', 'buyback_guid', 'actor_guid', 'pet_guid', 'stabled_pet',
+                require(kind in {'u8', 'u32', 'u64', 'string', 'buyback_guid', 'actor_guid', 'packed_actor_guid',
+                                 'pet_guid', 'stabled_pet',
                                  'wildcard_entry', 'wildcard_pending_cards', 'wildcard_lowest_card'},
                         f'{where}.fields[{index}]: unknown field type')
                 if kind == 'string':
                     require(isinstance(value, str), f'{where}.fields[{index}]: expected a string')
-                elif kind == 'actor_guid':
+                elif kind in {'actor_guid', 'packed_actor_guid'}:
                     require(value in actor_ids, f'{where}.fields[{index}]: expected a player or creature id')
                 elif kind == 'pet_guid':
                     require(value in player_ids, f'{where}.fields[{index}]: expected a player id')
@@ -724,7 +727,8 @@ def validate(scenario):
                 require('caster' not in step or 'spell' in step, f'{where}: aura caster filter needs spell')
                 if 'ranged_weapon_subclass' in step:
                     number(step['ranged_weapon_subclass'], f'{where}.ranged_weapon_subclass', 0, 20, True)
-            if metric in {'owned_creature_scale', 'owned_creature_visible', 'owned_creature_weapon_damage_min',
+            if metric in {'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display',
+                          'owned_creature_weapon_damage_min',
                           'owned_creature_spell_hit_chance', 'owned_creature_attackable'}:
                 require('entry' in step, f'{where}: metric needs creature entry')
             if metric == 'owned_creature_attackable':

@@ -1897,6 +1897,14 @@ private:
             return unit->movespline->Finalized() ? 0.0 : unit->movespline->Velocity();
         if (metric == "water_walk")
             return unit->HasWaterWalkAura();
+        if (metric == "in_water")
+            return unit->IsInWater();
+        if (metric == "terrain_in_water")
+            return unit->GetMap()->IsInWater(unit->GetPhaseMask(), unit->GetPositionX(), unit->GetPositionY(),
+                unit->GetPositionZ(), unit->GetCollisionHeight());
+        if (metric == "ground_height")
+            return unit->GetMap()->GetHeight(unit->GetPhaseMask(), unit->GetPositionX(), unit->GetPositionY(),
+                MAX_HEIGHT);
         if (metric == "forced_forward")
             return unit->HasUnitFlag2(UNIT_FLAG2_FORCE_MOVEMENT);
         if (metric == "cast_pushback_ms")
@@ -2922,13 +2930,18 @@ private:
                     && (!ownerDisplay || creature->GetDisplayId() == player->GetDisplayId());
             });
         }
-        if (metric == "owned_creature_scale" || metric == "owned_creature_visible")
+        if (metric == "owned_creature_scale" || metric == "owned_creature_visible" ||
+            metric == "owned_creature_display")
         {
             uint32 entry = step.get<uint32>("entry");
             Require(sObjectMgr->GetCreatureTemplate(entry) != nullptr, "Unknown creature entry in metric");
             if (Creature* creature = GetOwnedCreature(player, entry))
+            {
+                if (metric == "owned_creature_display")
+                    return creature->GetDisplayId();
                 return metric == "owned_creature_visible" ? double(creature->IsVisible()) :
                     double(creature->GetObjectScale());
+            }
             return 0.0;
         }
         if (metric == "owned_creature_spell_hit_chance")
@@ -3659,6 +3672,8 @@ private:
                             Require(pet != nullptr, "Packet pet GUID requires a summoned pet");
                             request << pet->GetGUID().GetRawValue();
                         }
+                        else if (kind == "packed_actor_guid")
+                            request << GetUnit(value.get_value<std::string>())->GetGUID().WriteAsPacked();
                         else if (kind == "wildcard_entry")
                             request << WildcardSlot(player, value.get_value<uint32>()).EntryId;
                         else if (kind == "wildcard_lowest_card")
