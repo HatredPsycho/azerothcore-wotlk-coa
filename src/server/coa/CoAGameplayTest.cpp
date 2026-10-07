@@ -4088,6 +4088,7 @@ private:
                     Creature* wounded = creatures.front();
                     uint32 const share = wounded->CountPctFromMaxHealth(*damagePct);
                     uint32 const spared = wounded->GetHealth() > share ? wounded->GetHealth() - share : 0;
+                    bool heldAtFloor = false;
                     for (uint32 blow = 0; blow < DamageShareBlows && wounded->IsAlive() &&
                         wounded->GetHealth() > spared; ++blow)
                     {
@@ -4096,9 +4097,12 @@ private:
                         Unit::DealDamage(player, wounded, spared ? std::min(asked, before - 1) : asked, nullptr,
                             DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL);
                         if (wounded->GetHealth() >= before)
+                        {
+                            heldAtFloor = true;
                             break;
+                        }
                     }
-                    Require(!wounded->IsAlive() || wounded->GetHealth() <= spared,
+                    Require(heldAtFloor || !wounded->IsAlive() || wounded->GetHealth() <= spared,
                         "Damage share left " + std::to_string(wounded->GetHealth()) + " of " +
                         std::to_string(wounded->GetMaxHealth()) + " instead of " + std::to_string(spared));
                 }
