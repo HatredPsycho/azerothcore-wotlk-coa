@@ -17,7 +17,7 @@
       "id": "rm",
       "race": 1,
       "class": 32,
-      "level": 80,
+      "level": 60,
       "spell_hit_rating": 10000
     }
   ],
@@ -26,7 +26,7 @@
       "id": "victim",
       "owner": "rm",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 12,
       "stationary": true
@@ -35,7 +35,7 @@
       "id": "nearby",
       "owner": "rm",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 15,
       "stationary": true
@@ -44,7 +44,7 @@
       "id": "outside",
       "owner": "rm",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 40,
       "stationary": true
