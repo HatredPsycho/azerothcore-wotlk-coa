@@ -3069,6 +3069,13 @@ private:
             Require(proto != nullptr, "Unknown item in metric");
             return proto->SellPrice;
         }
+        if (metric == "item_market_value")
+        {
+            uint32 item = step.get<uint32>("item");
+            ItemTemplate const* proto = sObjectMgr->GetItemTemplate(item);
+            Require(proto != nullptr, "Unknown item in metric");
+            return LocalLevelScaling::GetEffectiveItemMarketValue(item, proto->SellPrice);
+        }
         if (metric == "creature_model_scale" || metric == "creature_model_display")
         {
             uint32 entry = step.get<uint32>("entry");

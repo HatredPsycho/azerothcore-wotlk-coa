@@ -54,7 +54,7 @@ METRICS = {
     'bank_bag_slots', 'bank_shows',
     'system_messages',
     'system_message_contains', 'whispers_received', 'challenge_start_responses', 'challenge_start_code',
-    'owned_creature_scale', 'owned_creature_visible', 'unit_scale', 'combat_reach', 'token_count', 'item_sell_price', 'creature_model_scale', 'creature_model_display',
+    'owned_creature_scale', 'owned_creature_visible', 'unit_scale', 'combat_reach', 'token_count', 'item_sell_price', 'item_market_value', 'creature_model_scale', 'creature_model_display',
     'taxi_node', 'in_flight', 'taxi_destination', 'stabled_pet_count', 'stable_result', 'pet_rows', 'instance_binds_listed', 'pet_entry', 'pet_aura_stacks', 'pet_aura_duration_ms', 'pet_is_banker', 'pet_display',
     'pet_scale', 'pet_knows_spell', 'pet_distance', 'pet_casting', 'pet_spell_bar_count',
     'owned_creature_count', 'owned_creature_weapon_damage_min',

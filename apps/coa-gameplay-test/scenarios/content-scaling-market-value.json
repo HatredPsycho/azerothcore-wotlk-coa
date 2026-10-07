@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "name": "Content scaling: an item's market value follows the item level it was scaled to",
+  "contract": [
+    "Requires CoAContentScaling.Enable=1 with the TBC and WotLK packs at cap 60. Whoever prices goods by their",
+    "vendor value - the auction house bots - asks LocalLevelScaling for the item's worth on this realm, and the",
+    "content scaling module moves the authored vendor price along the vendor prices of items of the same kind",
+    "from the authored to the scaled item level. Runecloth 14047 (item level 50, 267 copper) and Frostweave Cloth",
+    "33470 (item level 70, 833 copper) are both moved down and keep their order: Frostweave is still worth more,",
+    "but less than its vendor price, which stays 833. Medallion of the Disgraced 39470, an epic neck of item level",
+    "200 selling for 47497 copper, falls to a small part of it. The Centenarian Bullion 413799 is a custom item",
+    "whose price was set by hand; its worth stays its vendor price of 50 gold."
+  ],
+  "timeout_ms": 60000,
+  "location": {
+    "map": 0,
+    "x": -9458.0,
+    "y": 42.0,
+    "z": 55.5
+  },
+  "players": [
+    {
+      "id": "trader",
+      "race": 1,
+      "class": 1,
+      "level": 60
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 1000
+    },
+    {
+      "action": "assert",
+      "label": "Frostweave Cloth keeps its vendor price",
+      "actor": "trader",
+      "metric": "item_sell_price",
+      "item": 33470,
+      "equals": 833
+    },
+    {
+      "action": "assert",
+      "label": "Runecloth is worth less than its vendor price",
+      "actor": "trader",
+      "metric": "item_market_value",
+      "item": 14047,
+      "min": 50,
+      "max": 150
+    },
+    {
+      "action": "assert",
+      "label": "Frostweave Cloth is worth more than Runecloth, less than its vendor price",
+      "actor": "trader",
+      "metric": "item_market_value",
+      "item": 33470,
+      "min": 151,
+      "max": 400
+    },
+    {
+      "action": "assert",
+      "label": "Medallion of the Disgraced is worth a small part of its vendor price",
+      "actor": "trader",
+      "metric": "item_market_value",
+      "item": 39470,
+      "min": 1000,
+      "max": 10000
+    },
+    {
+      "action": "assert",
+      "label": "a hand-priced custom item is worth its vendor price",
+      "actor": "trader",
+      "metric": "item_market_value",
+      "item": 413799,
+      "equals": 500000
+    }
+  ]
+}

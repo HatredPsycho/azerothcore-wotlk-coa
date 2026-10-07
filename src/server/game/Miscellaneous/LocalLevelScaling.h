@@ -68,6 +68,20 @@ inline std::atomic<ItemEffectValueResolver> ItemEffectValueOwner{nullptr};
 
 std::int32_t GetEffectiveItemEffectValue(std::uint32_t itemEntry, std::int32_t value);
 
+/// What an item is worth on this realm, given the value it was written with - its vendor price. A
+/// module that moves items to other levels moves their worth along, so whatever prices goods by that
+/// value, such as bots trading at the auction house, prices them for the level they have now. What a
+/// vendor really pays or asks is not this; it stays the template's. The authored value stands with
+/// nothing installed.
+using ItemMarketValueResolver = std::uint32_t (*)(std::uint32_t, std::uint32_t);
+inline std::atomic<ItemMarketValueResolver> ItemMarketValueOwner{nullptr};
+
+inline std::uint32_t GetEffectiveItemMarketValue(std::uint32_t itemEntry, std::uint32_t value)
+{
+    ItemMarketValueResolver const owner = ItemMarketValueOwner.load(std::memory_order_relaxed);
+    return owner ? owner(itemEntry, value) : value;
+}
+
 /// The flat amount an enchantment, a gem or a socket bonus adds to the item it sits on.
 ///
 /// An enchantment belongs to no item of its own: the same one goes on anything that will take it,
