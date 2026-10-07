@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Dirty Blades adds Nature damage and a stacking healing reduction (#6714)",
-  "contract": "Dirty Blades (680276) promises Nature damage equal to 70% of each landed melee autoattack, rounded down per hit, and its helper (520571) reduces healing received by 20% per stack up to two stacks. A level-28 Ranger attacks a stunned, lower-level opposing player without Nature resistance outside the protected starting zone. Observe actual white and Nature damage, native two-stack healing reduction and expiry. Pilfering (705087) raises the share to 80% and heals for 50% of actual Nature damage; a Nature-only absorb shield must prevent healing while leaving white swings intact, then removal restores the heal. Each normal Dirty Blades cast starts with the required Advantage aura and 100 Focus; the resource prerequisite is a fixture, not the reported defect. The copied Nature helper preserves the resolved white amount without a second outgoing or target multiplier; independent Nature resists and absorbs still apply. A +400 AP fixture in the final phase makes each swing large enough to distinguish the 80% share despite integer rounding.",
+  "contract": "Dirty Blades (680276) promises Nature damage equal to 70% of each landed melee autoattack, rounded down per hit, and its helper (520571) reduces healing received by 20% per stack up to two stacks. A level-28 Ranger attacks a stunned, lower-level opposing player without Nature resistance outside the protected starting zone. Observe actual white and Nature damage, native two-stack healing reduction and expiry. Pilfering (705087) raises the share to 80% and heals for 50% of actual Nature damage; a Nature-only absorb shield must prevent healing while leaving white swings intact, then removal restores the heal. Each normal Dirty Blades cast starts with the required Advantage aura and 100 Focus; the resource prerequisite is a fixture, not the reported defect. The copied Nature helper preserves the resolved white amount without a second outgoing or target multiplier; independent Nature resists and absorbs still apply. A +400 AP fixture in the final phase makes each swing large enough to distinguish the 80% share despite integer rounding. On this realm the level-28 swings land for about 11, so rounding each Nature hit down can cost up to one point per swing: two swings stay at or above 60% of the white total.",
   "timeout_ms": 90000,
   "location": {
     "map": 0,
@@ -201,7 +201,7 @@
       "metric": "spell_damage_total",
       "spell": 520571,
       "ratio_to": "blades_white",
-      "min": 0.65,
+      "min": 0.6,
       "max": 0.701
     },
     {
