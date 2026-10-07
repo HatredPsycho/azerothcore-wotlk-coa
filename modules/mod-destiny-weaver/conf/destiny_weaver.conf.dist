@@ -34,7 +34,8 @@ DestinyWeaver.LevelScaling = 1
 #    DestinyWeaver.LevelScaling.Default
 #        Description: What a character that has never made the choice gets. 1 scales the world and its
 #                     quests to the character's own level, 0 leaves both at their authored level until
-#                     the character asks for scaling.
+#                     the character asks for scaling. Bots are never scaled for themselves; grouped
+#                     under a player they follow that player's choice.
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 #        Reloadable:  yes (.reload config)

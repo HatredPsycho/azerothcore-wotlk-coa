@@ -132,9 +132,15 @@ namespace
 
     /// The character's own stored choice. While a character is grouped, the party's setting is the
     /// leader's instead - that is a separate question, asked in DestinyWeaver::LevelScalingEnabled.
+    /// A bot never chooses scaling for itself: a world lifted to its own level keeps every quest and
+    /// grind spot of its starting zone worth doing, so it never moves on. Grouped with a player, it
+    /// plays that player's world instead.
     bool PersonalLevelScaling(Player* player)
     {
         if (!ModuleEnabled() || !sConfigMgr->GetOption<bool>("DestinyWeaver.LevelScaling", true))
+            return false;
+
+        if (player && player->GetSession()->IsBot())
             return false;
 
         switch (StoredChoice(player, DestinyWeaver::SETTING_LEVEL_SCALING))
@@ -215,12 +221,14 @@ bool LevelScalingEnabled(Player* player)
     // While grouped, the leader's choice is the group's: they invited the character into their run,
     // and everyone in it should be playing the same world. Nothing is written to anyone's settings -
     // leaving the group gives each member their own choice back exactly as they left it, which is
-    // what makes this a group setting rather than a change to the character.
+    // what makes this a group setting rather than a change to the character. A bot leading the group
+    // has no choice to pass on - bots never scale for themselves - so under one, everyone keeps their own.
     if (player)
         if (Group* group = player->GetGroup())
             if (group->GetLeaderGUID() != player->GetGUID())
                 if (Player* leader = ObjectAccessor::FindConnectedPlayer(group->GetLeaderGUID()))
-                    return PersonalLevelScaling(leader);
+                    if (!leader->GetSession()->IsBot())
+                        return PersonalLevelScaling(leader);
 
     return PersonalLevelScaling(player);
 }
