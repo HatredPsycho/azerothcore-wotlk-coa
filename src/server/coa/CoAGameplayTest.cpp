@@ -1821,6 +1821,8 @@ private:
             return unit->GetCreatureType();
         if (metric == "display_id")
             return unit->GetDisplayId();
+        if (metric == "mount_display_id")
+            return unit->GetMountID();
         if (metric == "unit_scale")
             return double(unit->GetObjectScale());
         if (metric == "combat_reach")
@@ -2845,9 +2847,19 @@ private:
             player->GetCreatureListWithEntryInGrid(creatures, entry, 100.0f);
             float const minDistance = step.get<float>("min_distance", 0.0f);
             bool const ownerDisplay = step.get<bool>("owner_display", false);
+            auto const rangedWeaponSubclass = step.get_optional<uint32>("ranged_weapon_subclass");
+            Require(!rangedWeaponSubclass || *rangedWeaponSubclass < MAX_ITEM_SUBCLASS_WEAPON,
+                "Invalid ranged weapon subclass");
             return std::count_if(creatures.begin(), creatures.end(),
-                [player, spell, caster, minDistance, ownerDisplay](Creature* creature)
+                [player, spell, caster, minDistance, ownerDisplay, rangedWeaponSubclass](Creature* creature)
             {
+                if (rangedWeaponSubclass)
+                {
+                    ItemTemplate const* weapon = sObjectMgr->GetItemTemplate(
+                        creature->GetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID + 2));
+                    if (!weapon || weapon->Class != ITEM_CLASS_WEAPON || weapon->SubClass != *rangedWeaponSubclass)
+                        return false;
+                }
                 return creature->IsAlive() && (creature->GetOwnerGUID() == player->GetGUID() ||
                         creature->GetCreatorGUID() == player->GetGUID() ||
                         (creature->ToTempSummon() && creature->ToTempSummon()->GetSummonerGUID() == player->GetGUID()))

@@ -551,6 +551,7 @@ which is what name queries tell other clients. `at_login_flag` requires an `AtLo
 reports whether the player carries it (for example `8` customize, `64` faction change, `128` race change).
 `health_pct` observes current health as a percentage of maximum health.
 `creature_type` reads the native type used by creature-type targeting and effects.
+`mount_display_id` reads the unit's actual mount display; zero means the unit is dismounted.
 `cast_speed_multiplier` observes the native cast-time multiplier; smaller values mean faster casts.
 `spell_crit_chance` observes the player's Shadow spell critical chance, in percentage points.
 `spell_damage_done` and `melee_damage_done` require `target` and query native outgoing damage calculations
@@ -747,6 +748,8 @@ Player commands retain normal permission and gameplay checks; verify their effec
 `owned_creature_count` requires a player and `entry`. It counts living creatures of that entry owned, created or summoned by
 the player, in the same phase and within 100 yards, including summons outside the guardian-pet slot.
 An optional `spell` restricts the count to creatures with that aura; `caster` can select its aura owner. `min_distance` keeps creatures at least that many yards from the player (2D), and `owner_display: true` those wearing the player's display.
+`ranged_weapon_subclass` (0..20) restricts the count to creatures carrying a weapon of that item subclass
+in their ranged virtual equipment slot; subclass 2 means bows. This observes server equipment, not client rendering.
 `owned_creature_visible` requires a player and `entry` and reads one matching summon's server visibility,
 returning zero when absent. Pair it with a count assertion when checking a hidden helper.
 `owned_creature_spell_hit_chance` requires a player and a present owned creature selected by `entry`.

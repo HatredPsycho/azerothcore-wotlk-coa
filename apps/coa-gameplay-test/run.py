@@ -85,7 +85,7 @@ METRICS = {
     'ball_carried_count', 'ball_carried_quest', 'ball_turn_in_count', 'ball_turn_in_quest',
     'gossip_text',
     'stat', 'attack_power', 'ranged_attack_power', 'armor', 'weapon_damage_min', 'resistance',
-    'attack_time_ms', 'pet_attack_time_ms', 'run_speed_rate', 'display_id',
+    'attack_time_ms', 'pet_attack_time_ms', 'run_speed_rate', 'display_id', 'mount_display_id',
     'aura_amplitude_ms', 'melee_crit_chance', 'dodge_chance', 'parry_chance', 'expertise', 'combat_rating',
     'spell_modifier', 'spell_cast_time_ms', 'spell_max_range', 'spell_max_stacks', 'spell_healing_done',
     'aura_crit_chance', 'aura_script_value', 'melee_hit_chance', 'spell_hit_chance', 'spell_power',
@@ -130,8 +130,8 @@ PLAYER_STAT_METRICS = {
 METRIC_FIELDS = {'actor', 'metric', 'spell', 'power', 'caster', 'effect', 'item', 'entry', 'button',
                  'relative_to', 'ratio_to', 'target', 'quest', 'id', 'stat', 'school', 'hand', 'rating', 'op',
                  'base', 'key', 'index', 'pet', 'critical', 'target_pet', 'periodic', 'name', 'text',
-                 'min_distance', 'owner_display', 'skill', 'cache', 'table', 'exclude', 'dungeon', 'source',
-                 'opcode', 'from', 'slot', 'achievement', 'title', 'type_mask', 'hit_mask', 'spell_type_mask',
+                 'min_distance', 'owner_display', 'ranged_weapon_subclass', 'skill', 'cache', 'table', 'exclude',
+                 'dungeon', 'source', 'opcode', 'from', 'slot', 'achievement', 'title', 'type_mask', 'hit_mask', 'spell_type_mask',
                  'phase_mask', 'trigger_spell', 'trials', 'incoming', 'heal', 'quality',
                  'row', 'offset', 'skip_strings', 'map', 'difficulty', 'x', 'y'}
 ACTIONS = {
@@ -698,6 +698,8 @@ def validate(scenario):
             if metric == 'owned_creature_count':
                 require('entry' in step, f'{where}: metric needs creature entry')
                 require('caster' not in step or 'spell' in step, f'{where}: aura caster filter needs spell')
+                if 'ranged_weapon_subclass' in step:
+                    number(step['ranged_weapon_subclass'], f'{where}.ranged_weapon_subclass', 0, 20, True)
             if metric in {'owned_creature_scale', 'owned_creature_visible', 'owned_creature_weapon_damage_min',
                           'owned_creature_spell_hit_chance', 'owned_creature_attackable'}:
                 require('entry' in step, f'{where}: metric needs creature entry')
