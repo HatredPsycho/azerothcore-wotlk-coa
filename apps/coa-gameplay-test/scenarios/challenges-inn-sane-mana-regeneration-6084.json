@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Inn-Sane mana regeneration rates follow native challenge and rest transitions",
-  "contract": "Issue #6084. Inn-Sane's authored NO_MANA_REGENERATION_UNLESS_RESTED rule blocks actual passive mana outdoors and permits it in a rest area. Both owner-visible mana regeneration fields must describe that same permission, including the interrupted rate. Inn-Sane starts at level 1 as required, then the fixture advances that Cultist to level 60 below the realm's level-80 cap. Cultists activate and cancel challenges through native client requests, enter Goldshire inn through its real area-trigger packet, and leave through a normal teleport plus zone update. Recalculation after an intellect buff and a real relog must preserve the restriction. Magical Stopper's unconditional rule remains blocked inside the inn, while an ordinary control regenerates normally. Mage Armor and Arcane Intellect are fixture-granted observation aids, cast normally; their acquisition is outside this contract. Assertions read native owner fields, decode values-update packets received by the owner's session, and read actual power, without asserting client rendering. Values-update assertions follow an observed field change; an already-zero interrupted field need not be resent before the first inn visit. Login assertions read rebuilt native fields, without reusing a previous session's observed packet values.",
+  "contract": "Issue #6084. Inn-Sane's authored NO_MANA_REGENERATION_UNLESS_RESTED rule blocks actual passive mana outdoors and permits it in a rest area. Both owner-visible mana regeneration fields must describe that same permission, including the interrupted rate. Inn-Sane starts at level 1 as required, then the fixture advances that Cultist to level 59, below the realm's level-60 cap, where a challenge would end. Cultists activate and cancel challenges through native client requests, enter Goldshire inn through its real area-trigger packet, and leave through a normal teleport plus zone update. Recalculation after an intellect buff and a real relog must preserve the restriction. Magical Stopper's unconditional rule remains blocked inside the inn, while an ordinary control regenerates normally. Mage Armor and Arcane Intellect are fixture-granted observation aids, cast normally; their acquisition is outside this contract. Assertions read native owner fields, decode values-update packets received by the owner's session, and read actual power, without asserting client rendering. Values-update assertions follow an observed field change; an already-zero interrupted field need not be resent before the first inn visit. Login assertions read rebuilt native fields, without reusing a previous session's observed packet values.",
   "timeout_ms": 120000,
   "location": {
     "map": 0,
@@ -55,7 +55,7 @@
     {
       "action": "set_level",
       "actor": "trial",
-      "value": 60
+      "value": 59
     },
     {
       "action": "assert",
