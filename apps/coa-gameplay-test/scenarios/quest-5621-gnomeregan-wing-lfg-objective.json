@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Gnomeregan - Tinker's Court via Dungeon Finder names Thermaplugg as the objective and completes on his kill (#5621)",
-  "contract": "#5621: in a Dungeon Finder run of a Gnomeregan wing the objective tracker read 'Defeat: Unknown'. The tracker names GetLFGBoss(), which the client resolves from the current LFG dungeon id (SMSG 0x66D) through DungeonEncounterExtra.dbc; row 382 (Mekgineer Thermaplugg 7800) is the final encounter of wing 1033 (Tinker's Court) in both the client and server DBC, and instance_encounters 382 has lastEncounterDungeon 1033 since #5164. Expected: on entering, p1 receives 0x66D carrying 1033, and crediting Thermaplugg completes the wing so the Classic Random reward of the 24-34 bracket is paid.",
+  "contract": "#5621: in a Dungeon Finder run of a Gnomeregan wing the objective tracker read 'Defeat: Unknown'. The tracker names GetLFGBoss(), which the client resolves from the current LFG dungeon id (SMSG 0x66D) through DungeonEncounterExtra.dbc; row 382 (Mekgineer Thermaplugg 7800) is the final encounter of wing 1033 (Tinker's Court) in both the client and server DBC, and instance_encounters 382 has lastEncounterDungeon 1033 since #5164. Expected: on entering, p1 receives 0x66D carrying 1033, and crediting Thermaplugg completes the wing so the Classic Random reward is paid: on this realm a level 30 group stands in Classic content of the late thirties and gets the 35-45 bracket.",
   "timeout_ms": 120000,
   "location": {
     "map": 0,
@@ -118,19 +118,19 @@
     },
     {
       "action": "assert",
-      "label": "p1 is rewarded Classic Random 24-34 (1st) 24883: the boss kill completed the dungeon",
+      "label": "p1 is rewarded Classic Random 35-45 (1st) 24884: the boss kill completed the dungeon",
       "actor": "p1",
       "metric": "quest_rewarded",
-      "quest": 24883,
+      "quest": 24884,
       "equals": 1,
       "within_ms": 5000
     },
     {
       "action": "assert",
-      "label": "p2 is rewarded Classic Random 24-34 (1st) 24883: the boss kill completed the dungeon",
+      "label": "p2 is rewarded Classic Random 35-45 (1st) 24884: the boss kill completed the dungeon",
       "actor": "p2",
       "metric": "quest_rewarded",
-      "quest": 24883,
+      "quest": 24884,
       "equals": 1,
       "within_ms": 5000
     }

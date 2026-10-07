@@ -12,8 +12,8 @@
   "timeout_ms": 60000,
   "location": {"map": 1, "x": -472.5, "y": -2606.5, "z": 127.885, "o": 2.6},
   "players": [
-    {"id": "early", "race": 2, "class": 1, "level": 11},
-    {"id": "ready", "race": 2, "class": 1, "level": 12}
+    {"id": "early", "race": 2, "class": 1, "level": 8},
+    {"id": "ready", "race": 2, "class": 1, "level": 9}
   ],
   "creatures": [
     {"id": "darsok_early", "owner": "early", "entry": 3449, "distance": 2, "faction": 29, "level": 14},
@@ -21,13 +21,13 @@
   ],
   "steps": [
     {"action": "wait", "label": "Let login settle", "ms": 3000},
-    {"action": "assert", "label": "Darsok shows the level 11 orc the grey marker", "actor": "early",
+    {"action": "assert", "label": "Darsok shows the level 8 orc the grey marker", "actor": "early",
      "metric": "dialog_status", "entry": 3449, "equals": 1, "within_ms": 5000},
-    {"action": "assert", "label": "The level 11 orc cannot take Harpy Raiders yet", "actor": "early",
+    {"action": "assert", "label": "The level 8 orc cannot take Harpy Raiders yet", "actor": "early",
      "metric": "quest_takeable", "quest": 867, "equals": 0},
-    {"action": "assert", "label": "Darsok offers the level 12 orc a quest", "actor": "ready",
+    {"action": "assert", "label": "Darsok offers the level 9 orc a quest", "actor": "ready",
      "metric": "dialog_status", "entry": 3449, "equals": 8, "within_ms": 5000},
-    {"action": "assert", "label": "The level 12 orc can take Harpy Raiders", "actor": "ready",
+    {"action": "assert", "label": "The level 9 orc can take Harpy Raiders", "actor": "ready",
      "metric": "quest_takeable", "quest": 867, "equals": 1}
   ]
 }
