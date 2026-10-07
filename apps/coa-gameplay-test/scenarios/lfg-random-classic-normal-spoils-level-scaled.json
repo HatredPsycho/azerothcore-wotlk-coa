@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "A Random Classic Dungeon run gives one Dungeon Spoils whose single item fits the level it is opened at",
-  "contract": "A level 20 group finishes a Random Classic Dungeon (258) from the Dungeon Finder. The Classic Random 15-25 reward quest gives every member one Dungeon Spoils (2021814), and the final boss does not add a second. Used or opened as a container, the spoils are used up and put exactly one vanilla dungeon item in the bags, chosen when they are opened from the items that fit the opener's level: opened at level 20 the item requires level 15-20, kept unopened until level 60 it requires level 50-60.",
+  "contract": "A level 20 group finishes a Random Classic Dungeon (258) from the Dungeon Finder. On this realm level 20 stands in Classic content written for the mid twenties, so the reward is the Classic Random 24-34 quest (24883), which gives every member one Dungeon Spoils (2021814), and the final boss does not add a second. Used or opened as a container, the spoils are used up and put exactly one vanilla dungeon item in the bags, chosen when they are opened from the items that fit the opener's level: opened at level 20 the item requires level 15-20, kept unopened until level 60 it requires level 50-60.",
   "timeout_ms": 180000,
   "location": {
     "map": 0,
@@ -166,10 +166,10 @@
     },
     {
       "action": "assert",
-      "label": "p1 is rewarded the Classic Random 15-25 quest and its Dungeon Spoils",
+      "label": "p1 is rewarded the Classic Random 24-34 quest and its Dungeon Spoils",
       "actor": "p1",
       "metric": "quest_rewarded",
-      "quest": 24882,
+      "quest": 24883,
       "equals": 1,
       "within_ms": 5000
     },

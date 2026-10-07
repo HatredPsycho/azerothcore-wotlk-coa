@@ -82,6 +82,19 @@ inline std::uint32_t GetEffectiveItemMarketValue(std::uint32_t itemEntry, std::u
     return owner ? owner(itemEntry, value) : value;
 }
 
+/// The item level an item was written with, given the one its template has on this realm. A table written
+/// against authored item levels - the Callboard's cache tiers and the rewards in them - is read against what
+/// a character wears through this, so moving every item to the realm's band does not drop the character a
+/// tier. The template's item level stands with nothing installed.
+using AuthoredItemLevelResolver = std::uint32_t (*)(std::uint32_t, std::uint32_t);
+inline std::atomic<AuthoredItemLevelResolver> AuthoredItemLevelOwner{nullptr};
+
+inline std::uint32_t GetAuthoredItemLevel(std::uint32_t itemEntry, std::uint32_t itemLevel)
+{
+    AuthoredItemLevelResolver const owner = AuthoredItemLevelOwner.load(std::memory_order_relaxed);
+    return owner ? owner(itemEntry, itemLevel) : itemLevel;
+}
+
 /// The flat amount an enchantment, a gem or a socket bonus adds to the item it sits on.
 ///
 /// An enchantment belongs to no item of its own: the same one goes on anything that will take it,

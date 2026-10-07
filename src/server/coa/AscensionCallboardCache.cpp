@@ -7,6 +7,7 @@
 #include "GameTime.h"
 #include "Item.h"
 #include "ItemScript.h"
+#include "LocalLevelScaling.h"
 #include "Log.h"
 #include "Mail.h"
 #include "ObjectMgr.h"
@@ -159,6 +160,30 @@ CallboardPool const* GetPool(uint32 cacheItemId)
     return it == g_pools.end() ? nullptr : &it->second;
 }
 
+uint32 WornItemLevel(Player* player)
+{
+    float sum = 0.0f;
+    uint32 count = 0;
+    for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
+    {
+        if (slot == EQUIPMENT_SLOT_TABARD || slot == EQUIPMENT_SLOT_RANGED || slot == EQUIPMENT_SLOT_OFFHAND ||
+            slot == EQUIPMENT_SLOT_BODY)
+            continue;
+
+        if (Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
+            if (ItemTemplate const* proto = item->GetTemplate())
+            {
+                float level = proto->GetItemLevelIncludingQuality(player->GetLevel());
+                if (proto->Quality != ITEM_QUALITY_HEIRLOOM)
+                    level += float(LocalLevelScaling::GetAuthoredItemLevel(proto->ItemId, proto->ItemLevel)) -
+                        float(proto->ItemLevel);
+                sum += level;
+            }
+        ++count;
+    }
+    return count ? uint32(std::max(0.0f, sum / float(count))) : 0;
+}
+
 uint32 HighestItemLevel(CallboardPool const& pool)
 {
     uint32 highest = 0;
@@ -183,7 +208,7 @@ uint8 HighestStage(uint32 cacheItemId)
 uint32 ResolveGenericTier(Player* player, uint32 cacheItemId)
 {
     uint8 const highest = HighestStage(cacheItemId);
-    uint32 averageItemLevel = uint32(player->GetAverageItemLevel());
+    uint32 averageItemLevel = WornItemLevel(player);
     uint32 chosen = 0;
 
     for (uint8 index = 0; index <= highest; ++index)
@@ -266,7 +291,7 @@ bool OpenCallboardCache(Player* player, Item* item)
     player->SendEquipError(EQUIP_ERR_NONE, item, nullptr);
 
     AscensionCacheRewards::Reward reward;
-    if (!PickReward(player, *pool, uint32(player->GetAverageItemLevel()), reward))
+    if (!PickReward(player, *pool, WornItemLevel(player), reward))
     {
         ChatHandler(player->GetSession()).SendSysMessage(
             "The cache holds nothing this character can use.");
@@ -360,7 +385,7 @@ void SendReachedItemLevel(Player* player, uint32 itemLevel)
 
 bool RaiseReachedItemLevel(Player* player)
 {
-    uint32 const equipped = uint32(player->GetAverageItemLevel());
+    uint32 const equipped = WornItemLevel(player);
     if (equipped <= ReachedItemLevel(player))
         return false;
 
