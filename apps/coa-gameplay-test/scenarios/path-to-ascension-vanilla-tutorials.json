@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Path to Ascension: a vanilla realm offers the vanilla tutorial variants and hides the Wrath ones",
-  "contract": "PathToAscension.Expansion defaults to 0 (Vanilla). The client shows a Tutorial.dbc row whose expansion (field 33) is 3 or equals the expansion it derives from MaxPlayerLevel; the test config's MaxPlayerLevel 80 makes that Wrath (2). At login the server therefore patches (SMSG_TUTORIAL_PATCH 0x6A5) the vanilla rows PvP Power 9 and Normal: Molten Core 122 to expansion 3, and the Wrath rows PvP Power 259 and Heroic Dungeons 261 to expansion 0 so the client hides them. Normal: Naxxramas 127 is not made visible because Naxxramas is still a level 80 Wrath raid here, and the Burning Crusade row Normal: Karazhan 149 already stays hidden. 270 equipped PvP Power (eight soulbound level 60 PvP pieces) verifies tutorials 9 and 259, which share quest 580140. A claim of 259 is refused as unavailable and records nothing; a claim of 9 is answered CLAIM_TUTORIAL_OK and recorded.",
+  "contract": "PathToAscension.Expansion defaults to 0 (Vanilla). The client shows a Tutorial.dbc row whose expansion (field 33) is 3 or equals the expansion it derives from MaxPlayerLevel; this realm's MaxPlayerLevel 60 makes that Vanilla (0). The client therefore already shows the vanilla rows PvP Power 9 and Normal: Molten Core 122 and hides the Wrath rows PvP Power 259 and Heroic Dungeons 261, so none of them is patched (SMSG_TUTORIAL_PATCH 0x6A5). Normal: Naxxramas 127 is a vanilla row the client would show, but Naxxramas is still a level 80 Wrath raid here, so the server patches it to expansion 1 to hide it. The Burning Crusade row Normal: Karazhan 149 already stays hidden. 270 equipped PvP Power (eight soulbound level 60 PvP pieces) verifies tutorials 9 and 259, which share quest 580140. A claim of 259 is refused as unavailable and records nothing; a claim of 9 is answered CLAIM_TUTORIAL_OK and recorded.",
   "timeout_ms": 120000,
   "players": [
     {
@@ -26,52 +26,49 @@
     },
     {
       "action": "assert",
-      "label": "Vanilla PvP Power (9) is patched to any expansion for the Wrath client",
-      "actor": "pvper",
-      "metric": "server_packet_u32",
-      "opcode": 1701,
-      "row": 9,
-      "index": 33,
-      "equals": 3
-    },
-    {
-      "action": "assert",
-      "label": "Vanilla Normal: Molten Core (122) is patched to any expansion",
-      "actor": "pvper",
-      "metric": "server_packet_u32",
-      "opcode": 1701,
-      "row": 122,
-      "index": 33,
-      "equals": 3
-    },
-    {
-      "action": "assert",
-      "label": "Wrath PvP Power (259) is patched away from the client's expansion",
-      "actor": "pvper",
-      "metric": "server_packet_u32",
-      "opcode": 1701,
-      "row": 259,
-      "index": 33,
-      "equals": 0
-    },
-    {
-      "action": "assert",
-      "label": "Wrath Heroic Dungeons (261) is patched away from the client's expansion",
-      "actor": "pvper",
-      "metric": "server_packet_u32",
-      "opcode": 1701,
-      "row": 261,
-      "index": 33,
-      "equals": 0
-    },
-    {
-      "action": "assert",
-      "label": "Vanilla Normal: Naxxramas (127) is not made visible while Naxxramas is a Wrath raid",
+      "label": "Vanilla PvP Power (9) is shown by the Vanilla client without a patch",
       "actor": "pvper",
       "metric": "server_packets",
       "opcode": 1701,
-      "row": 127,
+      "row": 9,
       "equals": 0
+    },
+    {
+      "action": "assert",
+      "label": "Vanilla Normal: Molten Core (122) is shown without a patch",
+      "actor": "pvper",
+      "metric": "server_packets",
+      "opcode": 1701,
+      "row": 122,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "label": "Wrath PvP Power (259) is hidden by the Vanilla client without a patch",
+      "actor": "pvper",
+      "metric": "server_packets",
+      "opcode": 1701,
+      "row": 259,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "label": "Wrath Heroic Dungeons (261) is hidden without a patch",
+      "actor": "pvper",
+      "metric": "server_packets",
+      "opcode": 1701,
+      "row": 261,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "label": "Vanilla Normal: Naxxramas (127) is patched away from the client's expansion while Naxxramas is a Wrath raid",
+      "actor": "pvper",
+      "metric": "server_packet_u32",
+      "opcode": 1701,
+      "row": 127,
+      "index": 33,
+      "equals": 1
     },
     {
       "action": "assert",
@@ -84,12 +81,13 @@
     },
     {
       "action": "assert",
-      "label": "Mythic+ Dungeons (17) stays hidden while the server has no Mythic+",
+      "label": "Mythic+ Dungeons (17), shown by the Vanilla client, is patched away while the server offers no Mythic+ tutorial",
       "actor": "pvper",
-      "metric": "server_packets",
+      "metric": "server_packet_u32",
       "opcode": 1701,
       "row": 17,
-      "equals": 0
+      "index": 33,
+      "equals": 1
     },
     {
       "action": "learn",

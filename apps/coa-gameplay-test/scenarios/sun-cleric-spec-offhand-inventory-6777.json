@@ -13,19 +13,19 @@
       "id": "polearms",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     },
     {
       "id": "swords",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     },
     {
       "id": "dualwield",
       "race": 1,
       "class": 27,
-      "level": 80
+      "level": 60
     }
   ],
   "steps": [
