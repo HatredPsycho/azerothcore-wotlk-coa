@@ -453,7 +453,9 @@ namespace Trainer
     {
         Trainer* trainer = sObjectMgr->GetTrainer(npc->GetEntry());
         bool const rankTrainerHero = IsRankTrainerHero(player);
-        if (!trainer && !rankTrainerHero && npc->HasNpcFlag(UNIT_NPC_FLAG_TRAINER_CLASS))
+        // A CoA class trains at a book through mod-spellbook's own window, which leaves out what its talents replace.
+        if (!trainer && !rankTrainerHero && !IsAscensionClass(player->getClass()) &&
+            npc->HasNpcFlag(UNIT_NPC_FLAG_TRAINER_CLASS))
             trainer = OwnClassTrainer(player);
         if (trainer && trainer->GetTrainerType() == Type::Class && ClassTrainerOf)
             if (Trainer* replacement = ClassTrainerOf(*trainer, player))
