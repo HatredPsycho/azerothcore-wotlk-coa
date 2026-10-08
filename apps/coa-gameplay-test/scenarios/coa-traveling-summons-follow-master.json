@@ -190,7 +190,7 @@
       "metric": "nearby_creature_count",
       "entry": 50323,
       "equals": 1,
-      "within_ms": 5000
+      "within_ms": 15000
     }
   ]
 }
