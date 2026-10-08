@@ -4,7 +4,7 @@
   "contract": "With the Lithic Lance specialization passive 706159, Lithic Lance Ready 807048 runs aura_ascension_lithic_lance_ready::Apply (AscensionPrimalistLithicLance.cpp:38), which learns Lithic Lance 681251 as a temporary spell (learnSpell(LithicLance, true), line 44) and replaces the highest known Geode Barrage rank (chain 500402) with it through SetTemporarySpellReplacement (line 50). A temporary spell is never written to character_spell, and Player::_LoadActions runs before the buff is gained again, so a saved Lithic Lance button would be refused and deleted at login. persisted_action_button reads Player::GetSavedActionButtonSpell, the spell id _SaveActions writes: a button holding Lithic Lance must be saved as the replaced Geode Barrage rank 502770, and a button holding that rank itself is saved unchanged.",
   "timeout_ms": 60000,
   "players": [
-    {"id": "primalist", "race": 1, "class": 31, "level": 80}
+    {"id": "primalist", "race": 1, "class": 31, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let login state settle", "ms": 3000},

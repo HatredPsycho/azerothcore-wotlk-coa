@@ -11,7 +11,7 @@
   ],
   "timeout_ms": 60000,
   "players": [
-    {"id": "guardian", "race": 1, "class": 18, "level": 80}
+    {"id": "guardian", "race": 1, "class": 18, "level": 60}
   ],
   "steps": [
     {"action": "wait", "label": "Let the login patch stream go out", "ms": 7000},

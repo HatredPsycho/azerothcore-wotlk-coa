@@ -15,7 +15,7 @@
       "id": "ranger",
       "race": 1,
       "class": 21,
-      "level": 80,
+      "level": 60,
       "ranged_hit_rating": 10000,
       "melee_hit_rating": 10000
     }
@@ -25,7 +25,7 @@
       "id": "applier",
       "owner": "ranger",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 6,
       "faction": 12
@@ -34,7 +34,7 @@
       "id": "bleeding",
       "owner": "ranger",
       "entry": 36,
-      "level": 80,
+      "level": 60,
       "health": 1000000,
       "distance": 5,
       "faction": 2

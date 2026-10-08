@@ -4,8 +4,8 @@
   "contract": "AscensionBloodmageSecondary.cpp:604-611 (aura_ascension_bloodmage_hemal_excision::Offer): when Hemal Excision 803681 siphons curses from an ally, the caster gains the ten-second window 803734, whose apply learns Excision 803733 with learnSpell(803733, true) (PLAYERSPELL_TEMPORARY, never written to character_spell) and calls SetTemporarySpellReplacement(803681, 803733). The window's removal (line 619) clears it. A button holding Excision 803733 was saved by Player::_SaveActions as 803733; Player::_LoadActions at the next login runs before any window learns it again, so IsActionButtonDataValid would refuse and delete it. persisted_action_button reads Player::GetSavedActionButtonSpell, the id _SaveActions writes: the Excision button must be saved as Hemal Excision 803681, and a button holding Hemal Excision itself must be saved unchanged. Fixture curses copied from bloodmage-hemal-excision-reactivation.json.",
   "timeout_ms": 60000,
   "players": [
-    { "id": "bloodmage", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 },
-    { "id": "ally", "race": 1, "class": 20, "level": 80, "spell_hit_rating": 10000 }
+    { "id": "bloodmage", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 },
+    { "id": "ally", "race": 1, "class": 20, "level": 60, "spell_hit_rating": 10000 }
   ],
   "steps": [
     { "action": "wait", "label": "Let login state settle", "ms": 3000 },
