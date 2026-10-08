@@ -27,6 +27,9 @@ When the base sell price is zero, buy price uses the existing estimated price ra
 prices retain their sentinel values. Item identity, weapon delay, damage schools and other fields absent
 from this table retain the base template's values. Missing keys retain the existing estimates; they never
 use a nearby captured row.
+On a realm with content scaling active (`LocalLevelScaling::ContentScalingActive`), lifts keep the estimates:
+their base templates and item levels are already the realm's scaled ones, while the captured rows are keyed by
+the original client's item levels, so an exact key would select a row from a different scale.
 The table is loaded once at startup, before scaled templates are materialized, and requires a restart to
 change. It is a sorted, contiguous row vector with binary lookup rather than a sparse DBC ID array or a
 per-row hash allocation (approximately 236 MB for the original table, before allocator overhead).

@@ -161,13 +161,20 @@ double SetRatio(CurveSet const& set, CurveKey const& key, uint32 fromLevel, uint
     return curve == set.end() ? fallback : CurveRatio(curve->second, fromLevel, toLevel, fallback);
 }
 
+CapturedStats::Record const* CapturedRecordOnAuthoredLevels(uint32 item, uint32 itemLevel)
+{
+    if (LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
+        return nullptr;
+    return capturedStats.Find(item, itemLevel);
+}
+
 std::unique_ptr<ItemTemplate> BuildTemplate(uint32 entry, ItemTemplate const& base, uint32 lift, Curves const& curves)
 {
     auto proto = std::make_unique<ItemTemplate>(base);
     uint32 const itemLevel = base.ItemLevel + lift;
     proto->ItemId = entry;
     proto->ItemLevel = itemLevel;
-    if (CapturedStats::Record const* record = capturedStats.Find(base.ItemId, itemLevel))
+    if (CapturedStats::Record const* record = CapturedRecordOnAuthoredLevels(base.ItemId, itemLevel))
     {
         record->Apply(*proto);
         if (base.BuyPrice > 0)
