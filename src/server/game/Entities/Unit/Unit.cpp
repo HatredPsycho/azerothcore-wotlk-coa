@@ -6629,6 +6629,36 @@ bool Unit::HasAuras(SearchMethod sm, std::vector<uint32>& spellIds) const
     }
 }
 
+bool Unit::HasAuraOrTwin(uint32 spellId, ObjectGuid casterGUID) const
+{
+    for (uint32 relative : sSpellMgr->GetSpellAndRelatives(spellId))
+        if (HasAura(relative, casterGUID))
+            return true;
+    return false;
+}
+
+Aura* Unit::GetAuraOfRankedSpellOrTwin(uint32 spellId, ObjectGuid casterGUID) const
+{
+    for (uint32 relative : sSpellMgr->GetSpellAndRelatives(spellId))
+        if (Aura* aura = GetAuraOfRankedSpell(relative, casterGUID))
+            return aura;
+    return nullptr;
+}
+
+AuraEffect* Unit::GetAuraEffectOfRankedSpellOrTwin(uint32 spellId, uint8 effIndex, ObjectGuid casterGUID) const
+{
+    for (uint32 relative : sSpellMgr->GetSpellAndRelatives(spellId))
+        if (AuraEffect* effect = GetAuraEffectOfRankedSpell(relative, effIndex, casterGUID))
+            return effect;
+    return nullptr;
+}
+
+void Unit::RemoveAurasDueToSpellOrTwin(uint32 spellId)
+{
+    for (uint32 relative : sSpellMgr->GetSpellAndRelatives(spellId))
+        RemoveAurasDueToSpell(relative);
+}
+
 bool Unit::HasAura(uint32 spellId, ObjectGuid casterGUID, ObjectGuid itemCasterGUID, uint8 reqEffMask) const
 {
     if (GetAuraApplication(spellId, casterGUID, itemCasterGUID, reqEffMask))
@@ -15224,7 +15254,11 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
     bool spiritOfRedemption = false;
     if (victim->IsPlayer() && victim->IsClass(CLASS_PRIEST, CLASS_CONTEXT_ABILITY) && !victim->ToPlayer()->HasPlayerFlag(PLAYER_FLAGS_IS_OUT_OF_BOUNDS))
     {
-        if (AuraEffect* aurEff = victim->GetAuraEffectDummy(20711))
+        AuraEffect* aurEff = victim->GetAuraEffectDummy(20711);
+        auto const [twinBegin, twinEnd] = sSpellMgr->GetSpellTwins().equal_range(20711);
+        for (auto twin = twinBegin; !aurEff && twin != twinEnd; ++twin)
+            aurEff = victim->GetAuraEffectDummy(twin->second);
+        if (aurEff)
         {
             // Xinef: aura_spirit_of_redemption is triggered by 27827 shapeshift
             if (victim->HasSpiritOfRedemptionAura() || victim->HasAura(27827))
