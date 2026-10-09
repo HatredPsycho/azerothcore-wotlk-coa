@@ -3200,6 +3200,12 @@ private:
             Require(creature != nullptr, "Attack observation needs a present owned creature");
             return GetUnit(step.get<std::string>("target"))->IsValidAttackTarget(creature);
         }
+        if (metric == "owned_creature_victim")
+        {
+            Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
+            Require(creature != nullptr, "Victim observation needs a present owned creature");
+            return creature->GetVictim() == GetUnit(step.get<std::string>("target"));
+        }
         if (metric == "owned_creature_weapon_damage_min")
         {
             uint32 entry = step.get<uint32>("entry");
