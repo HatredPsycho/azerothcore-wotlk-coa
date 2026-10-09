@@ -2,6 +2,7 @@
 #include "CoALotteryAdvertising.h"
 #include "Chat.h"
 #include "CommandScript.h"
+#include "CellImpl.h"
 #include "CharacterCache.h"
 #include "Config.h"
 #include "CreatureScript.h"
