@@ -34,14 +34,16 @@ Then, in this order:
 1. The action bar's spells are remembered.
 2. Exotic hunter pets are deleted across every stable slot. Other pets, including one put away by a
    mount, and totems are dismissed.
-3. The quest log is emptied, and every ordinary zone quest up to the Prestige level may be done
-   again. Class, profession, dungeon, raid, PvP, event and repeating quests stay done.
+3. The quest log is emptied, and every ordinary zone or dungeon quest up to the Prestige level may be
+   done again, including quests that scale with the character. Class, profession, raid, PvP, event and
+   repeating quests stay done.
 4. The class's talents are forgotten (`ForgetAscensionClassTalents`), including the stored class-tree
    and active-specialization builds. The builds of other specializations are kept.
 5. Upgraded ranks above level 1 are removed. The character goes to level 1 through
    `Player::GiveLevel`, whose CoA progression pass removes the class abilities that level 1 does not
    allow. The rank left below a removed one is learned again, so it can be cast.
-6. Temporary buffs and debuffs are removed. Equipment the character can no longer use goes to the
+6. Temporary buffs and debuffs are removed, and the ruleset becomes War Mode (High-Risk and PvE Mode
+   are removed). Equipment the character can no longer use goes to the
    bags, or to the mailbox if they are full. This includes a weapon or shield whose proficiency came
    from a forgotten talent.
 7. The rewards (`CoAPrestige.Rewards`) are added to the bags, or mailed if they do not fit.
@@ -56,6 +58,8 @@ While Prestige Mode is active:
   `AddAscensionSpecializationSwitchGuard`.
 - The Prestige Challenge aura multiplies every experience gain by
   `100% + CoAPrestige.ExperienceBonusPercent`.
+- Reaching level 15 replaces War Mode with PvE Mode. From there the player chooses High-Risk or War
+  Mode again in a rested area.
 
 Reaching the required level again completes the cycle. It removes the aura and unlocks the
 specialization.
