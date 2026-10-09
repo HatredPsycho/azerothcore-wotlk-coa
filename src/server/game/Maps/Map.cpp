@@ -2315,7 +2315,17 @@ void InstanceMap::PermBindAllPlayers()
 
 void InstanceMap::UnloadAll()
 {
-    ASSERT(!HavePlayers());
+    // A player can still be linked here: AddPlayerToMap takes no lock, different maps update on
+    // different threads, and a far teleport into this instance can finish between DestroyInstance's
+    // check and this call. Asserting ends the worldserver over one late arrival, and unloading the
+    // grids under that player would be its own crash, so leave the map standing. DestroyInstance
+    // looks again afterwards and retries on a later cycle.
+    if (HavePlayers())
+    {
+        LOG_ERROR("maps", "InstanceMap::UnloadAll: map (Name: {}, Entry: {}, InstanceId: {}) still has "
+            "players linked to it; skipping this unload.", GetMapName(), GetId(), GetInstanceId());
+        return;
+    }
 
     if (m_resetAfterUnload)
     {

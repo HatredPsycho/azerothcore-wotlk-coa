@@ -101,8 +101,8 @@ void Scale(Player* player, Creature* creature, bool initial)
     creature->SetStatFlatModifier(UNIT_MOD_STAT_INTELLECT,BASE_VALUE,intellect);
     creature->UpdateStats(STAT_STAMINA);
     creature->UpdateStats(STAT_INTELLECT);
-    creature->SetStat(STAT_STAMINA,int32(creature->GetTotalStatValue(STAT_STAMINA)));
-    creature->SetStat(STAT_INTELLECT,int32(creature->GetTotalStatValue(STAT_INTELLECT)));
+    creature->SetStat(STAT_STAMINA,int32(std::lround(creature->GetTotalStatValue(STAT_STAMINA))));
+    creature->SetStat(STAT_INTELLECT,int32(std::lround(creature->GetTotalStatValue(STAT_INTELLECT))));
     creature->SetStatFlatModifier(UNIT_MOD_HEALTH,BASE_VALUE,player->GetLevel() * 35.0f + creature->GetStat(STAT_STAMINA) * 10);
     creature->UpdateMaxHealth();
     creature->SetHealth(initial || !maximumHealth ? creature->GetMaxHealth() :
@@ -585,7 +585,12 @@ struct npc_ascension_tinker_device : ScriptedAI
             player->EnterVehicle(me);
         else if (me->GetEntry() == 506051 && used.insert(player->GetGUID()).second)
         {
-            player->ModifyHealth(player->CountPctFromMaxHealth(Amount(570715)));
+            if (SpellInfo const* burst = sSpellMgr->GetSpellInfo(570715))
+            {
+                HealInfo healInfo(creator, player, player->CountPctFromMaxHealth(Amount(570715)),
+                    burst, burst->GetSchoolMask());
+                creator->HealBySpell(healInfo);
+            }
             Mana(player,CalculatePct(player->GetMaxPower(POWER_MANA),Amount(570715)),creator);
             for (Powers power : {POWER_RAGE,POWER_ENERGY,POWER_FOCUS,POWER_RUNIC_POWER})
                 if (player->GetMaxPower(power))
@@ -611,10 +616,24 @@ public:
         return true;
     }
 };
+
+class tinker_pet_type : public PlayerScript
+{
+public:
+    tinker_pet_type() : PlayerScript("tinker_pet_type", {PLAYERHOOK_ON_BEFORE_GUARDIAN_INIT_STATS_FOR_LEVEL}) { }
+
+    void OnPlayerBeforeGuardianInitStatsForLevel(Player* player, Guardian* guardian, CreatureTemplate const*,
+        PetType& type) override
+    {
+        if (player->getClass() == CLASS_TINKER && guardian && Permanent(guardian->GetEntry()))
+            type = SUMMON_PET;
+    }
+};
 }
 void AddSC_AscensionTinkerSummons()
 {
     new go_ascension_tinker_battery();
+    new tinker_pet_type();
     RegisterCreatureAI(npc_ascension_tinker_pet);
     RegisterCreatureAI(npc_ascension_tinker_device);
 }

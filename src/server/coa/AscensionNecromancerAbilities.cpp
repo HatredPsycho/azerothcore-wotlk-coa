@@ -397,7 +397,11 @@ class spell_ascension_necromancer_ability : public SpellScript
             Copy(player, player, 802122, uint32(std::min<uint64>(INT32_MAX, stolen / 2)));
         }
         if (id == 803767)
-            player->ModifyHealth((player->GetMaxHealth() - player->GetHealth()) * 30 / 100);
+        {
+            uint32 const missing = uint32((player->GetMaxHealth() - player->GetHealth()) * 30 / 100);
+            HealInfo healInfo(player, player, missing, GetSpellInfo(), GetSpellInfo()->GetSchoolMask());
+            player->HealBySpell(healInfo);
+        }
         if (id == 803773)
             player->EnergizeBySpell(
                 player, id, (player->GetMaxPower(POWER_MANA) - player->GetPower(POWER_MANA)) * 30 / 100, POWER_MANA);

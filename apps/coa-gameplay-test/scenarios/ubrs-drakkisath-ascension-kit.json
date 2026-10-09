@@ -255,7 +255,7 @@
       "action": "set_health",
       "label": "Leave Drakkisath at 35% health",
       "actor": "boss",
-      "value": 140000
+      "percent": 35
     },
     {
       "action": "attack_nearby",

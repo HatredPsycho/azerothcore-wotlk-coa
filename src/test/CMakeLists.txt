@@ -54,6 +54,9 @@ endif()
 
 target_link_libraries(unit_tests coa game)
 
+# Naming the target rather than a path lets CMake fill in the executable's real location: this
+# build sends binaries to bin/ and Windows adds the .exe suffix, neither of which a literal
+# ${CMAKE_BINARY_DIR}/src/test/unit_tests accounts for.
 add_test(
         NAME
         unit

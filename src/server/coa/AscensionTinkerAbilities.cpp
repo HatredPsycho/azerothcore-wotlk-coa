@@ -274,6 +274,7 @@ public:
 class spell_ascension_tinker_ability : public SpellScript
 {
     PrepareSpellScript(spell_ascension_tinker_ability);
+    Unit* HitUnit() { return IsInTargetHook() ? GetHitUnit() : nullptr; }
     bool handled = false;
     void Effect(SpellEffIndex index)
     {
@@ -337,8 +338,8 @@ class spell_ascension_tinker_ability : public SpellScript
         if (Any(GetSpellInfo(),{805372}) && type == SPELL_EFFECT_SCRIPT_EFFECT)
         {
             PreventHitDefaultEffect(index);
-            if (GetHitUnit())
-                PetCast(player,GetHitUnit(),805459);
+            if (HitUnit())
+                PetCast(player,HitUnit(),805459);
         }
         if (id == 524835 || id == 800349 || id == 801798)
         {
@@ -362,7 +363,7 @@ class spell_ascension_tinker_ability : public SpellScript
     void Hit()
     {
         Player* player = Owner(GetCaster());
-        Unit* target = GetHitUnit();
+        Unit* target = HitUnit();
         if (!player || !target)
             return;
         uint32 id = GetSpellInfo()->Id;

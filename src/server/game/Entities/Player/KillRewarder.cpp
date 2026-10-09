@@ -187,6 +187,8 @@ void KillRewarder::_RewardXP(Player* player, float rate)
         bool const noBonusExperience = sScriptMgr->OnPlayerHasNoBonusExperience(player);
         xp *= player->GetTotalAuraMultiplier(SPELL_AURA_MOD_XP_PCT, [recruitAFriend, noBonusExperience](AuraEffect const* effect)
         {
+            if (!Player::IsKillXPAuraEffect(effect))
+                return false;
             // CoA's party Aura of Experience explicitly excludes the recruit-a-friend bonus.
             if (effect->GetId() == 818059 && recruitAFriend)
                 return false;

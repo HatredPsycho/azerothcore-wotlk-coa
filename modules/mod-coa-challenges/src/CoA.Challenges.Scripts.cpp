@@ -1746,7 +1746,10 @@ namespace CoAChallenges
             }
             else if (PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS"))
             {
-                if (xpSource != XPSOURCE_PROFESSION_SKILL)
+                // A skill-up reaches the hook from the core as XPSOURCE_PROFESSION;
+                // the group share this module grants uses XPSOURCE_PROFESSION_SKILL.
+                // Both are profession experience, so both have to pass the rule.
+                if (xpSource != XPSOURCE_PROFESSION && xpSource != XPSOURCE_PROFESSION_SKILL)
                     amount = 0;
             }
 
@@ -3712,6 +3715,12 @@ namespace CoAChallenges
         // Gate is Unit::_IsValidAttackTarget (both melee and spells). Pets/
         // guardians are resolved to their owner. Battlegrounds/arenas keep their
         // own rules (only the open world is restricted).
+        //
+        // This hook is a predicate, not an action: the core evaluates it for every
+        // target validity question - area target selection, threat and range checks,
+        // each swing - so merely standing near another player runs it many times a
+        // second. It must therefore never send the player a message; a refusal that
+        // explains itself here reads as a chat flood.
         bool CanUnitAttack(Unit const* attacker, Unit const* target, SpellInfo const* /*spell*/) override
         {
             if (!attacker || !target)
@@ -3783,9 +3792,6 @@ namespace CoAChallenges
                 if (a->IsMaxLevel() != t->IsMaxLevel())
                     blocked = true;
             }
-            if (blocked && a->GetSession())
-                NotifyPlayer(a,
-                    "Your challenge restricts who you may fight in PvP.");
             return !blocked;
         }
 

@@ -1513,7 +1513,10 @@ namespace CoAChallenges
             uint32 amtBg = 1000; sScriptMgr->OnPlayerGiveXP(p, amtBg, nullptr, XPSOURCE_BATTLEGROUND);
             return amtKill == 0 && amtBg == 1000; });
         RUN("CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS", [](Player* p) {
-            uint32 amt = 1000; sScriptMgr->OnPlayerGiveXP(p, amt, nullptr, XPSOURCE_KILL); return amt == 0; });
+            uint32 amt = 1000; sScriptMgr->OnPlayerGiveXP(p, amt, nullptr, XPSOURCE_KILL);
+            uint32 amtSkillUp = 1000; sScriptMgr->OnPlayerGiveXP(p, amtSkillUp, nullptr, XPSOURCE_PROFESSION);
+            uint32 amtShared = 1000; sScriptMgr->OnPlayerGiveXP(p, amtShared, nullptr, XPSOURCE_PROFESSION_SKILL);
+            return amt == 0 && amtSkillUp == 1000 && amtShared == 1000; });
         RUN("CHALLENGE_RULES_TYPE_NO_FETCH_QUEST_EXPERIENCE", [](Player* p) {
             Quest const* talk = sObjectMgr->GetQuestTemplate(RuleTestFirstQuest(true));
             Quest const* work = sObjectMgr->GetQuestTemplate(RuleTestFirstQuest(false));

@@ -300,6 +300,14 @@ bool MapInstanced::DestroyInstance(InstancedMaps::iterator& itr)
 
     itr->second->UnloadAll();
 
+    // UnloadAll leaves the map standing when a player reached it in the window above. Deleting it then
+    // would hand that player a freed map instead of the assertion that used to end the server here.
+    if (itr->second->HavePlayers())
+    {
+        ++itr;
+        return false;
+    }
+
     // erase map
     delete itr->second;
     m_InstancedMaps.erase(itr++);

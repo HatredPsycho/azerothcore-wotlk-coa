@@ -1,0 +1,23 @@
+[worldserver]
+
+#
+#    CoACompanions.Enable
+#        Description: Send the health of a player's summoned companions to their client, for the
+#                     CoACompanions addon to draw. With this off the addon still works, but it can
+#                     only read a companion while the client holds a unit token for it.
+#        Default:     1 - enabled
+#                     0 - disabled
+#
+
+CoACompanions.Enable = 1
+
+#
+#    CoACompanions.Interval
+#        Description: Milliseconds between two updates for one player. One message is sent per
+#                     interval only when the values changed, plus a keep alive every 3 seconds so
+#                     the addon can tell a live reading from a stale one.
+#        Default:     1000
+#        Minimum:     250
+#
+
+CoACompanions.Interval = 1000

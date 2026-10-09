@@ -122,6 +122,7 @@ constexpr uint16 ApplyAppearancesOpcode = 0x0697;
 constexpr uint16 KnownEntriesUploadOpcode = 0x0727;
 constexpr uint16 KnownEntriesOpcode = 0x0726;
 constexpr uint16 UpdateEntriesResultOpcode = 0x072C;
+constexpr uint32 DamageShareBlows = 8;
 constexpr uint32 TalentRequestWindowMs = 2000;
 constexpr std::size_t QuestQueryFlagsOffset = 80;
 constexpr std::size_t QuestQueryFirstChoiceItemOffset = 136;
@@ -425,6 +426,7 @@ struct Actor
     std::map<uint32, uint32> questQueryFirstChoiceItem;
     uint32 lastQuestWindow = 0;
     uint32 lastStableResult = 0;
+    std::optional<uint8> charCreateResult;
     uint32 lfgProposalId = 0;
     std::map<uint16, uint32> extensionPackets;
     std::map<uint16, std::vector<std::string>> extensionPayloads;
@@ -637,6 +639,72 @@ void ObserveExtensionPacket(Actor& actor, WorldPacket const& packet)
             : std::string(reinterpret_cast<char const*>(packet.contents()), packet.size()));
 }
 
+std::string PrintableRuns(std::string const& payload)
+{
+    constexpr std::size_t MinimumRun = 4;
+    std::string runs;
+    std::string current;
+    auto flush = [&runs, &current]()
+    {
+        if (current.size() >= MinimumRun)
+        {
+            if (!runs.empty())
+                runs += " | ";
+            runs += current;
+        }
+        current.clear();
+    };
+    for (char const character : payload)
+    {
+        if (character >= 0x20 && character < 0x7F)
+            current.push_back(character);
+        else
+            flush();
+    }
+    flush();
+    return runs;
+}
+
+std::string CharCreateRefusal(Actor const& actor)
+{
+    if (!actor.charCreateResult || *actor.charCreateResult == CHAR_CREATE_SUCCESS ||
+        *actor.charCreateResult == CHAR_CREATE_IN_PROGRESS)
+        return {};
+
+    std::string reason;
+    switch (*actor.charCreateResult)
+    {
+        case CHAR_CREATE_DISABLED:
+            reason = "the realm disables this race or class for creation; see CharacterCreating.Disabled"
+                     ".RaceMask and .ClassMask in the worldserver config";
+            break;
+        case CHAR_CREATE_RESTRICTED_RACECLASS:
+            reason = "the realm does not offer this race and class together";
+            break;
+        case CHAR_CREATE_EXPANSION:
+        case CHAR_CREATE_EXPANSION_CLASS:
+            reason = "the account's expansion is below the one this race or class needs";
+            break;
+        case CHAR_CREATE_NAME_IN_USE:
+            reason = "the name is taken";
+            break;
+        case CHAR_CREATE_FAILED:
+            reason = "the race or class is missing from the server's DBC or creation data";
+            break;
+        case CHAR_CREATE_PVP_TEAMS_VIOLATION:
+            reason = "the account already holds a character of the opposing faction";
+            break;
+        default:
+            reason = "the server refused it";
+            break;
+    }
+
+    return "Character creation refused for " + actor.name + " (race " +
+        std::to_string(actor.definition.get<uint32>("race")) + ", class " +
+        std::to_string(actor.definition.get<uint32>("class")) + "): " + reason + " [code " +
+        std::to_string(*actor.charCreateResult) + "]";
+}
+
 uint32 NativeAdvancementMaximum()
 {
     static uint32 const maximum = []
@@ -673,6 +741,8 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
     ObserveExtensionPacket(actor, packet);
     if (packet.GetOpcode() == SMSG_STABLE_RESULT && packet.size() == sizeof(uint8))
         actor.lastStableResult = packet.read<uint8>(0);
+    if (packet.GetOpcode() == SMSG_CHAR_CREATE && packet.size() == sizeof(uint8))
+        actor.charCreateResult = packet.read<uint8>(0);
     constexpr std::size_t LfgProposalIdOffset = sizeof(uint32) + sizeof(uint8);
     if (packet.GetOpcode() == SMSG_LFG_PROPOSAL_UPDATE && packet.size() >= LfgProposalIdOffset + sizeof(uint32))
         actor.lfgProposalId = packet.read<uint32>(LfgProposalIdOffset);
@@ -1545,6 +1615,9 @@ private:
         Require(!actor.session->IsKicked(), "Test session was kicked: " + id);
         if (actor.stage == ActorStage::Creating)
         {
+            std::string const refusal = CharCreateRefusal(actor);
+            Require(refusal.empty(), refusal);
+
             actor.guid = sCharacterCache->GetCharacterGuidByName(actor.name);
             if (!actor.guid)
                 return;
@@ -3920,6 +3993,10 @@ private:
             bool const applied = specialization
                 ? GetAscensionActiveSpecialization(player) == step.get<uint32>("id")
                 : GetAscensionTalentRank(player, step.get<uint32>("entry")) == step.get<uint32>("rank");
+            Actor const& answering = _actors.at(step.get<std::string>("actor"));
+            if (auto const payloads = answering.extensionPayloads.find(UpdateEntriesResultOpcode);
+                payloads != answering.extensionPayloads.end() && !payloads->second.empty())
+                record.put("update_entries_result", PrintableRuns(payloads->second.back()));
             if (step.get<bool>("refused", false))
             {
                 bool const answered = results > _talentResultsBefore;
@@ -4116,7 +4193,14 @@ private:
         if (action == "set_health" && !_actors.count(id))
         {
             Unit* creature = GetUnit(id);
-            uint32 health = step.get<uint32>("value");
+            uint32 health = 0;
+            if (auto share = step.get_optional<uint32>("percent"))
+            {
+                Require(*share > 0 && *share <= 100, "Health share outside (0, 100]");
+                health = creature->CountPctFromMaxHealth(*share);
+            }
+            else
+                health = step.get<uint32>("value");
             Require(health > 0 && health <= creature->GetMaxHealth(), "Health fixture outside valid range");
             creature->SetHealth(health);
             return;
@@ -4235,8 +4319,18 @@ private:
             packet << uint8(3) << uint8(0) << uint8(0) << uint8(0) << std::string();
             WorldPackets::LFG::LFGJoin join(std::move(packet));
             join.Read();
+            record.put("lfg_parsed_slots", uint32(join.Slots.size()));
+            record.put("lfg_parsed_roles", uint32(join.Roles));
+            Group const* group = player->GetGroup();
+            record.put("lfg_group_members", uint32(group ? group->GetMembersCount() : 0));
+            record.put("lfg_is_leader", uint32(group && group->GetLeaderGUID() == player->GetGUID()));
+            record.put("lfg_can_join_hook", uint32(player->GetSession()->HasPermission(
+                rbac::RBAC_PERM_JOIN_DUNGEON_FINDER)));
+            record.put("lfg_locked_dungeons", uint32(sLFGMgr->GetLockedDungeons(player->GetGUID()).size()));
             player->GetSession()->HandleLfgJoinOpcode(join);
             record.put("lfg_state", uint32(sLFGMgr->GetState(player->GetGUID())));
+            if (group)
+                record.put("lfg_group_state", uint32(sLFGMgr->GetState(group->GetGUID())));
         }
         else if (action == "lfg_set_roles")
         {
@@ -4404,8 +4498,26 @@ private:
                 else if (auto damagePct = step.get_optional<int32>("damage_pct"))
                 {
                     Require(*damagePct > 0 && *damagePct < 100, "Damage share outside (0, 100)");
-                    Unit::DealDamage(player, creatures.front(), creatures.front()->CountPctFromMaxHealth(*damagePct),
-                        nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL);
+                    Creature* wounded = creatures.front();
+                    uint32 const share = wounded->CountPctFromMaxHealth(*damagePct);
+                    uint32 const spared = wounded->GetHealth() > share ? wounded->GetHealth() - share : 0;
+                    bool heldAtFloor = false;
+                    for (uint32 blow = 0; blow < DamageShareBlows && wounded->IsAlive() &&
+                        wounded->GetHealth() > spared; ++blow)
+                    {
+                        uint32 const before = wounded->GetHealth();
+                        uint32 const asked = (before - spared) << blow;
+                        Unit::DealDamage(player, wounded, spared ? std::min(asked, before - 1) : asked, nullptr,
+                            DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL);
+                        if (wounded->GetHealth() >= before)
+                        {
+                            heldAtFloor = true;
+                            break;
+                        }
+                    }
+                    Require(heldAtFloor || !wounded->IsAlive() || wounded->GetHealth() <= spared,
+                        "Damage share left " + std::to_string(wounded->GetHealth()) + " of " +
+                        std::to_string(wounded->GetMaxHealth()) + " instead of " + std::to_string(spared));
                 }
                 else
                     player->GetSession()->HandleAttackSwingOpcode(packet);
@@ -4975,6 +5087,12 @@ private:
             uint32 power = step.get<uint32>("power", POWER_MANA);
             Require(power < MAX_POWERS, "Invalid power index");
             uint32 value = step.get<uint32>("value");
+            if (auto maximum = step.get_optional<uint32>("maximum"))
+            {
+                Require(*maximum > 0 && *maximum <= INT32_MAX && value <= *maximum,
+                    "Invalid maximum power fixture");
+                target->SetMaxPower(Powers(power), int32(*maximum));
+            }
             Require(value <= target->GetMaxPower(Powers(power)), "Power fixture exceeds maximum");
             target->SetPower(Powers(power), value);
         }

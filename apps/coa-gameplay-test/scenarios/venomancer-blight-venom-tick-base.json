@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "name": "Venomancer: Blight Venom's tick keeps its level-scaled base",
+  "contract": "Blight Venom payload 805896 is aura 3 SPELL_AURA_PERIODIC_DAMAGE with EffectBasePoints 136, EffectDieSides 4 and EffectAmplitude 1000, read from Spell.dbc, so its rolled base is 137 to 140 before scaling. The CoA level curve 0.0267291844060354 + 0.0048541098014737*L + 0.0001859597762293*L^2 yields 0.0317692540 at level 1, so a single application gives 4.35 to 4.45, truncated to the 4 the client tooltip states. The curve was applied twice: AscensionScalingBaseData.h listed {805896, 1} for ascension_scaling_base (AscensionScalingBase.cpp:52) while AscensionVenomancerVenomBaseValues (AscensionVenomancerVenomPayloads.cpp:87-89) applies the identical polynomial to the same effect, and ScriptMgr::ModifySpellEffectBaseValue (ScriptDefines/UnitScript.cpp:68-73) runs every registered UnitScript against the same value reference. The squared curve gives 0.138 at level 1, truncated to 0, so the debuff applied and ticked for nothing; the error vanishes towards level 60 where the curve approaches 1. The same pair covered Nourishing Venom's heal payload 630869, which AscensionScalingBaseData.h listed at the identical index and which IsPeriodicBase is the only other spell to match. This scenario fails on the doubled curve and passes once the two generic rows are removed.",
+  "timeout_ms": 90000,
+  "players": [
+    {
+      "id": "venomancer",
+      "race": 1,
+      "class": 29,
+      "level": 1
+    }
+  ],
+  "location": {
+    "map": 0,
+    "x": -8917.41,
+    "y": -115.853,
+    "z": 82.3711,
+    "o": 0
+  },
+  "creatures": [
+    {
+      "id": "victim",
+      "owner": "venomancer",
+      "entry": 36,
+      "level": 1,
+      "health": 100000,
+      "distance": 3
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "label": "Let spawn AI and level scaling settle",
+      "ms": 5000
+    },
+    {
+      "action": "learn",
+      "actor": "venomancer",
+      "spell": 805896
+    },
+    {
+      "action": "cast",
+      "actor": "venomancer",
+      "spell": 805896,
+      "target": "victim"
+    },
+    {
+      "action": "assert",
+      "label": "Blight Venom applies its periodic damage aura",
+      "actor": "victim",
+      "metric": "aura",
+      "spell": 805896,
+      "equals": 1,
+      "within_ms": 2000
+    },
+    {
+      "action": "assert",
+      "label": "The tick carries the level curve once: 4 damage per second at level 1",
+      "actor": "victim",
+      "metric": "aura_amount",
+      "spell": 805896,
+      "effect": 0,
+      "equals": 4
+    }
+  ]
+}

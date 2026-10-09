@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "name": "Traveling summons: a following summon travels with its master through teleports",
+  "contract": "A summon that follows its master (here the Necromancer's Crypt Fiend 50323 from Raise: Crypt Fiend 504859 and the three Skeletons 50076 one Raise: Skeletons 500330 creates) stays at the master's side through a teleport: within the map it is moved next to the destination, and to another map it is summoned there again with its health and power, because a creature cannot change maps and the old map removes every controlled unit. Pets keep their own core handling. Stationary summons such as turrets and totems stay where they were placed.",
+  "timeout_ms": 120000,
+  "players": [
+    {
+      "id": "n",
+      "race": 5,
+      "class": 23,
+      "level": 30
+    },
+    {
+      "id": "t",
+      "race": 1,
+      "class": 28,
+      "level": 30
+    }
+  ],
+  "location": {
+    "map": 0,
+    "x": -8917.41,
+    "y": -115.853,
+    "z": 82.3711,
+    "o": 0
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "label": "Let spawn AI and the Life Force aura settle",
+      "ms": 3000
+    },
+    {
+      "action": "learn",
+      "actor": "n",
+      "spell": 504859
+    },
+    {
+      "action": "cast",
+      "label": "Raise: Crypt Fiend",
+      "actor": "n",
+      "spell": 504859
+    },
+    {
+      "action": "assert",
+      "label": "SETUP: the Crypt Fiend is raised",
+      "actor": "n",
+      "metric": "owned_creature_count",
+      "entry": 50323,
+      "equals": 1,
+      "within_ms": 8000
+    },
+    {
+      "action": "wait",
+      "label": "Let it take its place in the formation",
+      "ms": 2000
+    },
+    {
+      "action": "learn",
+      "actor": "n",
+      "spell": 500330
+    },
+    {
+      "action": "cast",
+      "label": "Raise: Skeletons, three at once",
+      "actor": "n",
+      "spell": 500330
+    },
+    {
+      "action": "assert",
+      "label": "SETUP: three Skeletons are raised",
+      "actor": "n",
+      "metric": "owned_creature_count",
+      "entry": 50076,
+      "equals": 3,
+      "within_ms": 8000
+    },
+    {
+      "action": "learn",
+      "actor": "t",
+      "spell": 500239
+    },
+    {
+      "action": "cast",
+      "label": "Build: Sentry Turret",
+      "actor": "t",
+      "spell": 500239
+    },
+    {
+      "action": "assert",
+      "label": "SETUP: the Sentry Turret stands",
+      "actor": "t",
+      "metric": "owned_creature_count",
+      "entry": 50046,
+      "equals": 1,
+      "within_ms": 5000
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "teleport",
+      "label": "Teleport across Elwynn Forest, beyond the minion's sight",
+      "actor": "n",
+      "map": 0,
+      "x": -9449.0,
+      "y": 64.0,
+      "z": 56.6,
+      "o": 0
+    },
+    {
+      "action": "teleport",
+      "label": "The Tinker teleports across Elwynn as well",
+      "actor": "t",
+      "map": 0,
+      "x": -9449.0,
+      "y": 64.0,
+      "z": 56.6,
+      "o": 0
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: a teleport within the map brings the Crypt Fiend along",
+      "actor": "n",
+      "metric": "nearby_creature_count",
+      "entry": 50323,
+      "equals": 1,
+      "within_ms": 5000
+    },
+    {
+      "action": "assert",
+      "label": "CONTROL: the Sentry Turret is stationary and stays where it was built",
+      "actor": "t",
+      "metric": "nearby_creature_count",
+      "entry": 50046,
+      "equals": 0,
+      "within_ms": 3000
+    },
+    {
+      "action": "teleport",
+      "label": "Teleport to Durotar on Kalimdor, another map",
+      "actor": "n",
+      "map": 1,
+      "x": 1629.4,
+      "y": -4373.4,
+      "z": 31.3,
+      "o": 0
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: the Crypt Fiend arrives on the new map with its master",
+      "actor": "n",
+      "metric": "owned_creature_count",
+      "entry": 50323,
+      "equals": 1,
+      "within_ms": 8000
+    },
+    {
+      "action": "assert",
+      "label": "and only once",
+      "actor": "n",
+      "metric": "nearby_creature_count",
+      "entry": 50323,
+      "equals": 1
+    },
+    {
+      "action": "assert",
+      "label": "All three Skeletons arrive as well, no more and no fewer",
+      "actor": "n",
+      "metric": "owned_creature_count",
+      "entry": 50076,
+      "equals": 3,
+      "within_ms": 8000
+    },
+    {
+      "action": "teleport",
+      "label": "Step 80 yards away on Kalimdor",
+      "actor": "n",
+      "map": 1,
+      "x": 1629.4,
+      "y": -4293.4,
+      "z": 31.3,
+      "o": 0
+    },
+    {
+      "action": "assert",
+      "label": "The arrived Crypt Fiend still follows its master",
+      "actor": "n",
+      "metric": "nearby_creature_count",
+      "entry": 50323,
+      "equals": 1,
+      "within_ms": 15000
+    }
+  ]
+}

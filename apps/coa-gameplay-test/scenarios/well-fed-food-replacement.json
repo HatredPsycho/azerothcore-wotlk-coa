@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Well Fed replacement through custom and stock food consumption",
-  "contract": "Only the latest Well Fed grants bonuses; eating custom or stock food preserves unrelated buffs.",
+  "contract": "Only the latest Well Fed grants bonuses; eating custom or stock food preserves unrelated buffs. The human warrior's Spirit carries The Human Spirit's +3% and is rounded, so the egg's +2 Spirit shows as +3 (50 * 1.03 = 51.5 -> 52 against 48 * 1.03 = 49.44 -> 49).",
   "timeout_ms": 180000,
   "players": [
     { "id": "eater", "race": 1, "class": 1, "level": 60 }
@@ -134,7 +134,7 @@
     },
     {
       "action": "assert", "actor": "eater", "metric": "stat", "stat": 4,
-      "relative_to": "spirit", "equals": 2
+      "relative_to": "spirit", "equals": 3
     },
     {
       "action": "assert", "actor": "eater", "metric": "combat_rating", "rating": 23,

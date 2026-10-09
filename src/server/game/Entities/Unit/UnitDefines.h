@@ -92,6 +92,8 @@ enum ShapeshiftForm
     FORM_TEST                           = 0x14,
     FORM_ZOMBIE                         = 0x15,
     FORM_METAMORPHOSIS                  = 0x16,
+    FORM_COA_23                         = 0x17,
+    FORM_COA_24                         = 0x18,
     FORM_UNDEAD                         = 0x19,
     FORM_MASTER_ANGLER                  = 0x1A,
     FORM_FLIGHT_EPIC                    = 0x1B,
@@ -100,9 +102,25 @@ enum ShapeshiftForm
     FORM_STEALTH                        = 0x1E,
     FORM_MOONKIN                        = 0x1F,
     FORM_SPIRITOFREDEMPTION             = 0x20,
+    FORM_COA_33                         = 0x21,
+    FORM_COA_34                         = 0x22,
+    FORM_GUARDIAN_LINE_FORMATION        = 0x23,
+    FORM_GUARDIAN_TOWER_FORMATION       = 0x24,
+    FORM_GUARDIAN_ASSAULT_FORMATION     = 0x25,
+    FORM_COA_38                         = 0x26,
+    FORM_COA_40                         = 0x28,
+    FORM_VENOMANCER_WING                = 0x2F,
+    FORM_COA_48                         = 0x30,
     FORM_TINKER_MECHSUIT                = 0x31,
+    FORM_NECROMANCER_LICH               = 0x32,
     FORM_VENOMANCER_SPIDER              = 0x34,
-    FORM_VENOMANCER_BEETLE              = 0x35
+    FORM_VENOMANCER_BEETLE              = 0x35,
+    FORM_VENOMANCER_WEAVER              = 0x36,
+    FORM_FELSWORN_INNER_DEMON           = 0x38,
+    FORM_BLOODMAGE_ACCURSED             = 0x39,
+    FORM_COA_59                         = 0x3B,
+    FORM_COA_61                         = 0x3D,
+    FORM_VENOMANCER_VIZIER              = 0x3E
 };
 
 enum ShapeshiftFlags

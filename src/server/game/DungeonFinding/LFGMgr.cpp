@@ -603,6 +603,56 @@ namespace lfg
        @param[in]     dungeons Dungeons the player/group is applying for
        @param[in]     comment Player selected comment
     */
+    /// A client that offers a random dungeon but sends the dungeons behind it instead of the random
+    /// entry itself leaves the player queued for a list of ordinary dungeons - which is exactly what
+    /// it looks like, so no reward is ever paid for a run the player chose as random. The Ascension
+    /// client does this: picking "Random Classic Dungeon" arrives here as its dungeons, each marked
+    /// as an ordinary one, with nothing in the packet still calling it random.
+    ///
+    /// A selection is read as the random entry only when it is all of it. "All of it" is what the
+    /// client could have offered: the dungeons of that random the player may enter and whose own
+    /// level range holds them. The second half matters because a realm that scales content unlocks
+    /// dungeons below their authored level, which the client knows nothing about, and the first
+    /// because a dungeon the server could not load an entrance for is offered by the client and is
+    /// not in the group at all. Picking a few by hand stays a choice of a few dungeons.
+    void LFGMgr::CollapseExpandedRandomDungeon(Player* player, LfgDungeonSet& dungeons)
+    {
+        if (!player || dungeons.size() < 2)
+            return;
+
+        uint8 const level = player->GetLevel();
+        LfgLockMap const& locks = GetLockedDungeons(player->GetGUID());
+
+        for (uint32 randomEntry : GetRandomAndSeasonalDungeons(level, player->GetSession()->Expansion()))
+        {
+            uint32 const randomId = randomEntry & 0x00FFFFFF;
+            LfgDungeonSet const& group = GetDungeonsByRandom(randomId);
+
+            LfgDungeonSet offered;
+            for (uint32 dungeonId : group)
+            {
+                LFGDungeonData const* dungeon = GetLFGDungeon(dungeonId);
+                if (dungeon && level >= dungeon->minlevel && level <= dungeon->maxlevel &&
+                    locks.find(dungeon->Entry()) == locks.end())
+                    offered.insert(dungeonId);
+            }
+
+            LfgDungeonSet submittedFromGroup;
+            for (uint32 dungeonId : dungeons)
+                if (group.find(dungeonId) != group.end())
+                    submittedFromGroup.insert(dungeonId);
+
+            if (offered.size() < 2 || offered != submittedFromGroup)
+                continue;
+
+            LOG_DEBUG("lfg", "LFGMgr::JoinLfg: [{}] submitted all {} dungeons random {} offers; reading it as that random.",
+                      player->GetGUID().ToString(), offered.size(), randomId);
+
+            dungeons.clear();
+            dungeons.insert(randomId);
+            return;
+        }
+    }
     void LFGMgr::JoinLfg(Player* player, uint8 roles, LfgDungeonSet& dungeons, std::string const& comment)
     {
         if (!player || dungeons.empty())
@@ -618,6 +668,8 @@ namespace lfg
 
         if (grp && (grp->isBGGroup() || grp->isBFGroup()))
             return;
+
+        CollapseExpandedRandomDungeon(player, dungeons);
 
         if (!sScriptMgr->OnPlayerCanJoinLfg(player, roles, dungeons, comment))
             return;
@@ -2932,9 +2984,19 @@ namespace lfg
 
     void LFGMgr::SetupGroupMember(ObjectGuid guid, ObjectGuid gguid)
     {
-        LfgDungeonSet dungeons;
-        dungeons.insert(GetDungeon(gguid));
-        SetSelectedDungeons(guid, dungeons);
+        // What a member queued with is what FinishDungeon pays them for, and only a random entry
+        // pays at all. Replacing it with the concrete dungeon the group ended up in takes that
+        // reward away: before the group has a dungeon this wrote a zero, which is what everyone
+        // added while the group was still being formed received, and afterwards it wrote the
+        // dungeon itself. A member who asked for a random dungeon keeps asking for one.
+        uint32 const dungeonId = GetDungeon(gguid);
+        if (dungeonId && !selectedRandomLfgDungeon(guid))
+        {
+            LfgDungeonSet dungeons;
+            dungeons.insert(dungeonId);
+            SetSelectedDungeons(guid, dungeons);
+        }
+
         SetState(guid, GetState(gguid));
         SetGroup(guid, gguid);
         AddPlayerToGroup(gguid, guid);

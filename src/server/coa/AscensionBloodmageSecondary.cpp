@@ -6,7 +6,6 @@
 #include "ScriptMgr.h"
 #include "Spell.h"
 #include "SpellAuraEffects.h"
-#include "SpellAuraEffects.h"
 #include "SpellAuras.h"
 #include "SpellMgr.h"
 #include "SpellScript.h"
@@ -63,6 +62,13 @@ enum BloodmageSecondarySpells : uint32
     SPELL_CURSED_FORM_REQUIREMENT_2 = 524861,
     SPELL_VAMPIRIC_FANG_SHARE = 572373,
     SPELL_VAMPIRIC_FANG_HEAL = 572374,
+    SPELL_VAMPIRIC_HUNGER = 802316,
+    SPELL_VAMPIRIC_HUNGER_ENRAGE = 504270,
+    SPELL_AORTIC_AEGIS = 704637,
+    SPELL_AORTIC_AEGIS_HEAL = 681029,
+    SPELL_FINGER_OF_DEATH = 806178,
+    SPELL_SHATTERED = 804447,
+    SPELL_TALDARAM_TORMENT = 800772,
     SPELL_RUNNING_WILD = 800175,
     SPELL_RUNNING_WILD_JOURNEYMAN = 520575,
     SPELL_BITE_WOUND = 706654,
@@ -327,6 +333,18 @@ public:
             spell->SetScriptValue(SPELL_ROTCLAW_ENERGIZE, 1);
             player->CastSpell(player, SPELL_ROTCLAW_ENERGIZE, true);
         }
+        if (id == SPELL_FINGER_OF_DEATH && !spell->GetScriptValue(SPELL_SHATTERED))
+        {
+            spell->SetScriptValue(SPELL_SHATTERED, 1);
+            player->CastSpell(target, SPELL_SHATTERED, true);
+            for (auto const& pair : target->GetAppliedAuras())
+            {
+                Aura* torment = pair.second->GetBase();
+                if (RankOf(torment->GetId(), SPELL_TALDARAM_TORMENT) &&
+                    torment->GetCasterGUID() == player->GetGUID())
+                    torment->RefreshDuration();
+            }
+        }
         if (RankOf(id, SPELL_LUNGE) && !spell->GetScriptValue(SPELL_LUNGE_ENERGIZE))
         {
             spell->SetScriptValue(SPELL_LUNGE_ENERGIZE, 1);
@@ -339,7 +357,11 @@ public:
             bool extendTransgression = player->HasAura(SPELL_TORTURE) && thirst &&
                 thirst->GetStackAmount() >= TORTURE_MINIMUM_THIRST_STACKS;
             if (damage)
-                Unit::DealHeal(player, player, damage);
+            {
+                SpellInfo const* fang = spell->GetSpellInfo();
+                HealInfo healInfo(player, player, damage, fang, fang->GetSchoolMask());
+                player->HealBySpell(healInfo);
+            }
             player->RemoveAurasDueToSpell(SPELL_BLOOD_THIRST);
             player->RemoveAurasDueToSpell(SPELL_INSATIABLE);
             player->RemoveAurasDueToSpell(SPELL_INSATIABLE_STACK);
@@ -747,6 +769,54 @@ class spell_ascension_bloodmage_excision : public SpellScript
     }
 };
 
+Player* ExpiringBloodmage(AuraScript* script)
+{
+    if (script->GetTargetApplication()->GetRemoveMode() != AURA_REMOVE_BY_EXPIRE)
+        return nullptr;
+    Unit* caster = script->GetCaster();
+    Player* player = caster ? caster->ToPlayer() : nullptr;
+    return player && player->getClass() == CLASS_SON_OF_ARUGAL ? player : nullptr;
+}
+
+class aura_ascension_bloodmage_blood_veil : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_bloodmage_blood_veil);
+
+    void Enrage(AuraEffect const*, AuraEffectHandleModes)
+    {
+        Player* player = ExpiringBloodmage(this);
+        Unit* target = GetTarget();
+        if (!player || !target || !player->HasAura(SPELL_VAMPIRIC_HUNGER))
+            return;
+        player->CastSpell(target, SPELL_VAMPIRIC_HUNGER_ENRAGE, true);
+    }
+
+    void Register() override
+    {
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_blood_veil::Enrage,
+            EFFECT_0, SPELL_AURA_SCHOOL_ABSORB, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
+class aura_ascension_bloodmage_darkfallen_lament : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_bloodmage_darkfallen_lament);
+
+    void Heal(AuraEffect const*, AuraEffectHandleModes)
+    {
+        Player* player = ExpiringBloodmage(this);
+        if (!player || !player->HasAura(SPELL_AORTIC_AEGIS))
+            return;
+        player->CastSpell(player, SPELL_AORTIC_AEGIS_HEAL, true);
+    }
+
+    void Register() override
+    {
+        AfterEffectRemove += AuraEffectRemoveFn(aura_ascension_bloodmage_darkfallen_lament::Heal,
+            EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
 void SyncRunningWildJourneyman(Player* player)
 {
     bool const runningWild = player->HasSpell(SPELL_RUNNING_WILD);
@@ -797,5 +867,7 @@ void AddSC_AscensionBloodmageSecondary()
     RegisterSpellScript(spell_ascension_bloodmage_hemal_excision);
     RegisterSpellScript(aura_ascension_bloodmage_hemal_excision);
     RegisterSpellScript(spell_ascension_bloodmage_excision);
+    RegisterSpellScript(aura_ascension_bloodmage_blood_veil);
+    RegisterSpellScript(aura_ascension_bloodmage_darkfallen_lament);
     new bloodmage_running_wild_journeyman();
 }

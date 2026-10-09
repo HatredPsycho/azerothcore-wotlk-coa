@@ -268,6 +268,7 @@ public:
 class spell_ascension_venomancer_ability : public SpellScript
 {
     PrepareSpellScript(spell_ascension_venomancer_ability);
+    Unit* HitUnit() { return IsInTargetHook() ? GetHitUnit() : nullptr; }
     bool performed = false;
     void Effect(SpellEffIndex index)
     {
@@ -275,7 +276,7 @@ class spell_ascension_venomancer_ability : public SpellScript
         if (!player)
             return;
         uint32 id = GetSpellInfo()->Id;
-        Unit* target = IsInTargetHook() ? GetHitUnit() : nullptr;
+        Unit* target = HitUnit();
         if (GetSpellInfo()->Effects[index].Effect != SPELL_EFFECT_DUMMY)
             return;
         PreventHitDefaultEffect(index);
