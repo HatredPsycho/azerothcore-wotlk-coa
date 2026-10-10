@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Finishing a level 60 Dungeon Finder dungeon rewards the Classic Random 56-60 completion (#6326)",
-  "contract": "At level 60 the Dungeon Finder offers Random Classic Dungeon (its maximum level is raised to the level cap). Finishing the final boss of the assigned level 60 dungeon, Blackrock Depths - Prison, pays every member the Classic Random 56-60 completion quest and its Adventurer's Cache.",
+  "contract": "At level 60 the Dungeon Finder offers Random Classic Dungeon (its maximum level is raised to the level cap). Finishing the final encounter of the assigned level 60 dungeon, Blackrock Depths - Prison, which is the Ring of Law (credited through High Justice Grimstone 10096; rev_20261009_81 moved it there from High Interrogator Gerstahn, as on Heroic and Mythic), pays every member the Classic Random 56-60 completion quest and its Adventurer's Cache.",
   "timeout_ms": 120000,
   "location": {
     "map": 0,
@@ -134,9 +134,9 @@
     },
     {
       "action": "encounter_credit",
-      "label": "High Interrogator Gerstahn, final boss of Blackrock Depths - Prison, is credited",
+      "label": "The Ring of Law, final encounter of Blackrock Depths - Prison, is credited",
       "actor": "p1",
-      "entry": 9018
+      "entry": 10096
     },
     {
       "action": "assert",
