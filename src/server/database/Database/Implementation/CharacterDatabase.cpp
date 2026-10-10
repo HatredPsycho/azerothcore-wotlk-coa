@@ -16,12 +16,36 @@
  */
 
 #include "CharacterDatabase.h"
+#include "Config.h"
 #include "MySQLPreparedStatement.h"
 
 void CharacterDatabaseConnection::DoPrepareStatements()
 {
     if (!m_reconnecting)
         m_stmts.resize(MAX_CHARACTERDATABASE_STATEMENTS);
+
+    if (sConfigMgr->GetOption<bool>("CoAChallenges.AutoCreateSchema", false))
+        Execute(
+            "CREATE TABLE IF NOT EXISTS coa_account_challenge_completion ("
+            "account INT UNSIGNED NOT NULL, "
+            "challengeId INT UNSIGNED NOT NULL, "
+            "level INT UNSIGNED NOT NULL DEFAULT 1, "
+            "completeTime INT UNSIGNED NOT NULL DEFAULT 0, "
+            "startTime INT UNSIGNED NOT NULL DEFAULT 0, "
+            "PRIMARY KEY (account, challengeId, level)) "
+            "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    PrepareStatement(CHAR_SEL_COA_ACCOUNT_CHALLENGE_COMPLETION,
+        "SELECT 1 FROM coa_account_challenge_completion WHERE account = ? AND challengeId = ? AND level = ? LIMIT 1",
+        CONNECTION_SYNCH);
+    PrepareStatement(CHAR_SEL_COA_ACCOUNT_CHALLENGE_COMPLETIONS,
+        "SELECT challengeId, level, startTime, completeTime FROM coa_account_challenge_completion WHERE account = ?",
+        CONNECTION_SYNCH);
+    PrepareStatement(CHAR_INS_COA_ACCOUNT_CHALLENGE_COMPLETION,
+        "INSERT IGNORE INTO coa_account_challenge_completion (account, challengeId, level, completeTime, startTime) "
+        "VALUES (?, ?, ?, UNIX_TIMESTAMP(), ?)", CONNECTION_SYNCH);
+    PrepareStatement(CHAR_DEL_COA_ACCOUNT_CHALLENGE_COMPLETIONS,
+        "DELETE FROM coa_account_challenge_completion WHERE account = ?", CONNECTION_SYNCH);
 
     PrepareStatement(CHAR_INS_ACCOUNT_VANITY_COLLECTION,
         "INSERT IGNORE INTO account_vanity_collection (account_id, item_id) VALUES (?, ?)", CONNECTION_ASYNC);
@@ -764,6 +788,11 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_DEL_MANASTORM_CACHE_ITEMS, "DELETE ii FROM item_instance ii INNER JOIN ascension_manastorm_cache mc ON mc.item = ii.guid AND mc.guid = ii.owner_guid WHERE mc.guid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_INS_MANASTORM_CACHE_INVENTORY, "INSERT INTO character_inventory (guid, bag, slot, item) VALUES (?, ?, ?, ?)", CONNECTION_ASYNC);
     PrepareStatement(CHAR_SEL_MANASTORM_INVENTORY_ITEM, "SELECT COUNT(*) FROM character_inventory ci INNER JOIN item_instance ii ON ii.guid = ci.item AND ii.owner_guid = ci.guid WHERE ci.guid = ? AND ci.item = ?", CONNECTION_SYNCH);
+
+    PrepareStatement(CHAR_REP_APPEARANCE_OUTFIT,
+        "REPLACE INTO character_appearance_outfit (guid, name, appearances) VALUES (?, ?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_DEL_APPEARANCE_OUTFIT,
+        "DELETE FROM character_appearance_outfit WHERE guid = ? AND name = ?", CONNECTION_ASYNC);
 
     PrepareStatement(CHAR_INS_PLAYER_ANTICHEAT_ALERT, "INSERT INTO player_anticheat_alert (account, guid, name, reason, details, size) VALUES (?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
 }

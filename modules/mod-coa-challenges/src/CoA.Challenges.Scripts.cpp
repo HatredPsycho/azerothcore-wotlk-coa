@@ -5,12 +5,18 @@
 #include "KillRewarder.h"
 #include "Random.h"
 #include "AllCreatureScript.h"
+#include "AccountScript.h"
 #include "LocalLevelScaling.h"
 
 using namespace Acore::ChatCommands;
 
 namespace CoAChallenges
 {
+
+    bool UsesCoreProfessionXP(Player* player)
+    {
+        return player && ActiveChallenges(player->GetGUID().GetCounter()).contains(167);
+    }
 
     // Heal-path helpers (defined below, used by HealBlocked earlier in this TU).
     void AllowBandageHeal(uint32 guid);
@@ -1616,7 +1622,8 @@ namespace CoAChallenges
         {
             if (PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_PROFESSION_EXPERIENCE"))
                 gain = 0;
-            if (player && PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS"))
+            if (player && PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS")
+                && !UsesCoreProfessionXP(player))
             {
                 std::lock_guard<std::mutex> lock(CraftRarityMutex);
                 CraftRarity[player->GetGUID().GetCounter()] = CraftedItemRarity(skill);
@@ -1627,7 +1634,8 @@ namespace CoAChallenges
         {
             if (PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_PROFESSION_EXPERIENCE"))
                 gain = 0;
-            if (player && PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS"))
+            if (player && PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS")
+                && !UsesCoreProfessionXP(player))
             {
                 // Gathering has no crafted item: flat XP, also clears a stale
                 // craft entry from a failed skill-up roll.
@@ -1653,6 +1661,8 @@ namespace CoAChallenges
             if (!player || !IsProfessionSkill(skillId))
                 return;
             if (!PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS"))
+                return;
+            if (UsesCoreProfessionXP(player))
                 return;
             uint32 mult = 1;
             {
@@ -1746,10 +1756,9 @@ namespace CoAChallenges
             }
             else if (PlayerHasRule(player, "CHALLENGE_RULES_TYPE_NO_EXPERIENCE_EXCEPT_PROFESSIONS"))
             {
-                // A skill-up reaches the hook from the core as XPSOURCE_PROFESSION;
-                // the group share this module grants uses XPSOURCE_PROFESSION_SKILL.
-                // Both are profession experience, so both have to pass the rule.
-                if (xpSource != XPSOURCE_PROFESSION && xpSource != XPSOURCE_PROFESSION_SKILL)
+                uint8 const professionSource = UsesCoreProfessionXP(player)
+                    ? XPSOURCE_PROFESSION : XPSOURCE_PROFESSION_SKILL;
+                if (xpSource != professionSource)
                     amount = 0;
             }
 
@@ -2977,7 +2986,7 @@ namespace CoAChallenges
                 handler->PSendSysMessage("Listed only (no online player; usage: .coa reward <id> [level] [player]).");
                 return true;
             }
-            GrantChallengeRewards(p, challengeId, lvl, true);
+            GrantChallengeRewards(p, challengeId, lvl, true, true);
             handler->PSendSysMessage("Delivered to {} (check the mailbox / achievements).", p->GetName());
             return true;
         }
@@ -3715,12 +3724,6 @@ namespace CoAChallenges
         // Gate is Unit::_IsValidAttackTarget (both melee and spells). Pets/
         // guardians are resolved to their owner. Battlegrounds/arenas keep their
         // own rules (only the open world is restricted).
-        //
-        // This hook is a predicate, not an action: the core evaluates it for every
-        // target validity question - area target selection, threat and range checks,
-        // each swing - so merely standing near another player runs it many times a
-        // second. It must therefore never send the player a message; a refusal that
-        // explains itself here reads as a chat flood.
         bool CanUnitAttack(Unit const* attacker, Unit const* target, SpellInfo const* /*spell*/) override
         {
             if (!attacker || !target)
@@ -3792,6 +3795,9 @@ namespace CoAChallenges
                 if (a->IsMaxLevel() != t->IsMaxLevel())
                     blocked = true;
             }
+            if (blocked && a->GetSession())
+                NotifyPlayer(a,
+                    "Your challenge restricts who you may fight in PvP.");
             return !blocked;
         }
 
@@ -3868,6 +3874,19 @@ namespace CoAChallenges
         }
     };
 
+    class CoAChallengesAccount : public AccountScript
+    {
+    public:
+        CoAChallengesAccount() : AccountScript("CoAChallengesAccount", { ACCOUNTHOOK_ON_BEFORE_ACCOUNT_DELETE }) { }
+
+        void OnBeforeAccountDelete(uint32 account) override
+        {
+            auto* statement = CharacterDatabase.GetPreparedStatement(CHAR_DEL_COA_ACCOUNT_CHALLENGE_COMPLETIONS);
+            statement->SetData(0, account);
+            CharacterDatabase.DirectExecute(statement);
+        }
+    };
+
     class CoAChallengesAllCreature : public AllCreatureScript
     {
     public:
@@ -3903,4 +3922,5 @@ void Addmod_coa_challengesScripts()
     new CoAChallenges::CoAChallengesGroup();
     new CoAChallenges::CoAChallengesSpells();
     new CoAChallenges::CoAChallengesAllCreature();
+    new CoAChallenges::CoAChallengesAccount();
 }

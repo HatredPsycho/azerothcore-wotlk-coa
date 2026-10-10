@@ -388,7 +388,10 @@ Optional `ascension_client: true` marks the socketless session as having negotia
 including its spell modifier packet layout. It defaults to false. This tests server packet construction;
 it does not perform socket authentication or verify delivery to a rendered client.
 Characters are created and loaded through the existing character creation, enumeration and login
-handlers with ordinary player security. Optional `location` supplies `map`, `x`, `y`, `z`, `o` for a fixture
+handlers with ordinary player security. A player may set `account_of` to an earlier player id to share that
+fixture's disposable account; otherwise each player gets its own account. This supports account-wide state
+checks through separate socketless character sessions and does not test simultaneous client authentication.
+Optional `location` supplies `map`, `x`, `y`, `z`, `o` for a fixture
 teleport. `location.ignore_access` optionally bypasses entry requirements for a fixture (for example a solo
 raid test), without enabling GM mode during combat. Actors share their lane's phase (`1 << 30` with one lane) to
 isolate ordinary spawns.
@@ -456,7 +459,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `gossip_hello` | `actor`, optional `target`: native gossip handler; defaults to the actor's summoned companion. |
 | `banker_activate` | `actor`, optional `target`, or optional `owner` + `entry`: native banker click (`CMSG_BANKER_ACTIVATE`); defaults to the actor's summoned companion, and `owner` aims it at a companion another actor summoned, walking up to it first. |
 | `personal_bank_open` | `actor`, bank object `entry`: native Personal Bank open (`CMSG_GUILD_BANKER_ACTIVATE`) on the nearest vault of that entry within 20 yards. |
-| `personal_bank_swap` | `actor`, vault `entry`, `direction` `deposit` or `withdraw`, optional bank `slot` (default 0); `deposit` needs `item`, the first carried item of that entry: native `CMSG_GUILD_BANK_SWAP_ITEMS` into or out of the open Personal Bank. |
+| `personal_bank_swap` | `actor`, vault `entry`, `direction` `deposit` or `withdraw`, optional bank `slot` (default 0) and split `count` (0 moves the stack); `deposit` needs `item`, the first carried item of that entry. Withdrawals optionally take backpack `inventory_slot` (23-38), otherwise use automatic storage. Sends native `CMSG_GUILD_BANK_SWAP_ITEMS` into or out of the open Personal Bank. |
 | `binder_activate` | `actor`, innkeeper `target`: native "make this inn your home" confirmation (`CMSG_BINDER_ACTIVATE`), walking up to the innkeeper first. |
 | `destroy_item` | `actor`, `item`: native `CMSG_DESTROYITEM` of the first carried item of that entry, as the player deleting it. |
 | `area_trigger` | `actor`, `id`: native area-trigger packet, as the client sends on walking into one; inn triggers are what set the rested flag. |
@@ -639,8 +642,9 @@ binds it lists, only those on map `id` when given, or -1 when it carries another
 loot window. `loot_required_level` and `loot_item_level` read those fields from the first matching item.
 These values inspect generated loot through the native item template, without changing it.
 
-`server_packets`, `server_packet_u32` and `server_packet_contains` accept `row` to capture packets whose first
-32-bit field is that value. Selected rows are retained independently of the ordinary 256-payload history limit,
+`server_packets`, `server_packet_u8`, `server_packet_u32` and `server_packet_contains` accept `row` to capture
+packets whose first 32-bit field is that value. Selected rows are retained independently of the ordinary
+256-payload history limit,
 including core opcodes. `server_packets` counts responses for that row; `server_packet_contains` returns 0 or 1
 for text in its latest response. `server_packet_u32` also accepts a byte `offset` and `skip_strings`: skip that many
 null-terminated strings at the offset, then read the 32-bit field at `index` relative to the resulting position.
@@ -720,6 +724,8 @@ reward eligibility and invokes native reward delivery. These actions do not test
 `action_button_packed` takes `button` and reads the complete action word, including its type.
 `server_packet_u32` takes `opcode` and optional zero-based `index`, and decodes a word from the last
 packet payload. It returns -1 when no such word was sent. These observe server state and packet contents.
+`server_packet_u8` uses the same fields to decode a byte, with byte-sized indexes. It can inspect the result
+byte in `SMSG_FRIEND_STATUS` (104) after a native `CMSG_ADD_FRIEND` (105) request.
 `server_packet_float` uses the same fields to decode a finite IEEE 754 float. With `from_end: true`,
 `index: 0` reads the last float and `index: 1` the preceding float, independent of a packed GUID's size.
 The recorded core packets include duel request (359), countdown (695) and completion (362), and
@@ -879,6 +885,8 @@ last creature query response delivered to that session, or -1 before one arrives
 and query the native quest level and XP calculations without awarding a reward.
 `quest_log_sent_level` and `quest_log_sent_xp` take the same arguments and return the last level or reward XP
 sent for that quest's log slot in `SMSG_UPDATE_OBJECT_ADDON` (fields 61 and 36 + slot), or -1 before one arrives.
+`quest_offer_sent_xp` reads the reward XP in the last native `SMSG_QUESTGIVER_OFFER_REWARD` for that quest,
+or -1 before the session receives a reward offer.
 `quest_query_scaled` takes the same arguments and returns 1 when the last quest query response for that quest
 carried the client's scaled-quest flag `0x01000000`, 0 when it did not, or -1 before one arrives.
 `quest_query_reward_choice` takes the same arguments and returns the first choice reward item id in the last quest
