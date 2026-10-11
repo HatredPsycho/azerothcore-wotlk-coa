@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "name": "An Echo of Nozdormu button is saved as Explode (#5469)",
-  "contract": "Echo of Nozdormu 520937 ('Transforms your Explode into Echo of Nozdormu. @s:802174') is a passive bound to aura_ascension_pyromancer_lifecycle, whose apply calls AscensionPyromancer::Refresh (AscensionPyromancerAuras.cpp:54-55); Refresh also runs periodically. While the aura is active, Refresh learns every PyromancerEchoRanks entry with SpellLevel at or below the player's level with learnSpell(..., true) (AscensionPyromancer.cpp:366-369) and replaces every known Explode rank (chain of 800792) with the highest learned Echo rank through SetTemporarySpellReplacement (lines 370-372). At level 15 that is only Echo of Nozdormu rank 1 802174 (SpellLevel 11; rank 2 803407 is level 18). 802174 is never written to character_spell, so a button holding it must be saved as Explode 800792, the spell persisted_action_button reads from Player::GetSavedActionButtonSpell; a button holding Explode itself is saved unchanged.",
+  "name": "An Echo of Nozdormu button is saved as Echo of Nozdormu (#5469)",
+  "contract": "Echo of Nozdormu 520937 ('Transforms your Explode into Echo of Nozdormu. @s:802174') is a passive bound to aura_ascension_pyromancer_lifecycle, whose apply calls AscensionPyromancer::Refresh (AscensionPyromancerAuras.cpp:54-55); Refresh also runs periodically. While the aura is active, Refresh learns every PyromancerEchoRanks entry with SpellLevel at or below the player's level with learnSpell(..., true) (AscensionPyromancer.cpp:366-369) and replaces every known Explode rank (chain of 800792) with the highest learned Echo rank through SetTemporarySpellReplacement (lines 370-372). At level 15 that is only Echo of Nozdormu rank 1 802174 (SpellLevel 11; rank 2 803407 is level 18). 802174 is never written to character_spell, so a button holding it must be saved as Explode 800792, the spell persisted_action_button reads from Player::GetSavedActionButtonSpell; a button holding Explode itself is saved unchanged. Since #7208 Refresh learns the Echo ranks with learnSpell(id), so 802174 is written to character_spell and AscensionPyromancer::SyncActionBars keeps Echo of Nozdormu on the bars; the button holding it is therefore saved as 802174. Refresh runs whenever the conversion aura is applied and then turns an Explode button into Echo of Nozdormu as well, so after the aura is applied again the former Explode button is saved as 802174.",
   "timeout_ms": 60000,
   "players": [
     { "id": "pyro", "race": 1, "class": 24, "level": 15 }
@@ -31,19 +31,20 @@
     },
     {
       "action": "assert",
-      "label": "The Echo of Nozdormu button is saved as Explode",
+      "label": "The Echo of Nozdormu button is saved as Echo of Nozdormu",
       "actor": "pyro",
       "metric": "persisted_action_button",
       "button": 2,
-      "equals": 800792
+      "equals": 802174
     },
+    {"action": "set_aura", "label": "Apply the conversion again so Refresh runs", "actor": "pyro", "spell": 520937, "stacks": 1},
     {
       "action": "assert",
-      "label": "Control: the Explode button is saved unchanged",
+      "label": "While the conversion is up, Refresh puts Echo of Nozdormu on the Explode button too",
       "actor": "pyro",
       "metric": "persisted_action_button",
       "button": 3,
-      "equals": 800792
+      "equals": 802174
     }
   ]
 }

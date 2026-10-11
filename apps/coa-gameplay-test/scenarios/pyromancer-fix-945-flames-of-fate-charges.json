@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Pyromancer Flames of Fate gives Aspect's Blessing extra charges (#945)",
-  "contract": "Flames of Fate 707325 reads \"Your Aspect's Blessing now affects $s1 additional casts of Echo of Nozdormu, but its cooldown is doubled, and its mana cost is increased by $s3%.\" Its effects on class mask 0x20 (Aspect's Blessing 802168) are SPELLMOD_CHARGES +2 (BasePoints 1), SPELLMOD_COOLDOWN +60000 ms (BasePoints 59999) and SPELLMOD_COST +50%. Aspect's Blessing has DBC ProcCharges 0 and RecoveryTime 60000, so the native mod gives it 2 charges and a 120000 ms cooldown. Before the fix Finish() in AscensionPyromancerAbilities.cpp removed the aura after every consuming cast (only 524707 decremented charges), so it vanished after the first Echo of Nozdormu and the second charge was never usable. The expected charge count is the DBC-derived 2; a maintainer could read '2 additional casts' as 3 total, which the DBC does not support.",
+  "contract": "Flames of Fate 707325 reads \"Your Aspect's Blessing now affects $s1 additional casts of Echo of Nozdormu, but its cooldown is doubled, and its mana cost is increased by $s3%.\" Its effects on class mask 0x20 (Aspect's Blessing 802168) are SPELLMOD_CHARGES +2 (BasePoints 1), SPELLMOD_COOLDOWN +60000 ms (BasePoints 59999) and SPELLMOD_COST +50%. Aspect's Blessing has DBC ProcCharges 0 and RecoveryTime 60000, so the native mod gives it 2 charges and a 120000 ms cooldown. Before the fix Finish() in AscensionPyromancerAbilities.cpp removed the aura after every consuming cast (only 524707 decremented charges), so it vanished after the first Echo of Nozdormu and the second charge was never usable. The expected charge count is the DBC-derived 2; a maintainer could read '2 additional casts' as 3 total, which the DBC does not support. Echo of Nozdormu ranks are only kept while the Echo conversion aura 520937 is up: since #7208 AscensionPyromancer::Refresh removes learned Echo ranks without it, so the scenario applies the aura before it learns Echo, as the talent does in play.",
   "timeout_ms": 90000,
   "players": [
     {
@@ -27,6 +27,7 @@
       "ms": 5000,
       "label": "Let spawn AI and level scaling settle"
     },
+    {"action": "set_aura", "label": "Echo of Nozdormu conversion, as the talent gives it", "actor": "p", "spell": 520937, "stacks": 1},
     {
       "action": "learn",
       "actor": "p",

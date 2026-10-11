@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Pyromancer: Expediting Power adds 5% to Echo of Nozdormu's Aspect's Blessing cooldown reduction (#1390)",
-  "contract": "Expediting Power 704814 is aura 107 on SPELLMOD_EFFECT2 with base points 4 (+5), tooltip: Echo of Nozdormu reduces the cooldown of Aspect's Blessing by an additional 5%. Echo of Nozdormu 802174 takes 5% off the remaining cooldown of every known spell (AscensionPyromancerAbilities.cpp) and had no term for the talent. Aspect's Blessing 802168 has RecoveryTime 60000. A control Pyromancer without the talent casts the same two spells at the same moment; its Aspect's Blessing loses 5% of the remaining time, the talented one 10%, so the talented cooldown is about 5% of the remaining time (at most 3000 ms) below the control's.",
+  "contract": "Expediting Power 704814 is aura 107 on SPELLMOD_EFFECT2 with base points 4 (+5), tooltip: Echo of Nozdormu reduces the cooldown of Aspect's Blessing by an additional 5%. Echo of Nozdormu 802174 takes 5% off the remaining cooldown of every known spell (AscensionPyromancerAbilities.cpp) and had no term for the talent. Aspect's Blessing 802168 has RecoveryTime 60000. A control Pyromancer without the talent casts the same two spells at the same moment; its Aspect's Blessing loses 5% of the remaining time, the talented one 10%, so the talented cooldown is about 5% of the remaining time (at most 3000 ms) below the control's. Echo of Nozdormu ranks are only kept while the Echo conversion aura 520937 is up: since #7208 AscensionPyromancer::Refresh removes learned Echo ranks without it, so the scenario applies the aura before it learns Echo, as the talent does in play.",
   "timeout_ms": 60000,
   "players": [
     {
@@ -39,6 +39,8 @@
       "label": "Let level scaling settle",
       "ms": 5000
     },
+    {"action": "set_aura", "label": "Echo of Nozdormu conversion, as the talent gives it", "actor": "control", "spell": 520937, "stacks": 1},
+    {"action": "set_aura", "label": "Echo of Nozdormu conversion, as the talent gives it", "actor": "talent", "spell": 520937, "stacks": 1},
     {
       "action": "learn",
       "actor": "control",

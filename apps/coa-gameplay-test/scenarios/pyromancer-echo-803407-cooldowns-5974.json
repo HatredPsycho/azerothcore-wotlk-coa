@@ -5,7 +5,8 @@
     "Original Echo 803407 and shared helper 802804 specify five percent reduction to all spell and ability",
     "cooldowns. The unrelated Draconic Invocation 802119 cooldown must fall by five percent, beyond natural",
     "elapsed time. Normal Echo casts require the authored 807533 readiness marker. This tests the reported higher",
-    "rank without adding a second reduction path."
+    "rank without adding a second reduction path.",
+    "Echo of Nozdormu ranks are only kept while the Echo conversion aura 520937 is up: since #7208 AscensionPyromancer::Refresh removes learned Echo ranks without it, so the scenario applies the aura before it learns Echo, as the talent does in play."
   ],
   "timeout_ms": 60000,
   "players": [
@@ -33,6 +34,7 @@
       "label": "Let spawn AI and level scaling settle",
       "ms": 5000
     },
+    {"action": "set_aura", "label": "Echo of Nozdormu conversion, as the talent gives it", "actor": "pyro", "spell": 520937, "stacks": 1},
     {
       "action": "learn",
       "actor": "pyro",
