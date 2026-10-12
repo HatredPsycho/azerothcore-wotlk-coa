@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: the added races may take the quests of their faction",
+  "contract": [
+    "The CoA Custom races package widens quest_template.AllowableRaces with the bits of the added races; Horde quests carry 1541213106 instead of 690.",
+    "rev_20261012_12 ORs in only the added races' bits (9 and 12-32), so a Skeleton (26, Horde) may take Rude Awakening (363, Deathknell, Horde 690 before) while an Alliance High Elf (14) still may not.",
+    "Player::CanTakeQuest without messages is observed (quest_takeable); the client's quest markers are not rendered."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    { "id": "undead", "race": 5, "class": 12, "level": 1 },
+    { "id": "skeleton", "race": 26, "class": 12, "level": 1 },
+    { "id": "highelf", "race": 14, "class": 12, "level": 1 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the logins settle", "ms": 3000 },
+    { "action": "assert", "label": "CONTROL: an Undead may take Rude Awakening", "actor": "undead", "metric": "quest_takeable", "quest": 363, "equals": 1 },
+    { "action": "assert", "label": "DISCRIMINATING: a Skeleton may take Rude Awakening", "actor": "skeleton", "metric": "quest_takeable", "quest": 363, "equals": 1 },
+    { "action": "assert", "label": "A Skeleton may take Your Place In The World", "actor": "skeleton", "metric": "quest_takeable", "quest": 4641, "equals": 1 },
+    { "action": "assert", "label": "An Alliance High Elf still may not take the Horde quest", "actor": "highelf", "metric": "quest_takeable", "quest": 363, "equals": 0 }
+  ]
+}
