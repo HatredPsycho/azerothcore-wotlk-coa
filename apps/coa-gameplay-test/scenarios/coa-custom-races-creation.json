@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: characters of the added races are created with their model, start and racials",
+  "contract": [
+    "Stage 1 of the CoA Custom races takes the race ids 9 and 12-63 from the CoA Custom 1.5.1 package.",
+    "Needs the package's client-coupled server DBCs (ChrRaces, CharSections, CharStartOutfit, CreatureDisplayInfo, CreatureModelData) in the worldserver's DataDir; without them ChrRaces lacks the added races and creation fails.",
+    "Package ChrRaces gives High Elf (14) male display 15476, Broken (22) 977439 and Void Elf (59) 977445, all Alliance (faction template 1).",
+    "Murloc (30) has no dressable player model: custom_race_display index 0 (hair style 0, skin 0) of the male Murloc is 977392, which InitDisplayIds applies instead of the ChrRaces model.",
+    "rev_20261012_10 starts High Elf in Shadowglen (template race 4, map 1) and Broken in Shadowglen too.",
+    "Every race from 12 up learns its four package racials (spell_dbc 140000xy); Worgen (13) also shares the Night Elf bit in playercreateinfo_skills (raceMask 4104), and learnSkillRewardedSpells must keep the Night Elf racial line (skill 126, Shadowmeld 58984) away from it.",
+    "Native race, display, map and known spells are observed; the client's character screen is not rendered."
+  ],
+  "timeout_ms": 120000,
+  "players": [
+    { "id": "highelf", "race": 14, "class": 12, "level": 1 },
+    { "id": "worgen", "race": 13, "class": 12, "level": 1 },
+    { "id": "broken", "race": 22, "class": 12, "level": 1 },
+    { "id": "murloc", "race": 30, "class": 12, "level": 1 },
+    { "id": "voidelf", "race": 59, "class": 12, "level": 1 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the logins settle", "ms": 3000 },
+    { "action": "assert", "label": "CONTROL: the High Elf is created as race 14", "actor": "highelf", "metric": "race", "equals": 14 },
+    { "action": "assert", "label": "The High Elf wears the ChrRaces male model", "actor": "highelf", "metric": "display_id", "equals": 15476 },
+    { "action": "assert", "label": "The High Elf starts in Kalimdor (Shadowglen)", "actor": "highelf", "metric": "map_id", "equals": 1 },
+    { "action": "assert", "label": "The High Elf knows its first package racial", "actor": "highelf", "metric": "knows_spell", "spell": 14000141, "equals": 1 },
+    { "action": "assert", "label": "The High Elf knows its fourth package racial", "actor": "highelf", "metric": "knows_spell", "spell": 14000144, "equals": 1 },
+    { "action": "assert", "label": "The Worgen knows its own package racial", "actor": "worgen", "metric": "knows_spell", "spell": 14000131, "equals": 1 },
+    { "action": "assert", "label": "DISCRIMINATING: the Worgen does not learn Shadowmeld through the shared Night Elf bit", "actor": "worgen", "metric": "knows_spell", "spell": 58984, "equals": 0 },
+    { "action": "assert", "label": "The Broken wears the package model above 65535", "actor": "broken", "metric": "display_id", "equals": 977439 },
+    { "action": "assert", "label": "The Broken knows its package racial", "actor": "broken", "metric": "knows_spell", "spell": 14000221, "equals": 1 },
+    { "action": "assert", "label": "DISCRIMINATING: the Murloc wears its custom_race_display look, not the ChrRaces model 977435", "actor": "murloc", "metric": "display_id", "equals": 977392 },
+    { "action": "assert", "label": "The Murloc knows its package racial", "actor": "murloc", "metric": "knows_spell", "spell": 14000301, "equals": 1 },
+    { "action": "assert", "label": "The Void Elf (race above 32) wears its model", "actor": "voidelf", "metric": "display_id", "equals": 977445 },
+    { "action": "assert", "label": "The Void Elf knows its package racial by exact race id", "actor": "voidelf", "metric": "knows_spell", "spell": 14000591, "equals": 1 }
+  ]
+}

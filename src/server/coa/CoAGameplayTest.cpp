@@ -3504,6 +3504,12 @@ private:
             Item const* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, uint8(slot));
             return item ? item->GetEntry() : 0;
         }
+        if (metric == "visible_item")
+        {
+            uint32 slot = step.get<uint32>("slot");
+            Require(slot < EQUIPMENT_SLOT_END, "Visible item observation needs a slot from 0 through 18");
+            return player->GetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + slot * 2);
+        }
         if (metric == "item_count")
         {
             uint32 item = step.get<uint32>("item");

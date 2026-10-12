@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: .hidearmor hides the visible armor, keeps it equipped and survives a relog",
+  "contract": [
+    ".hidearmor is part of the CoA Custom races package (1.5.1) and any player may use it.",
+    "It clears the visible-item fields of the armor slots (head, shoulders, shirt, chest, waist, legs, feet, wrists, hands, back, tabard) while the items stay equipped; weapons stay visible.",
+    "The choice is stored in characters.coa_hide_armor and applied again at login; typing the command again shows the armor.",
+    "Native visible-item fields (PLAYER_VISIBLE_ITEM_n_ENTRYID) and equipped items are observed; the client's rendering is not."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    { "id": "p", "race": 1, "class": 12, "level": 10 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the login settle", "ms": 2000 },
+    { "action": "add_item", "label": "Give the chest piece", "actor": "p", "item": 60, "count": 1 },
+    { "action": "equip", "label": "Put on a chest piece", "actor": "p", "item": 60, "slot": 4 },
+    { "action": "wait", "ms": 500 },
+    { "action": "assert", "label": "CONTROL: the chest piece is visible", "actor": "p", "metric": "visible_item", "slot": 4, "equals": 60 },
+    { "action": "command", "label": "Hide the armor", "actor": "p", "command": ".hidearmor" },
+    { "action": "wait", "ms": 500 },
+    { "action": "assert", "label": "DISCRIMINATING: the chest piece is no longer visible", "actor": "p", "metric": "visible_item", "slot": 4, "equals": 0 },
+    { "action": "assert", "label": "The chest piece stays equipped", "actor": "p", "metric": "equipped_item", "slot": 4, "equals": 60 },
+    { "action": "relog", "label": "Log out and back in", "actor": "p" },
+    { "action": "wait", "ms": 2000 },
+    { "action": "assert", "label": "The hidden armor is remembered across the relog", "actor": "p", "metric": "visible_item", "slot": 4, "equals": 0 },
+    { "action": "command", "label": "Show the armor again", "actor": "p", "command": ".hidearmor" },
+    { "action": "wait", "ms": 500 },
+    { "action": "assert", "label": "The chest piece is visible again", "actor": "p", "metric": "visible_item", "slot": 4, "equals": 60 }
+  ]
+}
