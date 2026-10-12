@@ -16,6 +16,7 @@
  */
 
 #include "Player.h"
+#include "CoaCustomRaces.h"
 #include "AccountMgr.h"
 #include "AchievementMgr.h"
 #include "AreaDefines.h"
@@ -1347,6 +1348,8 @@ bool Player::BuildEnumData(PreparedQueryResult result, WorldPacket* data)
     *data << uint32(petFamily);
 
     std::vector<std::string_view> equipment = Acore::Tokenize(fields[22].Get<std::string_view>(), ' ', false);
+    // Races that wear an NPC look have no body layout for armor on the character screen; only weapons are listed.
+    bool const weaponsOnly = CoaCustomRaces::DisplayStore::Instance().Has(plrRace, gender);
     for (uint8 slot = 0; slot < INVENTORY_SLOT_BAG_END; ++slot)
     {
         uint32 const visualBase = slot * 2;
@@ -1355,6 +1358,9 @@ bool Player::BuildEnumData(PreparedQueryResult result, WorldPacket* data)
         if (visualBase < equipment.size())
         {
             itemId = Acore::StringTo<uint32>(equipment[visualBase]);
+            if (weaponsOnly && slot != EQUIPMENT_SLOT_MAINHAND && slot != EQUIPMENT_SLOT_OFFHAND &&
+                slot != EQUIPMENT_SLOT_RANGED)
+                itemId = 0;
         }
 
         ItemTemplate const* proto = nullptr;
@@ -11288,6 +11294,16 @@ void Player::InitDisplayIds()
             LOG_ERROR("entities.player", "Invalid gender {} for player", gender);
             return;
     }
+
+    // SetDisplayId copies the gender of the model's creature_model_info row; a player keeps its own.
+    SetByteValue(UNIT_FIELD_BYTES_0, 2, gender);
+
+    if (uint32 customDisplay = CoaCustomRaces::GetCustomDisplay(this))
+    {
+        SetDisplayId(customDisplay);
+        SetNativeDisplayId(customDisplay);
+        SetByteValue(UNIT_FIELD_BYTES_0, 2, gender);
+    }
 }
 
 inline bool Player::_StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot, int32 price, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore)
@@ -12722,6 +12738,10 @@ void Player::learnQuestRewardedSpells()
 
 void Player::learnSkillRewardedSpells(uint32 skill_id, uint32 skill_value)
 {
+    // Races with their own racials never learn the vanilla racial lines they reach through a shared race-mask bit.
+    if (CoaCustomRaces::GetRacial(getRace()) && CoaCustomRaces::IsVanillaRacialSkill(skill_id))
+        return;
+
     uint32 raceMask  = getRaceMask();
     uint32 classMask = getClassMask();
 

@@ -46,6 +46,7 @@
 #include "AscensionFreshCharacterCheck.h"
 #include "AscensionLiveBaselineData.h"
 #include "AscensionRacialAbilities.h"
+#include "CoaCustomRaces.h"
 #include "AscensionPrimalistEarthquake.h"
 #include "AscensionPrimalistEarthshaping.h"
 #include "AscensionPrimalistSpiritBeast.h"
@@ -661,6 +662,9 @@ std::vector<uint32> GetAscensionRacialSpells(Player const* player)
             for (SkillLineAbilityEntry const* ability : GetSkillLineAbilitiesBySkillLine(skill.SkillId))
                 if (AscensionRacialAbilities::CanLearn(*ability, player->getRace(), player->getClass()))
                     spells.push_back(ability->Spell);
+
+    if (CoaCustomRaces::Racial const* racial = CoaCustomRaces::GetRacial(player->getRace()))
+        spells.insert(spells.end(), racial->Spells.begin(), racial->Spells.end());
 
     std::sort(spells.begin(), spells.end());
     spells.erase(std::unique(spells.begin(), spells.end()), spells.end());

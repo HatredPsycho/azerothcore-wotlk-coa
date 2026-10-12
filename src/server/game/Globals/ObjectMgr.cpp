@@ -16,6 +16,7 @@
  */
 
 #include "ObjectMgr.h"
+#include "CoaCustomRaces.h"
 #include "AchievementMgr.h"
 #include "ArenaTeamMgr.h"
 #include "CharacterCache.h"
@@ -4626,7 +4627,7 @@ void ObjectMgr::LoadPlayerInfo()
 
                 for (uint32 raceIndex = RACE_HUMAN; raceIndex < sRaceMgr->GetMaxRaces(); ++raceIndex)
                 {
-                    if (raceMask == 0 || ((1 << (raceIndex - 1)) & raceMask))
+                    if (raceMask == 0 || (RaceMaskBit(raceIndex) & raceMask))
                     {
                         for (uint32 classIndex = CLASS_WARRIOR; classIndex < MAX_CLASSES; ++classIndex)
                         {
@@ -4687,7 +4688,10 @@ void ObjectMgr::LoadPlayerInfo()
 
                 for (uint32 raceIndex = RACE_HUMAN; raceIndex < sRaceMgr->GetMaxRaces(); ++raceIndex)
                 {
-                    if (raceMask == 0 || ((1 << (raceIndex - 1)) & raceMask))
+                    // A race above 32 only shares the mask bit of another race; its own spells come by exact id below.
+                    if (raceMask != 0 && raceIndex > 32)
+                        continue;
+                    if (raceMask == 0 || (RaceMaskBit(raceIndex) & raceMask))
                     {
                         for (uint32 classIndex = CLASS_WARRIOR; classIndex < MAX_CLASSES; ++classIndex)
                         {
@@ -4703,6 +4707,19 @@ void ObjectMgr::LoadPlayerInfo()
                     }
                 }
             } while (result->NextRow());
+
+            for (CoaCustomRaces::Racial const& racial : CoaCustomRaces::Racials)
+            {
+                if (racial.RaceId >= sRaceMgr->GetMaxRaces())
+                    continue;
+                for (uint32 classIndex = CLASS_WARRIOR; classIndex < MAX_CLASSES; ++classIndex)
+                    if (PlayerInfo* info = _playerInfo[racial.RaceId][classIndex])
+                        for (uint32 spell : racial.Spells)
+                        {
+                            info->customSpells.push_back(spell);
+                            ++count;
+                        }
+            }
 
             LOG_INFO("server.loading", ">> Loaded {} Custom Player Create Spells in {} ms", count, GetMSTimeDiffToNow(oldMSTime));
             LOG_INFO("server.loading", " ");
@@ -4745,7 +4762,7 @@ void ObjectMgr::LoadPlayerInfo()
 
                 for (uint32 raceIndex = RACE_HUMAN; raceIndex < sRaceMgr->GetMaxRaces(); ++raceIndex)
                 {
-                    if (raceMask == 0 || ((1 << (raceIndex - 1)) & raceMask))
+                    if (raceMask == 0 || (RaceMaskBit(raceIndex) & raceMask))
                     {
                         for (uint32 classIndex = CLASS_WARRIOR; classIndex < MAX_CLASSES; ++classIndex)
                         {
@@ -9825,7 +9842,7 @@ int32 ObjectMgr::GetBaseReputationOf(FactionEntry const* factionEntry, uint8 rac
     if (!factionEntry)
         return 0;
 
-    uint32 raceMask = (1 << (race - 1));
+    uint32 raceMask = RaceMaskBit(race);
     uint32 classMask = (uint32(1) << (playerClass - 1));
 
     for (int i = 0; i < 4; i++)
