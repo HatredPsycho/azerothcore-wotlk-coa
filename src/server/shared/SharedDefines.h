@@ -92,6 +92,12 @@ enum Races
     //RACE_ICE_TROLL      = 21
 };
 
+// Race masks are 32 bits wide; playable race ids above 32 share the bit of race ((id - 1) % 32) + 1.
+inline constexpr uint32 RaceMaskBit(uint32 race)
+{
+    return 1u << ((race - 1) & 31);
+}
+
 // DisplayRace values from CreatureDisplayInfoExtra.dbc
 enum class DisplayRace : uint8
 {

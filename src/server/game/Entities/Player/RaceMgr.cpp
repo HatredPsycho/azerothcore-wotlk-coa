@@ -65,7 +65,7 @@ void RaceMgr::LoadRaces()
         if (GetMaxRaces() <= raceId)
             SetMaxRaces(raceId + 1);
 
-        uint32 raceBit = (1 << (raceId - 1));
+        uint32 raceBit = RaceMaskBit(raceId);
 
         _playableRaceMask |= raceBit;
 

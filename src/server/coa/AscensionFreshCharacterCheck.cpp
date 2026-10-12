@@ -246,7 +246,7 @@ Preflight CheckPassiveClosure(AscensionFreshCharacterExpectations::Case const& e
                 if (ability->AcquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_LEARN &&
                     ability->AcquireMethod != SKILL_LINE_ABILITY_LEARNED_ON_SKILL_VALUE)
                     continue;
-                if (ability->RaceMask && !(ability->RaceMask & (1u << (expected.RaceId - 1))))
+                if (ability->RaceMask && !(ability->RaceMask & RaceMaskBit(expected.RaceId)))
                     continue;
                 if (ability->ClassMask && !(ability->ClassMask & (1u << (expected.ClassId - 1))))
                     continue;
