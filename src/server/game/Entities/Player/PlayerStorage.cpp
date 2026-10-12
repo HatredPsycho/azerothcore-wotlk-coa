@@ -24,6 +24,7 @@
 #include "BattlegroundMgr.h"
 #include "CharacterDatabaseCleaner.h"
 #include "Chat.h"
+#include "CoaCustomRaces.h"
 #include "Common.h"
 #include "Config.h"
 #include "DatabaseEnv.h"
@@ -5135,6 +5136,7 @@ bool Player::LoadFromDB(ObjectGuid playerGuid, CharacterDatabaseQueryHolder cons
     SetByteValue(PLAYER_BYTES_2, 3, fields[15].Get<uint8>());
     SetByteValue(PLAYER_BYTES_3, 0, fields[5].Get<uint8>());
     SetByteValue(PLAYER_BYTES_3, 1, fields[54].Get<uint8>());
+    CoaCustomRaces::SetExtraAppearance(this, fields[75].Get<uint64>());
     ReplaceAllPlayerFlags((PlayerFlags)fields[16].Get<uint32>());
 
     RemovePlayerFlag(PLAYER_FLAGS_NO_PLAY_TIME);

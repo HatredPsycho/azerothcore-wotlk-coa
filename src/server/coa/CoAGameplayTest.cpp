@@ -19,6 +19,7 @@
 #include "CharmInfo.h"
 #include "Chat.h"
 #include "ClientDBC.h"
+#include "CoaCustomRaces.h"
 #include "CoACreatureScaling.h"
 #include "Config.h"
 #include "Creature.h"
@@ -669,6 +670,16 @@ std::string PrintableRuns(std::string const& payload)
     }
     flush();
     return runs;
+}
+
+void AppendCreateAppearance(WorldPacket& create, uint8 race, uint8 gender, uint64 extraAppearance)
+{
+    create << gender;
+    for (uint8 i = 0; i < 5; ++i)
+        create << uint8(0);
+    create << uint8(CoaCustomRaces::UsesExtraAppearanceByte(race) ? extraAppearance : 0);
+    if (CoaCustomRaces::UsesHaranirAppearance(race))
+        create << extraAppearance << CoaCustomRaces::HaranirCreateMagic;
 }
 
 std::string CharCreateRefusal(Actor const& actor)
@@ -1733,8 +1744,7 @@ private:
         Require(race > 0 && race <= 255 && playerClass > 0 && playerClass <= 255,
             "Race/class must fit the character creation packet");
         create << actor.definition.get<std::string>("name", actor.name) << uint8(race) << uint8(playerClass);
-        for (uint8 i = 0; i < 7; ++i)
-            create << uint8(0);
+        AppendCreateAppearance(create, uint8(race), 0, actor.definition.get<uint64>("extra_appearance", 0));
         actor.session->HandleCharCreateOpcode(create);
         Reach(actor, ActorStage::Creating);
     }
@@ -3504,6 +3514,8 @@ private:
             Item const* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, uint8(slot));
             return item ? item->GetEntry() : 0;
         }
+        if (metric == "extra_appearance")
+            return double(CoaCustomRaces::GetExtraAppearance(player));
         if (metric == "visible_item")
         {
             uint32 slot = step.get<uint32>("slot");
@@ -4306,9 +4318,9 @@ private:
                 actor.charCreateResult.reset();
                 WorldPacket create(CMSG_CHAR_CREATE, 32);
                 create << (_names ? _names->Next() : std::string("Harnessz")) << uint8(step.get<uint32>("race"))
-                       << uint8(step.get<uint32>("class")) << uint8(step.get<uint32>("gender", 0));
-                for (uint8 i = 0; i < 6; ++i)
-                    create << uint8(0);
+                       << uint8(step.get<uint32>("class"));
+                AppendCreateAppearance(create, uint8(step.get<uint32>("race")), uint8(step.get<uint32>("gender", 0)),
+                    step.get<uint64>("extra_appearance", 0));
                 actor.session->HandleCharCreateOpcode(create);
                 _characterCreateSent = true;
                 return;

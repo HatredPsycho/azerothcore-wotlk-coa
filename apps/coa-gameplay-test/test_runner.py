@@ -333,10 +333,22 @@ class RunnerTests(unittest.TestCase):
         for step in [
             {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'created': True},
             {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'gender': 1, 'created': False},
+            {'action': 'create_character', 'actor': 'caster', 'race': 70, 'class': 12, 'extra_appearance': 2**32 + 2,
+             'created': True},
+            {'action': 'assert', 'actor': 'caster', 'metric': 'extra_appearance', 'equals': 5},
         ]:
             scenario = copy.deepcopy(self.scenario)
             scenario['steps'].append(step)
             self.assertIs(run.validate(scenario), scenario)
+        for player_key in [{'extra_appearance': 5}, {'extra_appearance': 2**53 - 1}]:
+            scenario = copy.deepcopy(self.scenario)
+            scenario['players'][0].update(player_key)
+            self.assertIs(run.validate(scenario), scenario)
+        for player_key in [{'extra_appearance': -1}, {'extra_appearance': 2**53}, {'extra_appearance': 1.5}]:
+            scenario = copy.deepcopy(self.scenario)
+            scenario['players'][0].update(player_key)
+            with self.subTest(player_key=player_key), self.assertRaises(ValueError):
+                run.validate(scenario)
         for step in [
             {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1},
             {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'created': 1},

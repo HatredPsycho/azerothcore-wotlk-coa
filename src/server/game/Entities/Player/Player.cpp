@@ -593,6 +593,7 @@ bool Player::Create(ObjectGuid::LowType guidlow, CharacterCreateInfo* createInfo
                                     (0x00 << 16) |
                                     (((GetSession()->IsARecruiter() || GetSession()->GetRecruiterId() != 0) ? REST_STATE_RAF_LINKED : REST_STATE_NOT_RAF_LINKED) << 24)));
     SetByteValue(PLAYER_BYTES_3, 0, createInfo->Gender);
+    CoaCustomRaces::SetExtraAppearance(this, createInfo->ExtraAppearance);
     SetByteValue(PLAYER_BYTES_3, 3, 0);                     // BattlefieldArenaFaction (0 or 1)
 
     SetUInt32Value(PLAYER_GUILDID, 0);
@@ -16037,6 +16038,14 @@ void Player::_SaveCharacter(bool create, CharacterDatabaseTransaction trans)
     }
 
     trans->Append(stmt);
+
+    if (CoaCustomRaces::UsesExtraAppearance(getRace(true)))
+    {
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_EXTRA_APPEARANCE);
+        stmt->SetData(0, CoaCustomRaces::GetExtraAppearance(this));
+        stmt->SetData(1, GetGUID().GetCounter());
+        trans->Append(stmt);
+    }
 }
 
 void Player::_LoadGlyphs(PreparedQueryResult result)

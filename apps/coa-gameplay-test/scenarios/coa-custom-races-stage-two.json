@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races stage 2: the races above 63 are created with their start, racials and Esteria appearance",
+  "contract": [
+    "Stage 2 of the CoA Custom races takes the race ids 66-97 of the CoA Custom 1.5.1 package; CoA.CustomRaces.HighestRace is 97.",
+    "rev_20261012_14 gives them creation rows; 6_race_starts puts Highmountain (66) and Haranir (70) in Mulgore (map 1), Mechagnome (67) and Earthen (68) in Coldridge Valley (map 0) and Vulpera (74) in the Valley of Trials (map 1).",
+    "Every one of them learns its four package racials (spell_dbc 140000xy); the first of each is observed.",
+    "Highmountain and Earthen keep a sixth appearance byte (the outfit byte of CMSG_CHAR_CREATE), Haranir a uint64 after the stock packet with the HRC1 magic; characters.extraAppearance keeps it across a relog and UNIT_FIELD_PADDING / OBJECT_FIELD_PADDING carry it.",
+    "Races above 32 share the race mask bit of race ((id - 1) & 31) + 1: Saberon (97) the Human's, so Alliance quests such as A Threat Within (783); Vulpera (74) the Blood Elf's, so Horde quests such as Rude Awakening (363).",
+    "Native race, map, known spells, unit fields and CanTakeQuest are observed; EsteriaAppearance.dll's rendering is not."
+  ],
+  "timeout_ms": 150000,
+  "players": [
+    { "id": "highmountain", "race": 66, "class": 12, "level": 1, "extra_appearance": 5 },
+    { "id": "mechagnome", "race": 67, "class": 12, "level": 1 },
+    { "id": "earthen", "race": 68, "class": 12, "level": 1, "extra_appearance": 3 },
+    { "id": "haranir", "race": 70, "class": 12, "level": 1, "extra_appearance": 4294967298 },
+    { "id": "vulpera", "race": 74, "class": 12, "level": 1 },
+    { "id": "jinyu", "race": 78, "class": 12, "level": 1 },
+    { "id": "gnoll", "race": 83, "class": 12, "level": 1 },
+    { "id": "saberon", "race": 97, "class": 12, "level": 1 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the logins settle", "ms": 3000 },
+    { "action": "assert", "label": "CONTROL: the Highmountain Tauren is created as race 66", "actor": "highmountain", "metric": "race", "equals": 66 },
+    { "action": "assert", "label": "DISCRIMINATING: the Saberon is created as race 97", "actor": "saberon", "metric": "race", "equals": 97 },
+    { "action": "assert", "label": "The Highmountain Tauren starts in Kalimdor (Mulgore)", "actor": "highmountain", "metric": "map_id", "equals": 1 },
+    { "action": "assert", "label": "The Mechagnome starts in the Eastern Kingdoms (Coldridge Valley)", "actor": "mechagnome", "metric": "map_id", "equals": 0 },
+    { "action": "assert", "label": "The Earthen starts in the Eastern Kingdoms (Coldridge Valley)", "actor": "earthen", "metric": "map_id", "equals": 0 },
+    { "action": "assert", "label": "The Haranir starts in Kalimdor (Mulgore)", "actor": "haranir", "metric": "map_id", "equals": 1 },
+    { "action": "assert", "label": "The Vulpera starts in Kalimdor (Valley of Trials)", "actor": "vulpera", "metric": "map_id", "equals": 1 },
+    { "action": "assert", "label": "The Highmountain Tauren knows its first racial", "actor": "highmountain", "metric": "knows_spell", "spell": 14000661, "equals": 1 },
+    { "action": "assert", "label": "The Mechagnome knows its first racial", "actor": "mechagnome", "metric": "knows_spell", "spell": 14000671, "equals": 1 },
+    { "action": "assert", "label": "The Earthen knows its first racial", "actor": "earthen", "metric": "knows_spell", "spell": 14000681, "equals": 1 },
+    { "action": "assert", "label": "The Haranir knows its first racial", "actor": "haranir", "metric": "knows_spell", "spell": 14000701, "equals": 1 },
+    { "action": "assert", "label": "The Vulpera knows its first racial", "actor": "vulpera", "metric": "knows_spell", "spell": 14000741, "equals": 1 },
+    { "action": "assert", "label": "The Jinyu knows its first racial", "actor": "jinyu", "metric": "knows_spell", "spell": 14000781, "equals": 1 },
+    { "action": "assert", "label": "The Gnoll knows its first racial", "actor": "gnoll", "metric": "knows_spell", "spell": 14000831, "equals": 1 },
+    { "action": "assert", "label": "The Saberon knows its first racial", "actor": "saberon", "metric": "knows_spell", "spell": 14000971, "equals": 1 },
+    { "action": "assert", "label": "The Highmountain Tauren keeps its sixth appearance byte", "actor": "highmountain", "metric": "extra_appearance", "equals": 5 },
+    { "action": "assert", "label": "The Earthen keeps its sixth appearance byte", "actor": "earthen", "metric": "extra_appearance", "equals": 3 },
+    { "action": "assert", "label": "The Haranir keeps both words of its appearance", "actor": "haranir", "metric": "extra_appearance", "equals": 4294967298 },
+    { "action": "assert", "label": "A race without the Esteria extension carries none", "actor": "vulpera", "metric": "extra_appearance", "equals": 0 },
+    { "action": "relog", "label": "Log the Haranir out and back in", "actor": "haranir" },
+    { "action": "relog", "label": "Log the Highmountain Tauren out and back in", "actor": "highmountain" },
+    { "action": "assert", "label": "The Haranir appearance survives the relog", "actor": "haranir", "metric": "extra_appearance", "equals": 4294967298 },
+    { "action": "assert", "label": "The Highmountain appearance survives the relog", "actor": "highmountain", "metric": "extra_appearance", "equals": 5 },
+    { "action": "assert", "label": "The Saberon may take the Alliance quest A Threat Within", "actor": "saberon", "metric": "quest_takeable", "quest": 783, "equals": 1 },
+    { "action": "assert", "label": "The Vulpera may take the Horde quest Rude Awakening", "actor": "vulpera", "metric": "quest_takeable", "quest": 363, "equals": 1 },
+    { "action": "assert", "label": "The Vulpera may not take the Alliance quest", "actor": "vulpera", "metric": "quest_takeable", "quest": 783, "equals": 0 }
+  ]
+}

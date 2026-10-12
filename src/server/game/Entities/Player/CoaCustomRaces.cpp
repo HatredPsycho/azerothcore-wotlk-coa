@@ -39,6 +39,29 @@ std::size_t DisplayStore::Size() const
     return size;
 }
 
+uint64 GetExtraAppearance(Player const* player)
+{
+    uint8 const race = player->getRace(true);
+    if (UsesHaranirAppearance(race))
+        return uint64(player->GetUInt32Value(UNIT_FIELD_PADDING)) |
+            (uint64(player->GetUInt32Value(OBJECT_FIELD_PADDING)) << 32);
+    if (UsesExtraAppearanceByte(race))
+        return player->GetByteValue(UNIT_FIELD_PADDING, 0);
+    return 0;
+}
+
+void SetExtraAppearance(Player* player, uint64 extra)
+{
+    uint8 const race = player->getRace(true);
+    if (UsesHaranirAppearance(race))
+    {
+        player->SetUInt32Value(UNIT_FIELD_PADDING, uint32(extra));
+        player->SetUInt32Value(OBJECT_FIELD_PADDING, uint32(extra >> 32));
+    }
+    else if (UsesExtraAppearanceByte(race))
+        player->SetByteValue(UNIT_FIELD_PADDING, 0, uint8(extra));
+}
+
 uint32 GetCustomDisplay(Player const* player)
 {
     if (!player)

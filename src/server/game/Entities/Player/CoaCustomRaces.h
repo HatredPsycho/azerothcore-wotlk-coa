@@ -11,7 +11,7 @@ class Player;
 
 namespace CoaCustomRaces
 {
-constexpr uint8 MaxStageOneRace = 63;
+constexpr uint8 HighestRace = 97;
 
 struct Racial
 {
@@ -102,6 +102,28 @@ inline constexpr bool IsMaleOnly(uint8 race)
             return false;
     }
 }
+
+inline constexpr bool UsesExtraAppearanceByte(uint8 race)
+{
+    return race == 66 || race == 68 || race == 69;
+}
+
+inline constexpr bool UsesHaranirAppearance(uint8 race)
+{
+    return race == 70 || race == 71;
+}
+
+inline constexpr bool UsesExtraAppearance(uint8 race)
+{
+    return UsesExtraAppearanceByte(race) || UsesHaranirAppearance(race);
+}
+
+inline constexpr uint32 HaranirCreateMagic = 0x31435248;
+inline constexpr uint32 ExtraAppearanceEnumMagic = 0x31455848;
+inline constexpr uint32 HaranirEnumMagic = 0x32455848;
+
+uint64 GetExtraAppearance(Player const* player);
+void SetExtraAppearance(Player* player, uint64 extra);
 
 class DisplayStore
 {

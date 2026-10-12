@@ -80,9 +80,9 @@ CoA.AppearanceCatalogPerCategory = 500
 CoA.UnlockAllVanity = 1
 
 # CoA Custom races. Enable 0 blocks new characters of every added race (existing characters keep their data);
-# HighestRace is the highest race id that can be created (63 until the Esteria races above 63 are supported).
+# HighestRace is the highest race id that can be created (97: every package race, Saberon the highest).
 CoA.CustomRaces.Enable = 1
-CoA.CustomRaces.HighestRace = 63
+CoA.CustomRaces.HighestRace = 97
 
 # If a vanity item has no server item template but its DBC row names a valid spell,
 # learn that spell directly when delivery is requested.

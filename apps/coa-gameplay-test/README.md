@@ -391,6 +391,10 @@ Characters are created and loaded through the existing character creation, enume
 handlers with ordinary player security. A player may set `account_of` to an earlier player id to share that
 fixture's disposable account; otherwise each player gets its own account. This supports account-wide state
 checks through separate socketless character sessions and does not test simultaneous client authentication.
+Optional `extra_appearance` sends the Esteria appearance of the CoA Custom races in the creation packet, as the
+client's EsteriaAppearance.dll does: the sixth appearance byte for Highmountain Tauren and Earthen (66, 68, 69), the
+uint64 trailer with its `HRC1` magic for Haranir (70, 71, always sent for them, 0 by default); other races ignore it.
+The `extra_appearance` metric reads it back from the player's unit fields.
 `client_packet` fields may use `item_guid` with a carried item entry, or `gameobject_guid` with an entry of
 exactly one owned fixture gameobject. Both write the native raw GUID and require the referenced object to exist.
 Optional `location` supplies `map`, `x`, `y`, `z`, `o` for a fixture
@@ -745,7 +749,8 @@ service request or perform that service's spell, quest, faction, language or app
 `race` reads the loaded unit's current race. `pet_native_display` reads the guardian's native display,
 which the pet save path persists and transformation removal restores.
 
-`create_character` takes `actor`, `race`, `class`, optional `gender` (0 male, 1 female) and `created`. It sends
+`create_character` takes `actor`, `race`, `class`, optional `gender` (0 male, 1 female), optional
+`extra_appearance` (as for players) and `created`. It sends
 a native `CMSG_CHAR_CREATE` for a further character of the actor's account under a generated name and waits for
 the server's `SMSG_CHAR_CREATE` answer; `created` states whether that answer is success. The step records the
 answer as `char_create_result`. The character is not logged in; deleting the case account removes it.

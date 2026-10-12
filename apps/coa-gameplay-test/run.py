@@ -105,7 +105,7 @@ METRICS = {
     'aoe_damage_taken', 'reputation_gain', 'spell_immune', 'spell_effect_immune', 'melee_attack_count',
     'spell_damage_count', 'spell_damage_total', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
-    'equipped_item', 'visible_item',
+    'equipped_item', 'visible_item', 'extra_appearance',
     'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_max_health', 'pet_health', 'pet_attack_power',
     'pet_run_speed_rate',
     'distance', 'spell_proc_count', 'spell_proc_chance', 'aura_proc_rate', 'temporary_spell_replacement',
@@ -138,7 +138,7 @@ PLAYER_STAT_METRICS = {
     'aoe_damage_taken', 'reputation_gain', 'spell_immune', 'spell_effect_immune', 'melee_attack_count',
     'spell_damage_count', 'spell_damage_total', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
-    'equipped_item', 'visible_item',
+    'equipped_item', 'visible_item', 'extra_appearance',
     'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_aura_duration_ms', 'pet_max_health', 'pet_health',
     'pet_attack_power',
     'pet_run_speed_rate',
@@ -228,7 +228,8 @@ ACTIONS = {
     'restore_quest_spells': ({'actor'}, {'actor'}),
     'login_hooks': ({'actor'}, {'actor'}),
     'relog': ({'actor'}, {'actor', 'race'}),
-    'create_character': ({'actor', 'race', 'class', 'created'}, {'actor', 'race', 'class', 'gender', 'created'}),
+    'create_character': ({'actor', 'race', 'class', 'created'},
+                         {'actor', 'race', 'class', 'gender', 'extra_appearance', 'created'}),
     'talent': ({'actor', 'talent', 'rank'}, {'actor', 'talent', 'rank', 'command'}),
     'reset_talents': ({'actor'}, {'actor'}),
     'add_item': ({'actor', 'item'}, {'actor', 'item', 'count'}),
@@ -307,7 +308,8 @@ def validate(scenario):
         keys(player, {'id', 'race', 'class'},
              {'id', 'race', 'class', 'level', 'bot', 'spell_hit_rating', 'spell_crit_rating',
               'melee_crit_rating', 'ranged_crit_rating', 'ranged_hit_rating', 'melee_hit_rating',
-              'expertise_rating', 'allow_regeneration', 'name', 'expansion', 'ascension_client', 'account_of'}, 'player')
+              'expertise_rating', 'allow_regeneration', 'name', 'expansion', 'ascension_client', 'account_of',
+              'extra_appearance'}, 'player')
         identity = player['id']
         require(isinstance(identity, str) and ACTOR_ID.fullmatch(identity), 'Invalid player id')
         require(identity not in actor_ids, 'Duplicate actor id')
@@ -323,6 +325,7 @@ def validate(scenario):
             number(player[key], key, 1, 255, True)
         number(player.get('level', 80), 'level', 1, 255, True)
         number(player.get('expansion', 2), 'expansion', 0, 2, True)
+        number(player.get('extra_appearance', 0), 'extra_appearance', 0, 2**53 - 1, True)
         require(type(player.get('bot', False)) is bool, 'bot must be boolean')
         require(type(player.get('ascension_client', False)) is bool, 'ascension_client must be boolean')
         number(player.get('spell_hit_rating', 0), 'spell_hit_rating', 0, 100000, True)
@@ -512,6 +515,7 @@ def validate(scenario):
             number(step['race'], f'{where}.race', 1, 255, True)
             number(step['class'], f'{where}.class', 1, 255, True)
             number(step.get('gender', 0), f'{where}.gender', 0, 1, True)
+            number(step.get('extra_appearance', 0), f'{where}.extra_appearance', 0, 2**53 - 1, True)
             require(type(step['created']) is bool, f'{where}: created must be boolean')
             assertions += 1
         if action == 'specialization':
@@ -602,6 +606,8 @@ def validate(scenario):
             if metric in {'equipped_item', 'visible_item'}:
                 require(step['actor'] in player_ids, f'{where}: equipment metric needs a player')
                 number(step.get('slot'), f'{where}.slot', 0, 18, True)
+            if metric == 'extra_appearance':
+                require(step['actor'] in player_ids, f'{where}: extra_appearance needs a player')
             if metric in {'known_entry_rank', 'owned_creature_spell_proc_count'}:
                 require(step['actor'] in player_ids, f'{where}: metric needs a player')
                 number(step.get('entry'), f'{where}.entry', 1, 2**31 - 1, True)

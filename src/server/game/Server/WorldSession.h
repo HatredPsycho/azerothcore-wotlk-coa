@@ -383,6 +383,7 @@ protected:
     uint8 HairColor = 0;
     uint8 FacialHair = 0;
     uint8 OutfitId = 0;
+    uint64 ExtraAppearance = 0;
 
     /// Server side data
     uint8 CharCount = 0;

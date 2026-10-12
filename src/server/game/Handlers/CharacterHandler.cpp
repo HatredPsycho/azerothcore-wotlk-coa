@@ -226,6 +226,10 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result)
     WorldPacket data(SMSG_CHAR_ENUM, 100);                  // we guess size
 
     uint8 num = 0;
+    ByteBuffer extraAppearances;
+    uint32 extraAppearanceCount = 0;
+    ByteBuffer haranirAppearances;
+    uint32 haranirAppearanceCount = 0;
 
     data << num;
 
@@ -240,11 +244,34 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result)
             {
                 _legitCharacters.insert(guid);
                 ++num;
+                uint8 const race = (*result)[2].Get<uint8>();
+                uint64 const extra = (*result)[result->GetFieldCount() - 1].Get<uint64>();
+                if (CoaCustomRaces::UsesHaranirAppearance(race))
+                {
+                    haranirAppearances << guid.GetRawValue() << extra;
+                    ++haranirAppearanceCount;
+                }
+                else if (CoaCustomRaces::UsesExtraAppearanceByte(race))
+                {
+                    extraAppearances << guid.GetRawValue() << uint8(extra);
+                    ++extraAppearanceCount;
+                }
             }
         } while (result->NextRow());
     }
 
     data.put<uint8>(0, num);
+    // EsteriaAppearance.dll on the client strips these trailers before the stock enum parser reads the packet.
+    if (extraAppearanceCount)
+    {
+        data.append(extraAppearances);
+        data << extraAppearanceCount << CoaCustomRaces::ExtraAppearanceEnumMagic;
+    }
+    if (haranirAppearanceCount)
+    {
+        data.append(haranirAppearances);
+        data << haranirAppearanceCount << CoaCustomRaces::HaranirEnumMagic;
+    }
 
     SendPacket(&data);
 }
@@ -280,6 +307,20 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recvData)
              >> createInfo->HairColor
              >> createInfo->FacialHair
              >> createInfo->OutfitId;
+
+    if (CoaCustomRaces::UsesHaranirAppearance(createInfo->Race))
+    {
+        uint32 magic = 0;
+        if (recvData.size() - recvData.rpos() == sizeof(uint64) + sizeof(uint32))
+            recvData >> createInfo->ExtraAppearance >> magic;
+        if (magic != CoaCustomRaces::HaranirCreateMagic)
+        {
+            SendCharCreate(CHAR_CREATE_FAILED);
+            return;
+        }
+    }
+    else if (CoaCustomRaces::UsesExtraAppearanceByte(createInfo->Race))
+        createInfo->ExtraAppearance = createInfo->OutfitId;
 
     if (createInfo->Class == 10 && IsAscensionCompatEnabled() &&
         sConfigMgr->GetOption<bool>("CoA.MapClass10ToWarrior", false))

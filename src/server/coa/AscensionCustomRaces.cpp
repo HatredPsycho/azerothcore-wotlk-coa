@@ -20,7 +20,7 @@ using namespace Acore::ChatCommands;
 namespace
 {
 bool CustomRacesEnabled = true;
-uint32 HighestCustomRace = CoaCustomRaces::MaxStageOneRace;
+uint32 HighestCustomRace = CoaCustomRaces::HighestRace;
 std::unordered_set<ObjectGuid::LowType> HiddenArmor;
 
 constexpr uint8 HighestStockRace = 11;
@@ -105,7 +105,7 @@ public:
     void OnBeforeConfigLoad(bool) override
     {
         CustomRacesEnabled = sConfigMgr->GetOption<bool>("CoA.CustomRaces.Enable", true);
-        HighestCustomRace = sConfigMgr->GetOption<uint32>("CoA.CustomRaces.HighestRace", CoaCustomRaces::MaxStageOneRace);
+        HighestCustomRace = sConfigMgr->GetOption<uint32>("CoA.CustomRaces.HighestRace", CoaCustomRaces::HighestRace);
     }
 
     void OnStartup() override
