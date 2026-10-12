@@ -25,6 +25,7 @@ from world_cache import WorldCache, input_fingerprint
 ROOT = Path(__file__).resolve().parents[2]
 CREATE_FLAGS = subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
 IDENTIFIER = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
+CHAR_CREATE_SUCCESS = 0x2F
 ACTOR_ID = re.compile(r'[a-z][a-z0-9_]{0,31}\Z')
 LOCAL_HOSTS = {'127.0.0.1', 'localhost', '::1'}
 HOURS_PER_DAY = 24
@@ -227,6 +228,7 @@ ACTIONS = {
     'restore_quest_spells': ({'actor'}, {'actor'}),
     'login_hooks': ({'actor'}, {'actor'}),
     'relog': ({'actor'}, {'actor', 'race'}),
+    'create_character': ({'actor', 'race', 'class', 'created'}, {'actor', 'race', 'class', 'gender', 'created'}),
     'talent': ({'actor', 'talent', 'rank'}, {'actor', 'talent', 'rank', 'command'}),
     'reset_talents': ({'actor'}, {'actor'}),
     'add_item': ({'actor', 'item'}, {'actor', 'item', 'count'}),
@@ -505,6 +507,13 @@ def validate(scenario):
             require(step['actor'] in player_ids, f'{where}: relog needs a player')
             if 'race' in step:
                 number(step['race'], f'{where}.race', 1, 255, True)
+        if action == 'create_character':
+            require(step['actor'] in player_ids, f'{where}: create_character needs a player')
+            number(step['race'], f'{where}.race', 1, 255, True)
+            number(step['class'], f'{where}.class', 1, 255, True)
+            number(step.get('gender', 0), f'{where}.gender', 0, 1, True)
+            require(type(step['created']) is bool, f'{where}: created must be boolean')
+            assertions += 1
         if action == 'specialization':
             require(step['actor'] in player_ids, f'{where}: specialization needs a player')
             number(step['id'], f'{where}.id', 1, 0xFFFF, True)
@@ -1302,7 +1311,7 @@ def check_report(report, run_id, scenario, returncode):
     require(report.get('execution') == 'socketless-session-handlers', 'Unexpected execution mode')
     require(report.get('status') == 'passed', report.get('message', 'Scenario failed'))
     require(returncode == 0, f'Worldserver exited with code {returncode}')
-    expected = sum(step['action'] == 'assert' for step in scenario['steps'])
+    expected = sum(step['action'] in ('assert', 'create_character') for step in scenario['steps'])
     require(int(report.get('assertions', 0)) == expected, 'Not all assertions ran')
     require(int(report.get('completed_steps', 0)) == len(scenario['steps']), 'Scenario did not complete')
     records = report.get('steps', [])
@@ -1317,6 +1326,11 @@ def check_report(report, run_id, scenario, returncode):
             require('equals' not in step or actual == step['equals'], 'Equality assertion failed')
             require('min' not in step or actual >= step['min'], 'Minimum assertion failed')
             require('max' not in step or actual <= step['max'], 'Maximum assertion failed')
+        elif step['action'] == 'create_character':
+            require(record.get('status') == 'completed', 'An action did not complete')
+            require('char_create_result' in record, 'Missing character creation answer')
+            require((int(record['char_create_result']) == CHAR_CREATE_SUCCESS) == step['created'],
+                    'Character creation answer does not match the scenario')
         else:
             require(record.get('status') == 'completed', 'An action did not complete')
 

@@ -745,6 +745,11 @@ service request or perform that service's spell, quest, faction, language or app
 `race` reads the loaded unit's current race. `pet_native_display` reads the guardian's native display,
 which the pet save path persists and transformation removal restores.
 
+`create_character` takes `actor`, `race`, `class`, optional `gender` (0 male, 1 female) and `created`. It sends
+a native `CMSG_CHAR_CREATE` for a further character of the actor's account under a generated name and waits for
+the server's `SMSG_CHAR_CREATE` answer; `created` states whether that answer is success. The step records the
+answer as `char_create_result`. The character is not logged in; deleting the case account removes it.
+
 `login_hooks` takes `actor` and replays registered player-login hooks on the current character; it does not reconnect
 or reload the character from the database. Use it to exercise a repair against deliberately seeded fixture state.
 Hooks read character rows synchronously, so the step first waits for a marker query queued behind every character

@@ -25,6 +25,7 @@
 #include "CharacterCache.h"
 #include "CharacterPackets.h"
 #include "Chat.h"
+#include "CoaCustomRaces.h"
 #include "Common.h"
 #include "Config.h"
 #include "DatabaseEnv.h"
@@ -341,6 +342,13 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recvData)
             SendCharCreate(CHAR_CREATE_DISABLED);
             return;
         }
+    }
+
+    // The client crashes on the missing female model of these races.
+    if (createInfo->Gender == GENDER_FEMALE && CoaCustomRaces::IsMaleOnly(createInfo->Race))
+    {
+        SendCharCreate(CHAR_CREATE_DISABLED);
+        return;
     }
 
     if (!HasPermission(rbac::RBAC_PERM_SKIP_CHECK_CHARACTER_CREATION_CLASSMASK))
@@ -1770,6 +1778,12 @@ void WorldSession::HandleCharCustomizeCallback(std::shared_ptr<CharacterCustomiz
         return;
     }
 
+    if (customizeInfo->Gender == GENDER_FEMALE && CoaCustomRaces::IsMaleOnly(playerData->Race))
+    {
+        SendCharCustomize(CHAR_CREATE_ERROR, customizeInfo.get());
+        return;
+    }
+
     atLoginFlags &= ~AT_LOGIN_CUSTOMIZE;
 
     // prevent character rename to invalid name
@@ -2177,6 +2191,12 @@ void WorldSession::HandleCharFactionOrRaceChangeCallback(std::shared_ptr<Charact
             SendCharFactionChange(CHAR_CREATE_ERROR, factionChangeInfo.get());
             return;
         }
+    }
+
+    if (factionChangeInfo->Gender == GENDER_FEMALE && CoaCustomRaces::IsMaleOnly(factionChangeInfo->Race))
+    {
+        SendCharFactionChange(CHAR_CREATE_ERROR, factionChangeInfo.get());
+        return;
     }
 
     // prevent character rename to invalid name

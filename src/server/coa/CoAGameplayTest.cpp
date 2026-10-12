@@ -4298,6 +4298,30 @@ private:
                 "Relogged character did not enter the world");
             Reach(actor, ActorStage::Ready);
         }
+        else if (action == "create_character")
+        {
+            Actor& actor = _actors.at(step.get<std::string>("actor"));
+            if (!_characterCreateSent)
+            {
+                actor.charCreateResult.reset();
+                WorldPacket create(CMSG_CHAR_CREATE, 32);
+                create << (_names ? _names->Next() : std::string("Harnessz")) << uint8(step.get<uint32>("race"))
+                       << uint8(step.get<uint32>("class")) << uint8(step.get<uint32>("gender", 0));
+                for (uint8 i = 0; i < 6; ++i)
+                    create << uint8(0);
+                actor.session->HandleCharCreateOpcode(create);
+                _characterCreateSent = true;
+                return;
+            }
+            if (!actor.charCreateResult || *actor.charCreateResult == CHAR_CREATE_IN_PROGRESS)
+                return;
+            uint8 const result = *actor.charCreateResult;
+            record.put("char_create_result", uint32(result));
+            bool const created = result == CHAR_CREATE_SUCCESS;
+            Require(created == step.get<bool>("created"), created ? "The server created the character"
+                : "The server refused the character [code " + std::to_string(result) + "]");
+            ++_assertions;
+        }
         else if (action == "login_hooks" && !QueuedCharacterWorkDone())
             return;
         else
@@ -5487,9 +5511,11 @@ private:
         _characterQueueReached = false;
         _relogging = false;
         _relogSave.reset();
+        _characterCreateSent = false;
     }
 
     bool _relogging = false;
+    bool _characterCreateSent = false;
     std::optional<TransactionCallback> _relogSave;
     bool _targetsCreated = false;
     bool _stepStarted = false;

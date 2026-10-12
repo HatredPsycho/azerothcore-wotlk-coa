@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: female characters of the male-only races are refused at creation",
+  "contract": [
+    "The CoA Custom races package has no female model for Tuskarr (15), Taunka (17), Vrykul (18), Broken (22), Fel Orc (23), Forest Troll (24), Ice Troll (25), Skeleton (26) and Thin Human (32); the client crashes on it.",
+    "CMSG_CHAR_CREATE with gender 1 for such a race is answered with CHAR_CREATE_DISABLED; the male character of the same race and a female character of a race with a female model are created.",
+    "Skeleton is Horde (ChrRaces faction 2), so the Orc actor's account may hold it on a PvP realm.",
+    "Native SMSG_CHAR_CREATE answers are observed; the client's character screen is not rendered."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    { "id": "p", "race": 2, "class": 12, "level": 1 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the login settle", "ms": 2000 },
+    { "action": "create_character", "label": "CONTROL: a male Skeleton is created", "actor": "p", "race": 26, "class": 12, "gender": 0, "created": true },
+    { "action": "create_character", "label": "CONTROL: a female Orc is created", "actor": "p", "race": 2, "class": 12, "gender": 1, "created": true },
+    { "action": "create_character", "label": "DISCRIMINATING: a female Skeleton is refused", "actor": "p", "race": 26, "class": 12, "gender": 1, "created": false }
+  ]
+}

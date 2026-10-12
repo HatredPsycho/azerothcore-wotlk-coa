@@ -329,6 +329,26 @@ class RunnerTests(unittest.TestCase):
             with self.subTest(metric=metric, actor=actor, extra=extra), self.assertRaises(ValueError):
                 run.validate(scenario)
 
+    def test_create_character_step(self):
+        for step in [
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'created': True},
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'gender': 1, 'created': False},
+        ]:
+            scenario = copy.deepcopy(self.scenario)
+            scenario['steps'].append(step)
+            self.assertIs(run.validate(scenario), scenario)
+        for step in [
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1},
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'created': 1},
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'gender': 2, 'created': True},
+            {'action': 'create_character', 'actor': 'caster', 'race': 0, 'class': 1, 'created': True},
+            {'action': 'create_character', 'actor': 'target', 'race': 26, 'class': 1, 'created': True},
+        ]:
+            scenario = copy.deepcopy(self.scenario)
+            scenario['steps'].append(step)
+            with self.subTest(step=step), self.assertRaises(ValueError):
+                run.validate(scenario)
+
     def test_native_relog_and_slot_observations(self):
         for step in [
             {'action': 'relog', 'actor': 'caster'},
@@ -743,6 +763,33 @@ class RunnerTests(unittest.TestCase):
                 run.check_report(candidate, report['run_id'], self.scenario, 0)
         with self.assertRaises(ValueError):
             run.check_report(report, report['run_id'], self.scenario, 1)
+
+    def test_character_creation_answer_is_rechecked(self):
+        scenario = copy.deepcopy(self.scenario)
+        scenario['steps'] += [
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'created': True},
+            {'action': 'create_character', 'actor': 'caster', 'race': 26, 'class': 1, 'gender': 1, 'created': False},
+        ]
+        original, self.scenario = self.scenario, scenario
+        try:
+            report = self.report()
+        finally:
+            self.scenario = original
+        created, refused = len(scenario['steps']) - 2, len(scenario['steps']) - 1
+        report['steps'][created]['char_create_result'] = str(run.CHAR_CREATE_SUCCESS)
+        report['steps'][refused]['char_create_result'] = '51'
+        report['assertions'] = str(int(report['assertions']) + 2)
+        run.check_report(report, report['run_id'], scenario, 0)
+        for mutate in [
+            lambda r: r['steps'][created].update(char_create_result='51'),
+            lambda r: r['steps'][refused].update(char_create_result=str(run.CHAR_CREATE_SUCCESS)),
+            lambda r: r['steps'][refused].pop('char_create_result'),
+            lambda r: r.update(assertions=str(int(r['assertions']) - 1)),
+        ]:
+            candidate = copy.deepcopy(report)
+            mutate(candidate)
+            with self.subTest(report=candidate), self.assertRaises(ValueError):
+                run.check_report(candidate, report['run_id'], scenario, 0)
 
     def test_only_local_valid_database_names_are_accepted(self):
         connection = run.Connection.parse('127.0.0.1;3306;user;secret;acore_world')
