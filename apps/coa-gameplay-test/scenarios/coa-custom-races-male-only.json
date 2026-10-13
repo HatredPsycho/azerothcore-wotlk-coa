@@ -2,19 +2,24 @@
   "schema": 1,
   "name": "CoA Custom races: female characters of the male-only races are refused at creation",
   "contract": [
-    "The CoA Custom races package has no female model for Tuskarr (15), Taunka (17), Vrykul (18), Broken (22), Fel Orc (23), Forest Troll (24), Ice Troll (25), Skeleton (26) and Thin Human (32); the client crashes on it.",
-    "CMSG_CHAR_CREATE with gender 1 for such a race is answered with CHAR_CREATE_DISABLED; the male character of the same race and a female character of a race with a female model are created.",
-    "Skeleton is Horde (ChrRaces faction 2), so the Orc actor's account may hold it on a PvP realm.",
+    "The CoA Custom races package has no female model for Tuskarr (15), Taunka (17), Vrykul (18), Fel Orc (23), Forest Troll (24), Ice Troll (25) and Skeleton (26); the client crashes on it. Thin Human (32) and Furbolg (50) have a single model for both sexes on which female gear stretches across the screen (CoA Custom 1.4), and Gnoll (83) and Saberon (97) have a male model only.",
+    "Broken (22) is Eunoia's Broken with its own female model (CreatureDisplayInfo 977440, Character/Broken/Female/BrokenFemale) and 560 female CharSections rows, so its female is created (CoA Custom 1.3 dropped it from the list).",
+    "CMSG_CHAR_CREATE with gender 1 for a male-only race is answered with CHAR_CREATE_DISABLED; the male character of the same race and a female character of a race with a female model are created.",
+    "Skeleton is Horde (ChrRaces team 1), so the Orc actor's account may hold it; Broken and Furbolg are Alliance (team 7) and go to the Human actor's account on a PvP realm.",
     "Native SMSG_CHAR_CREATE answers are observed; the client's character screen is not rendered."
   ],
   "timeout_ms": 90000,
   "players": [
-    { "id": "p", "race": 2, "class": 12, "level": 1 }
+    { "id": "p", "race": 2, "class": 12, "level": 1 },
+    { "id": "a", "race": 1, "class": 12, "level": 1 }
   ],
   "steps": [
-    { "action": "wait", "label": "Let the login settle", "ms": 2000 },
+    { "action": "wait", "label": "Let the logins settle", "ms": 2000 },
     { "action": "create_character", "label": "CONTROL: a male Skeleton is created", "actor": "p", "race": 26, "class": 12, "gender": 0, "created": true },
     { "action": "create_character", "label": "CONTROL: a female Orc is created", "actor": "p", "race": 2, "class": 12, "gender": 1, "created": true },
-    { "action": "create_character", "label": "DISCRIMINATING: a female Skeleton is refused", "actor": "p", "race": 26, "class": 12, "gender": 1, "created": false }
+    { "action": "create_character", "label": "DISCRIMINATING: a female Skeleton is refused", "actor": "p", "race": 26, "class": 12, "gender": 1, "created": false },
+    { "action": "create_character", "label": "DISCRIMINATING: a female Broken is created", "actor": "a", "race": 22, "class": 12, "gender": 1, "created": true },
+    { "action": "create_character", "label": "CONTROL: a male Furbolg is created", "actor": "a", "race": 50, "class": 12, "gender": 0, "created": true },
+    { "action": "create_character", "label": "DISCRIMINATING: a female Furbolg is refused", "actor": "a", "race": 50, "class": 12, "gender": 1, "created": false }
   ]
 }
