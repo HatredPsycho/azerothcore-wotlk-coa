@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "Northshire class chain: the map marks where the Lost Pendant and the waterfall are (#6757, #6728)",
-  "contract": "Lost Pendant (200058, Sun Cleric) and A Quiet Life (200077, Templar) are two Northshire class quests whose objectives live in the world - 200058 wants the Lost Pendant 663319 that leaves the one chest in the valley at the Defias camp (gameobject 9301103, guid 7912105, -8956.38 -435.027) and 200077 wants the walk-in marker at the foot of the Northshire falls (creature 685037, guid 9003129, -8739.5 -410.5, credited within 15 yd out of combat) beside Uther's Statue. Neither quest had a single quest_poi row, not even a turn-in pin, so a player carrying one saw a completely unmarked world map (the sibling A Quiet Life quests 200081/200083 got their rows with the hidden-statue work). rev_20261007_80_coa_northshire_class_objective_markers.sql adds two markers to each: the objective area - ObjectiveIndex 4 for 200058, because it is an item objective (the slot stock 6 'Bounty on Garrick Padfoot' uses for RequiredItemId1), and ObjectiveIndex 0 for 200077, because it is an NPC/gameobject objective (the slot stock 7 'Kobold Camp Cleanup' uses for its camp), both on MapID 0 and WorldMapAreaId 30 (the map area Elwynn Forest draws under Northshire), Floor 0, Priority 0, Flags 1, four corners each - and the turn-in pin, id 1, ObjectiveIndex -1, one point on the trainer the quest is handed to: Chaplain Nysoni (50286, -8854 -193) for 200058 and Brother William (50280, -8907 -211) for 200077, the pair 200081 already carries. This case asks the server for the points the way the quest log does - the CMSG_QUEST_POI_QUERY a real client sends and the SMSG_QUEST_POI_QUERY_RESPONSE it answers with - and reads the fields out of the packet itself, so the whole server-to-client path is covered rather than the database rows. The first query is a control for 200081, a quest the character does not carry (it does have POI rows in the database): it must answer with its quest id and no points at all, which shows an empty answer means 'not carried' and not 'no rows'. The two queries that follow must each answer with exactly two markers on Elwynn Forest, asserted field by field: first the four-corner area, then the single-point pin on the quest giver. The last steps walk the player to the crate, to the thugs guarding it, to the walk-in marker by the statue and to both trainers, which is where the markers are drawn: the ground they cover is where the pendant, the falls and the two turn-ins actually are.",
+  "contract": "Lost Pendant (200058, Sun Cleric) and A Quiet Life (200077, Templar) are two Northshire class quests whose objectives live in the world - 200058 wants the Lost Pendant 663319 that leaves the one chest in the valley at the Defias camp (gameobject 9301103, guid 7912105, -8956.38 -435.027) and 200077 wants the walk-in marker at the foot of the Northshire falls (creature 685037, guid 9003129, -8739.5 -410.5, credited within 15 yd out of combat) beside Uther's Statue. Neither quest had a single quest_poi row, not even a turn-in pin, so a player carrying one saw a completely unmarked world map (the sibling A Quiet Life quests 200081/200083 got their rows with the hidden-statue work). rev_20261007_80_coa_northshire_class_objective_markers.sql adds two markers to each: the objective area - ObjectiveIndex 4 for 200058, because it is an item objective (the slot stock 6 'Bounty on Garrick Padfoot' uses for RequiredItemId1), and ObjectiveIndex 0 for 200077, because it is an NPC/gameobject objective (the slot stock 7 'Kobold Camp Cleanup' uses for its camp), both on MapID 0 and WorldMapAreaId 30 (rev_20261012_40 later narrows the 200058 area to 50 x 50 yd around the crate, -8981..-8931, -460..-410, so the client's diamond at its centre lands on the pendant) (the map area Elwynn Forest draws under Northshire), Floor 0, Priority 0, Flags 1, four corners each - and the turn-in pin, id 1, ObjectiveIndex -1, one point on the trainer the quest is handed to: Chaplain Nysoni (50286, -8854 -193) for 200058 and Brother William (50280, -8907 -211) for 200077, the pair 200081 already carries. This case asks the server for the points the way the quest log does - the CMSG_QUEST_POI_QUERY a real client sends and the SMSG_QUEST_POI_QUERY_RESPONSE it answers with - and reads the fields out of the packet itself, so the whole server-to-client path is covered rather than the database rows. The first query is a control for 200081, a quest the character does not carry (it does have POI rows in the database): it must answer with its quest id and no points at all, which shows an empty answer means 'not carried' and not 'no rows'. The two queries that follow must each answer with exactly two markers on Elwynn Forest, asserted field by field: first the four-corner area, then the single-point pin on the quest giver. The last steps walk the player to the crate, to the thugs guarding it, to the walk-in marker by the statue and to both trainers, which is where the markers are drawn: the ground they cover is where the pendant, the falls and the two turn-ins actually are.",
   "timeout_ms": 180000,
   "location": {
     "map": 0,
@@ -242,50 +242,50 @@
     },
     {
       "action": "assert",
-      "label": "its first corner is x -9035",
+      "label": "its first corner is x -8981 (rev_20261012_40 centres the 50 x 50 yd area on the crate)",
       "actor": "c",
       "metric": "server_packet_u32",
       "opcode": 484,
       "row": 1,
       "offset": 44,
       "index": 0,
-      "equals": 4294958261,
+      "equals": 4294958315,
       "within_ms": 4000
     },
     {
       "action": "assert",
-      "label": "and y -365",
+      "label": "and y -460",
       "actor": "c",
       "metric": "server_packet_u32",
       "opcode": 484,
       "row": 1,
       "offset": 48,
       "index": 0,
-      "equals": 4294966931,
+      "equals": 4294966836,
       "within_ms": 4000
     },
     {
       "action": "assert",
-      "label": "its opposite corner is x -8940",
+      "label": "its opposite corner is x -8931",
       "actor": "c",
       "metric": "server_packet_u32",
       "opcode": 484,
       "row": 1,
       "offset": 52,
       "index": 0,
-      "equals": 4294958356,
+      "equals": 4294958365,
       "within_ms": 4000
     },
     {
       "action": "assert",
-      "label": "and y -460, so the area spans the whole Defias camp the crate stands in and not the trail to the river",
+      "label": "and y -410, so the area is the 50 yd square around the crate the pendant stands on and not the trail to the river",
       "actor": "c",
       "metric": "server_packet_u32",
       "opcode": 484,
       "row": 1,
       "offset": 64,
       "index": 0,
-      "equals": 4294966836,
+      "equals": 4294966886,
       "within_ms": 4000
     },
     {
