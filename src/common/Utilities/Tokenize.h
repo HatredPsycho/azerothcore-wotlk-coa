@@ -18,6 +18,7 @@
 #ifndef _ACORE_TOKENIZE_H_
 #define _ACORE_TOKENIZE_H_
 
+#include <string>
 #include <string_view>
 #include <vector>
 
