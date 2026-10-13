@@ -83,6 +83,9 @@ CoA.UnlockAllVanity = 1
 # HighestRace is the highest race id that can be created (97: every package race, Saberon the highest).
 CoA.CustomRaces.Enable = 1
 CoA.CustomRaces.HighestRace = 97
+# DisabledRaces: race ids that cannot be created even below HighestRace, separated by commas. Default: Test Race 65,
+# Skyborne 72 and 77, Arakkoa 79 (client data only) and Darkfallen 80 and 81, which the client cannot show.
+CoA.CustomRaces.DisabledRaces = "65,72,77,79,80,81"
 
 # If a vanity item has no server item template but its DBC row names a valid spell,
 # learn that spell directly when delivery is requested.

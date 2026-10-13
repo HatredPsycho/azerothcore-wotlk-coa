@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: Cannibalize, Make Camp and Bone Gnaw eat a corpse like Cannibalize",
+  "contract": [
+    "The package racials Cannibalize 14000512 (race 51), Make Camp 14000742 (Vulpera, 74) and Bone Gnaw 14000832 (Gnoll, 83) copy Cannibalize 20577: effect 0 is a dummy, and their tooltip reads 'regenerates $20578s1% of total health every $20578t1 sec for $20578d. Only works on Humanoid or Undead corpses within $a1 yds.'",
+    "The channel, its bar and the heal are spell 20578, cast by spell_gen_cannibalize (CoA Custom 1.6, 10_cannibalize_1.6.sql). With the script a cast without a corpse within 5 yd is refused with SPELL_FAILED_NO_EDIBLE_CORPSES (141) and a cast beside an enemy Humanoid corpse starts 20578; without it every cast succeeds and does nothing.",
+    "All three races are Horde; the Human who dies beside them is the Alliance corpse. Native cast results and auras are observed."
+  ],
+  "timeout_ms": 90000,
+  "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
+  "players": [
+    { "id": "eater", "race": 51, "class": 12, "level": 80 },
+    { "id": "vulpera", "race": 74, "class": 12, "level": 80 },
+    { "id": "gnoll", "race": 83, "class": 12, "level": 80 },
+    { "id": "meal", "race": 1, "class": 1, "level": 80 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the logins settle", "ms": 3000 },
+    { "action": "assert", "label": "SETUP: the race 51 character knows Cannibalize", "actor": "eater", "metric": "knows_spell", "spell": 14000512, "equals": 1 },
+    { "action": "assert", "label": "SETUP: the Vulpera knows Make Camp", "actor": "vulpera", "metric": "knows_spell", "spell": 14000742, "equals": 1 },
+    { "action": "assert", "label": "SETUP: the Gnoll knows Bone Gnaw", "actor": "gnoll", "metric": "knows_spell", "spell": 14000832, "equals": 1 },
+    { "action": "cast", "label": "CONTROL: Bone Gnaw while nobody lies dead", "actor": "gnoll", "spell": 14000832 },
+    { "action": "assert", "label": "DISCRIMINATING: Bone Gnaw needs a corpse", "actor": "gnoll", "metric": "cast_failure", "spell": 14000832, "equals": 141, "within_ms": 1000 },
+    { "action": "die", "label": "The Human dies beside them", "actor": "meal" },
+    { "action": "wait", "label": "Let the corpse settle", "ms": 1000 },
+    { "action": "cast", "label": "Cannibalize beside the corpse", "actor": "eater", "spell": 14000512 },
+    { "action": "assert", "label": "DISCRIMINATING: Cannibalize starts the 20578 channel", "actor": "eater", "metric": "aura", "spell": 20578, "equals": 1, "within_ms": 1500 },
+    { "action": "cast", "label": "Make Camp beside the corpse", "actor": "vulpera", "spell": 14000742 },
+    { "action": "assert", "label": "DISCRIMINATING: Make Camp starts the 20578 channel", "actor": "vulpera", "metric": "aura", "spell": 20578, "equals": 1, "within_ms": 1500 },
+    { "action": "cast", "label": "Bone Gnaw beside the corpse", "actor": "gnoll", "spell": 14000832 },
+    { "action": "assert", "label": "DISCRIMINATING: Bone Gnaw starts the 20578 channel", "actor": "gnoll", "metric": "aura", "spell": 20578, "equals": 1, "within_ms": 1500 }
+  ]
+}

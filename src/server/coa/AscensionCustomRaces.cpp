@@ -11,9 +11,12 @@
 #include "PlayerScript.h"
 #include "ScriptMgr.h"
 #include "SpellMgr.h"
+#include "StringConvert.h"
+#include "Tokenize.h"
 #include "WorldScript.h"
 #include <algorithm>
 #include <atomic>
+#include <set>
 #include <unordered_set>
 #include <vector>
 
@@ -22,6 +25,7 @@ using namespace Acore::ChatCommands;
 namespace
 {
 bool CustomRacesEnabled = true;
+std::set<uint8> DisabledCustomRaces;
 enum class CreationOverride : uint8
 {
     None,
@@ -138,6 +142,18 @@ public:
     {
         CustomRacesEnabled = sConfigMgr->GetOption<bool>("CoA.CustomRaces.Enable", true);
         HighestCustomRace = sConfigMgr->GetOption<uint32>("CoA.CustomRaces.HighestRace", CoaCustomRaces::HighestRace);
+        DisabledCustomRaces.clear();
+        std::string const disabled =
+            sConfigMgr->GetOption<std::string>("CoA.CustomRaces.DisabledRaces", "65,72,77,79,80,81");
+        for (std::string_view token : Acore::Tokenize(disabled, ',', false))
+        {
+            while (!token.empty() && token.front() == ' ')
+                token.remove_prefix(1);
+            while (!token.empty() && token.back() == ' ')
+                token.remove_suffix(1);
+            if (Optional<uint8> race = Acore::StringTo<uint8>(token))
+                DisabledCustomRaces.insert(*race);
+        }
     }
 
     void OnStartup() override
@@ -156,7 +172,7 @@ public:
     {
         if (IsStockRace(race))
             return true;
-        return CreationEnabled() && race <= HighestCustomRace;
+        return CreationEnabled() && race <= HighestCustomRace && !DisabledCustomRaces.contains(race);
     }
 };
 

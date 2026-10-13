@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: CoA.CustomRaces.DisabledRaces refuses the races the client cannot show",
+  "contract": [
+    "CoA Custom 1.6 keeps Test Race (65), both Skyborne (72, 77) and Darkfallen (80, 81) archived or broken, and its Arakkoa (79) has client data only; the shipped CoA.CustomRaces.DisabledRaces = \"65,72,77,79,80,81\" refuses CMSG_CHAR_CREATE for them with CHAR_CREATE_DISABLED although rev_20261012_14 gives Skyborne and Darkfallen their playercreateinfo rows.",
+    "Skyborne 72 and Darkfallen 81 are Horde (ChrRaces team 1), so the Orc actor's account may hold them on a PvP realm; a male Skeleton (26), another added Horde race, is still created.",
+    "Native SMSG_CHAR_CREATE answers are observed; the client's character screen is not rendered."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    { "id": "p", "race": 2, "class": 12, "level": 1 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the login settle", "ms": 2000 },
+    { "action": "create_character", "label": "CONTROL: a male Skeleton is created", "actor": "p", "race": 26, "class": 12, "gender": 0, "created": true },
+    { "action": "create_character", "label": "DISCRIMINATING: a Skyborne (72) is refused", "actor": "p", "race": 72, "class": 12, "gender": 0, "created": false },
+    { "action": "create_character", "label": "DISCRIMINATING: a Darkfallen (81) is refused", "actor": "p", "race": 81, "class": 12, "gender": 0, "created": false }
+  ]
+}
