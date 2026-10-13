@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "CoA Custom races: CoA.CustomRaces.Enable = 0 refuses new characters of the added races",
+  "contract": [
+    "With CoA.CustomRaces.Enable = 0 the account hook refuses CMSG_CHAR_CREATE for every race outside the stock races 1-8, 10 and 11, answering CHAR_CREATE_DISABLED; the stock races are created as before.",
+    "The scenario sets custom_races false, which applies Enable = 0 for this case only and restores the configured value afterwards.",
+    "Skeleton (26) and Horde Pandaren (20) are Horde, so the Orc actor's account may hold them on a PvP realm; coa-custom-races-male-only creates the same male Skeleton and coa-custom-races-quests a Horde Pandaren when the races are enabled.",
+    "Native SMSG_CHAR_CREATE answers are observed; the client's character screen is not rendered."
+  ],
+  "timeout_ms": 90000,
+  "custom_races": false,
+  "players": [
+    { "id": "p", "race": 2, "class": 12, "level": 1 }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let the login settle", "ms": 2000 },
+    { "action": "create_character", "label": "CONTROL: a stock Orc is still created", "actor": "p", "race": 2, "class": 12, "gender": 0, "created": true },
+    { "action": "create_character", "label": "DISCRIMINATING: a male Skeleton is refused", "actor": "p", "race": 26, "class": 12, "gender": 0, "created": false },
+    { "action": "create_character", "label": "DISCRIMINATING: a Horde Pandaren is refused", "actor": "p", "race": 20, "class": 12, "gender": 0, "created": false }
+  ]
+}

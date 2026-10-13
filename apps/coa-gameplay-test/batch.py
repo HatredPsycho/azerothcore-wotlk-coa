@@ -1163,6 +1163,7 @@ def run_batch(args, directory=catalog.DIRECTORY):
             world_phase = any(step['action'] == 'set_phase' and step['value'] & 1
                               for step in case.scenario['steps'])
             case.exclusive = (world_phase or case.scenario.get('creature_scaling', False)
+                              or 'custom_races' in case.scenario
                               or (not case.exploratory and case.key in exclusive) or case.hour is not None)
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)

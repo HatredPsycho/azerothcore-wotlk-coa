@@ -8,6 +8,7 @@
 #include "ArenaTeam.h"
 #include "ArenaTeamMgr.h"
 #include "AscensionCoATalentState.h"
+#include "AscensionCustomRaces.h"
 #include "AscensionItemScaling.h"
 #include "AscensionNativeItemScaling.h"
 #include "AscensionQuestLog.h"
@@ -1254,6 +1255,8 @@ public:
         Require(_timeout > 0 && _timeout <= 600000, "Invalid scenario timeout");
         if (_scenario.get<bool>("creature_scaling", false))
             _creatureScaling.emplace();
+        if (auto customRaces = _scenario.get_optional<bool>("custom_races"))
+            _customRaces.emplace(*customRaces);
         _report.put("schema", 1);
         _report.put("run_id", _runId);
         _report.put("scenario", _scenario.get<std::string>("name"));
@@ -5616,6 +5619,7 @@ private:
     std::map<std::string, double> _snapshots;
     QueryCallbackProcessor _queries;
     std::optional<CreatureScaling::TestOverride> _creatureScaling;
+    std::optional<AscensionCustomRaces::TestOverride> _customRaces;
 };
 
 enum class TeardownStage

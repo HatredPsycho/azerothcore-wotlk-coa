@@ -1,4 +1,5 @@
 /* Copyright (C) 2016+ AzerothCore, GNU AGPL v3. */
+#include "AscensionCustomRaces.h"
 #include "AccountScript.h"
 #include "Chat.h"
 #include "CoaCustomRaces.h"
@@ -12,6 +13,7 @@
 #include "SpellMgr.h"
 #include "WorldScript.h"
 #include <algorithm>
+#include <atomic>
 #include <unordered_set>
 #include <vector>
 
@@ -20,6 +22,13 @@ using namespace Acore::ChatCommands;
 namespace
 {
 bool CustomRacesEnabled = true;
+enum class CreationOverride : uint8
+{
+    None,
+    Enabled,
+    Disabled
+};
+std::atomic<CreationOverride> TestCreationOverride{ CreationOverride::None };
 uint32 HighestCustomRace = CoaCustomRaces::HighestRace;
 std::unordered_set<ObjectGuid::LowType> HiddenArmor;
 
@@ -29,6 +38,19 @@ constexpr uint8 GoblinRace = 9;
 bool IsStockRace(uint8 race)
 {
     return race >= 1 && race <= HighestStockRace && race != GoblinRace;
+}
+
+bool CreationEnabled()
+{
+    switch (TestCreationOverride.load())
+    {
+        case CreationOverride::Enabled:
+            return true;
+        case CreationOverride::Disabled:
+            return false;
+        default:
+            return CustomRacesEnabled;
+    }
 }
 
 void LoadCustomRaceDisplays()
@@ -96,6 +118,16 @@ void RefreshArmor(Player* player)
 }
 }
 
+AscensionCustomRaces::TestOverride::TestOverride(bool enabled)
+{
+    TestCreationOverride = enabled ? CreationOverride::Enabled : CreationOverride::Disabled;
+}
+
+AscensionCustomRaces::TestOverride::~TestOverride()
+{
+    TestCreationOverride = CreationOverride::None;
+}
+
 class AscensionCustomRacesWorld : public WorldScript
 {
 public:
@@ -124,7 +156,7 @@ public:
     {
         if (IsStockRace(race))
             return true;
-        return CustomRacesEnabled && race <= HighestCustomRace;
+        return CreationEnabled() && race <= HighestCustomRace;
     }
 };
 

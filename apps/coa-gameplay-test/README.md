@@ -355,7 +355,8 @@ jumps ahead to it, and the real clock runs the case in single mode with a fixed 
 ([realm-local time](../../docs/coa/verification.md#realm-local-time)). Every result records its start as
 `realm_local_start`. Optional `creature_scaling: true` enables CoA creature scaling with its built-in multipliers
 for that case, whatever the module config says, and restores the configured state when the case ends; the batch
-runs such a case exclusively because the setting is process-global.
+runs such a case exclusively because the setting is process-global. Optional `custom_races` (boolean) overrides
+`CoA.CustomRaces.Enable` for that case in the same way and also runs exclusively.
 The [talent and item scenario](scenarios/talent-and-items.json) exercises talent learning, passive removal,
 equipping a shirt and consuming a healing potion. It does not measure the talent's damage coefficient.
 The [Shadowblast scenario](scenarios/shadowblast-shadow-rage.json) reproduces a Shadow Rage pet-targeting crash
