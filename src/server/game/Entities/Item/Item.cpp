@@ -16,6 +16,7 @@
  */
 
 #include "Item.h"
+#include "ContentScalingHooks.h"
 #include "Common.h"
 #include "DatabaseEnv.h"
 #include "GameTime.h"
@@ -844,8 +845,8 @@ uint32 Item::GetEnchantRequiredLevel() const
     for (uint32 enchant_slot = PERM_ENCHANTMENT_SLOT; enchant_slot < MAX_ENCHANTMENT_SLOT; ++enchant_slot)
         if (uint32 enchant_id = GetEnchantmentId(EnchantmentSlot(enchant_slot)))
             if (SpellItemEnchantmentEntry const* enchantEntry = sSpellItemEnchantmentStore.LookupEntry(enchant_id))
-                if (enchantEntry->requiredLevel > level)
-                    level = enchantEntry->requiredLevel;
+                level = std::max(level,
+                    LocalLevelScaling::GetEffectiveEnchantmentRequiredLevel(enchantEntry->requiredLevel));
 
     return level;
 }

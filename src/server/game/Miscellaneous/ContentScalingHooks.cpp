@@ -8,6 +8,9 @@
 #include "Creature.h"
 #include "CreatureData.h"
 #include "QuestDef.h"
+#include <mutex>
+#include <utility>
+#include <vector>
 
 namespace LocalLevelScaling
 {
@@ -81,5 +84,57 @@ namespace LocalLevelScaling
             return owner(player, victim, defaultContentLevel);
 
         return defaultContentLevel;
+    }
+
+    std::uint32_t GetEffectiveItemEnchantmentAmount(std::uint32_t hostItemEntry, std::uint32_t enchantmentType,
+        std::uint32_t statType, std::uint32_t amount)
+    {
+        if (!hostItemEntry || !amount)
+            return amount;
+
+        if (ItemEnchantmentAmountResolver const owner = ItemEnchantmentAmountOwner.load(std::memory_order_relaxed))
+            return owner(hostItemEntry, enchantmentType, statType, amount);
+
+        return amount;
+    }
+
+    std::uint32_t GetEffectiveEnchantmentRequiredLevel(std::uint32_t requiredLevel)
+    {
+        if (!requiredLevel)
+            return requiredLevel;
+
+        EnchantmentRequiredLevelResolver const owner = EnchantmentRequiredLevelOwner.load(std::memory_order_relaxed);
+        if (owner)
+            return owner(requiredLevel);
+
+        return requiredLevel;
+    }
+
+    namespace
+    {
+        std::mutex LevelResolvedMutex;
+        std::vector<std::pair<std::uint32_t, std::uint32_t>> LevelResolvedRanges;
+    }
+
+    void ReserveLevelResolvedItems(std::uint32_t firstEntry, std::uint32_t lastEntry)
+    {
+        if (!firstEntry || lastEntry < firstEntry)
+            return;
+
+        std::lock_guard lock(LevelResolvedMutex);
+        LevelResolvedRanges.emplace_back(firstEntry, lastEntry);
+    }
+
+    bool IsLevelResolvedItem(std::uint32_t entry)
+    {
+        if (!entry)
+            return false;
+
+        std::lock_guard lock(LevelResolvedMutex);
+        for (auto const& [first, last] : LevelResolvedRanges)
+            if (entry >= first && entry <= last)
+                return true;
+
+        return false;
     }
 }

@@ -503,6 +503,8 @@ public:
     {
         LoadCapturedStats();
         Registry::Instance().Load();
+        LocalLevelScaling::ScaledItemBaseOwner.store(
+            [](std::uint32_t entry) { return Registry::Instance().BaseEntry(entry); }, std::memory_order_relaxed);
     }
 
     void OnStartup() override

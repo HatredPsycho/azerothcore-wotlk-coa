@@ -3,6 +3,7 @@
 #include "DBCStores.h"
 #include "GameTime.h"
 #include "Config.h"
+#include "ContentScalingHooks.h"
 #include "Creature.h"
 #include "Item.h"
 #include "Log.h"
@@ -487,6 +488,7 @@ namespace
 
 void AddSC_coa_legendary_items()
 {
+    LocalLevelScaling::ReserveLevelResolvedItems(ItemEntryBase, ItemEntryBase + DesignCount * ItemEntryStride - 1);
     if (!sConfigMgr->GetOption<bool>("CoALegendaryItems.Enable", false))
         return;
     enabled.store(true);

@@ -95,6 +95,73 @@ inline bool IsAuthenticMap(std::uint32_t mapId, std::uint8_t difficulty)
     AuthenticMapResolver const owner = AuthenticMapOwner.load(std::memory_order_relaxed);
     return owner && owner(mapId, difficulty);
 }
+
+using ItemEffectValueResolver = std::int32_t (*)(std::uint32_t, std::int32_t);
+inline std::atomic<ItemEffectValueResolver> ItemEffectValueOwner{nullptr};
+
+/// The flat value a spell cast from an item carries, given the value written into the spell.
+inline std::int32_t GetEffectiveItemEffectValue(std::uint32_t itemEntry, std::int32_t value)
+{
+    ItemEffectValueResolver const owner = ItemEffectValueOwner.load(std::memory_order_relaxed);
+    return owner && itemEntry && value ? owner(itemEntry, value) : value;
+}
+
+using ItemMarketValueResolver = std::uint32_t (*)(std::uint32_t, std::uint32_t);
+inline std::atomic<ItemMarketValueResolver> ItemMarketValueOwner{nullptr};
+
+/// What an item is worth on this realm, given its vendor price; vendors themselves keep the template's.
+inline std::uint32_t GetEffectiveItemMarketValue(std::uint32_t itemEntry, std::uint32_t value)
+{
+    ItemMarketValueResolver const owner = ItemMarketValueOwner.load(std::memory_order_relaxed);
+    return owner ? owner(itemEntry, value) : value;
+}
+
+using AuthoredItemLevelResolver = std::uint32_t (*)(std::uint32_t, std::uint32_t);
+inline std::atomic<AuthoredItemLevelResolver> AuthoredItemLevelOwner{nullptr};
+
+/// The item level an item was written with, given the one its template has on this realm.
+inline std::uint32_t GetAuthoredItemLevel(std::uint32_t itemEntry, std::uint32_t itemLevel)
+{
+    AuthoredItemLevelResolver const owner = AuthoredItemLevelOwner.load(std::memory_order_relaxed);
+    return owner ? owner(itemEntry, itemLevel) : itemLevel;
+}
+
+using ScaledItemBaseResolver = std::uint32_t (*)(std::uint32_t entry);
+inline std::atomic<ScaledItemBaseResolver> ScaledItemBaseOwner{nullptr};
+
+/// The authored item a lifted copy was made from; any other entry answers itself.
+inline std::uint32_t BaseItemEntry(std::uint32_t entry)
+{
+    ScaledItemBaseResolver const owner = ScaledItemBaseOwner.load(std::memory_order_relaxed);
+    return owner ? owner(entry) : entry;
+}
+
+using ItemEnchantmentAmountResolver = std::uint32_t (*)(std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t);
+inline std::atomic<ItemEnchantmentAmountResolver> ItemEnchantmentAmountOwner{nullptr};
+
+/// The flat amount an enchantment, a gem or a socket bonus adds to the item it sits on.
+AC_GAME_API std::uint32_t GetEffectiveItemEnchantmentAmount(std::uint32_t hostItemEntry, std::uint32_t enchantmentType,
+    std::uint32_t statType, std::uint32_t amount);
+
+using EnchantmentRequiredLevelResolver = std::uint32_t (*)(std::uint32_t);
+inline std::atomic<EnchantmentRequiredLevelResolver> EnchantmentRequiredLevelOwner{nullptr};
+
+/// The level an enchantment asks of the character wearing it.
+AC_GAME_API std::uint32_t GetEffectiveEnchantmentRequiredLevel(std::uint32_t requiredLevel);
+
+using AbilityRequiredLevelResolver = std::uint8_t (*)(std::uint8_t);
+inline std::atomic<AbilityRequiredLevelResolver> AbilityRequiredLevelOwner{nullptr};
+
+/// The level a rank of an ability asks of the character who learns it.
+inline std::uint8_t GetEffectiveAbilityRequiredLevel(std::uint8_t requiredLevel)
+{
+    AbilityRequiredLevelResolver const owner = AbilityRequiredLevelOwner.load(std::memory_order_relaxed);
+    return owner ? owner(requiredLevel) : requiredLevel;
+}
+
+/// Item entries whose level is decided by which entry they are (one item per level), so nothing rewrites them.
+AC_GAME_API void ReserveLevelResolvedItems(std::uint32_t firstEntry, std::uint32_t lastEntry);
+[[nodiscard]] AC_GAME_API bool IsLevelResolvedItem(std::uint32_t entry);
 }
 
 #endif

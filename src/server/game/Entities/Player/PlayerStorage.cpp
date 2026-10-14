@@ -23,6 +23,7 @@
 #include "Battleground.h"
 #include "BattlegroundMgr.h"
 #include "CharacterDatabaseCleaner.h"
+#include "ContentScalingHooks.h"
 #include "Chat.h"
 #include "Common.h"
 #include "Config.h"
@@ -4434,7 +4435,7 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
     if (!ignore_condition && pEnchant->EnchantmentCondition && !EnchantmentFitsRequirements(pEnchant->EnchantmentCondition, -1))
         return;
 
-    if (pEnchant->requiredLevel > GetLevel())
+    if (LocalLevelScaling::GetEffectiveEnchantmentRequiredLevel(pEnchant->requiredLevel) > GetLevel())
         return;
 
     if (pEnchant->requiredSkill > 0 && pEnchant->requiredSkillValue > GetSkillValue(pEnchant->requiredSkill))
@@ -4459,7 +4460,8 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
         for (int s = 0; s < MAX_SPELL_ITEM_ENCHANTMENT_EFFECTS; ++s)
         {
             uint32 enchant_display_type = pEnchant->type[s];
-            uint32 enchant_amount = pEnchant->amount[s];
+            uint32 enchant_amount = LocalLevelScaling::GetEffectiveItemEnchantmentAmount(
+                item->GetEntry(), enchant_display_type, pEnchant->spellid[s], pEnchant->amount[s]);
             uint32 enchant_spell_id = pEnchant->spellid[s];
 
             switch (enchant_display_type)
