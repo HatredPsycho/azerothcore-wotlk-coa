@@ -902,3 +902,13 @@ bool InstanceScript::IsTwoFactionInstance() const
 
     return false;
 }
+
+uint32 InstanceScript::ResolveEncounterMechanic(uint32 encounterId, uint32 mechanicId,
+    EncounterMechanic mechanicType, uint32 authoredValue) const
+{
+    uint32 resolvedValue = authoredValue;
+    sScriptMgr->OnResolveEncounterMechanic(instance, encounterId, mechanicId,
+        static_cast<uint8>(mechanicType), authoredValue, resolvedValue);
+
+    return resolvedValue;
+}

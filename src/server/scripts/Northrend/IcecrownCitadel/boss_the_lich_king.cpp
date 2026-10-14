@@ -2448,7 +2448,16 @@ public:
 
         void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask) override
         {
-            if (IsHeroic() && !didbelow50pct && !dropped && me->HealthBelowPctDamaged(50, damage))
+            if (didbelow50pct || dropped)
+                return;
+
+            // Burning the Val'kyr down before it reaches the edge is raid damage in the seconds it
+            // has. A small group cannot produce it, and loses a player to every grab.
+            uint32 const authoredReleasePct = IsHeroic() ? 50 : 0;
+            uint32 const releasePct = _instance ? _instance->ResolveEncounterMechanic(DATA_THE_LICH_KING,
+                SPELL_VALKYR_CARRY, EncounterMechanic::StackThreshold, authoredReleasePct) : authoredReleasePct;
+
+            if (releasePct && me->HealthBelowPctDamaged(releasePct, damage))
                 GoSiphon();
         }
 

@@ -437,12 +437,19 @@ public:
                     Talk(SAY_VALITHRIA_BERSERK);
                     break;
                 case EVENT_DREAM_PORTAL:
+                {
                     if (!IsHeroic())
                         Talk(SAY_VALITHRIA_DREAM_PORTAL);
-                    for (uint32 i = 0; i < _portalCount; ++i)
+                    // One portal per healer the raid was built around. Portals nobody enters are
+                    // counted as missed, so a smaller group is punished for the ones it cannot take.
+                    uint32 const portals = _instance ? _instance->ResolveEncounterMechanic(
+                        DATA_VALITHRIA_DREAMWALKER, EVENT_DREAM_PORTAL,
+                        EncounterMechanic::RequiredInteractors, _portalCount) : _portalCount;
+                    for (uint32 i = 0; i < portals; ++i)
                         me->CastSpell(me, SPELL_PRE_SUMMON_DREAM_PORTAL, true);
                     _events.ScheduleEvent(EVENT_DREAM_PORTAL, 45s, 48s);
                     break;
+                }
                 case EVENT_DREAM_SLIP:
                     me->CastSpell(me, SPELL_DREAM_SLIP, false);
                     break;

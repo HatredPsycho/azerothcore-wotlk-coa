@@ -258,7 +258,11 @@ struct boss_twinemperorsAI : public BossAI
             {
                 if (Creature* twin = GetTwin())
                 {
-                    if (me->IsWithinDist(twin, 60.f))
+                    // Keeping the brothers 60 yards apart is the fight. A group too small to pull
+                    // them in two directions cannot stop the heal and the two never go down.
+                    uint32 const healRange = instance->ResolveEncounterMechanic(DATA_TWIN_EMPERORS,
+                        SPELL_HEAL_BROTHER, EncounterMechanic::ProximityDistance, 60);
+                    if (healRange && me->IsWithinDist(twin, float(healRange)))
                         DoCast(twin, SPELL_HEAL_BROTHER, true);
                 }
 

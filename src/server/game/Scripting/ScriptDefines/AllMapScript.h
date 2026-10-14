@@ -30,6 +30,7 @@ enum AllMapHook
     ALLMAPHOOK_ON_CREATE_MAP,
     ALLMAPHOOK_ON_DESTROY_MAP,
     ALLMAPHOOK_ON_MAP_UPDATE,
+    ALLMAPHOOK_ON_RESOLVE_ENCOUNTER_MECHANIC,
     ALLMAPHOOK_END
 };
 
@@ -95,6 +96,21 @@ public:
      * @param diff Contains information about the diff time
      */
     virtual void OnMapUpdate(Map* /*map*/, uint32 /*diff*/) { }
+
+    /**
+     * @brief This hook is called when an encounter asks what one of its values should be, so a module
+     * that scales content can answer with something other than what the script was written with. The
+     * authored value is kept beside the resolved one, so a script that nobody answers for keeps it.
+     *
+     * @param map Contains information about the Map
+     * @param encounterId Identifies the encounter, usually the boss entry
+     * @param mechanicId Identifies the value within that encounter
+     * @param mechanicType What kind of value it is
+     * @param authoredValue The value the script was written with
+     * @param resolvedValue The value to use, which starts out as the authored one
+     */
+    virtual void OnResolveEncounterMechanic(Map* /*map*/, uint32 /*encounterId*/, uint32 /*mechanicId*/,
+        uint8 /*mechanicType*/, uint32 /*authoredValue*/, uint32& /*resolvedValue*/) { }
 };
 
 #endif
