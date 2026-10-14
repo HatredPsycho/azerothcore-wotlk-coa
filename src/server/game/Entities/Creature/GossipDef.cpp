@@ -16,6 +16,7 @@
  */
 
 #include "GossipDef.h"
+#include "ContentScalingHooks.h"
 #include "AscensionQuestLog.h"
 #include "Formulas.h"
 #include "LocalLevelScaling.h"
@@ -589,13 +590,14 @@ void PlayerMenu::SendQuestQueryResponse(Quest const* quest) const
     LocalLevelScaling::QuestCurve const* curve = LocalLevelScaling::ScalingCurveFor(
         LocalLevelScaling::QuestScalingEnabled(viewer), quest->GetQuestId());
     int32 const questLevel = viewer->GetQuestLevel(quest);
-    int32 const stockLevel = quest->GetQuestLevel() > 0 ? quest->GetQuestLevel() : int32(viewer->GetLevel());
+    int32 const baseLevel = LocalLevelScaling::GetEffectiveQuestBaseLevel(quest);
+    int32 const stockLevel = baseLevel > 0 ? baseLevel : int32(viewer->GetLevel());
     bool const lifted = curve && questLevel != stockLevel;
-    int32 const sentLevel = lifted ? questLevel : quest->GetQuestLevel();
+    int32 const sentLevel = lifted ? questLevel : baseLevel;
     LOG_DEBUG("entities.player.quest", "SMSG_QUEST_QUERY_RESPONSE quest {} template level {} sent level {} player level {} min level {}",
         quest->GetQuestId(), quest->GetQuestLevel(), sentLevel, viewer->GetLevel(), quest->GetMinLevel());
     data << uint32(sentLevel);                              // per-player level; template remains immutable
-    data << uint32(quest->GetMinLevel());                   // min level
+    data << uint32(LocalLevelScaling::GetEffectiveQuestMinLevel(quest)); // min level
     data << uint32(quest->GetZoneOrSort());                 // zone or sort to display in quest log
 
     data << uint32(quest->GetType());                       // quest type

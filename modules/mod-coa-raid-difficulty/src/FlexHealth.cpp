@@ -30,6 +30,7 @@
 #include "FlexHealth.h"
 
 #include "Creature.h"
+#include "ContentScalingHooks.h"
 #include "DBCEnums.h"
 #include "DatabaseEnv.h"
 #include "Field.h"
@@ -114,6 +115,11 @@ namespace
     void ApplyFlex(Creature* creature)
     {
         if (!creature || !creature->GetMap() || !creature->GetMap()->IsRaid())
+            return;
+
+        // A content scaling module sizes raid bosses for groups of one to forty; two systems setting the same
+        // health would overwrite each other, so this one stands down while that one is in charge.
+        if (LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
             return;
 
         if (creature->GetEntry() == ENTRY_BASALTHANE_MOLTEN_BLOOD_OOZE)

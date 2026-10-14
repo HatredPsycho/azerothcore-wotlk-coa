@@ -27,6 +27,7 @@
 #include "Group.h"
 #include "MapMgr.h"
 #include "Player.h"
+#include "ContentScalingHooks.h"
 #include "PoolMgr.h"
 #include "QuestPackets.h"
 #include "ReputationMgr.h"
@@ -58,7 +59,7 @@ int32 Player::GetQuestLevel(Quest const* quest) const
 {
     if (!quest)
         return GetLevel();
-    return LocalLevelScaling::EffectiveQuestLevel(quest->GetQuestLevel(), GetLevel(),
+    return LocalLevelScaling::EffectiveQuestLevel(LocalLevelScaling::GetEffectiveQuestBaseLevel(quest), GetLevel(),
         LocalLevelScaling::ScalingCurveFor(LocalLevelScaling::QuestScalingEnabled(this), quest->GetQuestId()));
 }
 
@@ -271,7 +272,8 @@ bool Player::CanSeeStartQuest(Quest const* quest)
         SatisfyQuestPrevChain(quest, false) && SatisfyQuestBreadcrumb(quest, false) && SatisfyQuestDay(quest, false) && SatisfyQuestWeek(quest, false) &&
         SatisfyQuestMonth(quest, false) && SatisfyQuestSeasonal(quest, false))
     {
-        return GetLevel() + sWorld->getIntConfig(CONFIG_QUEST_HIGH_LEVEL_HIDE_DIFF) >= quest->GetMinLevel();
+        return GetLevel() + sWorld->getIntConfig(CONFIG_QUEST_HIGH_LEVEL_HIDE_DIFF) >=
+            LocalLevelScaling::GetEffectiveQuestMinLevel(quest);
     }
 
     return false;
@@ -1053,7 +1055,7 @@ bool Player::SatisfyQuestSkill(Quest const* qInfo, bool msg) const
 
 bool Player::SatisfyQuestLevel(Quest const* qInfo, bool msg) const
 {
-    if (GetLevel() < qInfo->GetMinLevel())
+    if (GetLevel() < LocalLevelScaling::GetEffectiveQuestMinLevel(qInfo))
     {
         if (msg)
             SendCanTakeQuestResponse(INVALIDREASON_QUEST_FAILED_LOW_LEVEL);
@@ -1524,7 +1526,9 @@ uint32 Player::CalculateQuestRewardXP(Quest const* quest)
     sScriptMgr->OnPlayerBeforeGetLevelForXPGain(this, level);
 
     // apply world quest rate
-    uint32 xp = uint32(quest->XPValue(level, LocalLevelScaling::QuestScalingEnabled(this)) * GetQuestRate(quest->IsDFQuest(), quest->GetQuestLevel()));
+    uint32 xp = uint32(quest->XPValue(level, LocalLevelScaling::QuestScalingEnabled(this)) *
+        LocalLevelScaling::GetEffectiveQuestRewardRate(this, quest,
+            GetQuestRate(quest->IsDFQuest(), quest->GetQuestLevel())));
 
     // handle SPELL_AURA_MOD_XP_QUEST_PCT auras; a NO_BONUS_EXPERIENCE challenge drops
     // the positive bonuses but keeps penalties.

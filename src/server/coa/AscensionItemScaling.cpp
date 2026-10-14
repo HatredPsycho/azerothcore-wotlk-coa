@@ -1,6 +1,7 @@
 /* Copyright (C) 2016+ AzerothCore, GNU AGPL v3. */
 
 #include "AscensionItemScaling.h"
+#include "ContentScalingHooks.h"
 #include "AscensionItemScalingPolicy.h"
 #include "AscensionItemStatData.h"
 #include "AscensionNativeItemScaling.h"
@@ -432,7 +433,8 @@ uint32 QuestRewardItem(Player const* player, uint32 itemId, Quest const* quest)
     if (!player)
         return itemId;
 
-    return EligibleLift(itemId, QuestLift(quest->GetQuestLevel(), uint32(player->GetQuestLevel(quest))));
+    return EligibleLift(itemId, QuestLift(LocalLevelScaling::GetEffectiveQuestBaseLevel(quest),
+        uint32(player->GetQuestLevel(quest))));
 }
 
 uint32 CreatureViewerLift(Player const* player, Creature const* creature)
@@ -522,7 +524,7 @@ public:
             return;
 
         Map* map = owner->FindMap();
-        if (!map)
+        if (!map || LocalLevelScaling::IsAuthenticMap(map->GetId(), map->GetDifficulty()))
             return;
 
         if (&store == &LootTemplates_Creature)

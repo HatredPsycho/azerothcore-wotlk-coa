@@ -16,6 +16,7 @@
  */
 
 #include "QuestDef.h"
+#include "ContentScalingHooks.h"
 #include "Formulas.h"
 #include "LocalLevelScaling.h"
 #include "Opcodes.h"
@@ -200,11 +201,12 @@ void Quest::LoadQuestTemplateAddon(Field* fields)
 
 uint32 Quest::XPValue(uint8 playerLevel, bool levelScaling) const
 {
-    int32 quest_level = Level == -1 ? playerLevel : Level;
+    int32 const baseLevel = LocalLevelScaling::GetEffectiveQuestBaseLevel(this);
+    int32 quest_level = baseLevel == -1 ? playerLevel : baseLevel;
     if (LocalLevelScaling::QuestCurve const* curve = LocalLevelScaling::ScalingCurveFor(levelScaling, Id))
     {
-        int32 const scaledLevel = LocalLevelScaling::EffectiveQuestLevel(Level, playerLevel, curve);
-        if (scaledLevel != (Level > 0 ? Level : int32(playerLevel)))
+        int32 const scaledLevel = LocalLevelScaling::EffectiveQuestLevel(baseLevel, playerLevel, curve);
+        if (scaledLevel != (baseLevel > 0 ? baseLevel : int32(playerLevel)))
         {
             if (RewardXPDifficulty >= 10)
                 return 0;
@@ -303,13 +305,31 @@ int32 Quest::GetRewOrReqMoney(uint8 playerLevel, bool levelScaling) const
         {
             // A scaled quest pays its own tier's ratio between the level it is played at and its own
             // level, and never less than the authored reward.
-            int32 const effectiveLevel = LocalLevelScaling::EffectiveQuestLevel(Level, playerLevel, curve);
+            int32 const effectiveLevel = LocalLevelScaling::EffectiveQuestLevel(
+                LocalLevelScaling::GetEffectiveQuestBaseLevel(this), playerLevel, curve);
             int8 const tier = FindMoneyTier();
             if (tier >= 0 && rewardedMoney > 0 && effectiveLevel != Level && effectiveLevel <= UINT8_MAX)
             {
                 uint32 const own = sObjectMgr->GetQuestMoneyReward(uint8(Level), uint8(tier));
                 uint32 const at = sObjectMgr->GetQuestMoneyReward(uint8(effectiveLevel), uint8(tier));
                 if (own && at > own)
+                {
+                    double const scaled = std::round(double(rewardedMoney) * double(at) / double(own));
+                    rewardedMoney = int32(std::min(scaled, double(INT32_MAX)));
+                }
+            }
+        }
+        else if (LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed))
+        {
+            // The installed module maps the quest to another level for everyone, so its money follows
+            // its own tier to that level even for a character who does not play scaled quests.
+            int32 const baseLevel = LocalLevelScaling::GetEffectiveQuestBaseLevel(this);
+            int8 const tier = FindMoneyTier();
+            if (tier >= 0 && rewardedMoney > 0 && baseLevel > 0 && baseLevel != Level && baseLevel <= UINT8_MAX)
+            {
+                uint32 const own = sObjectMgr->GetQuestMoneyReward(uint8(Level), uint8(tier));
+                uint32 const at = sObjectMgr->GetQuestMoneyReward(uint8(baseLevel), uint8(tier));
+                if (own && at)
                 {
                     double const scaled = std::round(double(rewardedMoney) * double(at) / double(own));
                     rewardedMoney = int32(std::min(scaled, double(INT32_MAX)));
@@ -330,7 +350,8 @@ uint32 Quest::GetRewMoneyMaxLevel(bool levelScaling) const
 
     rewMoney = (XPValue(sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL), levelScaling) * (6 * COPPER));
     // https://wowpedia.fandom.com/wiki/Quest?oldid=1035002 Formula is XP gained * 6c
-    return static_cast<int32>(rewMoney * sWorld->getRate(RATE_REWARD_BONUS_MONEY));
+    uint32 const finalMoney = static_cast<uint32>(rewMoney * sWorld->getRate(RATE_REWARD_BONUS_MONEY));
+    return static_cast<int32>(LocalLevelScaling::GetEffectiveQuestMoneyMaxLevel(this, finalMoney));
 }
 
 bool Quest::IsAutoAccept() const
@@ -397,8 +418,9 @@ void Quest::InitializeQueryData()
 
     queryData << uint32(GetQuestId());                    // quest id
     queryData << uint32(GetQuestMethod());                // Accepted values: 0, 1 or 2. 0 == IsAutoComplete() (skip objectives/details)
-    queryData << uint32(GetQuestLevel());                 // may be -1, static data, in other cases must be used dynamic level: Player::GetQuestLevel (0 is not known, but assuming this is no longer valid for quest intended for client)
-    queryData << uint32(GetMinLevel());                   // min level
+    // may be -1, static data, in other cases must be used dynamic level: Player::GetQuestLevel (0 is not known, but assuming this is no longer valid for quest intended for client)
+    queryData << uint32(LocalLevelScaling::GetEffectiveQuestBaseLevel(this));
+    queryData << uint32(LocalLevelScaling::GetEffectiveQuestMinLevel(this)); // min level
     queryData << uint32(GetZoneOrSort());                 // zone or sort to display in quest log
 
     queryData << uint32(GetType());                       // quest type

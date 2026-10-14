@@ -44,6 +44,7 @@
 #include "destiny_weaver_view_damage.h"
 
 #include "Config.h"
+#include "ContentScalingHooks.h"
 #include "Creature.h"
 #include "DBCStores.h"
 #include "Group.h"
@@ -250,6 +251,9 @@ namespace
         Map* map = creature->GetMap();
         ScalingScope const* scope = Scope();
         if (!map || !scope || map->IsScriptedPrivateInstance() || map->IsBattlegroundOrArena() || map->IsRaid())
+            return false;
+
+        if (LocalLevelScaling::IsAuthenticMap(map->GetId(), map->GetDifficulty()))
             return false;
 
         if (map->IsDungeon())
