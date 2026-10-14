@@ -727,7 +727,11 @@ def validate(scenario):
                           'spell_critical_damage', 'armor_reduced_damage', 'spell_immune', 'spell_effect_immune',
                           'distance_2d', 'can_detect'} \
                     or metric.startswith('script_'):
-                require('target' in step, f'{where}: damage metric needs target')
+                if metric.startswith('script_') and 'entry' in step:
+                    require('target' not in step, f'{where}: scripted damage selects either target or entry')
+                    number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
+                else:
+                    require('target' in step, f'{where}: damage metric needs target')
             if metric == 'aura_proc_rate':
                 require('target' in step, f'{where}: {metric} metric needs target')
                 number(step.get('type_mask'), f'{where}.type_mask', 1, 2**32 - 1, True)

@@ -3100,7 +3100,9 @@ private:
         }
         if (metric.rfind("script_", 0) == 0)
         {
-            Unit* attacker = GetUnit(step.get<std::string>("target"));
+            Unit* attacker = step.get_optional<uint32>("entry") ?
+                GetGiver(player, step.get<uint32>("entry")) : GetUnit(step.get<std::string>("target"));
+            Require(attacker != nullptr, "Scripted damage needs a present attacker");
             SpellInfo const* info = sSpellMgr->GetSpellInfo(spell);
             if (metric == "script_melee_damage_taken")
             {

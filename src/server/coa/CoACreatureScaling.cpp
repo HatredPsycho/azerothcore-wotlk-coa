@@ -4,6 +4,7 @@
 #include "CoACreatureScalingPolicy.h"
 #include "AllCreatureScript.h"
 #include "Config.h"
+#include "ContentScalingHooks.h"
 #include "Creature.h"
 #include "DatabaseEnv.h"
 #include "Field.h"
@@ -53,10 +54,16 @@ namespace
             && !creature->IsCritter() && !creature->GetCharmerOrOwnerGUID() && !IsDummy(creature);
     }
 
+    bool SizedByContentScaling(Map const* map)
+    {
+        return map->IsDungeon() && LocalLevelScaling::ContentScalingActive.load(std::memory_order_relaxed) &&
+            !LocalLevelScaling::IsAuthenticMap(map->GetId(), uint8(map->GetDifficulty()));
+    }
+
     CreatureScaling::Context ContextOf(Creature const* creature)
     {
         Map const* map = creature->FindMap();
-        if (!map)
+        if (!map || SizedByContentScaling(map))
             return CreatureScaling::Context::None;
         return CreatureScaling::ContextOf(map->IsBattlegroundOrArena(), map->IsScriptedPrivateInstance(),
             map->IsRegularDifficulty(), map->IsRaid(), map->IsDungeon());
