@@ -231,17 +231,6 @@ struct npc_ascension_tinker_pet : PetAI
         if (player && Permanent(me->GetEntry()))
         {
             events.Update(diff);
-            if (!initialized)
-            {
-                if (CharmInfo* charmInfo = me->GetCharmInfo())
-                {
-                    if (me->HasReactState(REACT_PASSIVE) && charmInfo->GetPlayerReactState() != REACT_PASSIVE)
-                    {
-                        me->SetReactState(REACT_DEFENSIVE);
-                        charmInfo->SetPlayerReactState(REACT_DEFENSIVE);
-                    }
-                }
-            }
             if (!initialized || events.ExecuteEvent())
             {
                 Scale(player,me,!initialized);
@@ -624,13 +613,24 @@ public:
 class tinker_pet_type : public PlayerScript
 {
 public:
-    tinker_pet_type() : PlayerScript("tinker_pet_type", {PLAYERHOOK_ON_BEFORE_GUARDIAN_INIT_STATS_FOR_LEVEL}) { }
+    tinker_pet_type() : PlayerScript("tinker_pet_type", {PLAYERHOOK_ON_BEFORE_GUARDIAN_INIT_STATS_FOR_LEVEL,
+        PLAYERHOOK_ON_AFTER_GUARDIAN_INIT_STATS_FOR_LEVEL}) { }
 
     void OnPlayerBeforeGuardianInitStatsForLevel(Player* player, Guardian* guardian, CreatureTemplate const*,
         PetType& type) override
     {
         if (player->getClass() == CLASS_TINKER && guardian && Permanent(guardian->GetEntry()))
             type = SUMMON_PET;
+    }
+
+    void OnPlayerAfterGuardianInitStatsForLevel(Player* player, Guardian* guardian) override
+    {
+        if (player->getClass() != CLASS_TINKER || !guardian || !Permanent(guardian->GetEntry()) ||
+            guardian->isBeingLoaded())
+            return;
+        PetStable const* stable = player->GetPetStable();
+        if (!stable || !stable->CurrentPet)
+            guardian->SetReactState(REACT_DEFENSIVE);
     }
 };
 }
