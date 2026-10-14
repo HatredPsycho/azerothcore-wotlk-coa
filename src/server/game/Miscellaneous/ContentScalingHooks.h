@@ -186,6 +186,28 @@ inline void AddContentScalingScope(std::vector<std::uint32_t>& worldMaps,
         owner(worldMaps, dungeonBands);
 }
 
+/// What the random bots take from a content scaling module that moves the world's levels: the level they stop
+/// at, the levels they ride and fly from, and the level bracket of each zone they hunt in.
+struct BotLevelPlan
+{
+    std::uint8_t maxLevel{0};
+    std::uint8_t groundMountLevel{0};
+    std::uint8_t fastGroundMountLevel{0};
+    std::uint8_t flyMountLevel{0};
+    std::uint8_t fastFlyMountLevel{0};
+    std::vector<std::pair<std::uint32_t, std::pair<std::uint8_t, std::uint8_t>>> zoneBrackets;
+};
+
+using BotLevelPlanResolver = bool (*)(BotLevelPlan&);
+inline std::atomic<BotLevelPlanResolver> BotLevelPlanOwner{nullptr};
+
+/// The installed module's plan for the random bots; false when nothing is installed or it has none.
+inline bool GetContentScalingBotLevelPlan(BotLevelPlan& plan)
+{
+    BotLevelPlanResolver const owner = BotLevelPlanOwner.load(std::memory_order_relaxed);
+    return owner && owner(plan);
+}
+
 /// Item entries whose level is decided by which entry they are (one item per level), so nothing rewrites them.
 AC_GAME_API void ReserveLevelResolvedItems(std::uint32_t firstEntry, std::uint32_t lastEntry);
 [[nodiscard]] AC_GAME_API bool IsLevelResolvedItem(std::uint32_t entry);
