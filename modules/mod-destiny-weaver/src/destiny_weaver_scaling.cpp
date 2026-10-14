@@ -152,6 +152,14 @@ namespace
                 itr->second = LocalLevelScaling::MergeBands(itr->second, band);
         }
 
+        std::vector<uint32> contentWorldMaps;
+        std::vector<std::pair<uint32, LocalLevelScaling::LevelBand>> contentDungeonBands;
+        LocalLevelScaling::AddContentScalingScope(contentWorldMaps, contentDungeonBands);
+        for (uint32 mapId : contentWorldMaps)
+            scope->WorldMaps.insert(mapId);
+        for (auto const& [mapId, band] : contentDungeonBands)
+            scope->DungeonBands.insert_or_assign(mapId, band);
+
         LOG_INFO("module.destiny_weaver", "creature scaling covers {} open-world map(s) and {} dungeon map(s)",
                  scope->WorldMaps.size(), scope->DungeonBands.size());
 
@@ -330,6 +338,8 @@ namespace
             // nothing, because there is nobody else for a high view to be wrong for.
             uint8 const offset = LocalLevelScaling::CreatureOffset.load(std::memory_order_relaxed);
             level = LocalLevelScaling::ScaleCreatureLevelForViewer(own, viewer->GetLevel(), offset);
+            if (uint8 const placed = LocalLevelScaling::GetCreatureWindowLevel(viewer, creature, own))
+                level = placed;
         }
 
         if (level == own)

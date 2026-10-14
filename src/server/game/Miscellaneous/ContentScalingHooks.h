@@ -8,8 +8,11 @@
 #define AC_CONTENT_SCALING_HOOKS_H
 
 #include "Define.h"
+#include "LocalLevelScaling.h"
 #include <atomic>
 #include <cstdint>
+#include <utility>
+#include <vector>
 
 class Creature;
 struct CreatureTemplate;
@@ -157,6 +160,30 @@ inline std::uint8_t GetEffectiveAbilityRequiredLevel(std::uint8_t requiredLevel)
 {
     AbilityRequiredLevelResolver const owner = AbilityRequiredLevelOwner.load(std::memory_order_relaxed);
     return owner ? owner(requiredLevel) : requiredLevel;
+}
+
+using CreatureWindowResolver = std::uint8_t (*)(Player const*, Creature const*, std::uint8_t ownLevel);
+inline std::atomic<CreatureWindowResolver> CreatureWindowOwner{nullptr};
+
+/// Where a lifted open-world creature stands for a viewer: its place in its zone, within a window around the
+/// viewer, instead of the viewer's level minus the offset. 0 when nothing is installed or it has no opinion.
+inline std::uint8_t GetCreatureWindowLevel(Player const* viewer, Creature const* creature, std::uint8_t ownLevel)
+{
+    CreatureWindowResolver const owner = CreatureWindowOwner.load(std::memory_order_relaxed);
+    return owner ? owner(viewer, creature, ownLevel) : 0;
+}
+
+using ScalingScopeResolver = void (*)(std::vector<std::uint32_t>& worldMaps,
+                                      std::vector<std::pair<std::uint32_t, LevelBand>>& dungeonBands);
+inline std::atomic<ScalingScopeResolver> ScalingScopeOwner{nullptr};
+
+/// The open-world maps and dungeon bands the installed module adds to where creatures scale for a viewer,
+/// asked whenever the scaling scope is built. A band given here replaces the one the dungeon finder names.
+inline void AddContentScalingScope(std::vector<std::uint32_t>& worldMaps,
+                                   std::vector<std::pair<std::uint32_t, LevelBand>>& dungeonBands)
+{
+    if (ScalingScopeResolver const owner = ScalingScopeOwner.load(std::memory_order_relaxed))
+        owner(worldMaps, dungeonBands);
 }
 
 /// Item entries whose level is decided by which entry they are (one item per level), so nothing rewrites them.
