@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "name": "Dungeon Spoils opened below the level of every dungeon item still give the lowest one",
+  "contract": "Dungeon Spoils (2021814) choose one vanilla dungeon item that fits the opener's level when they are opened. The final boss of Ragefire Chasm gives them to a character below 13, and the lowest items of the pool require 13, so nothing fit and the spoils could not be opened. Opened at level 8 they must be used up and put exactly one item in the bags, taken from the lowest level of the pool: it requires level 13.",
+  "timeout_ms": 60000,
+  "players": [ { "id": "p", "race": 1, "class": 1, "level": 8 } ],
+  "location": { "map": 0, "x": -8914.0, "y": -133.0, "z": 80.6 },
+  "steps": [
+    { "action": "wait", "ms": 3000 },
+    { "action": "add_item", "label": "SETUP: the character holds one Dungeon Spoils", "actor": "p", "item": 2021814, "count": 1 },
+    { "action": "use_item", "label": "The character opens the spoils at level 8", "actor": "p", "item": 2021814, "spell": 93461 },
+    { "action": "assert", "label": "The opened spoils are used up", "actor": "p", "metric": "item_count", "item": 2021814, "equals": 0, "within_ms": 3000 },
+    { "action": "assert", "label": "The spoils put exactly one of their items in the bags", "actor": "p", "metric": "carried_pool_item_count", "cache": 2021814, "table": "loot", "equals": 1 },
+    { "action": "assert", "label": "The item comes from the lowest level of the pool", "actor": "p", "metric": "carried_pool_item_count", "cache": 2021814, "table": "loot", "min_required_level": 13, "max_required_level": 13, "equals": 1 }
+  ]
+}
