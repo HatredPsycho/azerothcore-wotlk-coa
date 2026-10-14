@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "PlayerScript.h"
 #include <algorithm>
+#include <limits>
 #include <vector>
 
 namespace
@@ -26,10 +27,26 @@ namespace
     constexpr uint32 DungeonSpoilsMythic = 1027965;
     constexpr uint32 SpoilsLevelWindow = 5;
 
-    bool PlayerCanWear(Player const* player, ItemTemplate const* item)
+    bool PlayerCanWear(Player const* player, ItemTemplate const* item, bool laterLevel)
     {
-        return player->CanUseItem(item) == EQUIP_ERR_OK &&
+        InventoryResult const result = player->CanUseItem(item);
+        return (result == EQUIP_ERR_OK || (laterLevel && result == EQUIP_ERR_CANT_EQUIP_LEVEL_I)) &&
             (!item->GetSkill() || player->GetSkillValue(item->GetSkill()));
+    }
+
+    uint32 LevelCeiling(Player const* player, std::list<LootStoreItem*> const& entries)
+    {
+        uint32 lowest = std::numeric_limits<uint32>::max();
+        for (LootStoreItem const* entry : entries)
+        {
+            ItemTemplate const* item = sObjectMgr->GetItemTemplate(entry->itemid);
+            if (!item || entry->reference)
+                continue;
+            if (item->RequiredLevel <= player->GetLevel())
+                return player->GetLevel();
+            lowest = std::min(lowest, item->RequiredLevel);
+        }
+        return lowest;
     }
 
     bool AlreadyDropped(Loot const& loot, LootStoreItem const* entry)
@@ -45,12 +62,14 @@ namespace
     {
         std::vector<LootStoreItem*> spoils;
         uint32 bestLevel = 0;
+        uint32 const ceiling = levelScaled ? LevelCeiling(player, entries) : player->GetLevel();
+        bool const laterLevel = ceiling > player->GetLevel();
         for (LootStoreItem* entry : entries)
         {
             ItemTemplate const* item = sObjectMgr->GetItemTemplate(entry->itemid);
             if (!item || entry->reference || AlreadyDropped(loot, entry) ||
-                (levelScaled && item->RequiredLevel > player->GetLevel()) ||
-                (wearableOnly && !PlayerCanWear(player, item)))
+                (levelScaled && item->RequiredLevel > ceiling) ||
+                (wearableOnly && !PlayerCanWear(player, item, laterLevel)))
                 continue;
             spoils.push_back(entry);
             bestLevel = std::max(bestLevel, item->RequiredLevel);
