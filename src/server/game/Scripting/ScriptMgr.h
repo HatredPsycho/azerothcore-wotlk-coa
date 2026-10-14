@@ -530,6 +530,7 @@ public: /* PlayerScript */
     void OnPlayerCoAPrestigeSaved(Player* player);
     void OnPlayerMasterLootItem(Player* player, Item* item, uint32 count, ObjectGuid lootguid);
     std::optional<uint32> OnPlayerGetGameModeMask(Player const* player);
+    void OnResolveDungeonAccessLevels(Player const* player, uint32 mapId, Difficulty difficulty, uint8& minLevel, uint8& maxLevel);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);

@@ -254,6 +254,7 @@ enum PlayerHook
     PLAYERHOOK_ON_REFRESH_QUEST_GIVER,
     PLAYERHOOK_ON_COA_PROGRESS,
     PLAYERHOOK_ON_GET_GAME_MODE_MASK,
+    PLAYERHOOK_ON_RESOLVE_DUNGEON_ACCESS_LEVELS,
     PLAYERHOOK_ON_AFTER_APPLY_ITEM_MODS,
     PLAYERHOOK_ON_COA_PRESTIGE,
     PLAYERHOOK_ON_COA_PRESTIGE_SAVED,
@@ -1130,6 +1131,14 @@ public:
      * @return true when the script resolved the mask
      */
     [[nodiscard]] virtual bool OnPlayerGetGameModeMask(Player const* /*player*/, uint32& /*mask*/) { return false; }
+
+    /**
+     * @brief Called while checking whether a player may enter a dungeon, with the levels its
+     * requirements name. A module that maps content onto other levels than it was authored for
+     * answers with the levels that hold on this realm; with nobody answering, the authored ones stand.
+     */
+    virtual void OnResolveDungeonAccessLevels(Player const* /*player*/, uint32 /*mapId*/,
+        Difficulty /*difficulty*/, uint8& /*minLevel*/, uint8& /*maxLevel*/) { }
 };
 
 #endif
