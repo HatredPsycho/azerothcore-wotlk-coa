@@ -12,6 +12,7 @@
 #include "AscensionVenomancer.h"
 #include "AscensionTinker.h"
 #include "AscensionSunCleric.h"
+#include "AscensionXoroth.h"
 #include "AllCreatureScript.h"
 #include "AllItemScript.h"
 #include "AllSpellScript.h"
@@ -2508,6 +2509,8 @@ public:
     uint32 granted = SynchronizeProgression(player);
     if (restoreStoredBuild)
       RestoreBarButtons(player, specializationId, previousSpecialization);
+    else
+      player->SendInitialActionButtons();
     ChatHandler(player->GetSession())
         .PSendSysMessage(
             "Activated specialization {}. Stored the build of specialization {}, removed {} old talent "
@@ -4894,7 +4897,7 @@ private:
     if (!info)
       return;
 
-    if (info->Id == AscensionSunCleric::DawnCast)
+    if (info->Id == AscensionSunCleric::DawnCast || info->Id == AscensionXoroth::SPELL_SACRIFICIAL_CIRCLE)
     {
       row.Values[SPELL_WIRE_SLOT(SPELL_CASTER_AURA_SPELL_FIELD)] = info->CasterAuraSpell;
       row.Values[SPELL_WIRE_SLOT(SPELL_EXCLUDE_CASTER_AURA_SPELL_FIELD)] = info->ExcludeCasterAuraSpell;
