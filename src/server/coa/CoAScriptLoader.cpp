@@ -320,6 +320,7 @@ void AddSC_AscensionTierTokenVendor();
 void AddSC_AscensionFeatherOfAncients();
 void AddSC_AscensionVultureCultQuests();
 void AddSC_AscensionCaravanCarts();
+void AddSC_AscensionRoamingCreatureGrids();
 void AddSC_AscensionNorthshireRuins();
 void AddSC_AscensionStormwindKeepDoor();
 void AddSC_AscensionShadewellClues();
@@ -604,6 +605,7 @@ void AddCoAScripts()
     AddSC_AscensionFeatherOfAncients();
     AddSC_AscensionVultureCultQuests();
     AddSC_AscensionCaravanCarts();
+    AddSC_AscensionRoamingCreatureGrids();
     AddSC_AscensionNorthshireRuins();
     AddSC_AscensionStormwindKeepDoor();
     AddSC_AscensionShadewellClues();
