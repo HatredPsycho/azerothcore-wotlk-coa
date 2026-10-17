@@ -384,6 +384,8 @@ namespace
 
     void Refresh(Player* player, bool force)
     {
+        if (!force && Casting(player))
+            return;
         uint32 const spell = Preview(player);
         {
             std::lock_guard lock(SubscriberLock);
