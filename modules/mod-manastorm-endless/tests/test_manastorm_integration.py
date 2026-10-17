@@ -37,17 +37,37 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(values, generated)
         self.assertNotIn("`acore_world`.", result)
 
+    def test_teleport_import_stops_on_foreign_ids_before_any_upsert(self):
+        source = (EXPORTS / "Gametele.sql").read_text(encoding="utf-8-sig")
+        result, _ = prepare.teleport_sql(source)
+        guard = result.index("INSERT INTO `manastorm_tele_guard`")
+        self.assertLess(guard, result.index("INSERT INTO `game_tele`"))
+        self.assertIn("CHECK (`foreign_teleport_found` = 0)", result)
+        owners = result[result.index("INSERT INTO `manastorm_tele_owner`"):guard]
+        self.assertIn("(2038, 'Manastorm_SFK_RETHILGORE_A')", owners)
+        self.assertIn("(2038, 'UWES_SFK_RETHILGORE_A')", owners)
+        self.assertIn("(2103, 'Manastorm_OpenWorld_Marisadu''Paige')", owners)
+
     def test_world_preserves_rows_without_destructive_ddl(self):
         source = (EXPORTS / "ManastormWorldDBExport-RUNTHIS.sql").read_text(encoding="utf-8-sig")
         result, count = prepare.world_sql(source)
         self.assertEqual(count, 135197)
         before = re.findall(r"^INSERT INTO `([^`]+)` VALUES (.*);$", source, re.M)
-        after = re.findall(r"^INSERT INTO `([^`]+)` \([^\n]+?\) VALUES (.*) ON DUPLICATE KEY UPDATE", result, re.M)
+        statements = re.findall(r"^INSERT INTO `([^`]+)` \([^\n]+?\) VALUES\n(.*?) ON DUPLICATE KEY UPDATE",
+                                result, re.M | re.S)
+        after = [(table, values) for table, body in statements for values in body.split(",\n")]
         self.assertEqual(before, after)
+        self.assertLess(max(len(body) for _, body in statements), 2 * prepare.BATCH_BYTES)
         self.assertFalse(re.search(r"^(DROP|TRUNCATE|DELETE|REPLACE)\b", result, re.M))
         self.assertNotIn("FOREIGN_KEY_CHECKS", result)
         self.assertEqual(result.count("ADD COLUMN `source_field_"), 3)
         self.assertIn("SET `flags` = `flags` | 17", result)
+
+    def test_committed_snapshot_updates_match_generator(self):
+        files, _, _ = prepare.snapshots()
+        self.assertEqual([path.name for path in prepare.stale_snapshots(files)], [])
+        updates = sorted(path.name for path in prepare.UPDATES.glob("*.sql"))
+        self.assertEqual(updates[-2:], [path.name for path in files])
 
     def test_prepared_metadata_ddl_escapes_embedded_quotes(self):
         source = (EXPORTS / "ManastormWorldDBExport-RUNTHIS.sql").read_text(encoding="utf-8-sig")
