@@ -333,7 +333,7 @@ namespace
         return selection;
     }
 
-    PressBlock Press(Player* player)
+    PressBlock Press(Player* player, TriggerCastFlags selectionFlags = TRIGGERED_NONE)
     {
         if (Enabled && Casting(player))
             return PressBlock::Busy;
@@ -341,7 +341,7 @@ namespace
         if (selection.Block != PressBlock::None)
             return selection.Block;
 
-        if (uint32 const spell = ChooseSpell(player, selection.Target, selection.Healing))
+        if (uint32 const spell = ChooseSpell(player, selection.Target, selection.Healing, selectionFlags))
         {
             SpellCastTargets targets;
             targets.SetUnitTarget(selection.Target);
@@ -368,7 +368,19 @@ namespace
         uint32 Elapsed = 0;
         uint32 Shown = 0;
         bool Sent = false;
+        uint32 PendingPress = 0;
     };
+
+    constexpr uint32 PendingPressLifetime = 2000;
+
+    bool PressMustWait(Player* player)
+    {
+        if (Casting(player))
+            return true;
+        uint32 const spell = Preview(player);
+        SpellInfo const* info = spell ? sSpellMgr->GetSpellInfo(player->GetCastReplacement(spell)) : nullptr;
+        return info && player->GetGlobalCooldownMgr().HasGlobalCooldown(info);
+    }
 
     std::atomic<uint32> PreviewInterval = 250;
     std::mutex SubscriberLock;
@@ -419,17 +431,36 @@ namespace
 
         void OnPlayerUpdate(Player* player, uint32 diff) override
         {
+            bool pending = false;
+            bool refresh = false;
             {
                 std::lock_guard lock(SubscriberLock);
                 auto const found = Subscribers.find(player->GetGUID());
                 if (found == Subscribers.end())
                     return;
-                found->second.Elapsed += diff;
-                if (found->second.Elapsed < PreviewInterval)
-                    return;
-                found->second.Elapsed = 0;
+                Subscriber& subscriber = found->second;
+                pending = subscriber.PendingPress != 0;
+                subscriber.PendingPress = subscriber.PendingPress > diff ? subscriber.PendingPress - diff : 0;
+                subscriber.Elapsed += diff;
+                if (subscriber.Elapsed >= PreviewInterval)
+                {
+                    subscriber.Elapsed = 0;
+                    refresh = true;
+                }
             }
-            Refresh(player, false);
+            if (pending && !PressMustWait(player))
+            {
+                {
+                    std::lock_guard lock(SubscriberLock);
+                    auto const found = Subscribers.find(player->GetGUID());
+                    if (found != Subscribers.end())
+                        found->second.PendingPress = 0;
+                }
+                Press(player, TRIGGERED_IGNORE_GCD);
+                refresh = true;
+            }
+            if (refresh)
+                Refresh(player, false);
         }
 
         void OnPlayerLogout(Player* player) override
@@ -461,7 +492,17 @@ namespace
             }
             else if (request == "PRESS")
             {
-                Press(player);
+                if (PressMustWait(player))
+                {
+                    std::lock_guard lock(SubscriberLock);
+                    auto const found = Subscribers.find(player->GetGUID());
+                    if (found != Subscribers.end())
+                        found->second.PendingPress = PendingPressLifetime;
+                    else
+                        Press(player, TRIGGERED_IGNORE_GCD);
+                }
+                else
+                    Press(player, TRIGGERED_IGNORE_GCD);
                 Refresh(player, false);
             }
             return false;
