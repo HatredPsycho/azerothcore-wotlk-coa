@@ -12,6 +12,7 @@
 #include "Config.h"
 #include "DisableMgr.h"
 #include "Player.h"
+#include "PlayerScript.h"
 #include "Spell.h"
 #include "SpellAuraEffects.h"
 #include "SpellAuras.h"
@@ -24,9 +25,12 @@
 #include <algorithm>
 #include <atomic>
 #include <map>
+#include <mutex>
 #include <set>
 #include <string>
+#include <string_view>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 using namespace Acore::ChatCommands;
@@ -165,7 +169,7 @@ namespace
                 TARGET_FLAG_TRADE_ITEM | TARGET_FLAG_GAMEOBJECT | TARGET_FLAG_GAMEOBJECT_ITEM));
     }
 
-    bool Ready(Player* player, Unit* target, SpellInfo const* info, bool healing)
+    bool Ready(Player* player, Unit* target, SpellInfo const* info, bool healing, TriggerCastFlags probeFlags)
     {
         if (!Allowed(info, healing) || !player->HasActiveSpell(info->Id) ||
             sDisableMgr->IsDisabledFor(DISABLE_TYPE_SPELL, info->Id, player) ||
@@ -176,7 +180,7 @@ namespace
             if (SpellInfo const* ranked = info->GetAuraRankForLevel(target->GetLevel()))
                 info = ranked;
 
-        Spell probe(player, info, TRIGGERED_NONE);
+        Spell probe(player, info, probeFlags);
         SpellCastTargets targets;
         targets.SetUnitTarget(target);
         probe.InitExplicitTargets(targets);
@@ -219,7 +223,7 @@ namespace
         return 0;
     }
 
-    uint32 ChooseSpell(Player* player, Unit* target, bool healing)
+    uint32 ChooseSpell(Player* player, Unit* target, bool healing, TriggerCastFlags probeFlags = TRIGGERED_NONE)
     {
         std::map<std::string, SpellInfo const*> learned;
         for (auto const& [id, state] : player->GetSpellMap())
@@ -247,7 +251,7 @@ namespace
                 info->HasAura(SPELL_AURA_PERIODIC_LEECH) || info->HasAura(SPELL_AURA_PERIODIC_HEAL))
                 if (AuraStacks(target, info->SpellName[0], player->GetGUID()))
                     return uint32(0);
-            return Ready(player, target, info, healing) ? learnedInfo->Id : uint32(0);
+            return Ready(player, target, info, healing, probeFlags) ? learnedInfo->Id : uint32(0);
         };
 
         uint32 const selected = Select(Rules, GetAscensionActiveSpecialization(player), [&](Rule const& rule)
@@ -274,6 +278,124 @@ namespace
         return 0;
     }
 
+    enum class PressBlock : uint8
+    {
+        None,
+        Disabled,
+        Busy,
+        NoTarget,
+        HealthyFriend
+    };
+
+    struct Selection
+    {
+        PressBlock Block = PressBlock::None;
+        Unit* Target = nullptr;
+        bool Healing = false;
+    };
+
+    bool Busy(Player* player)
+    {
+        return !player->IsInWorld() || !player->FindMap() || !player->IsAlive() || player->IsInFlight() ||
+            player->m_mover != player || player->isPossessing() || player->IsCharmed();
+    }
+
+    bool Casting(Player* player)
+    {
+        return player->IsNonMeleeSpellCast(false, false, true) || player->GetCurrentSpell(CURRENT_MELEE_SPELL) ||
+            !player->SpellQueue.empty();
+    }
+
+    Selection SelectTarget(Player* player)
+    {
+        Selection selection;
+        if (!Enabled)
+        {
+            selection.Block = PressBlock::Disabled;
+            return selection;
+        }
+        if (Busy(player))
+        {
+            selection.Block = PressBlock::Busy;
+            return selection;
+        }
+        Unit* target = player->GetSelectedUnit();
+        if (!target || !target->IsAlive() ||
+            (!player->IsValidAttackTarget(target) && !player->IsValidAssistTarget(target)))
+        {
+            selection.Block = PressBlock::NoTarget;
+            return selection;
+        }
+        selection.Target = target;
+        selection.Healing = !player->IsValidAttackTarget(target);
+        if (selection.Healing && target->GetHealth() == target->GetMaxHealth())
+            selection.Block = PressBlock::HealthyFriend;
+        return selection;
+    }
+
+    PressBlock Press(Player* player)
+    {
+        if (Enabled && Casting(player))
+            return PressBlock::Busy;
+        Selection const selection = SelectTarget(player);
+        if (selection.Block != PressBlock::None)
+            return selection.Block;
+
+        if (uint32 const spell = ChooseSpell(player, selection.Target, selection.Healing))
+        {
+            SpellCastTargets targets;
+            targets.SetUnitTarget(selection.Target);
+            WorldPacket packet(CMSG_CAST_SPELL, 32);
+            packet << uint8(1) << spell << uint8(0);
+            targets.Write(packet);
+            player->GetSession()->HandleCastSpellOpcode(packet);
+        }
+        return PressBlock::None;
+    }
+
+    uint32 Preview(Player* player)
+    {
+        Selection const selection = SelectTarget(player);
+        if (selection.Block != PressBlock::None)
+            return 0;
+        return ChooseSpell(player, selection.Target, selection.Healing, TRIGGERED_IGNORE_GCD);
+    }
+
+    constexpr std::string_view AddonPrefix = "COARotation\t";
+
+    struct Subscriber
+    {
+        uint32 Elapsed = 0;
+        uint32 Shown = 0;
+        bool Sent = false;
+    };
+
+    std::atomic<uint32> PreviewInterval = 250;
+    std::mutex SubscriberLock;
+    std::unordered_map<ObjectGuid, Subscriber> Subscribers;
+
+    void SendAddon(Player* player, std::string const& message)
+    {
+        WorldPacket packet;
+        ChatHandler::BuildChatPacket(packet, CHAT_MSG_WHISPER, LANG_ADDON, player, player,
+            std::string(AddonPrefix) + message);
+        player->SendDirectMessage(&packet);
+    }
+
+    void Refresh(Player* player, bool force)
+    {
+        uint32 const spell = Preview(player);
+        {
+            std::lock_guard lock(SubscriberLock);
+            auto const found = Subscribers.find(player->GetGUID());
+            if (found == Subscribers.end() || (!force && found->second.Sent && found->second.Shown == spell))
+                return;
+            found->second.Shown = spell;
+            found->second.Sent = true;
+        }
+        SendAddon(player, "N;" + std::to_string(spell));
+    }
+
     class RotationConfig final : public WorldScript
     {
     public:
@@ -282,6 +404,65 @@ namespace
         void OnAfterConfigLoad(bool) override
         {
             Enabled = sConfigMgr->GetOption<bool>("CoA.RotationAssist.Enable", true);
+            PreviewInterval = std::max<uint32>(100,
+                sConfigMgr->GetOption<uint32>("CoA.RotationAssist.PreviewInterval", 250));
+        }
+    };
+
+    class RotationAddon final : public PlayerScript
+    {
+    public:
+        RotationAddon() : PlayerScript("CoARotationAddon",
+            { PLAYERHOOK_ON_UPDATE, PLAYERHOOK_ON_LOGOUT, PLAYERHOOK_CAN_PLAYER_USE_PRIVATE_CHAT }) { }
+
+        void OnPlayerUpdate(Player* player, uint32 diff) override
+        {
+            {
+                std::lock_guard lock(SubscriberLock);
+                auto const found = Subscribers.find(player->GetGUID());
+                if (found == Subscribers.end())
+                    return;
+                found->second.Elapsed += diff;
+                if (found->second.Elapsed < PreviewInterval)
+                    return;
+                found->second.Elapsed = 0;
+            }
+            Refresh(player, false);
+        }
+
+        void OnPlayerLogout(Player* player) override
+        {
+            std::lock_guard lock(SubscriberLock);
+            Subscribers.erase(player->GetGUID());
+        }
+
+        bool OnPlayerCanUseChat(Player* player, uint32 type, uint32 language, std::string& message,
+            Player* receiver) override
+        {
+            if (type != CHAT_MSG_WHISPER || language != LANG_ADDON || receiver != player ||
+                !message.starts_with(AddonPrefix))
+                return true;
+
+            std::string_view const request = std::string_view(message).substr(AddonPrefix.size());
+            if (request == "ON")
+            {
+                {
+                    std::lock_guard lock(SubscriberLock);
+                    Subscribers[player->GetGUID()] = Subscriber();
+                }
+                Refresh(player, true);
+            }
+            else if (request == "OFF")
+            {
+                std::lock_guard lock(SubscriberLock);
+                Subscribers.erase(player->GetGUID());
+            }
+            else if (request == "PRESS")
+            {
+                Press(player);
+                Refresh(player, false);
+            }
+            return false;
         }
     };
 
@@ -302,39 +483,22 @@ namespace
         static bool HandleRotation(ChatHandler* handler)
         {
             Player* player = handler->GetPlayer();
-            if (!Enabled || !player)
+            if (!player)
             {
                 handler->SendErrorMessage("Rotation assistance is disabled on this realm.");
                 return false;
             }
-            if (!player->IsInWorld() || !player->FindMap() || !player->IsAlive() || player->IsInFlight() ||
-                player->m_mover != player || player->isPossessing() || player->IsCharmed() ||
-                player->IsNonMeleeSpellCast(false, false, true) || player->GetCurrentSpell(CURRENT_MELEE_SPELL) ||
-                !player->SpellQueue.empty())
-                return true;
-
-            Unit* target = player->GetSelectedUnit();
-            if (!target || !target->IsAlive() ||
-                (!player->IsValidAttackTarget(target) && !player->IsValidAssistTarget(target)))
+            switch (Press(player))
             {
-                handler->SendErrorMessage("Select a living enemy to attack or a friendly target to heal.");
-                return false;
+                case PressBlock::Disabled:
+                    handler->SendErrorMessage("Rotation assistance is disabled on this realm.");
+                    return false;
+                case PressBlock::NoTarget:
+                    handler->SendErrorMessage("Select a living enemy to attack or a friendly target to heal.");
+                    return false;
+                default:
+                    return true;
             }
-
-            bool const healing = !player->IsValidAttackTarget(target);
-            if (healing && target->GetHealth() == target->GetMaxHealth())
-                return true;
-
-            if (uint32 const spell = ChooseSpell(player, target, healing))
-            {
-                SpellCastTargets targets;
-                targets.SetUnitTarget(target);
-                WorldPacket packet(CMSG_CAST_SPELL, 32);
-                packet << uint8(1) << spell << uint8(0);
-                targets.Write(packet);
-                player->GetSession()->HandleCastSpellOpcode(packet);
-            }
-            return true;
         }
     };
 }
@@ -342,5 +506,6 @@ namespace
 void AddCoARotationAssistScripts()
 {
     new RotationConfig();
+    new RotationAddon();
     new RotationCommands();
 }

@@ -11,6 +11,10 @@ CoA.Enable = 1
 # Uses CoA specialization priorities with a basic fallback for other builds.
 CoA.RotationAssist.Enable = 1
 
+# Milliseconds between next-spell updates for players running the CoARotation addon (client-addons).
+# Updates are sent only when the next spell changes. Default: 250, minimum 100.
+CoA.RotationAssist.PreviewInterval = 250
+
 # Maximum crafted-item upgrade steps: 0 disables upgrade kits, 1 allows Refined,
 # 2 allows Superior, and 3 allows Masterwork. Default: 2. Values are clamped to 0-3.
 # Applies on startup and config reload; existing upgraded items remain unchanged.
