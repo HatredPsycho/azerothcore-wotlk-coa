@@ -1,9 +1,4 @@
-# Extras
-
-Client-side pieces that server features depend on. They are kept here so that a feature and the
-addon it needs stay in one repository; nothing in this directory is built or installed by CMake.
-
-## CoACompanions
+# CoACompanions
 
 Unit frames for summoned companions: left click targets one, right click releases it.
 
@@ -13,7 +8,9 @@ entry and health over the `CoACompanions` addon channel, and this addon draws it
 Without the module it falls back to the unit tokens and only sees a companion while it happens to
 be the target, focus or mouseover.
 
-Install by copying the `CoACompanions` directory into the client's `Interface\AddOns`. `/coacomp`
-(or `/coacompanions`) takes `lock`, `unlock`, `scale <0.5-2.0>` and `reset`.
+## Installation
+
+Copy this entire `CoACompanions` directory into the client's `Interface/AddOns` directory.
+`/coacomp` (or `/coacompanions`) takes `lock`, `unlock`, `scale <0.5-2.0>` and `reset`.
 The server side is switched by `CoACompanions.Enable` (default on) and sends at `CoACompanions.Interval`
 milliseconds.
