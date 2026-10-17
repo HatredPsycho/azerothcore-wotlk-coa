@@ -536,7 +536,7 @@ local PAPERDOLL_BUTTON_BORDER_SIZE = 54
 local PAPERDOLL_BUTTON_HIGHLIGHT_TEXTURE = "Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight"
 local PAPERDOLL_BUTTON_HIGHLIGHT_SIZE = 52
 
-local PAPERDOLL_LAUNCHER_DOCK_VERSION = 20260518
+local PAPERDOLL_LAUNCHER_DOCK_VERSION = 20261017
 
 local function EnsurePaperDollLauncherDock()
     local dock = _G.PaperDollLauncherDock
@@ -558,14 +558,36 @@ local function EnsurePaperDollLauncherDock()
     dock.startY = -464
     dock.gap = 2
 
+    -- The Ascension client draws its own AscensionCharacterFrame; ElvUI hides it again and shows Blizzard's
+    -- CharacterFrame, whose visible area is CharacterFrame.backdrop and widens with its stats pane. The dock
+    -- follows whichever frame is open and sits below its bottom-right corner, clear of the bottom tabs.
     function dock:GetParentFrame()
-        return _G.PaperDollFrame or _G.CharacterFrame or UIParent
+        local ascension = _G.AscensionCharacterFrame
+        local character = _G.CharacterFrame
+        if ascension and ascension:IsShown() then
+            return ascension
+        end
+        if character and (character:IsShown() or character.backdrop or not ascension) then
+            return character
+        end
+        return ascension or _G.PaperDollFrame or UIParent
+    end
+
+    function dock:GetAnchor(parent)
+        if parent and parent == _G.CharacterFrame and parent.backdrop then
+            return "TOPRIGHT", parent.backdrop, "BOTTOMRIGHT", -4, -2
+        end
+        if parent and (parent == _G.AscensionCharacterFrame or parent == _G.CharacterFrame) then
+            return "TOPRIGHT", parent, "BOTTOMRIGHT", -6, -2
+        end
+
+        return self.startPoint, parent, self.startRelativePoint, self.startX, self.startY
     end
 
     function dock:InstallHooks()
         self.hookedParents = self.hookedParents or {}
 
-        local candidates = { _G.PaperDollFrame, _G.CharacterFrame }
+        local candidates = { _G.AscensionCharacterFrame, _G.PaperDollFrame, _G.CharacterFrame }
         for _, parent in ipairs(candidates) do
             if parent and parent.HookScript and not self.hookedParents[parent] then
                 parent:HookScript("OnShow", function()
@@ -664,7 +686,8 @@ local function EnsurePaperDollLauncherDock()
             if previousButton then
                 button:SetPoint("LEFT", previousButton, "RIGHT", self.gap, 0)
             else
-                button:SetPoint(self.startPoint, parent, self.startRelativePoint, self.startX, self.startY)
+                local point, relativeTo, relativePoint, x, y = self:GetAnchor(parent)
+                button:SetPoint(point, relativeTo, relativePoint, x, y)
             end
 
             button:Show()

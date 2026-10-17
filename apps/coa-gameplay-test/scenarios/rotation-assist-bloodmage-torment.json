@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance: an addon press casts the shown Taldaram's Torment, also during the global cooldown",
+  "contract": [
+    "With CoA.RotationAssist.Enable=1, a level 16 Blood Mage of specialization 26 with Taldaram's Torment",
+    "(802568), Shoot (3018) and a bow subscribes with the CoARotation addon and selects an enemy. The",
+    "specialization's priorities put Taldaram's Torment while the target lacks it first, so the preview is 802568 and",
+    "a press casts it and applies its bleed. The preview ignores the global cooldown, so a press during the global",
+    "cooldown must cast the shown spell through the spell queue instead of choosing another one: switching right",
+    "after the first cast to a second enemy without the bleed, a press within the global cooldown casts Taldaram's",
+    "Torment on it. After that bleed has expired a press reapplies it."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    {
+      "id": "bloodmage",
+      "name": "Rotbloodmage",
+      "race": 1,
+      "class": 20,
+      "level": 16,
+      "spell_hit_rating": 10000
+    }
+  ],
+  "creatures": [
+    {
+      "id": "target",
+      "owner": "bloodmage",
+      "entry": 36,
+      "level": 16,
+      "health": 1000000,
+      "distance": 8
+    },
+    {
+      "id": "second",
+      "owner": "bloodmage",
+      "entry": 36,
+      "level": 16,
+      "health": 1000000,
+      "distance": 10
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 5000
+    },
+    {
+      "action": "specialization",
+      "actor": "bloodmage",
+      "id": 26
+    },
+    {
+      "action": "learn",
+      "actor": "bloodmage",
+      "spell": 802568
+    },
+    {
+      "action": "learn",
+      "actor": "bloodmage",
+      "spell": 3018
+    },
+    {
+      "action": "add_item",
+      "actor": "bloodmage",
+      "item": 2504
+    },
+    {
+      "action": "equip",
+      "actor": "bloodmage",
+      "item": 2504,
+      "slot": 17
+    },
+    {
+      "action": "whisper",
+      "actor": "bloodmage",
+      "to": "Rotbloodmage",
+      "language": 4294967295,
+      "text": "COARotation\tON"
+    },
+    {
+      "action": "client_packet",
+      "actor": "bloodmage",
+      "opcode": 317,
+      "fields": [
+        {
+          "actor_guid": "target"
+        }
+      ],
+      "consumed": false
+    },
+    {
+      "action": "assert",
+      "label": "The opener preview is Taldaram's Torment",
+      "actor": "bloodmage",
+      "metric": "whispers_received",
+      "from": "bloodmage",
+      "text": "COARotation\tN;802568",
+      "equals": 1,
+      "within_ms": 2000
+    },
+    {
+      "action": "whisper",
+      "actor": "bloodmage",
+      "to": "Rotbloodmage",
+      "language": 4294967295,
+      "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "client_packet",
+      "actor": "bloodmage",
+      "opcode": 317,
+      "fields": [
+        {
+          "actor_guid": "second"
+        }
+      ],
+      "consumed": false
+    },
+    {
+      "action": "whisper",
+      "actor": "bloodmage",
+      "to": "Rotbloodmage",
+      "language": 4294967295,
+      "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert",
+      "label": "The first press casts Taldaram's Torment on the first enemy",
+      "actor": "target",
+      "metric": "aura",
+      "spell": 802568,
+      "caster": "bloodmage",
+      "equals": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: a press within the global cooldown casts the shown spell",
+      "actor": "bloodmage",
+      "metric": "spell_go_count",
+      "spell": 802568,
+      "equals": 2,
+      "within_ms": 3000
+    },
+    {
+      "action": "assert",
+      "label": "The second enemy bleeds",
+      "actor": "second",
+      "metric": "aura",
+      "spell": 802568,
+      "caster": "bloodmage",
+      "equals": 1,
+      "within_ms": 2000
+    },
+    {
+      "action": "assert",
+      "label": "Shoot is never cast in its place",
+      "actor": "bloodmage",
+      "metric": "spell_go_count",
+      "spell": 3018,
+      "equals": 0
+    },
+    {
+      "action": "assert",
+      "label": "The bleed on the second enemy expires",
+      "actor": "second",
+      "metric": "aura",
+      "spell": 802568,
+      "caster": "bloodmage",
+      "equals": 0,
+      "within_ms": 25000
+    },
+    {
+      "action": "whisper",
+      "actor": "bloodmage",
+      "to": "Rotbloodmage",
+      "language": 4294967295,
+      "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert",
+      "label": "After it expired a press reapplies it",
+      "actor": "bloodmage",
+      "metric": "spell_go_count",
+      "spell": 802568,
+      "equals": 3,
+      "within_ms": 3000
+    }
+  ]
+}
