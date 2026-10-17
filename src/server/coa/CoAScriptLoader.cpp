@@ -48,6 +48,7 @@ void AddSC_AscensionTreeOfLife();
 void AddSC_CoALfgStartPoint();
 void AddSC_CoABossProbe();
 void AddSC_CoADungeonSpellDamage();
+void AddSC_CoAGameObjectScale();
 void AddSC_CoACreatureScaling();
 void AddSC_CoADungeonBossKit();
 void AddSC_CoADungeonNormal();
@@ -373,7 +374,7 @@ void AddCoAScripts()
 {
     AddAscensionStockCoefficientScripts();
     AddAscensionScalingBaseScripts();
-    AddAscensionManastormScripts();
+    AddAscensionManastormItemScripts();
     AddSC_AscensionReaperDirge();
     AddAscensionTinkerOverloadScripts();
     AddAscensionCompatScripts();
@@ -715,6 +716,7 @@ void AddCoAScripts()
     AddSC_CoALfgStartPoint();
     AddSC_CoABossProbe();
     AddSC_CoADungeonSpellDamage();
+    AddSC_CoAGameObjectScale();
     AddSC_CoACreatureScaling();
     AddSC_CoADungeonBossKit();
     AddSC_CoADungeonNormal();
