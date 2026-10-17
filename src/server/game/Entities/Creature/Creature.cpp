@@ -1493,6 +1493,9 @@ bool Creature::isTappedBy(Player const* player) const
 
 void Creature::SaveToDB()
 {
+    if (m_privateCreatureData)
+        return;
+
     // this should only be used when the creature has already been loaded
     // preferably after adding to map, because mapid may not be valid otherwise
     CreatureData const* data = sObjectMgr->GetCreatureData(m_spawnId);
@@ -1508,6 +1511,9 @@ void Creature::SaveToDB()
 
 void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
 {
+    if (m_privateCreatureData)
+        return;
+
     // update in loaded data
     if (!m_spawnId)
         m_spawnId = sObjectMgr->GenerateCreatureSpawnId();
@@ -1809,8 +1815,13 @@ bool Creature::isVendorWithIconSpeak() const
     return m_creatureInfo->IconName == "Speak" && m_creatureData->npcflag & UNIT_NPC_FLAG_VENDOR;
 }
 
-bool Creature::LoadCreatureFromDB(ObjectGuid::LowType spawnId, Map* map, bool addToMap, bool allowDuplicate /*= false*/)
+bool Creature::LoadCreatureFromDB(ObjectGuid::LowType spawnId, Map* map, bool addToMap, bool allowDuplicate /*= false*/,
+    CreatureData const* privateData /*= nullptr*/)
 {
+    if (!map || (privateData && (!map->IsScriptedPrivateInstance() || privateData->mapid != map->GetId()
+        || privateData->spawnId != spawnId || !spawnId || sObjectMgr->GetCreatureData(spawnId))))
+        return false;
+
     if (!allowDuplicate)
     {
         // If an alive instance of this spawnId is already found, skip creation
@@ -1842,6 +1853,12 @@ bool Creature::LoadCreatureFromDB(ObjectGuid::LowType spawnId, Map* map, bool ad
     }
 
     CreatureData const* data = sObjectMgr->GetCreatureData(spawnId);
+    if (privateData)
+    {
+        m_privateCreatureData = std::make_unique<CreatureData>(*privateData);
+        m_privateCreatureData->dbData = false;
+        data = m_privateCreatureData.get();
+    }
     if (!data)
     {
         LOG_ERROR("sql.sql", "Creature (SpawnId: {}) not found in table `creature`, can't load. ", spawnId);
@@ -1976,6 +1993,9 @@ bool Creature::hasInvolvedQuest(uint32 quest_id) const
 
 void Creature::DeleteFromDB()
 {
+    if (m_privateCreatureData)
+        return;
+
     if (!m_spawnId)
     {
         LOG_ERROR("entities.unit", "Trying to delete not saved creature: {}", GetGUID().ToString());
@@ -2214,7 +2234,8 @@ void Creature::Respawn(bool force)
                 if (m_spawnId)
                 {
                     GetMap()->RemoveCreatureRespawnTime(m_spawnId);
-                    CreatureData const* data = sObjectMgr->GetCreatureData(m_spawnId);
+                    CreatureData const* data = m_privateCreatureData
+                        ? m_privateCreatureData.get() : sObjectMgr->GetCreatureData(m_spawnId);
                     // Respawn check if spawn has 2 entries
                     if (data->id2)
                     {
@@ -3252,7 +3273,8 @@ void Creature::GetRespawnPosition(float& x, float& y, float& z, float* ori, floa
 {
     if (m_spawnId)
     {
-        if (CreatureData const* data = sObjectMgr->GetCreatureData(m_spawnId))
+        if (CreatureData const* data = m_privateCreatureData
+            ? m_privateCreatureData.get() : sObjectMgr->GetCreatureData(m_spawnId))
         {
             x = data->posX;
             y = data->posY;
