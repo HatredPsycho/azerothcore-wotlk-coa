@@ -75,3 +75,20 @@ Place the module in:
 
 ```txt
 modules/mod-reagent-bank-account/
+```
+
+## CoA changes
+
+Imported from [Parabellum-sys/mod-reagent-bank-account](https://github.com/Parabellum-sys/mod-reagent-bank-account)
+at `f80a7e9` (MIT, a fork of Day36512/mod-reagent-bank-account). The addon lives in
+[client-addons/ReagentBankUI](../../client-addons/ReagentBankUI/README.md). Changes against the import:
+
+- A deposit or withdrawal saves the bag items in the same transaction as the bank rows, so a crash before the
+  next character save can no longer duplicate deposited reagents or lose withdrawn ones.
+- With `AccountWide = 1` or `EnableSharing = 1`, soulbound reagents stay in the bags; account-bound ones are still
+  accepted. Items offered in an open trade are never deposited.
+- The world SQL holds only the deposit exclusion list; the bank and its storage-mode table live in the characters
+  database, where the module creates them on startup.
+
+The `reagent-bank-deposit-withdraw` gameplay scenario covers deposit, withdrawal, the bound-reagent rule and a relog.
+

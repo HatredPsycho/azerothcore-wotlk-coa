@@ -702,11 +702,11 @@ namespace ReagentBank
 
         SetStoredStorageMode();
 
-        // Share keys (account_id vs char guid) are mode-specific — always clear on mode
+        // Share keys (account_id vs char guid) are mode-specific â€” always clear on mode
         // change regardless of EnableSharing, as stale keys from the old mode are invalid
         CharacterDatabase.DirectExecute("DELETE FROM `mod_reagent_bank_share_members`");
         CharacterDatabase.DirectExecute("DELETE FROM `mod_reagent_bank_share_invites`");
-        LOG_WARN("module", "ReagentBankAccount: storage mode changed from '{}' to '{}' — all share relationships cleared. Members must re-invite.", storedMode, desiredMode);
+        LOG_WARN("module", "ReagentBankAccount: storage mode changed from '{}' to '{}' â€” all share relationships cleared. Members must re-invite.", storedMode, desiredMode);
     }
 
     static void SendProtocol(ChatHandler* handler, std::string const& line)
@@ -801,6 +801,63 @@ namespace ReagentBank
         return IsCategory(itemSubclass);
     }
 
+    static bool BankLeavesCharacter()
+    {
+        return g_accountWideReagentBank || g_reagentBankSharingEnabled;
+    }
+
+    // Bound reagents must not reach another character through an account-wide or shared bank,
+    // and items offered in an open trade are not the player's to deposit.
+    static bool IsDepositableItem(Item const* item)
+    {
+        if (item->IsInTrade())
+            return false;
+
+        return !(BankLeavesCharacter() && item->IsSoulBound() && !item->IsBoundAccountWide());
+    }
+
+    template<class Visit>
+    static void ForEachBagItem(Player* player, Visit&& visit)
+    {
+        for (uint8 slot = INVENTORY_SLOT_ITEM_START; slot < INVENTORY_SLOT_ITEM_END; ++slot)
+            if (Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
+                visit(item);
+
+        for (uint8 bagSlot = INVENTORY_SLOT_BAG_START; bagSlot < INVENTORY_SLOT_BAG_END; ++bagSlot)
+            if (Bag* bag = player->GetBagByPos(bagSlot))
+                for (uint32 slot = 0; slot < bag->GetBagSize(); ++slot)
+                    if (Item* item = player->GetItemByPos(bagSlot, uint8(slot)))
+                        visit(item);
+    }
+
+    static uint32 CountDepositable(Player* player, uint32 itemEntry)
+    {
+        uint32 total = 0;
+        ForEachBagItem(player, [&](Item* item)
+        {
+            if (item->GetEntry() == itemEntry && IsDepositableItem(item))
+                total += item->GetCount();
+        });
+        return total;
+    }
+
+    static void DestroyDepositable(Player* player, uint32 itemEntry, uint32 amount)
+    {
+        std::vector<Item*> candidates;
+        ForEachBagItem(player, [&](Item* item)
+        {
+            if (item->GetEntry() == itemEntry && IsDepositableItem(item))
+                candidates.push_back(item);
+        });
+
+        for (Item* item : candidates)
+        {
+            if (!amount)
+                break;
+            player->DestroyItemCount(item, amount, true);
+        }
+    }
+
     static void LoadStoredItems(Player const* player, std::map<uint32, StoredItem>& items)
     {
         uint32 accountKey = 0;
@@ -828,7 +885,7 @@ namespace ReagentBank
         } while (result->NextRow());
     }
 
-    static void SaveStoredItems(Player const* player, std::map<uint32, StoredItem> const& changedItems)
+    static void SaveStoredItems(Player* player, std::map<uint32, StoredItem> const& changedItems)
     {
         if (changedItems.empty())
             return;
@@ -858,6 +915,9 @@ namespace ReagentBank
             }
         }
 
+        // The bank row and the bag items change together: saving only one of them would let a crash
+        // before the next character save duplicate deposited reagents or lose withdrawn ones.
+        player->SaveInventoryAndGoldToDB(trans);
         CharacterDatabase.CommitTransaction(trans);
     }
 
@@ -1017,6 +1077,9 @@ namespace ReagentBank
         if (IsDepositExcluded(itemEntry))
             return 0;
 
+        if (!IsDepositableItem(item))
+            return 0;
+
         if (onlyCategory && itemSubclass != onlyCategory)
             return 0;
 
@@ -1117,6 +1180,9 @@ namespace ReagentBank
             return 0;
 
         if (IsDepositExcluded(itemEntry))
+            return 0;
+
+        if (!IsDepositableItem(item))
             return 0;
 
         if (onlyCategory && itemSubclass != onlyCategory)
@@ -1223,7 +1289,7 @@ namespace ReagentBank
             if (IsDepositExcluded(itemEntry))
                 continue;
 
-            uint32 const availableInBags = player->GetItemCount(itemEntry, false);
+            uint32 const availableInBags = CountDepositable(player, itemEntry);
             uint32 const amountToDeposit = std::min<uint32>(requestedAmount, availableInBags);
             if (!amountToDeposit)
                 continue;
@@ -1242,7 +1308,7 @@ namespace ReagentBank
             }
 
             // Match the existing deposit behavior: remove bag items, then persist the virtual balance.
-            player->DestroyItemCount(itemEntry, amountToDeposit, true);
+            DestroyDepositable(player, itemEntry, amountToDeposit);
             stored.Amount = updatedStoredAmount;
 
             uint32 updatedTotal = 0;

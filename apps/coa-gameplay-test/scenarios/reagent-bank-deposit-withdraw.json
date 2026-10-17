@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "name": "Reagent bank: deposit and withdraw reagents, keep bound reagents out of the account bank",
+  "contract": [
+    "With mod-reagent-bank-account at its defaults (ReagentBankAccount.Enable=1, AccountWide=1), .rbank deposit all",
+    "moves every storable trade good from the bags into the server-side bank and .rbank withdraw all returns",
+    "them. Primal Nether (23572) binds on pickup; an account-wide bank would hand it to other characters, so",
+    "neither deposit all nor a targeted .rbank deposit item takes it, while unbound Linen Cloth (2589) moves.",
+    "After a relog the deposit is still in the bank and not back in the bags. The addon's interface is not",
+    "exercised; this checks the command protocol it drives."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "crafter", "race": 1, "class": 1, "level": 20 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 2000 },
+    { "action": "add_item", "actor": "crafter", "item": 2589, "count": 20 },
+    { "action": "add_item", "actor": "crafter", "item": 23572, "count": 5 },
+    {
+      "action": "assert", "label": "Primal Nether arrives soulbound", "actor": "crafter",
+      "metric": "item_soulbound", "item": 23572, "equals": 1
+    },
+    { "action": "command", "actor": "crafter", "command": ".rbank deposit all" },
+    {
+      "action": "assert", "label": "Linen Cloth leaves the bags", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 0, "within_ms": 2000
+    },
+    {
+      "action": "assert", "label": "Deposit all leaves the bound Primal Nether in the bags", "actor": "crafter",
+      "metric": "item_count", "item": 23572, "equals": 5
+    },
+    { "action": "command", "actor": "crafter", "command": ".rbank deposit item 23572 5" },
+    { "action": "wait", "ms": 500 },
+    {
+      "action": "assert", "label": "A targeted deposit refuses the bound Primal Nether", "actor": "crafter",
+      "metric": "item_count", "item": 23572, "equals": 5
+    },
+    { "action": "relog", "actor": "crafter" },
+    { "action": "wait", "ms": 2000 },
+    {
+      "action": "assert", "label": "After a relog the deposited cloth is not back in the bags", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 0
+    },
+    { "action": "command", "actor": "crafter", "command": ".rbank withdraw all" },
+    {
+      "action": "assert", "label": "Withdraw all returns the deposited cloth", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 20, "within_ms": 2000
+    },
+    {
+      "action": "assert", "label": "The bound reagent is untouched", "actor": "crafter",
+      "metric": "item_count", "item": 23572, "equals": 5
+    }
+  ]
+}
