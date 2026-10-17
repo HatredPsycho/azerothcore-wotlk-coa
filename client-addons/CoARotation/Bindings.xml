@@ -1,0 +1,3 @@
+<Bindings>
+  <Binding name="COAROTATION_PRESS" header="COAROTATION">CoARotation_Press()</Binding>
+</Bindings>

@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance addon: next-spell preview and press without a macro",
+  "contract": [
+    "With CoA.RotationAssist.Enable=1, the CoARotation addon subscribes with a self addon whisper",
+    "COARotation\\tON and the server answers with the spell the next press would cast as COARotation\\tN;<id>,",
+    "0 when there is none. Without a selection the preview is 0; selecting an enemy with only Frostbolt learned",
+    "previews Frostbolt. COARotation\\tPRESS casts exactly one normal Frostbolt, like one .rotation, and waiting",
+    "casts nothing more. An unchanged preview is not sent again, also not during the cast or the global cooldown,",
+    "because the preview ignores the global cooldown. Selecting oneself at full health previews 0. After",
+    "COARotation\\tOFF no further previews arrive. The client button, its icon, cooldown and key binding are",
+    "addon rendering and are not exercised here."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "caster", "name": "Rotcaster", "race": 1, "class": 8, "level": 1, "spell_hit_rating": 10000 }
+  ],
+  "creatures": [
+    { "id": "target", "owner": "caster", "entry": 36, "level": 1, "health": 100000, "distance": 3 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 3000 },
+    { "action": "unlearn", "actor": "caster", "spell": 133 },
+    { "action": "learn", "actor": "caster", "spell": 116 },
+    { "action": "whisper", "actor": "caster", "to": "Rotcaster", "language": 4294967295, "text": "COARotation\tON" },
+    {
+      "action": "assert", "label": "Subscribing without a selection previews nothing", "actor": "caster",
+      "metric": "whispers_received", "from": "caster", "text": "COARotation\tN;0", "equals": 1, "within_ms": 1500
+    },
+    {
+      "action": "client_packet", "actor": "caster", "opcode": 317, "fields": [{"actor_guid": "target"}],
+      "consumed": false
+    },
+    {
+      "action": "assert", "label": "Selecting an enemy previews Frostbolt", "actor": "caster",
+      "metric": "whispers_received", "from": "caster", "text": "COARotation\tN;116", "equals": 1, "within_ms": 2000
+    },
+    { "action": "snapshot", "actor": "caster", "metric": "spell_go_count", "spell": 116, "save_as": "before" },
+    { "action": "whisper", "actor": "caster", "to": "Rotcaster", "language": 4294967295, "text": "COARotation\tPRESS" },
+    {
+      "action": "assert", "label": "One press casts one Frostbolt", "actor": "caster",
+      "metric": "spell_go_count", "spell": 116, "relative_to": "before", "equals": 1, "within_ms": 5000
+    },
+    { "action": "wait", "ms": 4000 },
+    {
+      "action": "assert", "label": "Waiting casts nothing more", "actor": "caster",
+      "metric": "spell_go_count", "spell": 116, "relative_to": "before", "equals": 1
+    },
+    {
+      "action": "assert", "label": "The unchanged preview is not sent again during the cast and global cooldown",
+      "actor": "caster", "metric": "whispers_received", "from": "caster", "text": "COARotation\tN;116", "equals": 1
+    },
+    {
+      "action": "client_packet", "actor": "caster", "opcode": 317, "fields": [{"actor_guid": "caster"}],
+      "consumed": false
+    },
+    {
+      "action": "assert", "label": "Selecting oneself at full health previews nothing", "actor": "caster",
+      "metric": "whispers_received", "from": "caster", "text": "COARotation\tN;0", "equals": 2, "within_ms": 1500
+    },
+    { "action": "whisper", "actor": "caster", "to": "Rotcaster", "language": 4294967295, "text": "COARotation\tOFF" },
+    {
+      "action": "client_packet", "actor": "caster", "opcode": 317, "fields": [{"actor_guid": "target"}],
+      "consumed": false
+    },
+    { "action": "wait", "ms": 1500 },
+    {
+      "action": "assert", "label": "No previews arrive after unsubscribing", "actor": "caster",
+      "metric": "whispers_received", "from": "caster", "text": "COARotation\tN;116", "equals": 1
+    }
+  ]
+}
