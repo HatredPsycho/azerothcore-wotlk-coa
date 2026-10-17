@@ -18,5 +18,7 @@ button stops the server's updates; the key binding still casts.
 The addon whispers itself on the `COARotation` addon prefix: `ON` subscribes to updates, `OFF` ends them and
 `PRESS` casts. The server answers `N;<spell id>`, `0` when no spell is available, and sends it again only when it
 changes. The preview ignores the global cooldown, so the icon stays on the coming spell while the cooldown runs.
+`PRESS` always casts the shown spell: a press during the global cooldown or a running cast waits up to two seconds
+for them to end instead of falling through to another spell that happens to be ready.
 `CoA.RotationAssist.Enable` switches the feature and `CoA.RotationAssist.PreviewInterval` (default 250 ms) sets
 how often the server re-evaluates the next spell for subscribed players.
