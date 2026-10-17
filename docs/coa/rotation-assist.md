@@ -1,6 +1,8 @@
 # One-button rotation assistance
 
-Create a macro with the following text, put it on an action bar and bind it to a comfortable key:
+Install the [CoARotation](../../client-addons/CoARotation/README.md) addon for a button that shows the next
+spell and casts it with a click or a key binding. Without the addon, create a macro with the following text,
+put it on an action bar and bind it to a comfortable key:
 
 ```text
 /s .rotation
@@ -66,5 +68,6 @@ The `rotation_assist` harness checks the imported priorities, condition boundari
 selection of at most one action. The `rotation-assist` gameplay scenario exercises the ordinary player command,
 selected-target requirement, native spell effects, resource costs, cooldowns and idle behavior. The
 `rotation-assist-profile` scenario checks Incineration against a competing fallback spell.
-`rotation-assist-target-aura` checks a matching target debuff from another caster. Run them through
+`rotation-assist-target-aura` checks a matching target debuff from another caster. `rotation-assist-addon`
+checks the addon's subscription, next-spell preview and press. Run them through
 `tools/verify_all.py` as described in [verification](verification.md).
