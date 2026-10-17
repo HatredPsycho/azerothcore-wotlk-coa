@@ -87,6 +87,8 @@ at `f80a7e9` (MIT, a fork of Day36512/mod-reagent-bank-account). The addon lives
   next character save can no longer duplicate deposited reagents or lose withdrawn ones.
 - With `AccountWide = 1` or `EnableSharing = 1`, soulbound reagents stay in the bags; account-bound ones are still
   accepted. Items offered in an open trade are never deposited.
+- `ReagentBankAccount.AccountWide` defaults to 1 in code as the config template documents; a realm without
+  `mod_reagent_bank_account.conf` ran per character before.
 - The world SQL holds only the deposit exclusion list; the bank and its storage-mode table live in the characters
   database, where the module creates them on startup.
 

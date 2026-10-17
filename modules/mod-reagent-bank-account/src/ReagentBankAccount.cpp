@@ -342,7 +342,7 @@ namespace ReagentBank
     static void LoadConfig()
     {
         g_reagentBankEnabled = sConfigMgr->GetOption<bool>("ReagentBankAccount.Enable", true);
-        g_accountWideReagentBank = sConfigMgr->GetOption<bool>("ReagentBankAccount.AccountWide", false);
+        g_accountWideReagentBank = sConfigMgr->GetOption<bool>("ReagentBankAccount.AccountWide", true);
         g_reagentBankMaxItemsPerPage = sConfigMgr->GetOption<uint32>("ReagentBankAccount.MaxItemsPerPage", DEFAULT_REAGENT_BANK_ITEMS_PER_PAGE);
         g_reagentBankAutoMigrate = sConfigMgr->GetOption<bool>("ReagentBankAccount.AutoMigrate", true);
         g_reagentBankSharingEnabled = sConfigMgr->GetOption<bool>("ReagentBankAccount.EnableSharing", false);
@@ -702,11 +702,11 @@ namespace ReagentBank
 
         SetStoredStorageMode();
 
-        // Share keys (account_id vs char guid) are mode-specific â€” always clear on mode
+        // Share keys (account_id vs char guid) are mode-specific — always clear on mode
         // change regardless of EnableSharing, as stale keys from the old mode are invalid
         CharacterDatabase.DirectExecute("DELETE FROM `mod_reagent_bank_share_members`");
         CharacterDatabase.DirectExecute("DELETE FROM `mod_reagent_bank_share_invites`");
-        LOG_WARN("module", "ReagentBankAccount: storage mode changed from '{}' to '{}' â€” all share relationships cleared. Members must re-invite.", storedMode, desiredMode);
+        LOG_WARN("module", "ReagentBankAccount: storage mode changed from '{}' to '{}' — all share relationships cleared. Members must re-invite.", storedMode, desiredMode);
     }
 
     static void SendProtocol(ChatHandler* handler, std::string const& line)
@@ -1167,7 +1167,6 @@ namespace ReagentBank
         return totalDeposited;
     }
 
-
     static uint32 PreviewDepositFromSlot(Player* player, uint8 bagSlot, uint8 itemSlot, uint32 onlyCategory, std::map<uint32, StoredItem>& simulatedStoredItems, ItemAmountMap& previewItems, bool& overflowed)
     {
         Item* item = player->GetItemByPos(bagSlot, itemSlot);
@@ -1354,7 +1353,6 @@ namespace ReagentBank
 
         return item.ItemEntry && item.Amount && IsCategory(item.ItemSubclass);
     }
-
 
     static void SendRecipeCheck(ChatHandler* handler, Player const* player, uint32 requestId, std::vector<std::pair<uint32, uint32>> const& requestedItems)
     {
@@ -2055,7 +2053,6 @@ private:
             ReagentBank::SendCategory(handler, player, category, page, sortMode);
             return true;
         }
-
 
         if (command == "preview")
         {
