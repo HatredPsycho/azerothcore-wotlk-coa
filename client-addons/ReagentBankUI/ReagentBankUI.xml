@@ -1,0 +1,208 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+  <!--
+    ReagentBankUI template-only XML.
+
+    This file intentionally defines only reusable visual pieces. All runtime
+    behavior, server protocol handling, SavedVariables, TradeSkill hooks, and
+    row population stay in ReagentBankUI.lua.
+  -->
+
+  <Button name="ReagentBankUIButtonTemplate" virtual="true">
+    <Layers>
+      <Layer level="BORDER">
+        <Texture parentKey="shine" file="Interface\ChatFrame\ChatFrameBackground">
+          <Size>
+            <AbsDimension x="1" y="7"/>
+          </Size>
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="2" y="-2"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="TOPRIGHT">
+              <Offset>
+                <AbsDimension x="-2" y="-2"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="HIGHLIGHT">
+        <Texture parentKey="hover" file="Interface\ChatFrame\ChatFrameBackground">
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY">
+        <FontString parentKey="label" inherits="GameFontHighlightSmall" justifyH="CENTER">
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <Button name="ReagentBankUICloseButtonTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="24" y="24"/>
+    </Size>
+    <Layers>
+      <Layer level="HIGHLIGHT">
+        <Texture parentKey="hover" file="Interface\ChatFrame\ChatFrameBackground">
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY">
+        <FontString parentKey="label" inherits="GameFontNormal" justifyH="CENTER">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <EditBox name="ReagentBankUIEditBoxTemplate" virtual="true">
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="focusGlow" file="Interface\ChatFrame\ChatFrameBackground" hidden="true">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="1" y="-1"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="BOTTOMRIGHT">
+              <Offset>
+                <AbsDimension x="-1" y="1"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </EditBox>
+
+  <Button name="ReagentBankUIListRowTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="1" y="24"/>
+    </Size>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="bg" file="Interface\ChatFrame\ChatFrameBackground">
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="BORDER">
+        <Texture parentKey="fill" file="Interface\ChatFrame\ChatFrameBackground" hidden="true">
+          <Size>
+            <AbsDimension x="1" y="24"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="ARTWORK">
+        <Texture parentKey="icon">
+          <Size>
+            <AbsDimension x="22" y="22"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT">
+              <Offset>
+                <AbsDimension x="4" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="HIGHLIGHT">
+        <Texture parentKey="hover" file="Interface\ChatFrame\ChatFrameBackground">
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY">
+        <FontString parentKey="text" inherits="GameFontHighlight" justifyH="LEFT"/>
+        <FontString parentKey="count" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+          <Size>
+            <AbsDimension x="158" y="12"/>
+          </Size>
+          <Anchors>
+            <Anchor point="RIGHT">
+              <Offset>
+                <AbsDimension x="-8" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <Frame name="ReagentBankUIPreviewRowTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="1" y="22"/>
+    </Size>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="bg" file="Interface\ChatFrame\ChatFrameBackground">
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="ARTWORK">
+        <Texture parentKey="icon">
+          <Size>
+            <AbsDimension x="20" y="20"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT">
+              <Offset>
+                <AbsDimension x="3" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY">
+        <FontString parentKey="name" inherits="GameFontHighlightSmall" justifyH="LEFT"/>
+        <FontString parentKey="count" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+          <Size>
+            <AbsDimension x="98" y="12"/>
+          </Size>
+          <Anchors>
+            <Anchor point="RIGHT">
+              <Offset>
+                <AbsDimension x="-8" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+  </Frame>
+
+</Ui>
