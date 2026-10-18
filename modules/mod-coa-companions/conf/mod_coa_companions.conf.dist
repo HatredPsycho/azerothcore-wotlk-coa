@@ -2,9 +2,9 @@
 
 #
 #    CoACompanions.Enable
-#        Description: Send the health of a player's summoned companions to their client, for the
-#                     CoACompanions addon to draw. With this off the addon still works, but it can
-#                     only read a companion while the client holds a unit token for it.
+#        Description: Load the CoACompanions frame into the client at login and after every /reload,
+#                     and send it the health of the player's summoned companions to draw. With this
+#                     off neither the frame nor the health feed is sent.
 #        Default:     1 - enabled
 #                     0 - disabled
 #

@@ -6,13 +6,13 @@
 #include "Player.h"
 #include "WorldSession.h"
 #include <string_view>
+#include <vector>
 
 namespace
 {
     constexpr uint32 RequirementTypeId = 24;
     constexpr uint32 RequirementId = 16262;
     constexpr std::string_view Token = "MANASTORM_UI_FIXES";
-    constexpr Milliseconds LoginDelay = Milliseconds(5000);
 
     constexpr std::string_view GroupFinderKeybindLua = R"lua(
 function ToggleLFDParentFrame()
@@ -189,24 +189,15 @@ namespace ManastormClientUIFixes
         return lua;
     }
 
-    void ScheduleLoginPush(Player* player)
+    void RegisterProvider()
     {
-        if (!CanPush(player) || !ConfiguredFixes())
-            return;
-
-        player->m_Events.AddEventAtOffset([guid = player->GetGUID()]()
+        RegisterAscensionClientLuaProvider([](Player* player, AscensionClientUISettings const&,
+            std::vector<AscensionClientLuaChunk>& chunks)
         {
-            Player* current = ObjectAccessor::FindPlayer(guid);
             uint32 const fixes = ConfiguredFixes();
-            if (!CanPush(current) || !fixes)
+            if (!CanPush(player) || !fixes)
                 return;
-
-            AscensionClientLuaChunk chunk;
-            chunk.RequirementTypeId = RequirementTypeId;
-            chunk.RequirementId = RequirementId;
-            chunk.Token = std::string(Token);
-            chunk.Lua = BuildLua(fixes);
-            RunAscensionClientLua(current, chunk);
-        }, LoginDelay);
+            chunks.push_back({RequirementTypeId, RequirementId, std::string(Token), BuildLua(fixes)});
+        });
     }
 }

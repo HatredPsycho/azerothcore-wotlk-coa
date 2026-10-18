@@ -1,7 +1,10 @@
 # mod-coa-companions
 
-Sends the health of a player's summoned companions to their client, so the **CoACompanions**
-addon can draw a health bar for each of them.
+Loads the **CoACompanions** frame into the player's client and sends it the health of their summoned
+companions, so it can draw a health bar for each of them. No addon is installed: the frame arrives through
+the shared client Lua loader (`docs/coa/client-lua.md`) a few seconds after login and again after every
+`/reload`. `/coacomp` takes `lock`, `unlock`, `scale <0.5-2.0>` and `reset`; position and scale are stored
+on the server.
 
 ## Why it exists
 
@@ -29,8 +32,7 @@ can tell a live reading from a stale one, and one final empty message when the l
 gone. A player with no companions costs one integer comparison per update. The body is capped so
 a full army stays inside a single message.
 
-The module is optional. With it disabled the addon falls back to the unit tokens and behaves as it
-did before.
+With the module disabled neither the frame nor the feed is sent.
 
 ## Settings
 
@@ -38,11 +40,11 @@ Copy `conf/mod_coa_companions.conf.dist` to the server's `configs/modules/`.
 
 | setting | default | meaning |
 |---|---|---|
-| `CoACompanions.Enable` | `1` | send the feed at all |
+| `CoACompanions.Enable` | `1` | load the frame and send the feed |
 | `CoACompanions.Interval` | `1000` | milliseconds between updates for one player, minimum 250 |
 
 ## Verifying it
 
-With a Necromancer holding minions, end a fight and walk away. The addon's bars keep moving and
-stay bright green, and the `*` that marks a stale reading does not appear. Disabling the module
-and reloading brings the `*` back once the companions leave every unit token.
+With a Necromancer holding minions, end a fight and walk away. The frame's bars keep moving and
+stay bright green, and the `*` that marks a stale reading does not appear. A `/reload` brings the
+frame back at its stored position after about two seconds.
