@@ -115,6 +115,11 @@ void WorldDatabaseConnection::DoPrepareStatements()
     // 0: uint8
     PrepareStatement(WORLD_SEL_REQ_XP, "SELECT Experience FROM player_xp_for_level WHERE Level = ?", CONNECTION_SYNCH);
     PrepareStatement(WORLD_UPD_VERSION, "UPDATE version SET core_version = ?, core_revision = ?", CONNECTION_ASYNC);
+    PrepareStatement(WORLD_SEL_XP_HOTSPOTS, "SELECT id, payload FROM xp_hotspot_location", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_REP_XP_HOTSPOT, "REPLACE INTO xp_hotspot_location (id, payload) VALUES (?, ?)", CONNECTION_BOTH);
+    PrepareStatement(WORLD_DEL_XP_HOTSPOT, "DELETE FROM xp_hotspot_location WHERE id = ?", CONNECTION_BOTH);
+    PrepareStatement(WORLD_SEL_XP_HOTSPOT_SETTING, "SELECT id, value FROM xp_hotspot_setting", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_UPD_XP_HOTSPOT_SETTING, "REPLACE INTO xp_hotspot_setting (id, value) VALUES (?, ?)", CONNECTION_BOTH);
     PrepareStatement(WORLD_DEL_SPAWNGROUP_MEMBER, "DELETE FROM spawn_group WHERE spawnType = ? AND spawnId = ?", CONNECTION_ASYNC);
 #ifdef MOD_MANASTORM_ENDLESS
     PrepareStatement(WORLD_SEL_MANASTORM_PRIVATE_CREATURES,

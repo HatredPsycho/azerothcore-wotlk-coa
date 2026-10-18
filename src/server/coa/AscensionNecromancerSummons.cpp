@@ -31,11 +31,15 @@ bool Stationary(uint32 entry)
 }
 bool Ranged(uint32 entry)
 {
-    return entry == 50076 || entry == 50075 || entry == 50323 || entry == 50177;
+    return entry == 50076 || entry == 50075 || entry == 50323 || entry == 50177 || entry == 50067;
 }
 bool Follows(uint32 entry)
 {
     return !Stationary(entry) && entry != 523032 && entry != 542065;
+}
+bool Travelling(Player const* player)
+{
+    return player->IsMounted() || player->IsInFlight();
 }
 void Formation(uint32 slot, float& distance, float& angle)
 {
@@ -101,13 +105,28 @@ uint32 AttackSpell(uint32 entry)
     case 50075:
         return 801513;
     case 50076:
-        return 801516;
+        return 800609;
     case 50323:
-        return 822074;
+        return 803406;
     case 500484:
         return 801513;
     default:
         return 0;
+    }
+}
+void Evict(Player* player, int32 needed)
+{
+    auto& minions = State(player).minions;
+    while (int32(Capacity(player)) - Used(player) < needed)
+    {
+        auto oldest = std::find_if(minions.begin(), minions.end(),
+                                   [](MinionRecord const& row) { return row.cost != 0; });
+        if (oldest == minions.end())
+            return;
+        ObjectGuid guid = oldest->guid;
+        minions.erase(oldest);
+        if (Creature* unit = ObjectAccessor::GetCreature(*player, guid))
+            unit->DespawnOrUnsummon();
     }
 }
 }
@@ -211,8 +230,16 @@ bool Summon(Player* player, uint32 spell, Unit* target, Position const& position
     if (!info)
         return false;
     uint8 cost = Cost(player, spell);
-    if (cost && int32(Capacity(player)) - Used(player) < cost)
+    if (cost > Capacity(player))
         return false;
+    if (cost)
+    {
+        int32 count = 0;
+        for (auto const& row : NecromancerSummons)
+            if (row.spell == spell)
+                count += SummonCount(player, info, row);
+        Evict(player, std::min<int32>(count, Capacity(player) / cost) * cost);
+    }
     int32 lifetime = duration;
     if (!lifetime)
     {
@@ -351,7 +378,12 @@ class npc_ascension_necromancer : public ScriptedAI
     bool _exploded = false;
     float _inheritedSpeed = 1.0f;
     float _followRange = 0.0f;
+    bool _travelling = false;
 
+    bool Pacified(Player const* player) const
+    {
+        return _travelling || player->HasAura(500983);
+    }
     void IsSummonedBy(WorldObject* summoner) override
     {
         Player* player = summoner ? summoner->ToPlayer() : nullptr;
@@ -432,6 +464,11 @@ class npc_ascension_necromancer : public ScriptedAI
         if (key == 1)
             _target = guid;
     }
+    void JustDied(Unit*) override
+    {
+        if (uint32 champion = ChampionAura(me->GetEntry()))
+            me->RemoveOwnedAura(champion);
+    }
     void MovementInform(uint32 type, uint32 id) override
     {
         if (me->GetEntry() == 523032 && type == POINT_MOTION_TYPE && id == 1)
@@ -445,8 +482,8 @@ class npc_ascension_necromancer : public ScriptedAI
     void AttackStart(Unit* target) override
     {
         Player* player = Owner(me);
-        if (player && !Stationary(me->GetEntry()) && me->GetEntry() != 523032 && !player->HasAura(500983) &&
-            target && player->IsValidAttackTarget(target))
+        if (player && !Stationary(me->GetEntry()) && me->GetEntry() != 523032 && !Pacified(player) && target &&
+            player->IsValidAttackTarget(target))
             ScriptedAI::AttackStart(target);
     }
     void Regroup(Player* player)
@@ -481,7 +518,7 @@ class npc_ascension_necromancer : public ScriptedAI
         ScriptedAI::EnterEvadeMode(why);
         _followRange = 0.0f;
         Player* player = Owner(me);
-        if (!player || !me->IsAlive() || !Follows(me->GetEntry()) || player->HasAura(500983) ||
+        if (!player || !me->IsAlive() || !Follows(me->GetEntry()) || Pacified(player) ||
             me->GetMotionMaster()->GetCurrentMovementGeneratorType() != FOLLOW_MOTION_TYPE)
             return;
         Regroup(player);
@@ -490,7 +527,7 @@ class npc_ascension_necromancer : public ScriptedAI
     {
         Player* player = Owner(me);
         Unit* target = ObjectAccessor::GetUnit(*me, _target);
-        if (action != 1 || !player || player->HasAura(500983) || !target || !target->IsAlive() ||
+        if (action != 1 || !player || Pacified(player) || !target || !target->IsAlive() ||
             !Responds(me->GetEntry(), _command) || me->HasUnitState(UNIT_STATE_CONTROLLED))
             return;
         AttackStart(target);
@@ -565,6 +602,9 @@ class npc_ascension_necromancer : public ScriptedAI
         case 50303:
             Cast(me, target, 801518);
             break;
+        case 50076:
+            Cast(me, target, 801516);
+            break;
         case 50323:
             Cast(me, target, 822074);
             break;
@@ -584,13 +624,19 @@ class npc_ascension_necromancer : public ScriptedAI
             me->DespawnOrUnsummon();
             return;
         }
+        if (bool travelling = Follows(me->GetEntry()) && Travelling(player); travelling != _travelling)
+        {
+            _travelling = travelling;
+            me->SetImmuneToNPC(travelling);
+            _events.RescheduleEvent(1, 1ms);
+        }
         _events.Update(diff);
         while (uint32 event = _events.ExecuteEvent())
         {
             if (event == 1)
             {
                 Scale(player, me, Cost(player, _spell), _inheritedSpeed);
-                bool passive = player->HasAura(500983) || Stationary(me->GetEntry());
+                bool passive = Pacified(player) || Stationary(me->GetEntry());
                 me->SetReactState(passive                   ? REACT_PASSIVE
                                   : player->HasAura(500982) ? REACT_AGGRESSIVE
                                                             : REACT_DEFENSIVE);
@@ -645,7 +691,7 @@ class npc_ascension_necromancer : public ScriptedAI
             }
             if (event == 2)
             {
-                if (!player->HasAura(500983) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
+                if (!Pacified(player) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
                 {
                     if (me->GetEntry() == 50068)
                         Cast(me, me, 802353);
@@ -670,10 +716,10 @@ class npc_ascension_necromancer : public ScriptedAI
                 player->CastSpell(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 500365, true);
                 _events.ScheduleEvent(4, 3s);
             }
-            if (event == 5 && !player->HasAura(500983) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
+            if (event == 5 && !Pacified(player) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
                 if (Unit* victim = ObjectAccessor::GetUnit(*me, _target))
                     Cast(me, victim, 505229);
-            if (event == 6 && !player->HasAura(500983) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
+            if (event == 6 && !Pacified(player) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
                 if (Unit* victim = ObjectAccessor::GetUnit(*me, _target))
                     if (me->IsWithinMeleeRange(victim))
                         for (uint8 hit = 0; hit < (victim->HealthBelowPct(35) ? 5 : 2); ++hit)
@@ -686,7 +732,7 @@ class npc_ascension_necromancer : public ScriptedAI
             }
             if (event == 8)
             {
-                if (!player->HasAura(500983) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
+                if (!Pacified(player) && !me->HasUnitState(UNIT_STATE_CONTROLLED))
                     if (Unit* enemy = BreathTarget(player))
                     {
                         _breathTarget = enemy->GetGUID();
@@ -707,7 +753,7 @@ class npc_ascension_necromancer : public ScriptedAI
                     _events.RescheduleEvent(3, 1ms);
                     break;
                 }
-        if (!player->HasAura(500983) && !Stationary(me->GetEntry()) && !Ranged(me->GetEntry()) && UpdateVictim())
+        if (!Pacified(player) && !Stationary(me->GetEntry()) && !Ranged(me->GetEntry()) && UpdateVictim())
             DoMeleeAttackIfReady();
     }
 };
