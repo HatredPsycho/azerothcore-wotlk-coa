@@ -33,6 +33,7 @@
 #include "DBCStores.h"
 #include "DatabaseEnv.h"
 #include "DynamicObject.h"
+#include "GameEventMgr.h"
 #include "GameObject.h"
 #include "GameTime.h"
 #include "GitRevision.h"
@@ -260,6 +261,42 @@ void RequireRealmLocalHour(uint32 hour)
         "realm-local time is {:02}:{:02}; run it on a worldserver whose TZ puts local time in that hour", hour, hour,
         local.tm_hour, local.tm_min));
 }
+
+class GameEventStates
+{
+public:
+    GameEventStates() = default;
+    GameEventStates(GameEventStates const&) = delete;
+    GameEventStates& operator=(GameEventStates const&) = delete;
+
+    ~GameEventStates()
+    {
+        for (auto const& [eventId, active] : _original)
+            Apply(eventId, active);
+    }
+
+    void Set(uint16 eventId, bool active)
+    {
+        GameEventMgr::GameEventDataMap const& events = sGameEventMgr->GetEventMap();
+        Require(eventId < events.size() && events[eventId].isValid(), "Unknown game event");
+        _original.try_emplace(eventId, sGameEventMgr->IsActiveEvent(eventId));
+        Apply(eventId, active);
+        Require(sGameEventMgr->IsActiveEvent(eventId) == active, "The game event did not change state");
+    }
+
+private:
+    static void Apply(uint16 eventId, bool active)
+    {
+        if (sGameEventMgr->IsActiveEvent(eventId) == active)
+            return;
+        if (active)
+            sGameEventMgr->StartEvent(eventId, true);
+        else
+            sGameEventMgr->StopEvent(eventId, true);
+    }
+
+    std::map<uint16, bool> _original;
+};
 
 struct CaseAccounts
 {
@@ -4557,6 +4594,11 @@ private:
             Require(handled && !handler.HasSentErrorMessage(), "Console command failed: " + output);
             return;
         }
+        if (action == "game_event")
+        {
+            _gameEvents.Set(step.get<uint16>("event"), step.get<bool>("active"));
+            return;
+        }
         std::string id = step.get<std::string>("actor");
         if (action == "attack_owned_creature")
         {
@@ -5806,6 +5848,7 @@ private:
     QueryCallbackProcessor _queries;
     std::optional<CreatureScaling::TestOverride> _creatureScaling;
     std::optional<AscensionCustomRaces::TestOverride> _customRaces;
+    GameEventStates _gameEvents;
 };
 
 enum class TeardownStage
