@@ -11,7 +11,7 @@ CoA.Enable = 1
 # Uses CoA specialization priorities with a basic fallback for other builds.
 CoA.RotationAssist.Enable = 1
 
-# Milliseconds between next-spell updates for players running the CoARotation addon (client-addons).
+# Milliseconds between next-spell updates for the CoARotation button the server loads into the client.
 # Updates are sent only when the next spell changes. Default: 250, minimum 100.
 CoA.RotationAssist.PreviewInterval = 250
 
