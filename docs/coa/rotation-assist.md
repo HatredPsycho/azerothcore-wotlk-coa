@@ -18,8 +18,9 @@ usually has no available attack; press again when ready.
 The command is available to ordinary players of every class. Characters with a CoA specialization use the imported
 attack and healing priorities for that specialization, restricted to spells they currently know. The basic fallback
 also works for stock classes, classless characters and characters without a specialization. It tries learned,
-single-target damage or healing spells with a base cooldown of at most 15 seconds, ordered by spell level and spell
-ID. It does not promise an optimal rotation for every talent build, encounter or level.
+single-target damage or healing spells with a base cooldown of at most 15 seconds. Spells that spend runic power or
+energy come first, so a built-up resource is used before mana; otherwise higher spell level and then higher spell ID
+win. It does not promise an optimal rotation for every talent build, encounter or level.
 
 Normal costs, cooldowns, equipment, stance, line of sight, range and facing checks still apply. The highest active
 learned rank of a named spell is used, and native temporary spell replacements remain in effect. For spells that
@@ -40,19 +41,19 @@ reload. The feature needs no playerbots module, bot database, SQL migration, add
 ## Rotation data and attribution
 
 `src/server/coa/CoARotationData.h` adapts the attack and healing rules from
-[Zyth45/mod-playerbots](https://github.com/Zyth45/mod-playerbots/tree/10d0058cefe2a981373d65bc192464181ec9a49c),
-revision `10d0058cefe2a981373d65bc192464181ec9a49c` (CoA Bots 2.4). The upstream module is distributed under GPL
+[Zyth45/mod-playerbots](https://github.com/Zyth45/mod-playerbots/tree/3b5a29b0ec3c4299e30e89826a32181d3d93ded4),
+revision `3b5a29b0ec3c4299e30e89826a32181d3d93ded4` (CoA Bots 2.5). The upstream module is distributed under GPL
 version 2 or any later version; its copyright notices and
-[contributors](https://github.com/Zyth45/mod-playerbots/blob/10d0058cefe2a981373d65bc192464181ec9a49c/AUTHORS.md)
+[contributors](https://github.com/Zyth45/mod-playerbots/blob/3b5a29b0ec3c4299e30e89826a32181d3d93ded4/AUTHORS.md)
 remain credited. CoA specialization guide data is credited to ascensionsidekick.com and steviecraycray. The
 repository's `LICENSE` contains GPL version 2.
 
 The snapshot starts with `data/sql/playerbots/custom/zz_coa_rotation_corrections_1_9.sql`, then applies every later
-`zz_coa_rotation_corrections_*.sql` in filename order through `2_4`. This includes the fixes for Time Out!, Assume
-Peak Posture and the Reaper spender priorities. Specialization IDs come from `playerbots_coa_rotations.sql`. No
-upstream SQL is executed against the world or character databases.
+`zz_coa_rotation_corrections_*.sql` in filename order through `2_5`. This includes the fixes for Time Out!, Assume
+Peak Posture, the Reaper spender priorities and the 2.5 dungeon report corrections. Specialization IDs come from
+`playerbots_coa_rotations.sql`. No upstream SQL is executed against the world or character databases.
 
-The adaptation retains 1,571 rules across 70 specialization profiles. It keeps `cast`, `cast melee`, `cast debuff`,
+The adaptation retains 1,568 rules across 70 specialization profiles. It keeps `cast`, `cast melee`, `cast debuff`,
 `cast heal`, `cast heal party` and `cast heal tank` actions with readiness, missing debuff, aura
 presence/absence/stacks, self/target health, mana or resource conditions. Rules are sorted by descending upstream
 priority with original row order breaking ties; identical rules are deduplicated. Mana thresholds are 15%/40%;
