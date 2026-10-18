@@ -1,8 +1,8 @@
 Corrected Manastorm client files
 
-Alternative without a client archive: Manastorm.ClientUIFixes = 15 in
+Without a client archive: Manastorm.ClientUIFixes (default 15) in
 manastorm-endless.conf makes the server send these four corrections as interface
-Lua at login (see the module README).
+Lua at login (see the module README); set it to 0 for clients that carry them.
 
 The canonical files are under overlay/Interface/ and retain their archive paths:
   Interface/FrameXML/UIParent.lua
