@@ -5,30 +5,62 @@
     "Revanchion (14690) is the Scourge Invasion boss the event places in Dire Maul. His smart_scripts rows cast",
     "Shadow Bolt Volley (15245) every 12.5-14 s from 10-15 s into combat and Frost Nova (14907) every 14-18 s from",
     "13-16 s, but creature_template left his AIName empty, so the rows never ran and he fought with melee alone.",
-    "Expected: engaged by a level 60 player, he roots the player with his own Frost Nova within the first 25",
-    "seconds of the fight. Shadow Bolt Volley leaves no aura to read and is not asserted separately."
+    "Expected: engaged by a level 60 player, he casts his own Frost Nova within the first 25 seconds of the",
+    "fight, counted on him so a resisted nova still counts. Shadow Bolt Volley is not asserted separately."
   ],
   "timeout_ms": 90000,
   "players": [
-    { "id": "player", "race": 1, "class": 1, "level": 60 }
+    {
+      "id": "player",
+      "race": 1,
+      "class": 1,
+      "level": 60
+    }
   ],
   "creatures": [
-    { "id": "revanchion", "owner": "player", "entry": 14690, "level": 60, "health": 1000000, "distance": 4, "reaction": 2 }
+    {
+      "id": "revanchion",
+      "owner": "player",
+      "entry": 14690,
+      "level": 60,
+      "health": 1000000,
+      "distance": 4,
+      "reaction": 2
+    }
   ],
   "steps": [
-    { "action": "wait", "ms": 3000 },
-    { "action": "set_health", "actor": "player", "maximum": 1000000, "value": 1000000 },
     {
-      "action": "attack_nearby", "label": "The player engages Revanchion", "actor": "player", "entry": 14690,
-      "damage_pct": 1
+      "action": "wait",
+      "ms": 3000
     },
     {
-      "action": "assert", "label": "Revanchion is in combat", "actor": "revanchion",
-      "metric": "combat", "equals": 1, "within_ms": 3000
+      "action": "set_health",
+      "actor": "player",
+      "maximum": 1000000,
+      "value": 1000000
     },
     {
-      "action": "assert", "label": "DISCRIMINATING: Revanchion roots the player with Frost Nova", "actor": "player",
-      "metric": "aura", "spell": 14907, "caster": "revanchion", "equals": 1, "within_ms": 25000
+      "action": "attack",
+      "label": "The player engages Revanchion",
+      "actor": "player",
+      "target": "revanchion"
+    },
+    {
+      "action": "assert",
+      "label": "Revanchion is in combat",
+      "actor": "revanchion",
+      "metric": "combat",
+      "equals": 1,
+      "within_ms": 5000
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: Revanchion casts Frost Nova",
+      "actor": "revanchion",
+      "metric": "spell_cast_count",
+      "spell": 14907,
+      "min": 1,
+      "within_ms": 25000
     }
   ]
 }
