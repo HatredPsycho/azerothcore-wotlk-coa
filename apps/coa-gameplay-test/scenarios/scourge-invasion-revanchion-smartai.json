@@ -40,11 +40,10 @@
       "value": 1000000
     },
     {
-      "action": "attack_nearby",
+      "action": "attack",
       "label": "The player engages Revanchion",
       "actor": "player",
-      "entry": 14690,
-      "damage_pct": 1
+      "target": "revanchion"
     },
     {
       "action": "assert",
@@ -52,7 +51,7 @@
       "actor": "revanchion",
       "metric": "combat",
       "equals": 1,
-      "within_ms": 10000
+      "within_ms": 5000
     },
     {
       "action": "assert",
