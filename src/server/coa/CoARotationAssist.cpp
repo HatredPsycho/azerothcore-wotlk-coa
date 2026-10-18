@@ -24,6 +24,7 @@
 #include "WorldSession.h"
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <map>
 #include <mutex>
@@ -150,7 +151,8 @@ namespace
         for (SpellEffectInfo const& effect : info->Effects)
         {
             if (effect.Effect == SPELL_EFFECT_HEAL || effect.Effect == SPELL_EFFECT_HEAL_PCT ||
-                effect.Effect == SPELL_EFFECT_HEAL_MAX_HEALTH || effect.ApplyAuraName == SPELL_AURA_PERIODIC_HEAL)
+                effect.Effect == SPELL_EFFECT_HEAL_MAX_HEALTH || effect.ApplyAuraName == SPELL_AURA_PERIODIC_HEAL ||
+                effect.ApplyAuraName == SPELL_AURA_SCHOOL_ABSORB)
                 return true;
             if (effect.TriggerSpell)
                 if (SpellInfo const* triggered = sSpellMgr->GetSpellInfo(effect.TriggerSpell))
@@ -160,9 +162,24 @@ namespace
         return false;
     }
 
+    constexpr std::array<uint32, 28> ScriptedAttackSpells = {
+        504868, 504907, 504908,
+        500015, 501080, 501081, 501082, 501083, 501084, 501085, 501086, 501087, 501088,
+        712483,
+        501561,
+        36237, 289190, 500600,
+        501900, 501901, 501902, 501903, 501904, 501905, 501906, 501907, 501908, 801938
+    };
+
+    bool ScriptedAttack(SpellInfo const* info)
+    {
+        return std::find(ScriptedAttackSpells.begin(), ScriptedAttackSpells.end(), info->Id) !=
+            ScriptedAttackSpells.end();
+    }
+
     bool Allowed(SpellInfo const* info, bool healing)
     {
-        return info && (healing ? Heals(info) : DealsDamage(info) && !info->IsPositive() &&
+        return info && (healing ? Heals(info) : ((DealsDamage(info) && !info->IsPositive()) || ScriptedAttack(info)) &&
             info->NeedsExplicitUnitTarget()) &&
             !info->IsPassive() && !info->IsAutoRepeatRangedSpell() &&
             !HasManualEffect(info) &&
@@ -249,7 +266,8 @@ namespace
                 info->IsAffectingArea())) || !checked.insert(info->Id).second)
                 return uint32(0);
             if (info->HasAura(SPELL_AURA_PERIODIC_DAMAGE) || info->HasAura(SPELL_AURA_PERIODIC_DAMAGE_PERCENT) ||
-                info->HasAura(SPELL_AURA_PERIODIC_LEECH) || info->HasAura(SPELL_AURA_PERIODIC_HEAL))
+                info->HasAura(SPELL_AURA_PERIODIC_LEECH) || info->HasAura(SPELL_AURA_PERIODIC_HEAL) ||
+                info->HasAura(SPELL_AURA_SCHOOL_ABSORB))
                 if (AuraStacks(target, info->SpellName[0], player->GetGUID()))
                     return uint32(0);
             return Ready(player, target, info, healing, probeFlags) ? learnedInfo->Id : uint32(0);
@@ -422,7 +440,7 @@ end
 
 local PREFIX = "COARotation"
 local BINDING = "CLICK CoARotationButton:LeftButton"
-local EMPTY_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
+local EMPTY_ICON = "Interface\\Buttons\\UI-EmptySlot-Disabled"
 local DEFAULTS = { point = "CENTER", x = 0, y = -180, scale = 1, locked = 0, hidden = 0 }
 
 local settings = {}

@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance: a Witch Doctor's rotation casts Shadow Puppets",
+  "contract": [
+    "Witch Doctor specialization 5 lists Shadow Puppets in its priorities. Its spell data applies a periodic",
+    "dummy to the target and the puppet's Shadow damage comes from the class script, so the rotation used to",
+    "skip it as a manual spell. Expected: a level 20 Witch Doctor of specialization 5 with only Shadow Puppets",
+    "(500015) selects an enemy; the CoARotation preview is Shadow Puppets and a press casts it."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    {
+      "id": "wd",
+      "name": "Rotwitchdoc",
+      "race": 2,
+      "class": 13,
+      "level": 20,
+      "spell_hit_rating": 10000
+    }
+  ],
+  "creatures": [
+    {
+      "id": "target",
+      "owner": "wd",
+      "entry": 36,
+      "level": 20,
+      "health": 1000000,
+      "distance": 6
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "specialization",
+      "actor": "wd",
+      "id": 5
+    },
+    {
+      "action": "learn",
+      "actor": "wd",
+      "spell": 500015
+    },
+    {
+      "action": "whisper",
+      "actor": "wd",
+      "to": "Rotwitchdoc",
+      "language": 4294967295,
+      "text": "COARotation\tON"
+    },
+    {
+      "action": "client_packet",
+      "actor": "wd",
+      "opcode": 317,
+      "fields": [
+        {
+          "actor_guid": "target"
+        }
+      ],
+      "consumed": false
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: the preview is the scripted attack",
+      "actor": "wd",
+      "metric": "whispers_received",
+      "from": "wd",
+      "text": "COARotation\tN;500015",
+      "equals": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "whisper",
+      "actor": "wd",
+      "to": "Rotwitchdoc",
+      "language": 4294967295,
+      "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert",
+      "label": "A press casts it",
+      "actor": "wd",
+      "metric": "spell_go_count",
+      "spell": 500015,
+      "equals": 1,
+      "within_ms": 3000
+    }
+  ]
+}

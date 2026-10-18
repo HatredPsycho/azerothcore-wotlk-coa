@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance: a Felsworn's rotation casts Bane of Betrayal",
+  "contract": [
+    "Felsworn specialization 8 applies Bane of Betrayal while the target lacks it. The bane's damage at the end",
+    "of its duration comes from the class script and its spell data holds only a dummy aura, so the rotation",
+    "used to skip it as a manual spell. Expected: a level 40 Felsworn of specialization 8 with Bane of Betrayal",
+    "(712483) and without the specialization's higher-priority Manaburn (805248) selects an enemy; the",
+    "CoARotation preview is Bane of Betrayal and a press casts it."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    {
+      "id": "fs",
+      "name": "Rotfelsworn",
+      "race": 1,
+      "class": 14,
+      "level": 40,
+      "spell_hit_rating": 10000
+    }
+  ],
+  "creatures": [
+    {
+      "id": "target",
+      "owner": "fs",
+      "entry": 36,
+      "level": 40,
+      "health": 1000000,
+      "distance": 6
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "specialization",
+      "actor": "fs",
+      "id": 8
+    },
+    {
+      "action": "learn",
+      "actor": "fs",
+      "spell": 712483
+    },
+    {
+      "action": "unlearn",
+      "actor": "fs",
+      "spell": 805248
+    },
+    {
+      "action": "whisper",
+      "actor": "fs",
+      "to": "Rotfelsworn",
+      "language": 4294967295,
+      "text": "COARotation\tON"
+    },
+    {
+      "action": "client_packet",
+      "actor": "fs",
+      "opcode": 317,
+      "fields": [
+        {
+          "actor_guid": "target"
+        }
+      ],
+      "consumed": false
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: the preview is the scripted attack",
+      "actor": "fs",
+      "metric": "whispers_received",
+      "from": "fs",
+      "text": "COARotation\tN;712483",
+      "equals": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "whisper",
+      "actor": "fs",
+      "to": "Rotfelsworn",
+      "language": 4294967295,
+      "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert",
+      "label": "A press casts it",
+      "actor": "fs",
+      "metric": "spell_go_count",
+      "spell": 712483,
+      "equals": 1,
+      "within_ms": 3000
+    }
+  ]
+}

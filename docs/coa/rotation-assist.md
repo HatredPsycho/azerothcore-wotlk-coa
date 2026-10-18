@@ -23,8 +23,8 @@ ID. It does not promise an optimal rotation for every talent build, encounter or
 
 Normal costs, cooldowns, equipment, stance, line of sight, range and facing checks still apply. The highest active
 learned rank of a named spell is used, and native temporary spell replacements remain in effect. For spells that
-directly apply a damage-over-time or healing-over-time effect, the button waits for this player's effect to expire
-before reapplying it. Fully healed friendly targets do not receive another heal.
+directly apply a damage-over-time, healing-over-time or absorb effect, the button waits for this player's effect to
+expire before reapplying it. Fully healed friendly targets do not receive another heal.
 
 The player still chooses movement, target, forms, buffs, defensive abilities, taunts, pets, ground-targeted
 spells and untargeted area attacks. Party and tank healing rules address only the selected friendly target; the
@@ -58,11 +58,13 @@ presence/absence/stacks, self/target health, mana or resource conditions. Rules 
 priority with original row order breaking ties; identical rules are deduplicated. Mana thresholds are 15%/40%;
 health thresholds are 25%/45%/65%, matching the upstream defaults. Resource thresholds use the percentage of
 maximum power. Target-aura conditions accept effects from any caster, as upstream does. Runtime spell data
-requires a matching damage or healing effect (including periodic and triggered effects) and excludes automatic
-repeat attacks, movement,
-taunting, summoning and other manual actions. Damage implemented entirely by a script without a damage effect in
-its effective spell data stays manual. An unavailable or unknown rule falls through. This is a source snapshot, not
-a live dependency or a claim that all 70 rotations have been measured in game.
+requires a matching damage or healing effect (including periodic, absorb and triggered effects) and excludes
+automatic repeat attacks, movement, taunting, summoning and other manual actions. Damage implemented entirely by a
+script without a damage effect in its effective spell data stays manual, except targeted attacks whose damage the
+class scripts deal: Command: Undead and Virulency (Necromancer), Shadow Puppets (Witch Doctor), Bane of Betrayal
+(Felsworn), Righteous Upheaval (Templar), Air Strike and Build: Firepot Drone (Tinker); `ScriptedAttackSpells` in
+`CoARotationAssist.cpp` lists their ranks. An unavailable or unknown rule falls through. This is a source snapshot,
+not a live dependency or a claim that all 70 rotations have been measured in game.
 
 ## Verification
 
@@ -71,5 +73,6 @@ selection of at most one action. The `rotation-assist` gameplay scenario exercis
 selected-target requirement, native spell effects, resource costs, cooldowns and idle behavior. The
 `rotation-assist-profile` scenario checks Incineration against a competing fallback spell.
 `rotation-assist-target-aura` checks a matching target debuff from another caster. `rotation-assist-addon`
-checks the addon's subscription, next-spell preview and press. Run them through
-`tools/verify_all.py` as described in [verification](verification.md).
+checks the addon's subscription, next-spell preview and press. The Necromancer, Witch Doctor and Felsworn
+scenarios cover scripted attacks, and `rotation-assist-cultist-void-shield` covers an absorb on an injured ally.
+Run them through `tools/verify_all.py` as described in [verification](verification.md).
