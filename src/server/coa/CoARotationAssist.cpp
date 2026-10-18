@@ -4,6 +4,7 @@
  */
 
 #include "CoARotationAssist.h"
+#include "AscensionClientLua.h"
 #include "CoARotationData.h"
 #include "AscensionSpecialization.h"
 #include "Chat.h"
@@ -410,6 +411,267 @@ namespace
         SendAddon(player, "N;" + std::to_string(spell));
     }
 
+    constexpr uint32 RotationUIRequirementTypeId = 25;
+    constexpr uint32 RotationUIRequirementId = 16264;
+    constexpr std::string_view RotationUIToken = "COA_ROTATION_UI";
+
+    constexpr std::string_view RotationUILua = R"lua(
+if CoARotationButton then
+    return
+end
+
+local PREFIX = "COARotation"
+local BINDING = "CLICK CoARotationButton:LeftButton"
+local EMPTY_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
+local DEFAULTS = { point = "CENTER", x = 0, y = -180, scale = 1, locked = 0, hidden = 0 }
+
+local settings = {}
+for key, value in pairs(DEFAULTS) do
+    local stored = CoAUI.Settings.CoARotation and CoAUI.Settings.CoARotation[key]
+    settings[key] = stored ~= nil and stored or value
+end
+
+local spellId = 0
+local spellName
+local elapsed = 0
+
+local button = CreateFrame("Button", "CoARotationButton", UIParent)
+button:SetWidth(48)
+button:SetHeight(48)
+button:SetMovable(true)
+button:SetClampedToScreen(true)
+button:RegisterForClicks("LeftButtonUp")
+button:RegisterForDrag("LeftButton")
+button:Hide()
+
+local icon = button:CreateTexture(nil, "BACKGROUND")
+icon:SetAllPoints()
+icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+local border = button:CreateTexture(nil, "OVERLAY")
+border:SetTexture("Interface\\Buttons\\UI-Quickslot2")
+border:SetPoint("CENTER")
+border:SetWidth(84)
+border:SetHeight(84)
+
+button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+button:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
+
+local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+cooldown:SetAllPoints()
+
+local hotkey = button:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmallGray")
+hotkey:SetPoint("TOPRIGHT", -2, -3)
+
+local function Save()
+    CoAUI.Save("CoARotation", settings)
+end
+
+local function Say(message)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff00ccffCoA Rotation|r: " .. message)
+end
+
+local function Send(message)
+    SendAddonMessage(PREFIX, message, "WHISPER", UnitName("player"))
+end
+
+function CoARotation_Press()
+    Send("PRESS")
+end
+
+local function Place()
+    button:ClearAllPoints()
+    button:SetPoint(settings.point, UIParent, settings.point, settings.x, settings.y)
+    button:SetScale(settings.scale)
+    if settings.hidden == 1 then
+        button:Hide()
+    else
+        button:Show()
+    end
+end
+
+local function UpdateHotkey()
+    local key = GetBindingKey(BINDING)
+    hotkey:SetText(key and GetBindingText(key, "KEY_") or "")
+end
+
+local function UpdateCooldown()
+    if not spellName then
+        cooldown:Hide()
+        return
+    end
+    local start, duration, enabled = GetSpellCooldown(spellName)
+    if start then
+        CooldownFrame_SetTimer(cooldown, start, duration, enabled)
+    end
+end
+
+local function UpdateUsable()
+    if not spellName then
+        icon:SetVertexColor(1, 1, 1)
+        return
+    end
+    local usable, noMana = IsUsableSpell(spellName)
+    if IsSpellInRange(spellName, "target") == 0 then
+        icon:SetVertexColor(0.8, 0.1, 0.1)
+    elseif noMana then
+        icon:SetVertexColor(0.3, 0.3, 1)
+    elseif not usable then
+        icon:SetVertexColor(0.4, 0.4, 0.4)
+    else
+        icon:SetVertexColor(1, 1, 1)
+    end
+end
+
+local function ShowSpell(id)
+    spellId = id
+    local name, _, texture = GetSpellInfo(id)
+    if id == 0 or not name then
+        spellName = nil
+        icon:SetTexture(EMPTY_ICON)
+        icon:SetDesaturated(true)
+        button:SetAlpha(0.5)
+    else
+        spellName = name
+        icon:SetTexture(texture)
+        icon:SetDesaturated(false)
+        button:SetAlpha(1)
+    end
+    UpdateCooldown()
+    UpdateUsable()
+    if GameTooltip:IsOwned(button) then
+        button:GetScript("OnEnter")(button)
+    end
+end
+
+local function ClearBinding()
+    for _, key in ipairs({ GetBindingKey(BINDING) }) do
+        SetBinding(key)
+    end
+end
+
+button:SetScript("OnClick", CoARotation_Press)
+
+button:SetScript("OnDragStart", function(self)
+    if settings.locked ~= 1 then
+        self:StartMoving()
+    end
+end)
+
+button:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+    local point, _, _, x, y = self:GetPoint()
+    settings.point, settings.x, settings.y = point, x, y
+    Save()
+end)
+
+button:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    if spellId ~= 0 and spellName then
+        GameTooltip:SetHyperlink("spell:" .. spellId)
+    else
+        GameTooltip:SetText("CoA Rotation")
+        GameTooltip:AddLine("No spell available for the current target.", 1, 1, 1, true)
+    end
+    GameTooltip:AddLine("Click, or bind a key with /coarot bind <key>, to cast the next spell.", 0.6, 0.6, 0.6, true)
+    GameTooltip:Show()
+end)
+
+button:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+end)
+
+button:SetScript("OnUpdate", function(_, delta)
+    elapsed = elapsed + delta
+    if elapsed >= 0.2 then
+        elapsed = 0
+        UpdateUsable()
+    end
+end)
+
+local events = CreateFrame("Frame")
+events:RegisterEvent("CHAT_MSG_ADDON")
+events:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+events:RegisterEvent("UPDATE_BINDINGS")
+events:SetScript("OnEvent", function(_, event, prefix, message, channel, sender)
+    if event == "CHAT_MSG_ADDON" then
+        if prefix == PREFIX and channel == "WHISPER" and sender == UnitName("player") then
+            local id = tonumber(message:match("^N;(%d+)$"))
+            if id then
+                ShowSpell(id)
+            end
+        end
+    elseif event == "SPELL_UPDATE_COOLDOWN" then
+        UpdateCooldown()
+    elseif event == "UPDATE_BINDINGS" then
+        UpdateHotkey()
+    end
+end)
+
+SLASH_COAROTATION1 = "/coarot"
+SLASH_COAROTATION2 = "/coarotation"
+SlashCmdList.COAROTATION = function(input)
+    local command, argument = (input or ""):match("^%s*(%S*)%s*(.-)%s*$")
+    command = command:lower()
+    if command == "lock" or command == "unlock" then
+        settings.locked = command == "lock" and 1 or 0
+        Save()
+    elseif command == "scale" and tonumber(argument) then
+        settings.scale = math.min(2, math.max(0.5, tonumber(argument)))
+        Place()
+        Save()
+    elseif command == "reset" then
+        for key, value in pairs(DEFAULTS) do
+            settings[key] = value
+        end
+        Place()
+        Save()
+        Send("ON")
+    elseif command == "hide" then
+        settings.hidden = 1
+        Send("OFF")
+        Place()
+        Save()
+    elseif command == "show" then
+        settings.hidden = 0
+        Place()
+        Save()
+        Send("ON")
+    elseif command == "bind" and argument ~= "" then
+        if InCombatLockdown() then
+            Say("key bindings cannot change in combat.")
+            return
+        end
+        ClearBinding()
+        if SetBindingClick(argument:upper(), "CoARotationButton") then
+            SaveBindings(GetCurrentBindingSet())
+            Say("bound to " .. argument:upper() .. ".")
+        else
+            Say("unknown key " .. argument .. ".")
+        end
+        UpdateHotkey()
+    elseif command == "unbind" then
+        if InCombatLockdown() then
+            Say("key bindings cannot change in combat.")
+            return
+        end
+        ClearBinding()
+        SaveBindings(GetCurrentBindingSet())
+        UpdateHotkey()
+        Say("key binding removed.")
+    else
+        Say("/coarot bind <key> | unbind | lock | unlock | scale <0.5-2> | reset | hide | show")
+    end
+end
+
+Place()
+UpdateHotkey()
+ShowSpell(0)
+if settings.hidden ~= 1 then
+    Send("ON")
+end
+)lua";
+
     class RotationConfig final : public WorldScript
     {
     public:
@@ -548,6 +810,14 @@ namespace
 
 void AddCoARotationAssistScripts()
 {
+    RegisterAscensionClientLuaProvider([](Player* player, AscensionClientUISettings const& settings,
+        std::vector<AscensionClientLuaChunk>& chunks)
+    {
+        if (!Enabled || !player)
+            return;
+        chunks.push_back({RotationUIRequirementTypeId, RotationUIRequirementId, std::string(RotationUIToken),
+            AscensionClientUILua("CoARotation", settings).append(RotationUILua)});
+    });
     new RotationConfig();
     new RotationAddon();
     new RotationCommands();

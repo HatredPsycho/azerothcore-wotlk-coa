@@ -732,7 +732,6 @@ public:
         ManastormClientBridge::Instance().Login(player);
         ManastormMobilityClient::Sync(player);
         ManastormMgr::Instance().SyncManastormPotionCharges(player);
-        ManastormClientUIFixes::ScheduleLoginPush(player);
     }
 
     void OnPlayerMapChanged(Player* player) override
@@ -1178,6 +1177,7 @@ public:
 
 void AddSC_manastorm()
 {
+    ManastormClientUIFixes::RegisterProvider();
     new manastorm_worldscript();
     new manastorm_creaturescript();
     new manastorm_unitscript();

@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "name": "Permanent minions are stowed during a taxi flight and return on landing",
+  "contract": [
+    "CoA decision: minions that last until dismissed must not follow their owner along a taxi route, where they",
+    "would run through the zones below and pull everything on the way. AscensionCompanionFlight stows them when",
+    "the owner boards and summons them back beside the owner on landing; hunter and warlock pets are not affected.",
+    "Expected: a level 60 Necromancer's Greater Skeletal Warrior (504901, creature 51065) is gone within a few",
+    "seconds of the Stormwind - Lakeshire flight starting and stays gone while it lasts, the owner is not pulled",
+    "into combat on the way, and after landing the warrior is summoned again. Upstream's",
+    "necromancer-minions-mounted-7457 asserts the opposite for the flight and contradicts this decision."
+  ],
+  "timeout_ms": 420000,
+  "location": { "map": 0, "x": -8840.56, "y": 489.7, "z": 109.61, "o": 0 },
+  "players": [
+    { "id": "necro", "race": 1, "class": 23, "level": 60 }
+  ],
+  "creatures": [
+    { "id": "gryphon_master", "owner": "necro", "entry": 352, "faction": 12 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 3000 },
+    { "action": "learn", "actor": "necro", "spell": 504901 },
+    { "action": "cast", "actor": "necro", "spell": 504901 },
+    {
+      "action": "assert", "label": "SETUP: the Greater Skeletal Warrior is summoned", "actor": "necro",
+      "metric": "owned_creature_count", "entry": 51065, "equals": 1, "within_ms": 8000
+    },
+    { "action": "discover_taxi_node", "actor": "necro", "entry": 2 },
+    { "action": "discover_taxi_node", "actor": "necro", "entry": 5 },
+    { "action": "set_money", "actor": "necro", "value": 10000 },
+    {
+      "action": "client_packet", "label": "Fly Stormwind - Lakeshire", "actor": "necro", "opcode": 786,
+      "consumed": false,
+      "fields": [{"actor_guid": "gryphon_master"}, {"u32": 2}, {"u32": 2}, {"u32": 5}]
+    },
+    {
+      "action": "assert", "label": "The flight starts", "actor": "necro",
+      "metric": "in_flight", "equals": 1, "within_ms": 2000
+    },
+    {
+      "action": "assert", "label": "DISCRIMINATING: boarding stows the minion", "actor": "necro",
+      "metric": "owned_creature_count", "entry": 51065, "equals": 0, "within_ms": 3000
+    },
+    { "action": "wait", "label": "Fly on", "ms": 15000 },
+    {
+      "action": "assert", "label": "The minion stays stowed during the flight", "actor": "necro",
+      "metric": "owned_creature_count", "entry": 51065, "equals": 0
+    },
+    {
+      "action": "assert", "label": "Nothing on the way pulled the owner into combat", "actor": "necro",
+      "metric": "combat", "equals": 0
+    },
+    {
+      "action": "assert", "label": "The flight lands", "actor": "necro",
+      "metric": "in_flight", "equals": 0, "within_ms": 240000
+    },
+    {
+      "action": "assert", "label": "After landing the minion is summoned again", "actor": "necro",
+      "metric": "owned_creature_count", "entry": 51065, "equals": 1, "within_ms": 10000
+    }
+  ]
+}

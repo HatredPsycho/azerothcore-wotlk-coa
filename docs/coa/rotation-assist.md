@@ -1,8 +1,10 @@
 # One-button rotation assistance
 
-Install the [CoARotation](../../client-addons/CoARotation/README.md) addon for a button that shows the next
-spell and casts it with a click or a key binding. Without the addon, create a macro with the following text,
-put it on an action bar and bind it to a comfortable key:
+The server loads a CoARotation button into the client a few seconds after login and again after every
+`/reload` (see [client Lua](client-lua.md)); no addon is installed. It shows the next spell and casts it with a
+click or a key bound with `/coarot bind <key>`. `/coarot` also takes `unbind`, `lock`, `unlock`,
+`scale <0.5-2>`, `reset`, `hide` and `show`; position and scale are stored on the server. Without the button,
+create a macro with the following text, put it on an action bar and bind it to a comfortable key:
 
 ```text
 /s .rotation

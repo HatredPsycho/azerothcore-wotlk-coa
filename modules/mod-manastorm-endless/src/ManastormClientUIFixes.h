@@ -19,7 +19,7 @@ namespace ManastormClientUIFixes
 
     uint32 ConfiguredFixes();
     std::string BuildLua(uint32 fixes);
-    void ScheduleLoginPush(Player* player);
+    void RegisterProvider();
 }
 
 #endif

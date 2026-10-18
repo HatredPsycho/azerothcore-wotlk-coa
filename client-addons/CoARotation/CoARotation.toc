@@ -1,7 +1,0 @@
-## Interface: 30300
-## Title: CoA Rotation
-## Notes: One button for the server's rotation assistance that shows the next spell.
-## Version: 1.0.0
-## SavedVariables: CoARotationDB
-
-CoARotation.lua
