@@ -177,6 +177,12 @@ namespace
             ScriptedAttackSpells.end();
     }
 
+    bool SpendsBuiltResource(SpellInfo const* info)
+    {
+        return (info->PowerType == POWER_RUNIC_POWER || info->PowerType == POWER_ENERGY) &&
+            (info->ManaCost || info->ManaCostPercentage);
+    }
+
     bool Allowed(SpellInfo const* info, bool healing)
     {
         return info && (healing ? Heals(info) : ((DealsDamage(info) && !info->IsPositive()) || ScriptedAttack(info)) &&
@@ -289,7 +295,8 @@ namespace
             fallback.push_back(info);
         std::sort(fallback.begin(), fallback.end(), [](SpellInfo const* left, SpellInfo const* right)
         {
-            return std::tie(left->SpellLevel, left->Id) > std::tie(right->SpellLevel, right->Id);
+            return std::tuple(SpendsBuiltResource(left), left->SpellLevel, left->Id) >
+                std::tuple(SpendsBuiltResource(right), right->SpellLevel, right->Id);
         });
         for (SpellInfo const* info : fallback)
             if (uint32 const spell = usable(info, true))

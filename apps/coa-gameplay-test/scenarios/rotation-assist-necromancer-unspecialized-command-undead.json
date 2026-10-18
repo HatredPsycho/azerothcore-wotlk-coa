@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance: an unspecialized Necromancer spends runic power on Command: Undead",
+  "contract": [
+    "A level 1 Necromancer has no specialization, so the rotation falls back to its learned single-target spells.",
+    "That fallback ordered them by spell level and id only, which put Lichfrost (801722) ahead of Command: Undead",
+    "(504868) forever: Command never came, and once Lichfrost had spent the mana the button showed nothing.",
+    "Expected: with a Lesser Skeletal Warrior raised and no runic power the preview is Lichfrost; with 30% runic",
+    "power it is Command: Undead, which a press casts."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "necro", "name": "Rotnecrolow", "race": 1, "class": 23, "level": 1, "spell_hit_rating": 10000 }
+  ],
+  "creatures": [
+    { "id": "target", "owner": "necro", "entry": 36, "level": 1, "health": 1000000, "distance": 6 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 3000 },
+    { "action": "learn", "actor": "necro", "spell": 804360 },
+    { "action": "learn", "actor": "necro", "spell": 500970 },
+    { "action": "learn", "actor": "necro", "spell": 801722 },
+    { "action": "learn", "actor": "necro", "spell": 504868 },
+    { "action": "cast", "actor": "necro", "spell": 500970 },
+    { "action": "wait", "label": "Let the raise and its global cooldown finish", "ms": 4000 },
+    { "action": "set_power", "actor": "necro", "power": 6, "value": 0 },
+    {
+      "action": "whisper", "actor": "necro", "to": "Rotnecrolow", "language": 4294967295, "text": "COARotation\tON"
+    },
+    {
+      "action": "client_packet", "actor": "necro", "opcode": 317, "fields": [{"actor_guid": "target"}],
+      "consumed": false
+    },
+    {
+      "action": "assert", "label": "Without runic power the preview is Lichfrost", "actor": "necro",
+      "metric": "whispers_received", "from": "necro", "text": "COARotation\tN;801722", "equals": 1,
+      "within_ms": 3000
+    },
+    { "action": "set_power", "actor": "necro", "power": 6, "value": 300 },
+    {
+      "action": "assert", "label": "DISCRIMINATING: with 30% runic power the preview is Command: Undead",
+      "actor": "necro", "metric": "whispers_received", "from": "necro", "text": "COARotation\tN;504868",
+      "equals": 1, "within_ms": 3000
+    },
+    {
+      "action": "whisper", "actor": "necro", "to": "Rotnecrolow", "language": 4294967295, "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert", "label": "A press casts Command: Undead", "actor": "necro",
+      "metric": "spell_go_count", "spell": 504868, "equals": 1, "within_ms": 3000
+    }
+  ]
+}
