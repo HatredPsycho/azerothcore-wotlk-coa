@@ -31,7 +31,7 @@
     },
     {
       "action": "client_packet", "label": "The reloaded interface reports its action bars", "actor": "player",
-      "opcode": 703, "fields": [{"u8": 0}], "consumed": false
+      "opcode": 703, "fields": [{"u8": 0}], "early": false, "consumed": false
     },
     {
       "action": "assert", "label": "DISCRIMINATING: a reload brings both pieces back", "actor": "player",
