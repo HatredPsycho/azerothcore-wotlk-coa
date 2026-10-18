@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance: a Necromancer's rotation casts Command: Undead",
+  "contract": [
+    "Both Necromancer specializations put Command: Undead (504868) at 30% runic power into their priorities. Its",
+    "spell data holds only dummy effects; the minions attack through the class script. The rotation used to treat",
+    "it as a manual spell and skipped it. Expected: a level 60 Necromancer of specialization 34 with a Greater",
+    "Skeletal Warrior, Command: Undead and full runic power subscribes with the CoARotation button and selects an",
+    "enemy; the preview is Command: Undead and a press casts it."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "necro", "name": "Rotnecro", "race": 1, "class": 23, "level": 60, "spell_hit_rating": 10000 }
+  ],
+  "creatures": [
+    { "id": "target", "owner": "necro", "entry": 36, "level": 60, "health": 1000000, "distance": 6 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 3000 },
+    { "action": "specialization", "actor": "necro", "id": 34 },
+    { "action": "learn", "actor": "necro", "spell": 504901 },
+    { "action": "cast", "actor": "necro", "spell": 504901 },
+    {
+      "action": "assert", "label": "SETUP: the Greater Skeletal Warrior is summoned", "actor": "necro",
+      "metric": "owned_creature_count", "entry": 51065, "equals": 1, "within_ms": 8000
+    },
+    { "action": "wait", "label": "Let the summon's global cooldown pass", "ms": 2000 },
+    { "action": "learn", "actor": "necro", "spell": 504868 },
+    { "action": "set_power", "actor": "necro", "power": 6, "value": 1000 },
+    {
+      "action": "whisper", "actor": "necro", "to": "Rotnecro", "language": 4294967295, "text": "COARotation\tON"
+    },
+    {
+      "action": "client_packet", "actor": "necro", "opcode": 317, "fields": [{"actor_guid": "target"}],
+      "consumed": false
+    },
+    {
+      "action": "assert", "label": "DISCRIMINATING: the preview is Command: Undead", "actor": "necro",
+      "metric": "whispers_received", "from": "necro", "text": "COARotation\tN;504868", "equals": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "whisper", "actor": "necro", "to": "Rotnecro", "language": 4294967295, "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert", "label": "A press casts Command: Undead", "actor": "necro",
+      "metric": "spell_go_count", "spell": 504868, "equals": 1, "within_ms": 3000
+    }
+  ]
+}
