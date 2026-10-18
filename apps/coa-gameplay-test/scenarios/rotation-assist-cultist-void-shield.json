@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "name": "Rotation assistance: a Cultist healer's rotation shields an injured ally with Void Shield",
+  "contract": [
+    "Cultist specialization 40 heals and lists Void Shield first for an ally below 25% health. Void Shield",
+    "only absorbs damage, so the healing rotation used to skip it as a spell that does not heal. Expected:",
+    "a level 20 Cultist of specialization 40 with Void Shield (500715) selects an ally at 10 health; the",
+    "CoARotation preview is Void Shield and a press shields the ally. While the shield holds, the preview no",
+    "longer offers it."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    {
+      "id": "cultist",
+      "name": "Rotcultist",
+      "race": 1,
+      "class": 25,
+      "level": 20
+    },
+    {
+      "id": "ally",
+      "race": 1,
+      "class": 1,
+      "level": 20
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "specialization",
+      "actor": "cultist",
+      "id": 40
+    },
+    {
+      "action": "learn",
+      "actor": "cultist",
+      "spell": 500715
+    },
+    {
+      "action": "set_health",
+      "actor": "ally",
+      "value": 10
+    },
+    {
+      "action": "whisper",
+      "actor": "cultist",
+      "to": "Rotcultist",
+      "language": 4294967295,
+      "text": "COARotation\tON"
+    },
+    {
+      "action": "client_packet",
+      "actor": "cultist",
+      "opcode": 317,
+      "fields": [
+        {
+          "actor_guid": "ally"
+        }
+      ],
+      "consumed": false
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: the preview is Void Shield",
+      "actor": "cultist",
+      "metric": "whispers_received",
+      "from": "cultist",
+      "text": "COARotation\tN;500715",
+      "equals": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "whisper",
+      "actor": "cultist",
+      "to": "Rotcultist",
+      "language": 4294967295,
+      "text": "COARotation\tPRESS"
+    },
+    {
+      "action": "assert",
+      "label": "A press casts Void Shield",
+      "actor": "cultist",
+      "metric": "spell_go_count",
+      "spell": 500715,
+      "equals": 1,
+      "within_ms": 3000
+    },
+    {
+      "action": "assert",
+      "label": "The ally carries the shield",
+      "actor": "ally",
+      "metric": "aura",
+      "spell": 500715,
+      "equals": 1,
+      "within_ms": 1000
+    },
+    {
+      "action": "wait",
+      "ms": 2000
+    },
+    {
+      "action": "assert",
+      "label": "The preview stops offering the active shield",
+      "actor": "cultist",
+      "metric": "whispers_received",
+      "from": "cultist",
+      "text": "COARotation\tN;500715",
+      "equals": 1
+    }
+  ]
+}
