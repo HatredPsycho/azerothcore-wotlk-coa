@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "name": "Client Lua loader: a client that announces hot patches gets the CoA interface pieces as SMSG 0x8F0",
+  "contract": [
+    "A client with the hot-patch channel announces CMSG 0x8F1 (protocol 1, mode 2) after entering the world.",
+    "The loader's pieces then travel as SMSG 0x8F0 instead of SMSG_COA_PATCH_CHALLENGE_REQUIREMENT_TYPE (0x5BC):",
+    "the CoARotation button and the CoACompanions frame about five seconds after login, and both again after",
+    "the reloaded interface reports CMSG_SET_ACTIONBAR_TOGGLES (0x2BF). Expected: both pieces in 0x8F0 after",
+    "login and at least two more 0x8F0 packets after 0x2BF, while no 0x5BC carries either piece. The client's",
+    "execution of the patches is not exercised here."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "player", "name": "Hotprobe", "race": 1, "class": 1, "level": 10 }
+  ],
+  "steps": [
+    {
+      "action": "client_packet", "label": "The client announces the hot-patch channel", "actor": "player",
+      "opcode": 2289, "fields": [{"u32": 1}, {"u8": 2}]
+    },
+    {
+      "action": "assert", "label": "DISCRIMINATING: the CoARotation button arrives as a hot patch", "actor": "player",
+      "metric": "server_packet_contains", "opcode": 2288, "text": "CoARotationButton", "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert", "label": "The CoACompanions frame arrives as a hot patch", "actor": "player",
+      "metric": "server_packet_contains", "opcode": 2288, "text": "CoACompanionsFrame", "equals": 1,
+      "within_ms": 2000
+    },
+    {
+      "action": "assert", "label": "No formatter carries the button", "actor": "player",
+      "metric": "server_packet_contains", "opcode": 1468, "text": "CoARotationButton", "equals": 0
+    },
+    { "action": "wait", "label": "Let the login send settle", "ms": 2000 },
+    {
+      "action": "snapshot", "actor": "player", "metric": "server_packets", "opcode": 2288, "save_as": "before_reload"
+    },
+    {
+      "action": "client_packet", "label": "The reloaded interface reports its action bars", "actor": "player",
+      "opcode": 703, "fields": [{"u8": 0}], "early": false, "consumed": false
+    },
+    {
+      "action": "assert", "label": "A reload brings both pieces back as hot patches", "actor": "player",
+      "metric": "server_packets", "opcode": 2288, "relative_to": "before_reload", "min": 2, "within_ms": 5000
+    },
+    {
+      "action": "assert", "label": "Still no formatter carries the frame", "actor": "player",
+      "metric": "server_packet_contains", "opcode": 1468, "text": "CoACompanionsFrame", "equals": 0
+    }
+  ]
+}

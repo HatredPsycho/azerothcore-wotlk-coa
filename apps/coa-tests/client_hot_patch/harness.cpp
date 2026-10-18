@@ -62,6 +62,11 @@ struct Player
     WorldSession* session = nullptr;
 };
 
+namespace GameTime
+{
+    std::chrono::steady_clock::time_point SteadyNow() { return std::chrono::steady_clock::now(); }
+}
+
 // ACTUAL_CLIENT_LUA
 
 namespace

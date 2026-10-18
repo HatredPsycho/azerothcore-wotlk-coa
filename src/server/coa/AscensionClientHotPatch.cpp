@@ -1,6 +1,7 @@
 /* Copyright (C) 2016+ AzerothCore, GNU AGPL v3. */
 #include "AscensionClientLua.h"
 #include "AscensionCompatOpcodes.h"
+#include "GameTime.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
@@ -78,7 +79,7 @@ namespace
         void OnPlayerLogin(Player* player) override
         {
             if (WorldSession* session = player->GetSession(); session && !session->IsBot())
-                ResetAscensionClientLuaCapability(session->GetAccountId(), AscensionClientLuaClock::now());
+                ResetAscensionClientLuaCapability(session->GetAccountId(), GameTime::SteadyNow());
         }
 
         void OnPlayerLogout(Player* player) override

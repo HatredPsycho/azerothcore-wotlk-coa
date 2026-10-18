@@ -3,7 +3,8 @@
   "name": "Client Lua loader: CoA interface pieces arrive after login and again after a /reload, with stored settings",
   "contract": [
     "The server loads the CoARotation button and the CoACompanions frame into the client as Lua inside",
-    "SMSG_COA_PATCH_CHALLENGE_REQUIREMENT_TYPE (0x5BC) about five seconds after login. A /reload loses them; the",
+    "SMSG_COA_PATCH_CHALLENGE_REQUIREMENT_TYPE (0x5BC). A client that never announces the hot-patch channel gets",
+    "them after the server's 30 second wait for that announcement. A /reload loses them; the",
     "client announces its reloaded interface with CMSG_SET_ACTIONBAR_TOGGLES (0x2BF), and about 1.5 seconds later",
     "the server sends them again. A setting saved with the COAUI<TAB>SAVE whisper is stored per character and",
     "travels with the piece after the next login; a setting with characters outside the allowed set is dropped.",
@@ -18,7 +19,7 @@
     {
       "action": "assert", "label": "The CoARotation button arrives after login", "actor": "player",
       "metric": "server_packet_contains", "opcode": 1468, "text": "CoARotationButton", "equals": 1,
-      "within_ms": 10000
+      "within_ms": 40000
     },
     {
       "action": "assert", "label": "The CoACompanions frame arrives after login", "actor": "player",
@@ -50,7 +51,7 @@
     {
       "action": "assert", "label": "The stored scale travels with the button after the relog", "actor": "player",
       "metric": "server_packet_contains", "opcode": 1468, "text": "scale=1.35;x=120;y=-40", "equals": 1,
-      "within_ms": 10000
+      "within_ms": 40000
     },
     {
       "action": "assert", "label": "A setting with a quote is rejected", "actor": "player",

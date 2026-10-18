@@ -1,5 +1,6 @@
 /* Copyright (C) 2016+ AzerothCore, GNU AGPL v3. */
 #include "AscensionClientLua.h"
+#include "GameTime.h"
 #include "Player.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
@@ -195,7 +196,7 @@ void RunAscensionClientLua(Player* player, AscensionClientLuaChunk const& chunk)
     if (!session)
         return;
 
-    switch (GetAscensionClientLuaRoute(session->GetAccountId(), AscensionClientLuaClock::now()))
+    switch (GetAscensionClientLuaRoute(session->GetAccountId(), GameTime::SteadyNow()))
     {
         case AscensionClientLuaRoute::HotPatch:
             SendHotPatch(session, chunk);
