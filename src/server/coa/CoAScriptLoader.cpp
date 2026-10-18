@@ -23,6 +23,7 @@ void AddAscensionTravelPermitScripts();
 void AddSC_AscensionRulesets();
 void AddSC_AscensionMercenary();
 void AddSC_AscensionHighRisk();
+void AddSC_AscensionFelCommutation();
 void AddSC_AscensionCrowsCache();
 void AddSC_AscensionItemScaling();
 void AddSC_AscensionNativeItemScaling();
@@ -377,6 +378,8 @@ void AddSC_AscensionClassBundleStore();
 void AddSC_AscensionLfgObjective();
 void AddSC_AscensionBushcraft();
 
+void AddSC_XPHotspots();
+
 void AddCoAScripts()
 {
     AddAscensionStockCoefficientScripts();
@@ -664,6 +667,7 @@ void AddCoAScripts()
     AddAscensionVenomancerVenomTalentScripts();
     AddAscensionVenomancerVenomPayloadScripts();
     AddAscensionTinkerCombatSymbiosisScripts();
+    AddSC_XPHotspots();
     AddCoABugReportScripts();
     AddAscensionArenaQueueScripts();
     AddCoAPlayerTicketScripts();
@@ -705,6 +709,7 @@ void AddCoAScripts()
     AddSC_AscensionRulesets();
     AddSC_AscensionMercenary();
     AddSC_AscensionHighRisk();
+    AddSC_AscensionFelCommutation();
     AddSC_AscensionCrowsCache();
     AddSC_AscensionItemScaling();
     AddSC_AscensionNativeItemScaling();
