@@ -147,6 +147,8 @@ void ApplyContracts(SpellInfo* info)
         info->Effects[1].Effect = 0;
     if (id == 503738 || id == 570136)
         dummy(1);
+    if (id == 531130)
+        info->SpellFamilyFlags[0] |= 8;
     if (id == 300236)
         info->Effects[0].SpellClassMask[1] = 268435456;
     if (id == 302923 || id == 300234 || id == 301325 || id == 704163)
@@ -209,8 +211,6 @@ void ApplyContracts(SpellInfo* info)
     }
     if (id == 705746)
         info->Effects[0].ApplyAuraName = SPELL_AURA_SCHOOL_HEAL_ABSORB;
-    if (id == 805049 || id == 807811 || id == 807813)
-        info->RecoveryTime = info->CategoryRecoveryTime = 180000;
     if (id == 808017)
     {
         info->Effects[2].ApplyAuraName = SPELL_AURA_SPELL_MAGNET;
@@ -356,7 +356,10 @@ void ApplyContracts(SpellInfo* info)
         info->Effects[2].TargetA = SpellImplicitTargetInfo(TARGET_UNIT_MASTER);
         info->Effects[2].TargetB = SpellImplicitTargetInfo();
     }
-    for (uint32 child : {573242, 801241, 707575, 561318, 561095, 570050, 505225, 681463})
+    if (id == 707575)
+        for (auto& effect : info->Effects)
+            effect.BonusMultiplier = 0.0f;
+    for (uint32 child : {573242, 801241, 561318, 561095, 570050, 505225, 681463})
         if (id == child)
         {
             info->AttributesEx2 |= SPELL_ATTR2_CANT_CRIT;
@@ -392,7 +395,7 @@ float Factor(Player* player, Unit* target, SpellInfo const* info, bool periodic)
     if (info->Id == 800343 && player->HasAura(570136))
         factor *= 1.0f + Diseases(player, target) * 0.04f;
     if (info->Id == 800343 && player->HasAura(704723))
-        factor *= 1.0f + player->GetAuraCount(706504) * 0.1f;
+        factor *= 1.0f + player->GetAuraCount(707133) * 0.1f;
     if (periodic && Named(info, 500968))
         factor *= 2.0f - target->GetHealthPct() / 100.0f;
     if (info->Id == 533240 && player->HasAura(503738))
