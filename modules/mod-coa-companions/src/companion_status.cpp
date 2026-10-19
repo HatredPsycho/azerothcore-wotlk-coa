@@ -156,6 +156,7 @@ local function Build()
     local wantedHeight = 0
 
     local wantedSlot = {}
+    local wantedVisible = false
 
     local function ApplyHeight()
         if wantedHeight <= 0 or InCombatLockdown() then
@@ -177,6 +178,16 @@ local function Build()
                 row:SetPoint("TOPLEFT", container, "TOPLEFT", 6, -(24 + (slot - 1) * ROW_HEIGHT))
                 row.slot = slot
             end
+            if row and row.active then
+                row:Show()
+            elseif row then
+                row:Hide()
+            end
+        end
+        if wantedVisible then
+            container:Show()
+        else
+            container:Hide()
         end
     end
 
@@ -402,7 +413,8 @@ R"lua(        row.health:SetHeight(ROW_HEIGHT - 6)
             end
         end
 
-        container:SetAlpha((capacity == 0 and liveCount == 0) and 0 or 1)
+        wantedVisible = capacity > 0 or liveCount > 0
+        container:SetAlpha(wantedVisible and 1 or 0)
 
         for _, entry in ipairs(COMPANIONS) do
             if not active[entry.spell] then
