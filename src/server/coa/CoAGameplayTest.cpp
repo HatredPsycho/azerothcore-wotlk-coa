@@ -2206,6 +2206,8 @@ private:
             return unit->GetDisplayId();
         if (metric == "mount_display_id")
             return unit->GetMountID();
+        if (metric == "can_fly")
+            return unit->CanFly();
         if (metric == "unit_scale")
             return double(unit->GetObjectScale());
         if (metric == "combat_reach")
@@ -2427,6 +2429,8 @@ private:
         }
         if (metric == "run_speed_rate")
             return unit->GetSpeedRate(MOVE_RUN);
+        if (metric == "flight_speed_rate")
+            return unit->GetSpeedRate(MOVE_FLIGHT);
         if (metric == "spell_hit_bonus_taken")
         {
             SpellInfo const* info = sSpellMgr->GetSpellInfo(spell);
