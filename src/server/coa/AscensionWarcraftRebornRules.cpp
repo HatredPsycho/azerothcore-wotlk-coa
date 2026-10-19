@@ -264,6 +264,9 @@ std::vector<std::pair<std::uint32_t, std::uint32_t>> SpellTwins(std::uint32_t sp
         std::optional<SpellLayout> const stock = layout(spellId);
         if (stock && stock == layout(spellId + REBORN_SPELL_OFFSET))
             twins.emplace_back(spellId, spellId + REBORN_SPELL_OFFSET);
+        if (stock && spellId < BLIZZARD_SPELL_END && spellId + CROSSOVER_SPELL_OFFSET < spellCount &&
+            stock == layout(spellId + CROSSOVER_SPELL_OFFSET))
+            twins.emplace_back(spellId, spellId + CROSSOVER_SPELL_OFFSET);
     }
     return twins;
 }
