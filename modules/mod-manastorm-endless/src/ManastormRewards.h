@@ -4,6 +4,7 @@
 #include "DatabaseEnv.h"
 #include "ManastormDefines.h"
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -43,6 +44,7 @@ public:
     static ManastormRewards& Instance();
 
     bool Load();
+    void SetCacheLevelMapper(std::function<uint32(uint32)> mapper) { _cacheLevelMapper = std::move(mapper); }
     bool IsLoaded() const { return _loaded; }
 
     bool LoadState(
@@ -96,6 +98,7 @@ public:
         ManastormRun& run) const;
 
 private:
+    std::function<uint32(uint32)> _cacheLevelMapper;
     ManastormRewards() = default;
 
     enum class CacheSelector : uint8

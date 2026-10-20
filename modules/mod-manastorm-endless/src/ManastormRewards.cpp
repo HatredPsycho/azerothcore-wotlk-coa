@@ -359,7 +359,7 @@ bool ManastormRewards::ResolveCacheItemEntry(
     uint32 const value =
         endgame
         ? depth
-        : playerLevel;
+        : (_cacheLevelMapper ? _cacheLevelMapper(playerLevel) : playerLevel);
 
     if (!value)
         return false;
