@@ -1,0 +1,1165 @@
+{
+  "schema": 1,
+  "name": "Beginner's Books of Ascension and of Artisans stand where Questie places the Book of Ascension",
+  "contract": [
+    "Questie's Ascension database lists 29 places for the Beginner's Book of Ascension (75118). Each of them",
+    "holds exactly one Beginner's Book of Ascension and one Beginner's Book of Artisans (57524) within 60 yards,",
+    "the two Elwynn books and the Ratchet book of artisans included, and the ground the server sees there lies",
+    "within three yards of the books' height, so none is placed under a floor or a roof."
+  ],
+  "timeout_ms": 600000,
+  "location": {
+    "map": 1,
+    "x": -612.988,
+    "y": -4204.112,
+    "z": 39.135,
+    "o": 0.0,
+    "ignore_access": true
+  },
+  "players": [
+    {
+      "id": "visitor",
+      "race": 2,
+      "class": 1,
+      "level": 60
+    }
+  ],
+  "steps": [
+    {
+      "action": "set_phase",
+      "actor": "visitor",
+      "value": 1
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": -612.988,
+      "y": -4205.612,
+      "z": 39.135,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 42.4 68.7: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 42.4 68.7: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 42.4 68.7: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 35.135,
+      "max": 41.135
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": 285.632,
+      "y": -4723.836,
+      "z": 14.592,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 52.2 43.2: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 52.2 43.2: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 52.2 43.2: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 10.592,
+      "max": 16.592
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": -824.428,
+      "y": -4935.356,
+      "z": 21.526,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 56.2 74.7: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 56.2 74.7: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Durotar 56.2 74.7: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 17.526,
+      "max": 23.526
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": -2913.85,
+      "y": -256.988,
+      "z": 53.942,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 28.4 67.0: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 28.4 67.0: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 28.4 67.0: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 49.942,
+      "max": 55.942
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": -887.35,
+      "y": -3782.924,
+      "z": 12.937,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 63.2 37.0: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 63.2 37.0: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 63.2 37.0: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 8.937,
+      "max": 14.937
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": -428.01,
+      "y": -2658.272,
+      "z": 97.255,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 52.1 30.2: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 52.1 30.2: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "The Barrens 52.1 30.2: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 93.255,
+      "max": 99.255
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": 8713.353,
+      "y": -6665.35,
+      "z": 71.35,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 44.2 70.9: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 44.2 70.9: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 44.2 70.9: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 67.35,
+      "max": 73.35
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": 10338.438,
+      "y": -6374.775,
+      "z": 36.116,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 38.3 21.4: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 38.3 21.4: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 38.3 21.4: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 32.116,
+      "max": 38.116
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": 9527.537,
+      "y": -6803.25,
+      "z": 17.492,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 47.0 46.1: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 47.0 46.1: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Eversong Woods 47.0 46.1: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 13.492,
+      "max": 19.492
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -8908.985,
+      "y": -135.57,
+      "z": 81.47,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Elwynn Forest 48.1 41.9: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Elwynn Forest 48.1 41.9: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Elwynn Forest 48.1 41.9: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 77.47,
+      "max": 83.47
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -9480.79,
+      "y": 37.93,
+      "z": 57.739,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Elwynn Forest 43.1 66.6: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Elwynn Forest 43.1 66.6: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Elwynn Forest 43.1 66.6: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 53.739,
+      "max": 59.739
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -6230.911,
+      "y": 318.376,
+      "z": 384.062,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Dun Morogh 30.1 71.7: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Dun Morogh 30.1 71.7: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Dun Morogh 30.1 71.7: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 380.062,
+      "max": 386.062
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -5597.292,
+      "y": -508.856,
+      "z": 402.212,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Dun Morogh 46.9 52.4: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Dun Morogh 46.9 52.4: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Dun Morogh 46.9 52.4: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 398.212,
+      "max": 404.212
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": 10327.458,
+      "y": 824.083,
+      "z": 1327.379,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Teldrassil 58.7 44.3: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Teldrassil 58.7 44.3: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Teldrassil 58.7 44.3: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 1323.379,
+      "max": 1329.379
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": 9879.45,
+      "y": 885.175,
+      "z": 1307.192,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Teldrassil 57.5 57.5: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Teldrassil 57.5 57.5: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Teldrassil 57.5 57.5: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 1303.192,
+      "max": 1309.192
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": 1851.433,
+      "y": 1608.33,
+      "z": 96.621,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Tirisfal Glades 31.5 65.9: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Tirisfal Glades 31.5 65.9: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Tirisfal Glades 31.5 65.9: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 92.621,
+      "max": 98.621
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": 2240.11,
+      "y": 257.448,
+      "z": 35.117,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Tirisfal Glades 61.4 53.0: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Tirisfal Glades 61.4 53.0: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Tirisfal Glades 61.4 53.0: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 31.116999999999997,
+      "max": 37.117
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": -4185.795,
+      "y": -12499.87,
+      "z": 45.361,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Azuremyst Isle 49.1 51.3: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Azuremyst Isle 49.1 51.3: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Azuremyst Isle 49.1 51.3: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 41.361,
+      "max": 47.361
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": -4050.045,
+      "y": -13785.99,
+      "z": 76.566,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Azuremyst Isle 80.7 46.3: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Azuremyst Isle 80.7 46.3: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Azuremyst Isle 80.7 46.3: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 72.566,
+      "max": 78.566
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": -2357.825,
+      "y": -373.556,
+      "z": -6.396,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Mulgore 47.1 60.9: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Mulgore 47.1 60.9: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Mulgore 47.1 60.9: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": -10.396,
+      "max": -4.396
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": 6411.52,
+      "y": 496.723,
+      "z": 8.964,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Darkshore 37.3 44.0: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Darkshore 37.3 44.0: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Darkshore 37.3 44.0: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 4.964,
+      "max": 10.964
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": 496.018,
+      "y": 1625.7,
+      "z": 127.9,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Silverpine Forest 43.4 41.8: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Silverpine Forest 43.4 41.8: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Silverpine Forest 43.4 41.8: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 123.9,
+      "max": 129.9
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -5364.68,
+      "y": -2957.391,
+      "z": 324.818,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Loch Modan 34.9 47.7: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Loch Modan 34.9 47.7: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Loch Modan 34.9 47.7: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 320.818,
+      "max": 326.818
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": 7570.8,
+      "y": -6855.3,
+      "z": 94.27,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Ghostlands 47.6 31.6: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Ghostlands 47.6 31.6: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Ghostlands 47.6 31.6: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 90.27,
+      "max": 96.27
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 530,
+      "x": -2054.3,
+      "y": -11873.862,
+      "z": 47.959,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Bloodmyst Isle 55.1 59.6: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Bloodmyst Isle 55.1 59.6: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Bloodmyst Isle 55.1 59.6: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 43.959,
+      "max": 49.959
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -9265.219,
+      "y": -2183.722,
+      "z": 64.65100000000001,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Redridge Mountains 28.2 47.7: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Redridge Mountains 28.2 47.7: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Redridge Mountains 28.2 47.7: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 60.651,
+      "max": 66.65100000000001
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 1,
+      "x": 2777.401,
+      "y": -394.558,
+      "z": 110.075,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Ashenvale 36.3 49.3: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Ashenvale 36.3 49.3: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Ashenvale 36.3 49.3: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 106.075,
+      "max": 112.075
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -10580.0,
+      "y": -1163.061,
+      "z": 29.253,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Duskwood 73.9 48.0: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Duskwood 73.9 48.0: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Duskwood 73.9 48.0: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 25.253,
+      "max": 31.253
+    },
+    {
+      "action": "teleport",
+      "actor": "visitor",
+      "map": 0,
+      "x": -10676.151,
+      "y": 1023.569,
+      "z": 34.186,
+      "o": 0.0
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "assert",
+      "label": "Westfall 56.9 54.7: one Beginner's Book of Ascension",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 75118,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Westfall 56.9 54.7: one Beginner's Book of Artisans",
+      "actor": "visitor",
+      "metric": "nearby_creature_count",
+      "entry": 57524,
+      "equals": 1,
+      "within_ms": 10000
+    },
+    {
+      "action": "assert",
+      "label": "Westfall 56.9 54.7: the books stand on the ground the server sees, not under a floor or roof",
+      "actor": "visitor",
+      "metric": "ground_height",
+      "min": 30.186,
+      "max": 36.186
+    }
+  ]
+}
