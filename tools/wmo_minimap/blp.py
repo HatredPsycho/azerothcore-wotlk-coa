@@ -75,11 +75,40 @@ def encode_dxt1(rgb, opaque):
     return out.tobytes()
 
 
-def write_blp_dxt1(rgb, opaque):
+def write_blp_dxt1(rgb, opaque, mipmaps=False):
     h, w = opaque.shape
-    payload = encode_dxt1(rgb, opaque)
-    header = struct.pack("<4sIBBBBII", b"BLP2", 1, 2, 1, 0, 0, w, h)
-    offsets = [1172] + [0] * 15
-    sizes = [len(payload)] + [0] * 15
+    levels = mip_levels(rgb, opaque) if mipmaps else [(rgb, opaque)]
+    payloads = [encode_dxt1(*_padded_to_blocks(level_rgb, level_opaque)) for level_rgb, level_opaque in levels]
+    header = struct.pack("<4sIBBBBII", b"BLP2", 1, 2, 1, 0, 1 if mipmaps else 0, w, h)
+    offsets, sizes, position = [], [], 1172
+    for payload in payloads:
+        offsets.append(position)
+        sizes.append(len(payload))
+        position += len(payload)
+    offsets += [0] * (16 - len(offsets))
+    sizes += [0] * (16 - len(sizes))
     header += struct.pack("<16I", *offsets) + struct.pack("<16I", *sizes) + b"\0" * 1024
-    return header + payload
+    return header + b"".join(payloads)
+
+
+def mip_levels(rgb, opaque):
+    levels = [(rgb, opaque)]
+    while max(rgb.shape[:2]) > 1:
+        h, w = opaque.shape
+        nh, nw = max(1, h // 2), max(1, w // 2)
+        weights = opaque[:nh * (h // nh), :nw * (w // nw)].reshape(nh, h // nh, nw, w // nw).astype(np.float32)
+        colors = rgb[:nh * (h // nh), :nw * (w // nw)].reshape(nh, h // nh, nw, w // nw, 3)
+        covered = weights.sum(axis=(1, 3))
+        rgb = (colors * weights[..., None]).sum(axis=(1, 3)) / np.maximum(covered, 1.0)[..., None]
+        opaque = covered >= weights.shape[1] * weights.shape[3] / 2.0
+        levels.append((rgb, opaque))
+    return levels
+
+
+def _padded_to_blocks(rgb, opaque):
+    h, w = opaque.shape
+    ph, pw = max(4, -(-h // 4) * 4), max(4, -(-w // 4) * 4)
+    if (ph, pw) == (h, w):
+        return rgb, opaque
+    return (np.pad(rgb, ((0, ph - h), (0, pw - w), (0, 0)), mode="edge"),
+            np.pad(opaque, ((0, ph - h), (0, pw - w)), mode="edge"))

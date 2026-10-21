@@ -116,12 +116,36 @@ class FormatTests(unittest.TestCase):
         rgb[:, :32] = [200, 120, 40]
         opaque = np.zeros((32, 64), dtype=bool)
         opaque[:, :32] = True
-        raw = blp.write_blp_dxt1(rgb, opaque)
+        raw = blp.write_blp_dxt1(rgb, opaque, mipmaps=False)
         self.assertEqual(raw[:4], b"BLP2")
         self.assertEqual(len(raw), 1172 + 64 * 32 // 2)
         back = np.asarray(Image.open(io.BytesIO(raw)).convert("RGBA")).astype(np.float32)
         self.assertTrue(((back[..., 3] > 0) == opaque).all())
         self.assertLess(np.abs(back[:, :32, :3] - rgb[:, :32]).max(), 9)
+
+    def test_blp_carries_a_full_mip_chain_down_to_one_pixel(self):
+        rgb = np.full((32, 64, 3), 128.0, dtype=np.float32)
+        opaque = np.ones((32, 64), dtype=bool)
+        raw = blp.write_blp_dxt1(rgb, opaque, mipmaps=True)
+        self.assertEqual(raw[11], 1)
+        offsets = struct.unpack_from("<16I", raw, 20)
+        sizes = struct.unpack_from("<16I", raw, 84)
+        expected = [max(1, -(-(64 >> i) // 4)) * max(1, -(-(max(1, 32 >> i)) // 4)) * 8 for i in range(7)]
+        self.assertEqual(list(sizes[:7]), expected)
+        self.assertEqual(sizes[7:], (0,) * 9)
+        self.assertEqual(offsets[0], 1172)
+        self.assertEqual(offsets[6] + sizes[6], len(raw))
+        back = np.asarray(Image.open(io.BytesIO(raw)).convert("RGBA")).astype(np.float32)
+        self.assertLess(np.abs(back[..., :3] - 128).max(), 9)
+
+    def test_mip_levels_keep_coverage_where_most_texels_are_drawn(self):
+        rgb = np.zeros((4, 4, 3), dtype=np.float32)
+        opaque = np.zeros((4, 4), dtype=bool)
+        opaque[:2, :2] = True
+        levels = blp.mip_levels(rgb, opaque)
+        self.assertEqual([level[1].shape for level in levels], [(4, 4), (2, 2), (1, 1)])
+        self.assertTrue(levels[1][1][0, 0])
+        self.assertFalse(levels[1][1][1, 1])
 
     def test_mpq_round_trips_through_mpyq(self):
         files = {"textures\\Minimap\\a.blp": bytes(range(256)) * 300, "x\\small.txt": b"hello"}
