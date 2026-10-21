@@ -563,6 +563,7 @@ struct AppearanceInfo {
   uint32 CreatureDisplay = 0;
   uint32 CreatureEntry = 0;
   uint32 CreatureWeapon = 0;
+  uint32 IncarnationSpell = 0;
 };
 
 constexpr uint32 INCARNATION_KIND_FORM = 1;
@@ -607,6 +608,7 @@ struct PlayerCollectionState {
   uint32 CompanionSkinningTimer = 0;
   uint32 CosmeticTimer = 0;
   std::unordered_set<uint32> AppliedCosmeticSpells;
+  uint32 AppliedIncarnationSpell = 0;
   bool CanSeeItemAppearances = true;
   bool CanSeeSpellAppearances = true;
 };
@@ -4583,31 +4585,29 @@ private:
                 LOG_ERROR("coa", "coa_client_skill_line_ability {} has unknown SkillLine {}", id, skillLine);
         } while (result->NextRow());
 
-        ClientDBC abilities;
-        std::filesystem::path const serverDbc =
-            std::filesystem::path(sWorld->GetDataPath()) / "dbc" / "SkillLineAbility.dbc";
-        if (!abilities.Load(serverDbc.string(), SKILL_LINE_ABILITY_DBC_FIELD_COUNT))
+        for (auto skillLine = skillLines.begin(); skillLine != skillLines.end();)
         {
-            LOG_ERROR("coa", "Cannot read {}; skill line ability patches are not streamed", serverDbc.generic_string());
-            return rows;
-        }
-
-        for (uint32 index = 0; index < abilities.GetRecordCount(); ++index)
-        {
-            ClientDBC::Record const record = abilities.GetRecord(index);
-            auto const skillLine = skillLines.find(record.GetUInt32(0));
-            if (skillLine == skillLines.end())
+            SkillLineAbilityEntry const* entry = sSkillLineAbilityStore.LookupEntry(skillLine->first);
+            if (!entry || !entry->Spell)
+            {
+                LOG_ERROR("coa", "coa_client_skill_line_ability {} has no SkillLineAbility row", skillLine->first);
+                skillLine = skillLines.erase(skillLine);
                 continue;
+            }
 
             SkillLineAbilityPatchRow& row = rows.emplace_back();
-            for (uint32 field = 0; field < row.size(); ++field)
-                row[field] = record.GetUInt32(field);
+            row[0] = entry->ID;
             row[1] = skillLine->second;
-            skillLines.erase(skillLine);
+            row[2] = entry->Spell;
+            row[3] = entry->RaceMask;
+            row[4] = entry->ClassMask;
+            row[7] = entry->MinSkillLineRank;
+            row[8] = entry->SupercededBySpell;
+            row[9] = entry->AcquireMethod;
+            row[10] = entry->TrivialSkillLineRankHigh;
+            row[11] = entry->TrivialSkillLineRankLow;
+            skillLine = skillLines.erase(skillLine);
         }
-
-        for (auto const& [id, skillLine] : skillLines)
-            LOG_ERROR("coa", "coa_client_skill_line_ability {} has no SkillLineAbility.dbc row", id);
         return rows;
     }
 
@@ -5444,6 +5444,8 @@ public:
         uint32 const incarnationDisplay = record.GetUInt32(8);
         if (sCreatureDisplayInfoStore.LookupEntry(incarnationDisplay))
           appearance.CreatureDisplay = incarnationDisplay;
+        else if (record.GetInt32(8) < 0 && sSpellMgr->GetSpellInfo(uint32(-record.GetInt32(8))))
+          appearance.IncarnationSpell = uint32(-record.GetInt32(8));
         appearance.CreatureWeapon = record.GetUInt32(9);
       }
       _allAppearanceIds.push_back(appearanceId);
@@ -5637,8 +5639,9 @@ public:
     SendVanityCollection(player, *state);
     RefreshVisibleItems(player);
     for (auto const& [id, appearance] : _appearances)
-        if (appearance.CosmeticSpell)
-            player->RemoveAurasDueToSpell(appearance.CosmeticSpell, player->GetGUID());
+        for (uint32 spell : { appearance.CosmeticSpell, appearance.IncarnationSpell })
+            if (spell)
+                player->RemoveAurasDueToSpell(spell, player->GetGUID());
     RefreshCosmetics(player, *state);
     RefreshIncarnations(player);
     InitializeRiding(player);
@@ -5719,6 +5722,7 @@ public:
         {
             state->CosmeticTimer = 1000;
             RefreshCosmetics(player, *state);
+            RefreshIncarnationSpell(player);
         }
         else
             state->CosmeticTimer -= diff;
@@ -6151,19 +6155,45 @@ public:
             return nullptr;
 
         auto const appearance = _appearances.find(appearanceId);
-        return appearance != _appearances.end() && appearance->second.CreatureDisplay ? &appearance->second : nullptr;
+        return appearance != _appearances.end() &&
+            (appearance->second.CreatureDisplay || appearance->second.IncarnationSpell) ? &appearance->second : nullptr;
     }
 
-    uint32 GetIncarnationFormDisplay(Player* player, ShapeshiftForm form)
+    AppearanceInfo const* GetActiveFormIncarnation(Player* player, ShapeshiftForm form)
     {
         if (form == FORM_DIREBEAR)
             form = FORM_BEAR;
         else if (form == FORM_FLIGHT_EPIC)
             form = FORM_FLIGHT;
 
-        uint32 const category = FindIncarnationCategory(INCARNATION_KIND_FORM, form);
-        AppearanceInfo const* appearance = category ? GetActiveIncarnation(player, category) : nullptr;
+        uint32 const category = form != FORM_NONE ? FindIncarnationCategory(INCARNATION_KIND_FORM, form) : 0;
+        return category ? GetActiveIncarnation(player, category) : nullptr;
+    }
+
+    uint32 GetIncarnationFormDisplay(Player* player, ShapeshiftForm form)
+    {
+        AppearanceInfo const* appearance = GetActiveFormIncarnation(player, form);
         return appearance ? appearance->CreatureDisplay : 0;
+    }
+
+    void RefreshIncarnationSpell(Player* player)
+    {
+        auto state = GetState(player);
+        if (!state || !player->IsInWorld())
+            return;
+
+        AppearanceInfo const* appearance = player->IsAlive() ?
+            GetActiveFormIncarnation(player, player->GetShapeshiftForm()) : nullptr;
+        uint32 const spell = appearance ? appearance->IncarnationSpell : 0;
+        if (state->AppliedIncarnationSpell && state->AppliedIncarnationSpell != spell)
+            player->RemoveAurasDueToSpell(state->AppliedIncarnationSpell, player->GetGUID());
+        state->AppliedIncarnationSpell = spell;
+        if (spell && !player->HasAura(spell, player->GetGUID()))
+            if (Aura* aura = player->AddAura(spell, player))
+            {
+                aura->SetMaxDuration(-1);
+                aura->SetDuration(-1);
+            }
     }
 
     void RefreshIncarnationGuardian(Player* player, Guardian* guardian)
@@ -6176,7 +6206,8 @@ public:
             return;
 
         AppearanceInfo const* appearance = GetActiveIncarnation(player, category);
-        uint32 const display = appearance ? appearance->CreatureDisplay : guardian->GetNativeDisplayId();
+        uint32 const display = appearance && appearance->CreatureDisplay ? appearance->CreatureDisplay :
+            guardian->GetNativeDisplayId();
         if (guardian->GetDisplayId() != display)
             guardian->SetDisplayId(display, guardian->GetObjectScale());
 
@@ -6198,6 +6229,7 @@ public:
             player->RestoreDisplayId();
         if (Pet* pet = player->GetPet())
             RefreshIncarnationGuardian(player, pet);
+        RefreshIncarnationSpell(player);
     }
 
   void DeliverVanityItem(Player *player, uint32 itemId) {
@@ -6942,8 +6974,9 @@ private:
         return;
       }
       if ((IsCosmeticCategory(categoryId) && !appearance.CosmeticSpell) ||
-          ((categoryId == APPEARANCE_CATEGORY_SHADOWHOUND || _incarnationCategories.contains(categoryId)) &&
-           !appearance.CreatureDisplay))
+          (categoryId == APPEARANCE_CATEGORY_SHADOWHOUND && !appearance.CreatureDisplay) ||
+          (_incarnationCategories.contains(categoryId) && !appearance.CreatureDisplay &&
+           !appearance.IncarnationSpell))
       {
         SendApplyResult(player, "APPLY_APPEARANCES_INVALID_SELECTION");
         return;
@@ -8827,6 +8860,8 @@ public:
   void OnPlayerEquip(Player *player, Item *item, uint8, uint8,
                      bool) override {
     AscensionCollectionService::Instance().OnItemObtained(player, item);
+    if (ascensionCompatConfig.GetConfigValue<bool>(AscensionCompatConfig::ENABLED))
+      ReconcileAscensionPrimalistWeapon(player);
   }
 
   bool OnPlayerCanCastItemUseSpell(Player *player, Item *item, SpellCastTargets const &, uint8, uint32) override {
@@ -9004,7 +9039,21 @@ public:
             {UNITHOOK_ON_BLOCK,
              UNITHOOK_ON_PERIODIC_DAMAGE_RESULT,
              UNITHOOK_ON_AURA_APPLY, UNITHOOK_ON_AURA_REMOVE,
-             UNITHOOK_ON_SEND_AURA_UPDATE}) {}
+             UNITHOOK_ON_SEND_AURA_UPDATE, UNITHOOK_ON_UNIT_SET_SHAPESHIFT_FORM}) {}
+
+    void OnUnitSetShapeshiftForm(Unit* unit, uint8) override
+    {
+        if (!unit || !unit->IsPlayer() ||
+            !ascensionCompatConfig.GetConfigValue<bool>(AscensionCompatConfig::ENABLED))
+            return;
+
+        ObjectGuid const guid = unit->GetGUID();
+        unit->m_Events.AddEventAtOffset([guid]()
+        {
+            if (Player* player = ObjectAccessor::FindPlayer(guid))
+                AscensionCollectionService::Instance().RefreshIncarnationSpell(player);
+        }, 1ms);
+    }
 
     void OnSendAuraUpdate(Unit* target, Player* receiver,
         AuraApplication const* application, bool remove) override
