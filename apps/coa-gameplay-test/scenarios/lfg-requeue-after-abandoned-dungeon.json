@@ -1,0 +1,301 @@
+{
+  "schema": 1,
+  "name": "Dungeon Finder: a full group that left its dungeon unfinished can queue again",
+  "contract": [
+    "A full Dungeon Finder group whose dungeon is unfinished counts as continuing it, and LFGMgr::JoinLfg refuses a full group's continuation with LFG_JOIN_PARTY_NOT_MEET_REQS, so it could not queue again until it disbanded.",
+    "Once every member has left the dungeon, LFGMgr::ReleaseAbandonedDungeon marks the run finished and drops the members' binds to that map, so the next queue starts a new role check and match like after a completed dungeon.",
+    "The random dungeon cooldown (71328) from the first run is removed so that only the abandoned-run rule decides the second queue."
+  ],
+  "timeout_ms": 180000,
+  "location": {
+    "map": 1,
+    "x": 1629.36,
+    "y": -4373.39,
+    "z": 31.26,
+    "o": 0
+  },
+  "players": [
+    {
+      "id": "p1",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p2",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p3",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p4",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p5",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p2"
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p3"
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p4"
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p5"
+    },
+    {
+      "action": "lfg_join",
+      "label": "A full group queues for Random Classic Dungeon",
+      "actor": "p1",
+      "dungeons": [
+        258
+      ],
+      "roles": 3
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p2",
+      "roles": 4
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p3",
+      "roles": 8
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p4",
+      "roles": 8
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p5",
+      "roles": 8
+    },
+    {
+      "action": "wait",
+      "ms": 20000
+    },
+    {
+      "action": "lfg_accept",
+      "actor": "p1"
+    },
+    {
+      "action": "lfg_accept",
+      "actor": "p2"
+    },
+    {
+      "action": "lfg_accept",
+      "actor": "p3"
+    },
+    {
+      "action": "lfg_accept",
+      "actor": "p4"
+    },
+    {
+      "action": "lfg_accept",
+      "actor": "p5"
+    },
+    {
+      "action": "assert",
+      "label": "p1 is in its Dungeon Finder dungeon",
+      "actor": "p1",
+      "metric": "lfg_state",
+      "equals": 5,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p2 is in its Dungeon Finder dungeon",
+      "actor": "p2",
+      "metric": "lfg_state",
+      "equals": 5,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p3 is in its Dungeon Finder dungeon",
+      "actor": "p3",
+      "metric": "lfg_state",
+      "equals": 5,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p4 is in its Dungeon Finder dungeon",
+      "actor": "p4",
+      "metric": "lfg_state",
+      "equals": 5,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p5 is in its Dungeon Finder dungeon",
+      "actor": "p5",
+      "metric": "lfg_state",
+      "equals": 5,
+      "within_ms": 20000
+    },
+    {
+      "action": "lfg_teleport",
+      "actor": "p1",
+      "out": true
+    },
+    {
+      "action": "lfg_teleport",
+      "actor": "p2",
+      "out": true
+    },
+    {
+      "action": "lfg_teleport",
+      "actor": "p3",
+      "out": true
+    },
+    {
+      "action": "lfg_teleport",
+      "actor": "p4",
+      "out": true
+    },
+    {
+      "action": "lfg_teleport",
+      "actor": "p5",
+      "out": true
+    },
+    {
+      "action": "assert",
+      "label": "p1 is back in Orgrimmar",
+      "actor": "p1",
+      "metric": "map_id",
+      "equals": 1,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p2 is back in Orgrimmar",
+      "actor": "p2",
+      "metric": "map_id",
+      "equals": 1,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p3 is back in Orgrimmar",
+      "actor": "p3",
+      "metric": "map_id",
+      "equals": 1,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p4 is back in Orgrimmar",
+      "actor": "p4",
+      "metric": "map_id",
+      "equals": 1,
+      "within_ms": 20000
+    },
+    {
+      "action": "assert",
+      "label": "p5 is back in Orgrimmar",
+      "actor": "p5",
+      "metric": "map_id",
+      "equals": 1,
+      "within_ms": 20000
+    },
+    {
+      "action": "set_aura",
+      "actor": "p1",
+      "spell": 71328,
+      "stacks": 0
+    },
+    {
+      "action": "set_aura",
+      "actor": "p2",
+      "spell": 71328,
+      "stacks": 0
+    },
+    {
+      "action": "set_aura",
+      "actor": "p3",
+      "spell": 71328,
+      "stacks": 0
+    },
+    {
+      "action": "set_aura",
+      "actor": "p4",
+      "spell": 71328,
+      "stacks": 0
+    },
+    {
+      "action": "set_aura",
+      "actor": "p5",
+      "spell": 71328,
+      "stacks": 0
+    },
+    {
+      "action": "lfg_join",
+      "label": "The group queues again without finishing",
+      "actor": "p1",
+      "dungeons": [
+        258
+      ],
+      "roles": 3
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p2",
+      "roles": 4
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p3",
+      "roles": 8
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p4",
+      "roles": 8
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p5",
+      "roles": 8
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: the new queue is accepted instead of refused as a continuation",
+      "actor": "p1",
+      "metric": "lfg_state",
+      "min": 2,
+      "max": 3,
+      "within_ms": 5000
+    }
+  ]
+}
