@@ -604,6 +604,7 @@ namespace lfg
         void SetState(ObjectGuid guid, LfgState state);
         void SetCanOverrideRBState(ObjectGuid guid, bool val);
         void GetCompatibleDungeons(LfgDungeonSet& dungeons, LfgGuidSet const& players, LfgLockPartyMap& lockMap, uint32 randomDungeonId = 0);
+        void ReleaseAbandonedDungeon(Group* grp);
         void _SaveToDB(ObjectGuid guid);
 
         // Proposals
