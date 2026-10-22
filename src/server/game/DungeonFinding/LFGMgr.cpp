@@ -1678,20 +1678,23 @@ namespace lfg
 
     // CoA: a full group that left its dungeon unfinished would otherwise be refused every queue until it
     // disbands, since a full group cannot continue. With nobody inside any more the run counts as abandoned.
+    // So does a Dungeon Finder group whose finder state is gone (None after a restart, no dungeon left).
     void LFGMgr::ReleaseAbandonedDungeon(Group* grp)
     {
         ObjectGuid const gguid = grp->GetGUID();
-        if (!grp->isLFGGroup() || GetState(gguid) != LFG_STATE_DUNGEON || grp->GetMembersCount() < MAXGROUPSIZE)
+        LfgState const state = GetState(gguid);
+        if (!grp->isLFGGroup() || (state != LFG_STATE_DUNGEON && state != LFG_STATE_NONE) ||
+            grp->GetMembersCount() < MAXGROUPSIZE)
             return;
 
         uint32 const mapId = GetDungeonMapId(gguid);
-        if (!mapId)
+        if (!mapId && state == LFG_STATE_DUNGEON)
             return;
 
         for (GroupReference* itr = grp->GetFirstMember(); itr != nullptr; itr = itr->next())
         {
             Player* member = itr->GetSource();
-            if (!member || member->GetMapId() == mapId)
+            if (!member || (mapId && member->GetMapId() == mapId))
                 return;
         }
 
@@ -1700,7 +1703,8 @@ namespace lfg
         {
             Player* member = itr->GetSource();
             SetState(member->GetGUID(), LFG_STATE_FINISHED_DUNGEON);
-            sInstanceSaveMgr->PlayerUnbindInstance(member->GetGUID(), mapId, member->GetDungeonDifficulty(), true, member);
+            if (mapId)
+                sInstanceSaveMgr->PlayerUnbindInstance(member->GetGUID(), mapId, member->GetDungeonDifficulty(), true, member);
         }
         _SaveToDB(gguid);
         LOG_DEBUG("lfg", "LFGMgr::ReleaseAbandonedDungeon: [{}] left map {} unfinished; released", gguid.ToString(), mapId);

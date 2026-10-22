@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "name": "Dungeon Finder: a full group whose finder state was lost can queue again",
+  "contract": [
+    "A Dungeon Finder group keeps its LFG flag across a restart while the finder's own state does not: it comes back as state None.",
+    "LFGMgr::JoinLfg treats every LFG group that has not finished as continuing its dungeon and refuses a full group's continuation, so such a group could not queue until it disbanded.",
+    "LFGMgr::ReleaseAbandonedDungeon releases a full LFG group in state None whose members are not in its dungeon, so the queue starts a new role check and match."
+  ],
+  "timeout_ms": 120000,
+  "location": {
+    "map": 1,
+    "x": 1629.36,
+    "y": -4373.39,
+    "z": 31.26,
+    "o": 0
+  },
+  "players": [
+    {
+      "id": "p1",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p2",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p3",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p4",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    },
+    {
+      "id": "p5",
+      "race": 2,
+      "class": 1,
+      "level": 20
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p2"
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p3"
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p4"
+    },
+    {
+      "action": "group",
+      "actor": "p1",
+      "target": "p5"
+    },
+    {
+      "action": "lfg_dungeon",
+      "label": "The group is a Dungeon Finder group for Deadmines without finder state, as after a restart",
+      "actor": "p1",
+      "dungeon": 6
+    },
+    {
+      "action": "assert",
+      "label": "SETUP: the group has no finder state",
+      "actor": "p1",
+      "metric": "lfg_state",
+      "equals": 0
+    },
+    {
+      "action": "lfg_join",
+      "label": "The group queues for Random Classic Dungeon",
+      "actor": "p1",
+      "dungeons": [
+        258
+      ],
+      "roles": 3
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p2",
+      "roles": 4
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p3",
+      "roles": 8
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p4",
+      "roles": 8
+    },
+    {
+      "action": "lfg_set_roles",
+      "actor": "p5",
+      "roles": 8
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: the queue is accepted instead of refused as a continuation",
+      "actor": "p1",
+      "metric": "lfg_state",
+      "min": 2,
+      "max": 3,
+      "within_ms": 5000
+    }
+  ]
+}
