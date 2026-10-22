@@ -162,6 +162,18 @@ inline std::uint8_t GetEffectiveAbilityRequiredLevel(std::uint8_t requiredLevel)
     return owner ? owner(requiredLevel) : requiredLevel;
 }
 
+using SummonedGuardianLevelResolver = std::uint8_t (*)(Unit const* summoner, Creature const* guardian,
+    std::uint8_t summonLevel);
+inline std::atomic<SummonedGuardianLevelResolver> SummonedGuardianLevelOwner{nullptr};
+
+/// The level a summoned guardian enters the world at, given the summoner's level the core would give it.
+inline std::uint8_t GetEffectiveSummonedGuardianLevel(Unit const* summoner, Creature const* guardian,
+    std::uint8_t summonLevel)
+{
+    SummonedGuardianLevelResolver const owner = SummonedGuardianLevelOwner.load(std::memory_order_relaxed);
+    return owner ? owner(summoner, guardian, summonLevel) : summonLevel;
+}
+
 using CreatureWindowResolver = std::uint8_t (*)(Player const*, Creature const*, std::uint8_t ownLevel);
 inline std::atomic<CreatureWindowResolver> CreatureWindowOwner{nullptr};
 

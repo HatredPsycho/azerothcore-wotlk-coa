@@ -22,6 +22,7 @@
 #include "CellImpl.h"
 #include "Chat.h"
 #include "Common.h"
+#include "ContentScalingHooks.h"
 #include "Creature.h"
 #include "DynamicObject.h"
 #include "Formulas.h"
@@ -6656,13 +6657,15 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
         if (!summon)
             return;
 
+        uint8 const guardianLevel = LocalLevelScaling::GetEffectiveSummonedGuardianLevel(caster, summon, summonLevel);
+
         // xinef: set calculated level
-        summon->SetLevel(summonLevel);
+        summon->SetLevel(guardianLevel);
 
         // if summonLevel changed, set stats for calculated level
-        if (summonLevel != caster->GetLevel())
+        if (guardianLevel != caster->GetLevel())
         {
-            ((Guardian*)summon)->InitStatsForLevel(summonLevel);
+            ((Guardian*)summon)->InitStatsForLevel(guardianLevel);
         }
 
         // xinef: if we have more than one guardian, change follow angle
