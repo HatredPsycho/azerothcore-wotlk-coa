@@ -14616,7 +14616,29 @@ LootItem* Player::StoreLootItem(uint8 lootSlot, Loot* loot, InventoryResult& msg
         if (loot->containerGUID)
             sLootItemStorage->RemoveStoredLootItem(loot->containerGUID, item->itemid, item->count, loot, item->itemIndex);
 
-        sScriptMgr->OnPlayerLootItem(this, newitem, storedCount, this->GetLootGUID());
+        // StoreNewItem can return the item that was already in the bag when a loot stack merged into it, or
+        // a newly created item. Do not hand a pointer to the hooks that is no longer in the inventory: some
+        // of them dereference it, and a stale pointer turns a bot looting into a worldserver crash.
+        auto isStored = [this](Item* stored) -> bool
+        {
+            if (!stored)
+                return false;
+
+            for (uint8 i = 0; i < PLAYER_SLOTS_COUNT; ++i)
+                if (GetItemByPos(INVENTORY_SLOT_BAG_0, i) == stored)
+                    return true;
+
+            for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
+                if (Bag* bag = GetBagByPos(i))
+                    for (uint8 j = 0; j < bag->GetBagSize(); ++j)
+                        if (bag->GetItemByPos(j) == stored)
+                            return true;
+
+            return false;
+        };
+
+        if (isStored(newitem))
+            sScriptMgr->OnPlayerLootItem(this, newitem, storedCount, this->GetLootGUID());
     }
     else
     {
