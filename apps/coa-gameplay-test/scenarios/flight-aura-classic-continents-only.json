@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "name": "A flight aura lets a player fly in Outland but not on the classic continents",
+  "contract": [
+    "Upstream #8631 made every flight aura inert for every player. On our realms Outland and Northrend keep flight,",
+    "which some of their quests and raids require; only the classic continents (Eastern Kingdoms, Kalimdor) ban it.",
+    "Flight Form 33943 carries SPELL_AURA_FLY. Applied directly in Orgrimmar it must not let the druid fly; applied",
+    "in Hellfire Peninsula it must. Without the classic ban the aura lets the druid fly in Orgrimmar too. free_flying reads",
+    "the server's view; can_fly waits for a client acknowledgement a test player never sends."
+  ],
+  "timeout_ms": 60000,
+  "location": {
+    "map": 1,
+    "x": 1662.44,
+    "y": -4405.14,
+    "z": 18.0879,
+    "o": 0
+  },
+  "players": [
+    {
+      "id": "druid",
+      "race": 6,
+      "class": 11,
+      "level": 80
+    }
+  ],
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "set_aura",
+      "actor": "druid",
+      "spell": 33943,
+      "stacks": 1
+    },
+    {
+      "action": "assert",
+      "label": "DISCRIMINATING: Flight Form does not let the druid fly in Orgrimmar",
+      "actor": "druid",
+      "metric": "free_flying",
+      "equals": 0
+    },
+    {
+      "action": "cancel_aura",
+      "actor": "druid",
+      "spell": 33943
+    },
+    {
+      "action": "teleport",
+      "actor": "druid",
+      "map": 530,
+      "x": -248.11,
+      "y": 922.9,
+      "z": 84.38,
+      "o": 1.57
+    },
+    {
+      "action": "wait",
+      "ms": 3000
+    },
+    {
+      "action": "set_aura",
+      "actor": "druid",
+      "spell": 33943,
+      "stacks": 1
+    },
+    {
+      "action": "assert",
+      "label": "Flight Form lets the druid fly in Hellfire Peninsula",
+      "actor": "druid",
+      "metric": "free_flying",
+      "equals": 1,
+      "within_ms": 3000
+    }
+  ]
+}

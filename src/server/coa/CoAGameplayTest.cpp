@@ -2217,6 +2217,8 @@ private:
             return unit->GetMountID();
         if (metric == "can_fly")
             return unit->CanFly();
+        if (metric == "free_flying")
+            return unit->HasFlyAura() || unit->HasIncreaseMountedFlightSpeedAura();
         if (metric == "unit_scale")
             return double(unit->GetObjectScale());
         if (metric == "combat_reach")

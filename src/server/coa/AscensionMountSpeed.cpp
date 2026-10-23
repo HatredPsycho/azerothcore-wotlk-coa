@@ -26,9 +26,8 @@ uint8 FlightEffectMask(SpellInfo const* spell)
 {
     uint8 mask = 0;
     for (SpellEffectInfo const& effect : spell->GetEffects())
-        if (effect.ApplyAuraName == SPELL_AURA_FLY ||
-            (effect.ApplyAuraName >= SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED &&
-             effect.ApplyAuraName <= SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED_NOT_STACKING))
+        if (effect.ApplyAuraName == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED ||
+            effect.ApplyAuraName == SPELL_AURA_FLY)
             mask |= 1 << effect.EffectIndex;
     return mask;
 }
@@ -74,9 +73,22 @@ public:
 
 namespace AscensionMountSpeed
 {
-bool CanFly(Player*, SpellInfo const*)
+bool CanFly(Player* player, SpellInfo const* mount)
 {
-    return false;
+    if (!mount || player->GetBaseSkillValue(SKILL_RIDING) < RIDING_SKILL_EXPERT || player->InBattleground())
+        return false;
+
+    uint32 const map = GetVirtualMapForMapAndZone(player->GetMapId(), player->GetZoneId());
+    if (map != MAP_OUTLAND && (map != MAP_NORTHREND || !player->HasSpell(ColdWeatherFlying)))
+        return false;
+
+    AreaTableEntry const* area = sAreaTableStore.LookupEntry(player->GetAreaId());
+    Battlefield* battlefield = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId());
+    if ((area && (area->flags & AREA_FLAG_NO_FLY_ZONE)) || (battlefield && !battlefield->CanFlyIn()))
+        return false;
+
+    return mount->CheckLocation(player->GetMapId(), player->GetZoneId(), player->GetAreaId(), player) ==
+        SPELL_CAST_OK && player->canFlyInZone(player->GetMapId(), player->GetZoneId(), mount);
 }
 }
 
