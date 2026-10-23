@@ -220,6 +220,11 @@ void ApplyContracts(SpellInfo* info)
     }
     if (id == 803773)
         info->CategoryRecoveryTime = 60000;
+    if (id == 805027 || (id >= 807938 && id <= 807941))
+    {
+        info->CategoryEntry = nullptr;
+        info->CategoryRecoveryTime = 0;
+    }
     if (id == 807796)
         periodic(1, 5000);
     if (id == 808016)

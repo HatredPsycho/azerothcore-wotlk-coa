@@ -1396,6 +1396,12 @@ void HandleAscensionClassMechanicsCast(Spell* spell)
         return;
 
     SpellInfo const* info = spell->GetSpellInfo();
+    if (player->getClass() == CLASS_WARLOCK && info->Id == 217364 &&
+        !player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
+    {
+        if (Unit* target = spell->GetOriginalTarget())
+            player->CastSpell(target, 281295, true);
+    }
     if (player->getClass() == CLASS_RANGER)
         HandleRangerAdvantageCast(spell, player);
 
