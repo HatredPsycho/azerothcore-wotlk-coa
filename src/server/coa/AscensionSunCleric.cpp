@@ -216,7 +216,10 @@ void Extend(Player* player, uint32 id, int32 milliseconds)
     Aura* aura = player->GetAura(id);
     if (!aura)
     {
+        bool const wasOnCooldown = player->HasSpellCooldown(id);
         Cast(player, player, id);
+        if (!wasOnCooldown && player->HasSpellCooldown(id))
+            player->RemoveSpellCooldown(id, true);
         aura = player->GetAura(id);
         if (aura)
             aura->SetDuration(milliseconds);
@@ -258,7 +261,7 @@ void ActivateDawn(Player* player)
     Resource(player, SolarPower, -20);
     Cast(player, player, Dawn);
     if (Aura* aura = player->GetAura(Dawn))
-        aura->SetCharges(10);
+        aura->SetCharges(aura->CalcMaxCharges());
     if (AuraEffect* choice = player->GetAuraEffect(Dawn, EFFECT_0))
         choice->SetAmount(1);
     if (player->HasAura(704586))
