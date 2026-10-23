@@ -5882,6 +5882,23 @@ public:
             std::find(MysticAltarVanityItems.begin(), MysticAltarVanityItems.end(), itemId) != MysticAltarVanityItems.end();
     }
 
+    [[nodiscard]] bool IsUnsummonableCompanion(uint32 itemId) const
+    {
+        auto const vanity = _vanityItems.find(itemId);
+        if (vanity == _vanityItems.end() || !vanity->second.LearnedSpell ||
+            !(vanity->second.CategoryMask & VANITY_CATEGORY_COMPANIONS))
+            return false;
+
+        SpellInfo const* spell = sSpellMgr->GetSpellInfo(vanity->second.LearnedSpell);
+        if (!spell)
+            return false;
+
+        for (SpellEffectInfo const& effect : spell->Effects)
+            if (effect.Effect == SPELL_EFFECT_SUMMON && !sObjectMgr->GetCreatureTemplate(effect.MiscValue))
+                return true;
+        return false;
+    }
+
     [[nodiscard]] bool OwnsBankVanityItem(Player* player, PlayerCollectionState const& state, uint32 itemId) const
     {
         if (state.OwnedVanityItems.contains(itemId) || player->HasItemCount(itemId))
@@ -6352,9 +6369,15 @@ public:
       return false;
 
     std::size_t vanityBefore = state->OwnedVanityItems.size();
+    std::size_t unsummonable = 0;
     for (uint32 itemId : _allVanityItemIds) {
       if (IsWithheldVanityItem(itemId))
         continue;
+
+      if (IsUnsummonableCompanion(itemId)) {
+        ++unsummonable;
+        continue;
+      }
 
       if (state->OwnedVanityItems.insert(itemId).second) {
         CharacterDatabasePreparedStatement *stmt =
@@ -6371,9 +6394,9 @@ public:
 
     LOG_INFO("coa",
              "Granted full Ascension vanity collection to {} (account {}): "
-             "+{} vanity items",
+             "+{} vanity items, {} companions without a creature skipped",
              player->GetName(), state->AccountId,
-             state->OwnedVanityItems.size() - vanityBefore);
+             state->OwnedVanityItems.size() - vanityBefore, unsummonable);
     return true;
   }
 
@@ -9311,12 +9334,6 @@ public:
                     break;
                 case 40120:
                     spellInfo->AttributesEx4 |= SPELL_ATTR4_ONLY_FLYING_AREAS;
-                    break;
-                case 287665:
-                case 917000:
-                    for (SpellEffectInfo& effect : spellInfo->Effects)
-                        if (effect.IsAura(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
-                            effect.Effect = 0;
                     break;
                 case 83086:
                 case 9930889:
