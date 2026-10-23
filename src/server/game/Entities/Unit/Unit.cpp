@@ -35,6 +35,7 @@
 #include "Creature.h"
 #include "CreatureAIImpl.h"
 #include "CreatureGroups.h"
+#include "DBCStores.h"
 #include "DisableMgr.h"
 #include "DynamicVisibility.h"
 #include "Errors.h"
@@ -17840,8 +17841,23 @@ bool Unit::SetSwim(bool enable)
  *
  *  Doesn't inform the client.
  */
+// CoA: players do not fly on the classic continents; Outland and Northrend keep flight for their quests
+// and raids.
+bool Unit::IsFlightBannedPlayer() const
+{
+    Player const* player = ToPlayer();
+    if (!player || player->IsGameMaster())
+        return false;
+
+    uint32 const map = GetVirtualMapForMapAndZone(GetMapId(), GetZoneId());
+    return map == MAP_EASTERN_KINGDOMS || map == MAP_KALIMDOR;
+}
+
 void Unit::SetCanFly(bool enable)
 {
+    if (enable && IsFlightBannedPlayer())
+        enable = false;
+
     bool isClientControlled = IsClientControlled();
 
     if (!isClientControlled)
