@@ -2312,6 +2312,15 @@ private:
             Require(dungeon != nullptr, "LFG disable metric needs a known dungeon");
             return sLFGMgr->IsDungeonDisabled(dungeon->map, Difficulty(dungeon->difficulty)) ? 1 : 0;
         }
+        if (metric == "lfg_lock_status")
+        {
+            Require(unit->IsPlayer(), "LFG lock metric needs a player");
+            lfg::LFGDungeonData const* dungeon = sLFGMgr->GetLFGDungeon(step.get<uint32>("dungeon"));
+            Require(dungeon != nullptr, "LFG lock metric needs a known dungeon");
+            lfg::LfgLockMap const& locks = sLFGMgr->GetLockedDungeons(unit->GetGUID());
+            auto const found = locks.find(dungeon->Entry());
+            return found != locks.end() ? double(found->second) : 0;
+        }
         if (metric == "lfg_state")
         {
             Require(unit->IsPlayer(), "LFG state needs a player");
@@ -2557,6 +2566,17 @@ private:
                     info ? info->GetSchoolMask() : SPELL_SCHOOL_MASK_NORMAL);
             Require(info != nullptr, "Incoming spell damage needs a spell");
             return unit->SpellDamageBonusTaken(attacker, info, 1000, SPELL_DIRECT_DAMAGE);
+        }
+        if (metric == "carried_aura_count")
+        {
+            ObjectGuid caster;
+            if (auto id = step.get_optional<std::string>("caster"))
+                caster = GetUnit(*id)->GetGUID();
+            uint32 count = 0;
+            for (auto const& [unused, listed] : step.get_child("spells"))
+                if (unit->HasAura(listed.get_value<uint32>(), caster))
+                    ++count;
+            return count;
         }
         if (metric.rfind("aura", 0) == 0)
         {
@@ -2954,6 +2974,11 @@ private:
             player->GetCreatureListWithEntryInGrid(creatures, step.get<uint32>("entry"), 60.0f);
             Require(creatures.size() == 1, "Creature template metric needs exactly one nearby creature");
             return creatures.front()->GetCreatureTemplate()->Entry;
+        }
+        if (metric == "spawn_respawn_remaining")
+        {
+            time_t const respawn = player->GetMap()->GetCreatureRespawnTime(step.get<uint32>("spawn"));
+            return std::max<time_t>(0, respawn - GameTime::GetGameTime().count());
         }
         if (metric == "nearby_creature_count")
         {
@@ -3727,12 +3752,14 @@ private:
             return item ? item->GetEntry() : 0;
         }
         if (metric == "item_random_property" || metric == "item_suffix_factor" || metric == "item_enchantment" ||
-            metric == "item_guid" || metric == "item_soulbound")
+            metric == "item_guid" || metric == "item_soulbound" || metric == "item_duration")
         {
             Item* item = player->GetItemByEntry(step.get<uint32>("item"));
             Require(item != nullptr, "Item observation requires a carried item");
             if (metric == "item_guid")
                 return double(item->GetGUID().GetCounter());
+            if (metric == "item_duration")
+                return item->GetUInt32Value(ITEM_FIELD_DURATION);
             if (metric == "item_soulbound")
                 return item->IsSoulBound();
             if (metric == "item_random_property")
@@ -4518,6 +4545,9 @@ private:
                     change->SetData(1, player->GetGUID().GetCounter());
                     transaction->Append(change);
                 }
+                if (auto offline = step.get_optional<uint32>("offline_seconds"))
+                    transaction->Append("UPDATE characters SET logout_time = logout_time - {} WHERE guid = {}",
+                        *offline, player->GetGUID().GetCounter());
                 _relogSave.emplace(CharacterDatabase.AsyncCommitTransaction(transaction));
                 _relogging = true;
                 return;

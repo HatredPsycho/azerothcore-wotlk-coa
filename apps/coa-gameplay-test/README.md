@@ -529,6 +529,8 @@ Metrics: `health`, `max_health`, `creature_type`, `power`, `max_power`, `alive`,
 `charm_entry`, `charm_aura_stacks`, `controls_self`, `private_instance`, `dynamic_object`,
 `dynamic_object_duration_ms`, `dynamic_object_height`, `distance`, `spell_proc_count`, `spell_proc_chance`,
 `aura_proc_rate`, `spell_cast_count`, `temporary_spell_replacement`,
+`carried_aura_count` (how many of the `spells` list the unit carries, optionally only from `caster`; for an
+effect that picks one of several auras at random),
 `bank_shows`, `system_messages`, `cast_failure`, `pet_is_banker`, `pet_display`, `pet_scale`,
 `pet_knows_spell`, `pet_distance`. `pet_health` and `pet_max_health` read native health and maximum health.
 `equipped_item` takes `slot` (0..18) and reads that equipment slot's item entry, or zero when empty.
@@ -751,6 +753,9 @@ through the native character-login handler. It preserves saved character state a
 Optional `race` seeds the saved character's race through `CHAR_UPD_CHAR_RACE` and updates the character cache
 before login, retaining saved pet data. This fixtures the post-service state; it does not submit a race/faction
 service request or perform that service's spell, quest, faction, language or appearance conversions.
+Optional `offline_seconds` moves the saved logout time that far back, so the login handler treats the character
+as offline for that long (real-time item durations, rest). `item_duration` requires `item` and reads the
+remaining duration in seconds of the first carried copy of that item.
 `race` reads the loaded unit's current race. `pet_native_display` reads the guardian's native display,
 which the pet save path persists and transformation removal restores.
 
@@ -894,6 +899,9 @@ It tests dispatch and deferral, not a real socket, packet delivery, or every pos
 the socketless session. They return zero until the corresponding field has been observed; they do not
 force updates or inspect client rendering. `lfg_dungeon_disabled` takes an LFGDungeons.dbc `dungeon` id and
 returns 1 when the `disables` table locks that dungeon's map and difficulty out of Dungeon Finder, otherwise 0.
+`lfg_lock_status` takes a player `actor` and an LFGDungeons.dbc `dungeon` id and returns the lock status the
+server lists for that dungeon in the player's Dungeon Finder info (0 when it is not locked, otherwise the
+`LfgLockStatusType`, such as 2 too low level or 4 too low gear score).
 `lfg_state` takes a player `actor` and returns its native Dungeon Finder state (0 none, 1 role check, 2 queued,
 3 proposal, 4 vote kick, 5 in dungeon, 6 finished dungeon, 7 raid browser).
 `in_arena` takes a player `actor` and returns 1 while that player is inside an arena match.
@@ -921,7 +929,9 @@ query response for that quest, or -1 before one arrives.
 selection packet through the packet hook and typed session handler, and does not bypass its group or
 in-instance restrictions. `map_id` and `map_difficulty` observe the current map after a normal teleport.
 `nearby_creature_template` requires `entry` and exactly one creature within 60 yards, then returns its
-selected difficulty template. `loot_gear_item_level` returns the first unlooted weapon/armor item's level in
+selected difficulty template. `spawn_respawn_remaining` requires a player and a creature `spawn` (its database
+guid) and returns the seconds until the actor's map respawns that spawn, from the map's saved respawn times
+(zero when none is saved). `loot_gear_item_level` returns the first unlooted weapon/armor item's level in
 the current loot window (zero if absent). The three `vanilla-dungeons-*` scenarios use these to check
 all 19 map/mode pairs per tier and a real VanCleef killing blow, without a GM access bypass.
 `nearby_creature_count` requires a player and `entry`, and counts living creatures in the same phase within
