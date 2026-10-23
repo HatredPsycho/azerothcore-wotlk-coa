@@ -17842,6 +17842,9 @@ bool Unit::SetSwim(bool enable)
  */
 void Unit::SetCanFly(bool enable)
 {
+    if (enable && IsPlayer() && !ToPlayer()->IsGameMaster())
+        enable = false;
+
     bool isClientControlled = IsClientControlled();
 
     if (!isClientControlled)
