@@ -32,7 +32,7 @@ namespace
     constexpr uint32 DungeonSpoils = 2021814;
     constexpr uint32 DungeonSpoilsHeroic = 1202039;
     constexpr uint32 DungeonSpoilsMythic = 1027965;
-    constexpr uint32 SpoilsLevelWindow = 5;
+    constexpr uint32 SpoilsLevelWindow = 2;
 
     std::unordered_set<uint32> MarkBosses;
 
@@ -42,26 +42,10 @@ namespace
             (map->GetSpawnMode() == 1 || map->GetSpawnMode() == 2);
     }
 
-    bool PlayerCanWear(Player const* player, ItemTemplate const* item, bool laterLevel)
+    bool PlayerCanWear(Player const* player, ItemTemplate const* item)
     {
-        InventoryResult const result = player->CanUseItem(item);
-        return (result == EQUIP_ERR_OK || (laterLevel && result == EQUIP_ERR_CANT_EQUIP_LEVEL_I)) &&
+        return player->CanUseItem(item) == EQUIP_ERR_OK &&
             (!item->GetSkill() || player->GetSkillValue(item->GetSkill()));
-    }
-
-    uint32 LevelCeiling(Player const* player, std::list<LootStoreItem*> const& entries)
-    {
-        uint32 lowest = std::numeric_limits<uint32>::max();
-        for (LootStoreItem const* entry : entries)
-        {
-            ItemTemplate const* item = sObjectMgr->GetItemTemplate(entry->itemid);
-            if (!item || entry->reference)
-                continue;
-            if (item->RequiredLevel <= player->GetLevel())
-                return player->GetLevel();
-            lowest = std::min(lowest, item->RequiredLevel);
-        }
-        return lowest;
     }
 
     bool AlreadyDropped(Loot const& loot, LootStoreItem const* entry)
@@ -72,19 +56,27 @@ namespace
         });
     }
 
+    uint32 SpoilsLevelCap(Player const* player, std::list<LootStoreItem*> const& entries)
+    {
+        uint32 lowestLevel = std::numeric_limits<uint32>::max();
+        for (LootStoreItem const* entry : entries)
+            if (ItemTemplate const* item = sObjectMgr->GetItemTemplate(entry->itemid); item && !entry->reference)
+                lowestLevel = std::min(lowestLevel, item->RequiredLevel);
+        return std::max<uint32>(player->GetLevel(), lowestLevel);
+    }
+
     std::vector<LootStoreItem*> SpoilsFor(Player const* player, std::list<LootStoreItem*> const& entries,
         Loot const& loot, bool levelScaled, bool wearableOnly)
     {
         std::vector<LootStoreItem*> spoils;
+        uint32 const levelCap = levelScaled ? SpoilsLevelCap(player, entries) : 0;
         uint32 bestLevel = 0;
-        uint32 const ceiling = levelScaled ? LevelCeiling(player, entries) : player->GetLevel();
-        bool const laterLevel = ceiling > player->GetLevel();
         for (LootStoreItem* entry : entries)
         {
             ItemTemplate const* item = sObjectMgr->GetItemTemplate(entry->itemid);
             if (!item || entry->reference || AlreadyDropped(loot, entry) ||
-                (levelScaled && item->RequiredLevel > ceiling) ||
-                (wearableOnly && !PlayerCanWear(player, item, laterLevel)))
+                (levelScaled && item->RequiredLevel > levelCap) ||
+                (wearableOnly && !PlayerCanWear(player, item)))
                 continue;
             spoils.push_back(entry);
             bestLevel = std::max(bestLevel, item->RequiredLevel);
