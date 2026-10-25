@@ -483,6 +483,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `use_nearby_gameobject` | `actor`, `entry`, optional `owner` (a player id): native use request for the single gameobject of that entry within 20 yards in the actor's phase; `owner` narrows the choice to the object that player owns, so one of several nearby objects can be clicked. |
 | `spell_click_nearby` | `actor`, `entry`: native `CMSG_SPELLCLICK` on the nearest living creature of that entry within 20 yards, as the client sends on right-clicking a spell-click creature. |
 | `use_gameobject` | `actor`, `entry`: native use request for the actor's single nearby owned gameobject. |
+| `voidportal` | Player `actor`, `op` `force` with `group` and `spawn`, or `op` `roll` with `success`: put the one realm-wide Void Portal on that configured point as a point rotation does, or replace the next proximity roll; the manager is process-global, so the case runs exclusively. |
 | `summon` | Player `actor`, `as`, `entry`, optional `distance` (yards along +x, default 5) and `ai_action` (an integer passed to the creature AI's `DoAction`, for a scripted step such as finishing a boss intro): summon a creature into the actor's map and phase under the id `as`. |
 | `summon_gameobject` | Player `actor`, `entry`, optional `distance` (yards in front, default 2) and `duration_s` (default 300; 0 keeps it until the actor logs out, and only an untimed summon counts as spawned for scripts that check it): summon a gameobject the actor owns; fails if the actor already owns one of that entry. |
 | `loot_gameobject` | Player `actor`, `entry`: open the loot of the actor's single owned chest as a successful open-lock cast does, so chest loot is generated for that player. Lock, key and skill checks are not exercised. |
@@ -951,6 +952,7 @@ anywhere on the player's map, in any phase; a spawn whose grid is not loaded is 
 20 yards (0 when none).
 `nearby_gameobject_at_client` takes `entry` and is 1 while the nearest such gameobject within 20 yards is in
 the player's client-visible set. Owners always see their own objects, so per-player visibility needs a world spawn.
+`voidportal_group` returns the active Void Portal spawn group id, or 0 while the manager has no portal up.
 ## Evidence boundaries
 
 ### Optional character names
