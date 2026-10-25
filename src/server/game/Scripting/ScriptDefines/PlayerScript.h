@@ -278,7 +278,8 @@ enum class CoAProgressEvent : uint8
     VanityDelivered,
     VanityCollected,
     AppearanceCollected,
-    ExperimentalTeleporter
+    ExperimentalTeleporter,
+    OutfitSaved
 };
 
 class PlayerScript : public ScriptObject
