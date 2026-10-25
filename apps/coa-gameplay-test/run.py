@@ -49,7 +49,7 @@ METRICS = {
     'view_level', 'sent_level', 'sent_max_health', 'sent_average_item_level', 'sent_average_item_level_count',
     'creature_query_rank', 'quest_level', 'quest_xp',
     'quest_log_sent_level', 'quest_log_sent_xp', 'quest_offer_sent_xp', 'quest_query_scaled', 'quest_query_reward_choice',
-    'health', 'health_pct', 'max_health', 'creature_type', 'respawn_remaining', 'power', 'max_power', 'alive', 'combat', 'victim', 'casting', 'level',
+    'health', 'health_pct', 'max_health', 'creature_type', 'respawn_remaining', 'power', 'max_power', 'alive', 'combat', 'victim', 'has_redirects', 'casting', 'level',
     'aura', 'aura_stacks', 'aura_charges', 'aura_duration_ms', 'aura_amount', 'aura_positive', 'aura_visible',
     'carried_aura_count',
     'knows_spell', 'spell_active', 'has_talent', 'talent_points', 'active_talent_spec', 'cooldown_ms', 'global_cooldown_ms', 'spell_charges',
@@ -88,10 +88,10 @@ METRICS = {
     'spellbook_silent_buys', 'spellbook_multi_announced_buys',
     'cast_speed_multiplier', 'spell_crit_chance', 'spell_power_cost', 'spell_damage_done', 'melee_damage_done',
     'who_count', 'who_class', 'player_name', 'name_lookup', 'loot_count', 'loot_entry', 'loot_received',
-    'loot_gold', 'loot_bloodforged', 'loot_required_level', 'loot_item_level', 'loot_base_entry', 'loot_item_armor',
+    'loot_offered_item_count', 'loot_gold', 'loot_bloodforged', 'loot_required_level', 'loot_item_level', 'loot_base_entry', 'loot_item_armor',
     'carried_item_level', 'carried_item_required_level', 'carried_item_armor', 'carried_item_scaling_level',
     'nearby_gameobject_count', 'nearby_gameobject_quest_active', 'nearby_gameobject_state', 'nearby_gameobject_scale',
-    'nearby_creature_count', 'map_creature_count', 'nearby_gameobject_at_client',
+    'nearby_creature_count', 'map_creature_count', 'nearby_gameobject_at_client', 'voidportal_group',
     'carried_money',
     'channel_object_entry',
     'quest_rewarded', 'has_achievement', 'has_title', 'spell_damage_taken', 'melee_damage_taken', 'spell_healing_taken',
@@ -228,6 +228,7 @@ ACTIONS = {
     'set_player_setting': ({'actor', 'source', 'index', 'value'}, {'actor', 'source', 'index', 'value'}),
     'set_phase': ({'actor'}, {'actor', 'value'}),
     'use_nearby_gameobject': ({'actor', 'entry'}, {'actor', 'entry', 'owner'}),
+    'voidportal': ({'actor', 'op'}, {'actor', 'op', 'group', 'spawn', 'success'}),
     'spell_click_nearby': ({'actor', 'entry'}, {'actor', 'entry'}),
     'attack_owned_creature': ({'actor', 'target', 'entry'}, {'actor', 'target', 'entry'}),
     'attack_nearby': ({'actor', 'entry'}, {'actor', 'entry', 'kill', 'damage_pct'}),
@@ -485,6 +486,13 @@ def validate(scenario):
                 number(step[key], f'{where}.{key}', 0, 2**32 - 1, True)
         if action == 'use_nearby_gameobject' and 'owner' in step:
             require(step['owner'] in player_ids, f'{where}: nearby gameobject owner needs a player')
+        if action == 'voidportal':
+            require(step['op'] in {'force', 'roll'}, f'{where}: unknown voidportal op')
+            if step['op'] == 'force':
+                number(step['group'], f'{where}.group', 1, 2**31 - 1, True)
+                number(step['spawn'], f'{where}.spawn', 1, 2**31 - 1, True)
+            else:
+                require(type(step['success']) is bool, f'{where}: success must be boolean')
         if action == 'who' and 'target' in step:
             require(step['target'] in player_ids, f'{where}: Who name filter needs a player')
         if action == 'attack_owned_creature':
@@ -831,7 +839,7 @@ def validate(scenario):
             if 'school' in step and metric == 'spell_crit_chance':
                 number(step['school'], f'{where}.school', 0, 6, True)
             if metric in {'item_count', 'carried_item_level', 'carried_item_required_level', 'carried_item_armor',
-                          'carried_item_scaling_level'}:
+                          'carried_item_scaling_level', 'loot_offered_item_count'}:
                 require('item' in step, f'{where}: metric needs item')
             if metric in {'item_random_property', 'item_suffix_factor', 'item_enchantment',
                           'item_guid', 'item_soulbound', 'item_duration'}:
@@ -988,7 +996,7 @@ def validate(scenario):
                           'spell_damage_done', 'melee_damage_done',
                           'who_count', 'who_class',
                           'loot_count', 'loot_entry', 'loot_required_level', 'loot_item_level', 'loot_received',
-                          'quest_rewarded', 'has_achievement',
+                          'loot_offered_item_count', 'quest_rewarded', 'has_achievement',
                           'loot_base_entry', 'loot_item_armor',
                           'carried_item_level', 'carried_item_required_level', 'carried_item_armor',
                           'carried_item_scaling_level',
