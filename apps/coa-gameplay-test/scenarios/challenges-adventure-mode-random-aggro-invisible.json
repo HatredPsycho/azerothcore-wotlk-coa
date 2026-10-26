@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "name": "Adventure Mode's random aggro pulse leaves invisible creatures alone",
+  "contract": "Adventurer Mode Random Aggro (888071) is a threat effect on TARGET_UNIT_SRC_AREA_ENEMY within 25 yards. Area spells pass ignoreStealth to Unit::_IsValidAttackTarget, so without a target filter the pulse also pulled invisible ambience creatures such as Lordaeron Citizen (3617, invisibility aura 34426) into combat, and they killed characters who could neither see nor fight them. The citizens later got UNIT_FLAG_IMMUNE_TO_PC, so this case uses a passive wolf that casts Greater Invisibility on itself instead. The spell script keeps only targets the caster can see or detect: one tier 100 pulse pulls a visible passive wolf 12 yards away into combat while the invisible wolf 8 yards away stays out of combat. The pulser's health is raised so the wolf cannot kill it during the wait.",
+  "timeout_ms": 120000,
+  "location": {
+    "map": 0,
+    "x": -8914.0,
+    "y": -133.0,
+    "z": 80.6
+  },
+  "players": [
+    { "id": "pulser", "race": 1, "class": 1, "level": 1 }
+  ],
+  "creatures": [
+    { "id": "wolf", "owner": "pulser", "entry": 299, "faction": 7, "level": 1, "health": 42, "distance": 12 },
+    { "id": "hidden_wolf", "owner": "pulser", "entry": 299, "faction": 7, "level": 1, "health": 42, "distance": 8 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 5000 },
+    { "action": "cast", "actor": "hidden_wolf", "spell": 34426, "target": "hidden_wolf" },
+    { "action": "wait", "ms": 1000 },
+    { "action": "assert", "label": "the hidden wolf is invisible", "actor": "hidden_wolf", "metric": "aura", "spell": 34426,
+      "equals": 1 },
+    { "action": "assert", "label": "the passive wolf starts out of combat", "actor": "wolf", "metric": "combat",
+      "equals": 0 },
+    { "action": "assert", "label": "the invisible wolf starts out of combat", "actor": "hidden_wolf", "metric": "combat",
+      "equals": 0 },
+
+    { "action": "start_challenge", "actor": "pulser", "challenge": 211, "level": 100 },
+    { "action": "wait", "ms": 1500 },
+    { "action": "assert", "label": "tier 100 starts", "actor": "pulser", "metric": "challenge_start_code", "equals": 0 },
+    { "action": "set_health", "actor": "pulser", "value": 100000, "maximum": 100000 },
+
+    { "action": "assert", "label": "the pulse pulls the visible wolf into combat", "actor": "wolf", "metric": "combat",
+      "equals": 1, "within_ms": 20000 },
+    { "action": "assert", "label": "the pulse fired and started its recovery", "actor": "pulser",
+      "metric": "cooldown_ms", "spell": 888071, "min": 100000, "max": 120000 },
+    { "action": "assert", "label": "the same pulse leaves the invisible wolf out of combat", "actor": "hidden_wolf",
+      "metric": "combat", "equals": 0 },
+    { "action": "assert", "label": "the hidden wolf is still invisible", "actor": "hidden_wolf", "metric": "aura",
+      "spell": 34426, "equals": 1 }
+  ]
+}

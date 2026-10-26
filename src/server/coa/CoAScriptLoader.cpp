@@ -47,7 +47,6 @@ void AddSC_AscensionAdventureModeRandomAggro();
 void AddSC_AscensionDungeonRelease();
 void AddSC_AscensionRaidRelease();
 void AddSC_AscensionThreatRedirect();
-void AddSC_AscensionAdventureModeAggro();
 void AddSC_AscensionCompanionFlight();
 void AddSC_AscensionTalentDataProcs();
 void AddSC_AscensionTreeOfLife();
@@ -776,7 +775,6 @@ void AddCoAScripts()
     AddSC_AscensionDungeonRelease();
     AddSC_AscensionRaidRelease();
     AddSC_AscensionThreatRedirect();
-    AddSC_AscensionAdventureModeAggro();
     AddSC_AscensionCompanionFlight();
     AddSC_AscensionTalentDataProcs();
     AddSC_AscensionTreeOfLife();
