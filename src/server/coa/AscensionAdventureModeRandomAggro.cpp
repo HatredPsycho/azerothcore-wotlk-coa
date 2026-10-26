@@ -2,19 +2,14 @@
 
 #include "ScriptMgr.h"
 #include "SpellAuraDefines.h"
+#include "SpellInfo.h"
 #include "SpellScript.h"
 #include "Unit.h"
 
-#include <algorithm>
 #include <list>
 
 namespace
 {
-enum AdventureModeAggroSpells : uint32
-{
-    SPELL_ADVENTURE_MODE_RANDOM_AGGRO = 888071
-};
-
 bool IsUndetectedInvisibleUnit(Unit const* caster, WorldObject* target)
 {
     Unit const* unit = target->ToUnit();
@@ -25,9 +20,9 @@ class spell_ascension_adventure_mode_random_aggro : public SpellScript
 {
     PrepareSpellScript(spell_ascension_adventure_mode_random_aggro);
 
-    bool Validate(SpellInfo const*) override
+    SpellCastResult CheckCast()
     {
-        return ValidateSpellInfo({SPELL_ADVENTURE_MODE_RANDOM_AGGRO});
+        return GetCaster()->HasSpellCooldown(GetSpellInfo()->Id) ? SPELL_FAILED_DONT_REPORT : SPELL_CAST_OK;
     }
 
     void KeepOnlyPerceivedTargets(std::list<WorldObject*>& targets)
@@ -44,16 +39,23 @@ class spell_ascension_adventure_mode_random_aggro : public SpellScript
         });
     }
 
+    void StartRecovery()
+    {
+        GetCaster()->AddSpellCooldown(GetSpellInfo()->Id, 0, GetSpellInfo()->RecoveryTime);
+    }
+
     void Register() override
     {
+        OnCheckCast += SpellCheckCastFn(spell_ascension_adventure_mode_random_aggro::CheckCast);
         OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(
             spell_ascension_adventure_mode_random_aggro::KeepOnlyPerceivedTargets,
             EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+        AfterCast += SpellCastFn(spell_ascension_adventure_mode_random_aggro::StartRecovery);
     }
 };
 }
 
-void AddSC_AscensionAdventureModeAggro()
+void AddSC_AscensionAdventureModeRandomAggro()
 {
     RegisterSpellScript(spell_ascension_adventure_mode_random_aggro);
 }

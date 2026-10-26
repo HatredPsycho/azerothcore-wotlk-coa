@@ -30,7 +30,15 @@ LOCAL_HOSTS = {'127.0.0.1', 'localhost', '::1'}
 HOURS_PER_DAY = 24
 MINUTES_PER_HOUR = 60
 MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
-METRICS = {
+TIMELINE_METRICS = {'timeline_count', 'timeline_first_ms', 'timeline_interval_min_ms', 'timeline_interval_max_ms',
+                    'timeline_interval_median_ms'}
+TIMELINE_EVENTS = {'cast', 'aura_applied', 'aura_removed', 'death', 'enter_combat', 'evade', 'spawn', 'boss_state'}
+TIMELINE_FIELDS = {'event', 'source_entry', 'state', 'target_actors', 'exclude_target_actors'}
+ENCOUNTER_STATES = {'NOT_STARTED', 'IN_PROGRESS', 'FAIL', 'DONE', 'SPECIAL'}
+MAX_ENCOUNTER_RADIUS = 200
+RAID_ROLES = {'tank', 'healer', 'melee', 'ranged'}
+RAID_ROLE_FIELDS = {'rotation', 'heal_spell', 'taunt_spell'}
+METRICS = TIMELINE_METRICS | {
     'item_random_property', 'item_suffix_factor', 'item_enchantment', 'item_guid', 'item_soulbound', 'item_duration',
     'mana_regen', 'mana_regen_interrupted', 'resting',
     'sent_mana_regen', 'sent_mana_regen_interrupted',
@@ -43,7 +51,8 @@ METRICS = {
     'lfg_need_allowed',
     'map_id',
     'in_arena', 'arena_team_members', 'arena_team_season_games', 'arena_team_season_wins',
-    'map_difficulty', 'nearby_creature_template', 'nearby_creature_max_health', 'nearby_creature_sent_spellclick',
+    'map_difficulty', 'nearby_creature_template', 'nearby_creature_max_health', 'nearby_creature_health_pct',
+    'nearby_creature_sent_spellclick',
     'spawn_respawn_remaining',
     'loot_gear_item_level',
     'position_x', 'position_y', 'position_z',
@@ -91,6 +100,7 @@ METRICS = {
     'who_count', 'who_class', 'player_name', 'name_lookup', 'loot_count', 'loot_entry', 'loot_received',
     'loot_offered_item_count', 'loot_gold', 'loot_bloodforged', 'loot_required_level', 'loot_item_level', 'loot_base_entry', 'loot_item_armor',
     'carried_item_level', 'carried_item_required_level', 'carried_item_armor', 'carried_item_scaling_level',
+    'carried_item_stat',
     'nearby_gameobject_count', 'nearby_gameobject_quest_active', 'nearby_gameobject_state', 'nearby_gameobject_scale',
     'nearby_creature_count', 'map_creature_count', 'nearby_gameobject_at_client', 'voidportal_group',
     'carried_money',
@@ -109,10 +119,12 @@ METRICS = {
     'spell_modifier', 'spell_cast_time_ms', 'client_cast_time_ms', 'client_attributes', 'client_spell_targets', 'spell_max_range', 'spell_max_stacks', 'spell_healing_done',
     'aura_crit_chance', 'aura_script_value', 'melee_hit_chance', 'spell_hit_chance', 'spell_power',
     'spell_done_crit_chance', 'spell_taken_crit_chance', 'spell_done_crit_chance_scripted', 'ranged_taken_crit_chance',
-    'melee_spell_damage_done', 'script_melee_damage_taken',
+    'melee_spell_damage_done', 'melee_spell_damage_done_scripted', 'script_melee_damage_taken',
+    'script_melee_damage_dealt',
     'script_spell_damage_taken', 'script_periodic_damage_taken', 'script_heal_received', 'spell_effect_value',
     'block_chance', 'block_value', 'critical_block_chance', 'spell_critical_damage', 'armor_reduced_damage',
     'aoe_damage_taken', 'reputation_gain', 'spell_immune', 'spell_effect_immune', 'melee_attack_count',
+    'melee_attacks_taken',
     'spell_damage_count', 'spell_damage_total', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
     'equipped_item',
@@ -142,10 +154,12 @@ PLAYER_STAT_METRICS = {
     'spell_family_flags',
     'melee_hit_chance', 'spell_power', 'spell_done_crit_chance',
     'spell_taken_crit_chance', 'spell_done_crit_chance_scripted', 'melee_spell_damage_done',
-    'script_melee_damage_taken', 'script_spell_damage_taken', 'script_periodic_damage_taken',
-    'script_heal_received', 'spell_effect_value',
+    'melee_spell_damage_done_scripted',
+    'script_melee_damage_taken', 'script_melee_damage_dealt', 'script_spell_damage_taken',
+    'script_periodic_damage_taken', 'script_heal_received', 'spell_effect_value',
     'block_chance', 'block_value', 'critical_block_chance', 'spell_critical_damage', 'armor_reduced_damage',
     'aoe_damage_taken', 'reputation_gain', 'spell_immune', 'spell_effect_immune', 'melee_attack_count',
+    'melee_attacks_taken',
     'spell_damage_count', 'spell_damage_total', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
     'equipped_item',
@@ -162,7 +176,7 @@ METRIC_FIELDS = {'actor', 'metric', 'spell', 'power', 'caster', 'effect', 'item'
                  'phase_mask', 'trigger_spell', 'trials', 'incoming', 'heal', 'quality',
                  'row', 'offset', 'skip_strings', 'from_end', 'x', 'y', 'min_required_level', 'max_required_level',
                  'flat_coefficient_modifier', 'dominant_stat', 'off_stat', 'spells',
-                 'min_level', 'max_level', 'min_home_distance', 'spawn'}
+                 'min_level', 'max_level', 'min_home_distance', 'spawn'} | TIMELINE_FIELDS
 ACTIONS = {
     'stop_attack': ({'actor'}, {'actor'}),
     'set_moving': ({'actor', 'enabled'}, {'actor', 'enabled', 'flag'}),
@@ -203,6 +217,7 @@ ACTIONS = {
     'lfg_accept': ({'actor'}, {'actor'}),
     'lfg_final_credit': ({'actor'}, {'actor'}),
     'encounter_credit': ({'actor', 'entry'}, {'actor', 'entry'}),
+    'encounter_start': ({'actor', 'boss_entry'}, {'actor', 'boss_entry', 'radius'}),
     'leave_group': ({'actor'}, {'actor'}),
     'die': ({'actor'}, {'actor', 'revived'}),
     'release_spirit': ({'actor'}, {'actor'}),
@@ -261,6 +276,7 @@ ACTIONS = {
     'set_xp_enabled': ({'actor', 'enabled'}, {'actor', 'enabled'}),
     'set_level': ({'actor', 'value'}, {'actor', 'value'}),
     'set_health': ({'actor'}, {'actor', 'value', 'percent', 'pet', 'maximum'}),
+    'set_health_pct': ({'actor', 'pct'}, {'actor', 'pct', 'entry', 'target'}),
     'reset_cooldown': ({'actor', 'spell'}, {'actor', 'spell'}),
     'restore_charges': ({'actor', 'spell'}, {'actor', 'spell'}),
     'set_power': ({'actor', 'value'}, {'actor', 'value', 'power', 'pet', 'maximum'}),
@@ -304,13 +320,59 @@ def read_json(path):
     return json.loads(Path(path).read_text(encoding='utf-8-sig'), object_pairs_hook=unique_object)
 
 
+def validate_timeline_step(step, where, encounter_started, actor_ids):
+    require(encounter_started, f'{where}: timeline metrics need an earlier encounter_start')
+    event = step.get('event')
+    require(isinstance(event, str) and event in TIMELINE_EVENTS, f'{where}: timeline metric needs a known event')
+    for field in ('spell', 'source_entry'):
+        if field in step:
+            number(step[field], f'{where}.{field}', 1, 2**32 - 1, True)
+    if 'state' in step:
+        state = step['state']
+        require(event == 'boss_state' and isinstance(state, str) and state in ENCOUNTER_STATES,
+                f'{where}: state needs the boss_state event and a known encounter state')
+    for field in ('target_actors', 'exclude_target_actors'):
+        if field in step:
+            actors = step[field]
+            require(isinstance(actors, list) and actors
+                    and all(isinstance(actor, str) and actor in actor_ids for actor in actors)
+                    and len(set(actors)) == len(actors), f'{where}: {field} must list distinct known actors')
+
+
+MAX_PLAYERS = {1: 8, 2: 25}
+MAX_TIMEOUT_MS = {1: 600000, 2: 1200000}
+
+
+def validate_raid_role(player):
+    if 'role' not in player:
+        require(not RAID_ROLE_FIELDS & player.keys(), f'{sorted(RAID_ROLE_FIELDS)} need a player role')
+        return
+    role = player['role']
+    require(isinstance(role, str) and role in RAID_ROLES, f'role must be one of {sorted(RAID_ROLES)}')
+    for field in ('heal_spell', 'taunt_spell'):
+        if field in player:
+            number(player[field], field, 1, 2**32 - 1, True)
+    require(('heal_spell' in player) == (role == 'healer'), 'heal_spell is required for a healer and only for one')
+    require(role == 'tank' or 'taunt_spell' not in player, 'taunt_spell is only for a tank')
+    require(role != 'healer' or 'rotation' not in player, 'A healer casts heal_spell, not a rotation')
+    require(role != 'ranged' or 'rotation' in player, 'A ranged role needs a rotation')
+    if 'rotation' not in player:
+        return
+    rotation = player['rotation']
+    require(isinstance(rotation, list) and rotation, 'rotation must be a non-empty list of spell ids')
+    for spell in rotation:
+        number(spell, 'rotation', 1, 2**32 - 1, True)
+    require(len(set(rotation)) == len(rotation), 'rotation must not repeat a spell')
+
+
 def validate(scenario):
     keys(scenario, {'schema', 'name', 'players', 'steps'},
          {'schema', 'name', 'players', 'creatures', 'steps', 'timeout_ms', 'location', 'contract', 'hour',
           'creature_scaling', 'vanity_ownership', 'two_side'}, 'scenario')
-    require(type(scenario['schema']) is int and scenario['schema'] == 1, 'Unsupported scenario schema')
+    schema = scenario['schema']
+    require(type(schema) is int and schema in MAX_PLAYERS, 'Unsupported scenario schema')
     require(isinstance(scenario['name'], str) and scenario['name'].strip(), 'Scenario needs a name')
-    number(scenario.get('timeout_ms', 90000), 'timeout_ms', 1, 600000, True)
+    number(scenario.get('timeout_ms', 90000), 'timeout_ms', 1, MAX_TIMEOUT_MS[schema], True)
     if 'hour' in scenario:
         number(scenario['hour'], 'hour', 0, HOURS_PER_DAY - 1, True)
     require(type(scenario.get('creature_scaling', False)) is bool, 'creature_scaling must be boolean')
@@ -329,7 +391,8 @@ def validate(scenario):
             require(type(value) is bool, f'two_side.{name} must be boolean')
     players = scenario['players']
     creatures = scenario.get('creatures', [])
-    require(isinstance(players, list) and 1 <= len(players) <= 8, 'Expected 1..8 players')
+    require(isinstance(players, list) and 1 <= len(players) <= MAX_PLAYERS[schema],
+            f'Expected 1..{MAX_PLAYERS[schema]} players')
     require(isinstance(creatures, list) and len(creatures) <= 8, 'Expected at most eight creatures')
     player_ids = set()
     actor_ids = set()
@@ -337,7 +400,8 @@ def validate(scenario):
         keys(player, {'id', 'race', 'class'},
              {'id', 'race', 'class', 'level', 'bot', 'spell_hit_rating', 'spell_crit_rating',
               'melee_crit_rating', 'ranged_crit_rating', 'ranged_hit_rating', 'melee_hit_rating',
-              'expertise_rating', 'allow_regeneration', 'name', 'expansion', 'ascension_client', 'account_of'}, 'player')
+              'expertise_rating', 'allow_regeneration', 'name', 'expansion', 'ascension_client', 'account_of',
+              'role', 'rotation', 'heal_spell', 'taunt_spell'}, 'player')
         identity = player['id']
         require(isinstance(identity, str) and ACTOR_ID.fullmatch(identity), 'Invalid player id')
         require(identity not in actor_ids, 'Duplicate actor id')
@@ -363,6 +427,7 @@ def validate(scenario):
         number(player.get('melee_hit_rating', 0), 'melee_hit_rating', 0, 100000, True)
         number(player.get('expertise_rating', 0), 'expertise_rating', 0, 100000, True)
         require(type(player.get('allow_regeneration', True)) is bool, 'allow_regeneration must be boolean')
+        validate_raid_role(player)
     for creature in creatures:
         keys(creature, {'id', 'owner', 'entry'},
              {'id', 'owner', 'entry', 'distance', 'faction', 'level', 'health', 'reaction', 'spell_hit_bonus',
@@ -392,6 +457,7 @@ def validate(scenario):
     require(isinstance(steps, list) and 1 <= len(steps) <= 10000, 'Expected 1..10000 steps')
     snapshots = {}
     assertions = 0
+    encounter_started = False
     for index, step in enumerate(steps):
         where = f'step {index}'
         require(isinstance(step, dict) and step.get('action') in ACTIONS, f'{where}: unknown action')
@@ -518,6 +584,13 @@ def validate(scenario):
             number(step['dungeon'], f'{where}.dungeon', 1, 2**24 - 1, True)
         if action == 'encounter_credit':
             number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
+        if action == 'encounter_start':
+            number(step['boss_entry'], f'{where}.boss_entry', 1, 2**32 - 1, True)
+            if 'radius' in step:
+                number(step['radius'], f'{where}.radius', 0, MAX_ENCOUNTER_RADIUS)
+                require(step['radius'] > 0, f'{where}: radius must be positive')
+            require(not encounter_started, f'{where}: a scenario allows only one encounter_start')
+            encounter_started = True
         if action == 'lfg_join':
             require(type(step['dungeons']) is list and 0 < len(step['dungeons']) <= 50,
                     f'{where}: dungeons must list 1-50 LFGDungeons ids')
@@ -645,12 +718,19 @@ def validate(scenario):
             if 'percent' in step:
                 require(step['actor'] not in player_ids, f'{where}: a health share needs a creature')
                 number(step['percent'], f'{where}.percent', 1, 100, True)
+        if action == 'set_health_pct':
+            require(('entry' in step) != ('target' in step), f'{where}: needs exactly one of entry or target')
+            number(step['pct'], f'{where}.pct', 1, 99, True)
         if action in ('set_health', 'set_power') and 'maximum' in step:
             require(step['actor'] in player_ids, f'{where}: a maximum fixture needs a player or their pet')
             number(step['maximum'], f'{where}.maximum', 1, 2**31 - 1, True)
             require(step['value'] <= step['maximum'], f'{where}: value exceeds fixture maximum')
         if action in {'snapshot', 'assert'}:
             metric = step['metric']
+            if metric in TIMELINE_METRICS:
+                validate_timeline_step(step, where, encounter_started, actor_ids)
+            else:
+                require(not TIMELINE_FIELDS & step.keys(), f'{where}: event fields only apply to timeline metrics')
             if 'creator_only' in step:
                 require(metric == 'owned_creature_count', f'{where}: creator_only needs owned_creature_count')
                 require(type(step['creator_only']) is bool, f'{where}: creator_only must be boolean')
@@ -695,10 +775,11 @@ def validate(scenario):
             if metric == 'creature_query_rank':
                 require(step['actor'] in player_ids, f'{where}: creature query metric needs a player')
                 number(step.get('entry'), f'{where}.entry', 1, 2**31 - 1, True)
-            if metric in {'map_id', 'map_difficulty', 'nearby_creature_template',
-                          'nearby_creature_max_health', 'nearby_creature_sent_spellclick', 'loot_gear_item_level'}:
+            if metric in {'map_id', 'map_difficulty', 'nearby_creature_template', 'nearby_creature_max_health',
+                          'nearby_creature_health_pct', 'nearby_creature_sent_spellclick', 'loot_gear_item_level'}:
                 require(step['actor'] in player_ids, f'{where}: dungeon/loot metric needs a player')
-            if metric in {'nearby_creature_template', 'nearby_creature_max_health', 'nearby_creature_sent_spellclick'}:
+            if metric in {'nearby_creature_template', 'nearby_creature_max_health', 'nearby_creature_health_pct',
+                          'nearby_creature_sent_spellclick'}:
                 number(step.get('entry'), f'{where}.entry', 1, 2**32 - 1, True)
             if metric == 'spawn_respawn_remaining':
                 require(step['actor'] in player_ids, f'{where}: spawn respawn metric needs a player')
@@ -753,7 +834,8 @@ def validate(scenario):
                     'spell_family_flags',
                     'spell_taken_crit_chance',
                     'spell_done_crit_chance_scripted',
-                    'melee_spell_damage_done', 'script_spell_damage_taken', 'script_periodic_damage_taken',
+                    'melee_spell_damage_done', 'melee_spell_damage_done_scripted',
+                    'script_spell_damage_taken', 'script_periodic_damage_taken',
                     'script_heal_received', 'spell_effect_value', 'spell_critical_damage', 'armor_reduced_damage',
                     'spell_immune', 'spell_effect_immune', 'spell_damage_count', 'spell_damage_total',
                     'spell_uses_armor', 'pet_aura_amount', 'pet_aura_amplitude_ms', 'spell_heal_count', 'spell_heal_total',
@@ -789,6 +871,7 @@ def validate(scenario):
             if metric in {'spell_damage_done', 'melee_damage_done', 'spell_damage_taken', 'melee_damage_taken',
                           'spell_healing_done', 'spell_healing_taken', 'spell_done_crit_chance',
                           'spell_taken_crit_chance', 'spell_done_crit_chance_scripted', 'melee_spell_damage_done',
+                          'melee_spell_damage_done_scripted',
                           'spell_critical_damage', 'armor_reduced_damage', 'spell_immune', 'spell_effect_immune',
                           'distance_2d', 'can_detect'} \
                     or metric.startswith('script_'):
@@ -843,8 +926,10 @@ def validate(scenario):
             if 'school' in step and metric == 'spell_crit_chance':
                 number(step['school'], f'{where}.school', 0, 6, True)
             if metric in {'item_count', 'carried_item_level', 'carried_item_required_level', 'carried_item_armor',
-                          'carried_item_scaling_level', 'loot_offered_item_count'}:
+                          'carried_item_scaling_level', 'carried_item_stat', 'loot_offered_item_count'}:
                 require('item' in step, f'{where}: metric needs item')
+            if metric == 'carried_item_stat':
+                number(step.get('stat'), f'{where}.stat', 0, 255, True)
             if metric in {'item_random_property', 'item_suffix_factor', 'item_enchantment',
                           'item_guid', 'item_soulbound', 'item_duration'}:
                 require(step['actor'] in player_ids, f'{where}: item observation needs a player')
@@ -1003,7 +1088,7 @@ def validate(scenario):
                           'loot_offered_item_count', 'quest_rewarded', 'has_achievement',
                           'loot_base_entry', 'loot_item_armor',
                           'carried_item_level', 'carried_item_required_level', 'carried_item_armor',
-                          'carried_item_scaling_level',
+                          'carried_item_scaling_level', 'carried_item_stat',
                           'has_title',
                           'quest_status', 'quest_takeable', 'quest_objective_count', 'dialog_status',
                           'ball_offer_count', 'ball_offers_quest',
