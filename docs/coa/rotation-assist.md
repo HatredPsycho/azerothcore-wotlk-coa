@@ -76,4 +76,6 @@ selected-target requirement, native spell effects, resource costs, cooldowns and
 `rotation-assist-target-aura` checks a matching target debuff from another caster. `rotation-assist-addon`
 checks the addon's subscription, next-spell preview and press. The Necromancer, Witch Doctor and Felsworn
 scenarios cover scripted attacks, and `rotation-assist-cultist-void-shield` covers an absorb on an injured ally.
-Run them through `tools/verify_all.py` as described in [verification](verification.md).
+Gameplay-test raid bots with `rotation_assist` call the same selection (`CoARotationAssist::ChooseSpell`) for their
+active specialization, regardless of `CoA.RotationAssist.Enable`; `raid-bots-rotation-assist` checks an Incineration
+Pyromancer bot in a raid fight. Run them through `tools/verify_all.py` as described in [verification](verification.md).

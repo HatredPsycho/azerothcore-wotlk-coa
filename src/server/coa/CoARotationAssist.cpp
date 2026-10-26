@@ -246,8 +246,11 @@ namespace
         }
         return 0;
     }
+}
 
-    uint32 ChooseSpell(Player* player, Unit* target, bool healing, TriggerCastFlags probeFlags = TRIGGERED_NONE)
+namespace CoARotationAssist
+{
+    uint32 ChooseSpell(Player* player, Unit* target, bool healing, TriggerCastFlags probeFlags)
     {
         std::map<std::string, SpellInfo const*> learned;
         for (auto const& [id, state] : player->GetSpellMap())
@@ -303,6 +306,16 @@ namespace
                 return spell;
         return 0;
     }
+
+    uint32_t ChooseSpell(Player* player, Unit* target, bool healing)
+    {
+        return ChooseSpell(player, target, healing, TRIGGERED_NONE);
+    }
+}
+
+namespace
+{
+    using namespace CoARotationAssist;
 
     enum class PressBlock : uint8
     {

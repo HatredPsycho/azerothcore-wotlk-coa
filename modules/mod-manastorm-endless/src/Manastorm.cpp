@@ -742,6 +742,7 @@ public:
             "manastorm_playerscript",
             {
                 PLAYERHOOK_ON_LOGIN,
+                PLAYERHOOK_ON_LOGOUT,
                 PLAYERHOOK_ON_MAP_CHANGED,
                 PLAYERHOOK_ON_LEVEL_CHANGED,
                 PLAYERHOOK_ON_GIVE_EXP,
@@ -756,12 +757,19 @@ public:
 
     void OnPlayerLogin(Player* player) override
     {
+        ManastormClientUIFixes::ResetObjectiveHighlight(player);
         if (ManastormModuleConfig::Enabled())
             ManastormMgr::Instance().OnPlayerLogin(player);
         // Native mode publishes false flags when disabled; Mode 1 sends no native configs.
         ManastormClientBridge::Instance().Login(player);
         ManastormMobilityClient::Sync(player);
         ManastormMgr::Instance().SyncManastormPotionCharges(player);
+        ManastormClientUIFixes::ScheduleLoginPush(player);
+    }
+
+    void OnPlayerLogout(Player* player) override
+    {
+        ManastormClientUIFixes::ResetObjectiveHighlight(player);
     }
 
     void OnPlayerMapChanged(Player* player) override
