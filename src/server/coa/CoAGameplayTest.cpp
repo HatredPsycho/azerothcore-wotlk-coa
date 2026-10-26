@@ -843,11 +843,13 @@ struct Actor
     uint32 challengeStartLastCode = 0;
     std::map<uint64, std::map<uint16, uint32>> unitValues;
     std::map<uint32, uint32> creatureQueryRank;
+    std::map<uint32, std::vector<uint32>> creatureQueryQuestItems;
     std::map<uint32, uint32> clientCastTimeMs;
     std::map<uint32, uint32> clientAttributes;
     std::map<uint32, uint32> clientSpellTargets;
     std::map<uint32, uint32> questQueryFlags;
     std::map<uint32, uint32> questQueryFirstChoiceItem;
+    std::map<uint32, std::string> questQueryResponse;
     std::map<uint32, uint32> questOfferXP;
     uint32 lastQuestWindow = 0;
     uint32 lastStableResult = 0;
@@ -1275,6 +1277,9 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
     if (packet.GetOpcode() == SMSG_QUEST_QUERY_RESPONSE
         && packet.size() >= QuestQueryFirstChoiceItemOffset + sizeof(uint32))
         actor.questQueryFirstChoiceItem[packet.read<uint32>(0)] = packet.read<uint32>(QuestQueryFirstChoiceItemOffset);
+    if (packet.GetOpcode() == SMSG_QUEST_QUERY_RESPONSE && packet.size() >= sizeof(uint32))
+        actor.questQueryResponse[packet.read<uint32>(0)].assign(reinterpret_cast<char const*>(packet.contents()),
+            packet.size());
     if (packet.GetOpcode() == SMSG_CREATURE_QUERY_RESPONSE)
     {
         WorldPacket response(packet);
@@ -1288,6 +1293,18 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
             response >> name >> unusedName >> unusedName >> unusedName >> subName >> iconName;
             response >> typeFlags >> type >> family >> rank;
             actor.creatureQueryRank[entry] = rank;
+
+            constexpr size_t QuestItemsOffsetFromRank = 2 * sizeof(uint32) + 4 * sizeof(uint32) + 2 * sizeof(float)
+                + sizeof(uint8);
+            if (response.size() - response.rpos() >= QuestItemsOffsetFromRank
+                + MAX_CREATURE_QUEST_ITEMS * sizeof(uint32))
+            {
+                response.read_skip(QuestItemsOffsetFromRank);
+                std::vector<uint32>& questItems = actor.creatureQueryQuestItems[entry];
+                questItems.clear();
+                for (size_t i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
+                    questItems.push_back(response.read<uint32>());
+            }
         }
     }
     ObserveUnitValues(actor, packet);
@@ -3059,6 +3076,14 @@ private:
             Require(player != nullptr, "Arena metric needs a player");
             return player->InArena() ? 1 : 0;
         }
+        if (metric == "battleground_team" || metric == "team")
+        {
+            Player* player = unit->ToPlayer();
+            Require(player != nullptr, "Team metric needs a player");
+            if (metric == "team")
+                return double(player->GetTeamId());
+            return player->InBattleground() ? double(player->GetBgTeamId()) : -1;
+        }
         if (metric == "arena_team_members" || metric == "arena_team_season_games" || metric == "arena_team_season_wins")
         {
             Player* player = unit->ToPlayer();
@@ -3100,11 +3125,28 @@ private:
             auto itr = actor.questQueryFirstChoiceItem.find(step.get<uint32>("quest"));
             return itr == actor.questQueryFirstChoiceItem.end() ? -1 : int64(itr->second);
         }
+        if (metric == "quest_query_text_contains")
+        {
+            Actor& actor = _actors.at(step.get<std::string>("actor"));
+            auto itr = actor.questQueryResponse.find(step.get<uint32>("quest"));
+            if (itr == actor.questQueryResponse.end())
+                return -1;
+            return itr->second.find(step.get<std::string>("text")) != std::string::npos ? 1 : 0;
+        }
         if (metric == "creature_query_rank")
         {
             Actor& actor = _actors.at(step.get<std::string>("actor"));
             auto itr = actor.creatureQueryRank.find(step.get<uint32>("entry"));
             return itr == actor.creatureQueryRank.end() ? -1 : int64(itr->second);
+        }
+        if (metric == "creature_query_quest_item")
+        {
+            Actor& actor = _actors.at(step.get<std::string>("actor"));
+            auto itr = actor.creatureQueryQuestItems.find(step.get<uint32>("entry"));
+            if (itr == actor.creatureQueryQuestItems.end())
+                return -1;
+            uint32 const item = step.get<uint32>("item");
+            return std::find(itr->second.begin(), itr->second.end(), item) != itr->second.end() ? 1 : 0;
         }
         if (metric == "client_cast_time_ms")
         {
@@ -4312,6 +4354,12 @@ private:
             }
             return 0.0;
         }
+        if (metric == "owned_creature_armor")
+        {
+            Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
+            Require(creature != nullptr, "Armor observation needs a present owned creature");
+            return creature->GetArmor();
+        }
         if (metric == "owned_creature_virtual_item")
         {
             Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
@@ -4979,6 +5027,12 @@ private:
         }
         if (metric == "player_class")
             return player->getClass();
+        if (metric == "name_query_race")
+        {
+            uint8 race = player->getRace();
+            sScriptMgr->OnPlayerGetNameQueryRace(player, race);
+            return race;
+        }
         if (metric == "cached_class")
         {
             CharacterCacheEntry const* cached = sCharacterCache->GetCharacterCacheByGuid(player->GetGUID());
