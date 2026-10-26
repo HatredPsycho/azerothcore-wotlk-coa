@@ -351,10 +351,16 @@ bool ScalingChosenBy(Player const* player)
         !(LocalLevelScaling::ScalingBlocksFor(player) & LocalLevelScaling::ChallengeBlocksCreatureScaling);
 }
 
+uint32 DropKey(Player const* looter, uint32 base)
+{
+    if (!base)
+        base = DropBase(looter);
+    return ItemLadder::ClientKey(base);
+}
+
 void AssignLevel(Player* owner, Item* item, uint32 key)
 {
-    if (!enabled.load(std::memory_order_relaxed) || !owner || !item || item->IsEquipped() ||
-        !ScalingChosenBy(owner))
+    if (!enabled.load(std::memory_order_relaxed) || !owner || !item || item->IsEquipped())
         return;
 
     ItemTemplate const* proto = item->GetTemplate();
@@ -372,14 +378,30 @@ void AssignLevel(Player* owner, Item* item, uint32 key)
     SendLevel(owner, item);
 }
 
+bool LootScalesFor(Player const* player)
+{
+    return LocalLevelScaling::DungeonLootScales(player) || ScalingChosenBy(player);
+}
+
 void AssignDropLevel(Player* looter, Item* item, uint32 base = 0)
 {
-    if (!looter)
+    if (!looter || !item)
         return;
 
-    if (!base)
-        base = DropBase(looter);
-    AssignLevel(looter, item, ItemLadder::ClientKey(base));
+    uint32 const key = DropKey(looter, base);
+    if (LocalLevelScaling::DungeonLootScales(looter))
+    {
+        if (key < item->GetTemplate()->ItemLevel)
+            AssignLevel(looter, item, key);
+    }
+    else if (ScalingChosenBy(looter))
+        AssignLevel(looter, item, key);
+}
+
+void AssignQuestRewardLevel(Player* player, Item* item)
+{
+    if (player && ScalingChosenBy(player))
+        AssignLevel(player, item, DropKey(player, 0));
 }
 
 void MasterLooted(Player* receiver, Item* item)
@@ -389,7 +411,7 @@ void MasterLooted(Player* receiver, Item* item)
 
 void QuestRewardStored(Player* player, Item* item, Quest const* quest)
 {
-    if (!questRewards.load(std::memory_order_relaxed))
+    if (!questRewards.load(std::memory_order_relaxed) || !ScalingChosenBy(player))
         return;
 
     LocalLevelScaling::QuestCurve const* curve = LocalLevelScaling::QuestCurveFor(quest->GetQuestId());
@@ -400,7 +422,7 @@ void QuestRewardStored(Player* player, Item* item, Quest const* quest)
 
 uint32 RollLevel(Player* roller)
 {
-    if (IsBot(roller) || !ScalingChosenBy(roller))
+    if (IsBot(roller) || !LootScalesFor(roller))
         return 0;
 
     uint32 const base = DropBase(roller);
@@ -412,7 +434,7 @@ uint32 RollLevel(Player* roller)
 uint32 CorpseLevel(Player* viewer, Creature const* corpse)
 {
     if (IsBot(viewer) || corpse->IsAlive() || !corpse->HasDynamicFlag(UNIT_DYNFLAG_LOOTABLE) ||
-        !viewer->isAllowedToLoot(corpse) || !ScalingChosenBy(viewer))
+        !viewer->isAllowedToLoot(corpse) || !LootScalesFor(viewer))
         return 0;
     return std::min<uint32>(DropBase(viewer), 255);
 }
@@ -624,7 +646,7 @@ public:
     void OnPlayerQuestRewardItem(Player* player, Item* item, uint32) override
     {
         if (questRewards.load(std::memory_order_relaxed))
-            AssignDropLevel(player, item);
+            AssignQuestRewardLevel(player, item);
     }
 };
 }
