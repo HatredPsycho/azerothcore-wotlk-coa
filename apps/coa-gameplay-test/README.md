@@ -896,6 +896,8 @@ aura expiry is a separate event.
 
 `owned_creature_weapon_damage_min` requires a player and `entry`. It returns the lowest minimum weapon damage (`UNIT_FIELD_MINDAMAGE`) across their living
 owned creatures of that entry in the same phase and within 100 yards, so every copy of a guardian must meet an asserted `min`; zero when there are none.
+`owned_creature_armor` requires a player and a present owned creature selected by `entry`. It reads that creature's
+native `GetArmor()`, zero when absent.
 `owned_gameobject_count` requires a player and `entry`. It counts their summoned gameobjects of that entry
 in the same phase and within 100 yards. `gameobject_display` and `gameobject_scale` read the single owned
 object's native display id and scale, returning zero when absent. They do not verify client rendering.
@@ -954,11 +956,17 @@ server lists for that dungeon in the player's Dungeon Finder info (0 when it is 
 loot rule lets the actor roll Need on that item at the actor's position, otherwise 0. Outside a Dungeon Finder
 group or its dungeon every item returns 1.
 `in_arena` takes a player `actor` and returns 1 while that player is inside an arena match.
+`battleground_team` takes a player `actor` and returns the side that player fights for inside a battleground or
+arena (0 Alliance, 1 Horde), or -1 outside one. `team` returns the player's current team (0 Alliance, 1 Horde),
+which a cross-faction battleground replaces while the player is inside it. `name_query_race` returns the race the
+server sends for that player in name query responses, from which the client places a battleground scoreboard row.
 `arena_team_members`, `arena_team_season_games` and `arena_team_season_wins` take a player `actor` and arena
 `slot` (0 2v2, 1 3v3, 2 5v5) and read the team in that slot: its member count (0 without a team), or its
 season games and wins (-1 without a team).
 `creature_query_rank` takes a player `actor` and creature `entry` and returns the rank of the
 last creature query response delivered to that session, or -1 before one arrives.
+`creature_query_quest_item` takes the same arguments plus `item` and returns 1 when that response lists the item
+among the creature's quest drops (`creature_questitem`), 0 when it does not, or -1 before one arrives.
 `quest_level` and `quest_xp` take a player `actor` and `quest`
 and query the native quest level and XP calculations without awarding a reward.
 `quest_log_sent_level` and `quest_log_sent_xp` take the same arguments and return the last level or reward XP
@@ -973,6 +981,9 @@ or -1 before the session receives a reward offer.
 carried the client's scaled-quest flag `0x01000000`, 0 when it did not, or -1 before one arrives.
 `quest_query_reward_choice` takes the same arguments and returns the first choice reward item id in the last quest
 query response for that quest, or -1 before one arrives.
+`quest_query_text_contains` takes the same arguments plus `text` and returns 1 when the last quest query response
+for that quest contains that text anywhere (title, log, tracker or completion strings), 0 when it does not, or -1
+before one arrives.
 
 `dungeon_difficulty_packet` takes a player `actor` and `value` (0, 1 or 2), sends the native dungeon
 selection packet through the packet hook and typed session handler, and does not bypass its group or
