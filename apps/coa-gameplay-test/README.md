@@ -401,7 +401,12 @@ preserves Static and must leave the talent without a depletion bonus.
 
 Players require `id`, numeric `race` and `class`; `level` defaults to 80. Optional `bot` logs the actor in on a
 session flagged as a bot, the way playerbots flags the sessions it creates, so a scenario can check what the
-server does differently for them. Optional `spell_hit_rating`,
+server does differently for them. Optional `security` (0..3, default 0/`SEC_PLAYER`) raises that one fixture
+session's account security, so a `command` step can reach a GM-gated chat command (for example an authoring
+command that forces an exact, deterministic encounter for the test) without granting it to every other fixture
+player. Leave it unset for ordinary player security, which remains the default for the whole catalog; set it
+only when the scenario specifically exercises GM/admin-gated behavior through that actor's own command. Optional
+`spell_hit_rating`,
 `spell_crit_rating`, `melee_crit_rating`, `ranged_crit_rating`, `ranged_hit_rating`, `melee_hit_rating` and
 `expertise_rating` add fixture ratings through normal calculations, useful for preventing misses, dodges and
 parries, or forcing critical hits, in deterministic tests.
@@ -448,10 +453,10 @@ Creatures require `id`, player `owner` and template `entry`. Optional `distance`
 (default 3 yards); `faction`, `level`, `health` default to 14, 80, 100000. They retain template data and AI,
 with health regeneration disabled and `reaction` defaulting to passive (0); defensive (1) and aggressive (2)
 fixtures exercise native target selection and movement. `victim` with a `target` measures whether that unit is
-the actor's current attack victim. `can_attack` with a `target` returns one when the native `IsValidAttackTarget`
-check lets the actor attack that unit, including faction reaction, PvP flags and sanctuaries. The native
-player-damage share a kill needs for loot and reward is taken from the declared health, so a player's kill leaves
-a lootable or skinnable corpse. Pick a
+the actor's current attack victim. `can_attack` with a `target` (and an optional `spell`, checked as that spell's
+target) returns one when the native `IsValidAttackTarget` check lets the actor attack that unit, including faction
+reaction, PvP flags and sanctuaries. The native player-damage share a kill needs for loot and reward is taken from
+the declared health, so a player's kill leaves a lootable or skinnable corpse. Pick a
 template whose scripts suit the experiment.
 Setup clears combat initiated by spawn-time AI before starting the scenario: a fixture whose AI engaged a player
 while spawning evades at once. No step runs while any fixture is evading, so a spell or attack is never aimed at
@@ -512,6 +517,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `use_item` | `actor`, `item`, `spell`, optional `target`, `target_item` (an owned item entry, sent as the item target instead of a unit) and `destination`: normal item-use handler. |
 | `use_nearby_gameobject` | `actor`, `entry`, optional `owner` (a player id): native use request for the single gameobject of that entry within 20 yards in the actor's phase; `owner` narrows the choice to the object that player owns, so one of several nearby objects can be clicked. |
 | `spell_click_nearby` | `actor`, `entry`: native `CMSG_SPELLCLICK` on the nearest living creature of that entry within 20 yards, as the client sends on right-clicking a spell-click creature. |
+| `select_nearby` | `actor`, `entry`, optional `radius` (default 40): native `CMSG_SET_SELECTION` on the nearest living creature of that entry, as the client sends on clicking it. GM commands that read `ChatHandler::getSelectedCreature()` (`.cast target`, `.cast back`, …) need this first; `attack_nearby` only sends `CMSG_ATTACKSWING` and never selects. |
 | `use_gameobject` | `actor`, `entry`: native use request for the actor's single nearby owned gameobject. |
 | `voidportal` | Player `actor`, `op` `force` with `group` and `spawn`, or `op` `roll` with `success`: put the one realm-wide Void Portal on that configured point as a point rotation does, or replace the next proximity roll; the manager is process-global, so the case runs exclusively. |
 | `summon` | Player `actor`, `as`, `entry`, optional `distance` (yards along +x, default 5) and `ai_action` (an integer passed to the creature AI's `DoAction`, for a scripted step such as finishing a boss intro): summon a creature into the actor's map and phase under the id `as`. |
@@ -581,7 +587,8 @@ screen and not only in chat. The cache metrics are `carried_pool_item_count` (ne
 optional `table`: `prestigious`, `callboard`, or `loot` for the cache's item loot and its references, and
 optional `min_required_level`/`max_required_level` that keep only carried items in that range; optional
 `dominant_stat` keeps items whose strongest of Agility 3, Strength 4, Intellect 5 and Spirit 6 is that stat,
-and `off_stat` keeps items that carry one of those four but whose strongest is not that stat), `pool_variant_count`, `pool_retired_item_count`, `pool_row_count`,
+and `off_stat` keeps items that carry one of those four but whose strongest is not that stat; optional `quality`
+keeps items of that exact quality), `pool_variant_count`, `pool_retired_item_count`, `pool_row_count`,
 `pool_item_present` (needs `item`; `table` `fire_lord` with `cache` 2400040 reads Cache of the Fire Lord's
 pool across every raid difficulty), and `cache_token_count`, `cache_token_stage`, `cache_token_present`
 (need `cache`, the last also `item`), which read the token table the realm loads and answer how many
@@ -628,6 +635,9 @@ unit; `target` identifies the attacker, and `melee_damage_taken` optionally acce
 These queries do not execute attacks or include hit rolls, critical hits, armor/resistance mitigation, or proc
 effects.
 `spell_power_cost` requires `spell` and queries its current native resource cost; it does not submit a cast.
+`skill_line_for_spell` requires `spell` and returns the server's loaded `SkillLineAbility` entry's `SkillLine`
+for it (the client spellbook tab the spell's own row places it under), or `-1` when no row carries a nonzero
+skill line for that spell.
 `spell_crit_chance` optionally accepts `school` (0..6, default Shadow). `melee_crit_chance`, `dodge_chance` and
 `parry_chance` read the player's percentage fields; `expertise` reads main-hand expertise; `combat_rating` requires
 `rating` (0..24, native `CombatRating`) and reads the rating value. `stat` requires `stat` (0..4), `resistance`
@@ -771,6 +781,9 @@ returns the highest per-item level that native item scaling stored for such an i
 `loot_slot` with `item` also picks up a copy of that item.
 `creature_loot_quality_rate` requires `entry` (a creature loot id), fills that template `rolls` times (default 10000)
 for the actor and reports the percentage of fills holding an item of at least `quality` (default 3, rare).
+`forced_loot_count` requires `item`, adds it directly through `Loot::AddItem` with the actor as loot owner
+(bypassing any loot table), and reports how many uncollected copies survive that call; a gate inside `AddItem`
+that rejects the item for that actor reports zero.
 `loot_slot` accepts an optional `item` to find that item in the current creature corpse's or chest's per-player
 slots, then submits the native pickup request. Without it, `slot` defaults to zero. `respawn_remaining` reads a
 fixture creature's remaining death-time respawn timer in seconds; summoned fixtures still use corpse-based timing.
@@ -1004,6 +1017,8 @@ anywhere on the player's map, in any phase; a spawn whose grid is not loaded is 
 (0 open, 1 closed, 99 none).
 `nearby_gameobject_scale` takes `entry` and returns the object scale of the nearest such gameobject within
 20 yards (0 when none).
+`nearby_gameobject_ground_offset` takes `entry` and returns the nearest such gameobject's Z minus the map's terrain
+height under it (negative when buried); it requires a gameobject to exist within 20 yards.
 `nearby_gameobject_at_client` takes `entry` and is 1 while the nearest such gameobject within 20 yards is in
 the player's client-visible set. Owners always see their own objects, so per-player visibility needs a world spawn.
 `voidportal_group` returns the active Void Portal spawn group id, or 0 while the manager has no portal up.
@@ -1093,6 +1108,7 @@ must be a player but is not used.
 | `spawn_placement` | `guid`, `spawn_type`, `tolerance` | The verdict code below. |
 | `spawn_submerged` | `guid`, `spawn_type` | 1 when the spawn is below a liquid surface, else 0. |
 | `spawn_display_state` | `guid`, `spawn_type` | The worst state of the spawn's displays: 0 `missing`, 1 `server_only`, 2 `client`. Fails "Spawn has no display to check" without a display. |
+| `spawn_stand_state` | `guid`, `spawn_type` (`creature` only) | The creature's effective `creature_addon.bytes1` (else template addon) low byte: the `UNIT_STAND_STATE` a load applies, 0 `stand` without an addon. Fails "Stand state metric needs a creature spawn" for a gameobject. |
 | `point_ground_gap` | `map`, `x`, `y`, `z` | The point's height above its ground, as for a spawn. Fails "No ground found for the point". |
 | `point_placement` | `map`, `x`, `y`, `z`, `tolerance` | The verdict code of the point, phase 1, without exemptions. |
 
@@ -1212,7 +1228,11 @@ real early receive hook and session queue; follow it with a wait before teleport
 `dungeon_difficulty_packet` remains available for Normal and Heroic. `nearby_creature_max_health`
 requires an entry and reads the nearest living matching creature within 60 yards; `nearby_creature_health_pct`
 reads that creature's current health as a percentage of its maximum, so a real spawn such as a raid boss can be
-checked undamaged before its encounter.
+checked undamaged before its encounter. `nearby_creature_can_attack` returns 1 when the native
+`IsValidAttackTarget` lets the actor attack that creature, otherwise 0. `nearby_creature_mount_display` reads
+that creature's mount display id (0 when on foot) and `nearby_creature_display` its current display id.
+`nearby_creature_aura_count` requires `spell` and counts the
+living creatures of the entry within 60 yards that carry that aura.
 `nearby_creature_sent_spellclick` reads that creature's NPC flags from the last values update the actor's client
 received: 1 with the spell-click flag, 0 without, -1 when no values update carried them (creation packets are not
 parsed). The

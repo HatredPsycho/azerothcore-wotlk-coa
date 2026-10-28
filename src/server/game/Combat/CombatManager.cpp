@@ -231,6 +231,11 @@ bool CombatManager::SetInCombatWith(Unit* who, bool addSecondUnitSuppressed)
     if (!CombatManager::CanBeginCombat(_owner, who))
         return false;
 
+    CombatManager& whoManager = who->GetCombatManager();
+    if (whoManager._pvpRefs.erase(_owner->GetGUID()) + whoManager._pveRefs.erase(_owner->GetGUID()))
+        LOG_ERROR("entities.unit.combat", "CombatManager::SetInCombatWith: dropped a one-sided combat reference of {} to {}",
+            who->GetGUID().ToString(), _owner->GetGUID().ToString());
+
     // ...then create new reference
     CombatReference* ref;
     if (_owner->IsControlledByPlayer() && who->IsControlledByPlayer())
