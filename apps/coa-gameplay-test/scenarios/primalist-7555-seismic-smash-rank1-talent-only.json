@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "name": "Seismic Smash rank 1 is a Mountainking talent, not a trainer purchase (#7555)",
+  "contract": [
+    "CharacterAdvancement entry 7498 (class type 31, tab 91 = ChrSpecs 60 WILDWALKER/MOUNTAINKING) has",
+    "RankSpell 300693, TalentEssenceCost 1 and a 23 TE tab investment requirement, so Seismic Smash rank 1 is",
+    "a deep Mountainking talent. 300693 is the only AscensionCompatData::ClassSpells candidate that is also a",
+    "TE-paid advancement entry (15 further overlaps all cost 0 TE), and rev_20261027_61 briefly sold it at",
+    "trainer 900031 and granted it at level 59. A Wildwalker who knows 300693 with nothing invested in tab 91",
+    "holds an untraversible entry set, so every known-entries upload for that tab is refused with",
+    "CA_UPDATE_ENTRIES_NOT_TRAVERSIBLE / CA_LEARN_NOT_ENOUGH_INVESTED_TE and specialization 60 never",
+    "activates. Ranks 2-4 (301276-301279) keep their own trainer rows and their ReqAbility1 gate on 300693,",
+    "which the talent grants. This proves the trainer never offers rank 1, that no level grants it, that rank",
+    "2 stays gated while rank 1 is unknown, and that activating specialization 60 still works."
+  ],
+  "timeout_ms": 90000,
+  "players": [
+    {
+      "id": "primalist",
+      "race": 3,
+      "class": 31,
+      "level": 80
+    }
+  ],
+  "creatures": [
+    {
+      "id": "trainer",
+      "owner": "primalist",
+      "entry": 4217,
+      "distance": 2,
+      "faction": 35
+    }
+  ],
+  "steps": [
+    { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 4000 },
+    { "action": "money", "actor": "primalist", "copper": 1000000, "label": "FIXTURE: a purse for the lesson" },
+
+    { "action": "assert", "label": "THE FIX: no level grants rank 1 as a class spell", "actor": "primalist", "metric": "knows_spell", "spell": 300693, "equals": 0 },
+
+    { "action": "gossip_hello", "actor": "primalist", "target": "trainer", "label": "right-click Mathrengyl Bearwalker at level 80" },
+    { "action": "gossip_select", "actor": "primalist", "option": 0, "label": "I seek training as a Primalist" },
+    { "action": "assert", "label": "SETUP: the trainer window opened", "actor": "primalist", "metric": "trainer_list_packets", "equals": 1 },
+    { "action": "assert", "label": "THE FIX: rank 1 is not in the trainer window at all", "actor": "primalist", "metric": "trainer_window_state", "spell": 300693, "equals": -1 },
+    { "action": "assert", "label": "CONTROL: rank 2 is offered but unavailable while rank 1 is unknown", "actor": "primalist", "metric": "trainer_window_state", "spell": 301276, "equals": 1 },
+
+    { "action": "specialization", "actor": "primalist", "id": 60, "label": "THE FIX: the Mountainking known-entries upload is accepted" }
+  ]
+}
