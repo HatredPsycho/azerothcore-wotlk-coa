@@ -141,6 +141,39 @@ class RunnerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             run.validate(scenario)
 
+    def test_nearby_creature_can_attack_needs_a_player_and_entry(self):
+        step = {'action': 'assert', 'actor': 'caster', 'metric': 'nearby_creature_can_attack', 'entry': 24484,
+                'equals': 0}
+        self.assert_step_validates(step)
+        for change in ({'actor': 'target'}, {'entry': 0}, {'entry': '24484'}):
+            self.assert_step_rejected({**step, **change})
+        self.assert_step_rejected({key: value for key, value in step.items() if key != 'entry'})
+
+    def test_nearby_creature_mount_display_needs_a_player_and_entry(self):
+        step = {'action': 'assert', 'actor': 'caster', 'metric': 'nearby_creature_mount_display', 'entry': 23543,
+                'min': 1}
+        self.assert_step_validates(step)
+        for change in ({'actor': 'target'}, {'entry': 0}, {'entry': '23543'}):
+            self.assert_step_rejected({**step, **change})
+        self.assert_step_rejected({key: value for key, value in step.items() if key != 'entry'})
+
+    def test_nearby_creature_display_needs_a_player_and_entry(self):
+        step = {'action': 'assert', 'actor': 'caster', 'metric': 'nearby_creature_display', 'entry': 24468,
+                'equals': 2790}
+        self.assert_step_validates(step)
+        for change in ({'actor': 'target'}, {'entry': 0}, {'entry': '24468'}):
+            self.assert_step_rejected({**step, **change})
+        self.assert_step_rejected({key: value for key, value in step.items() if key != 'entry'})
+
+    def test_nearby_creature_aura_count_needs_a_player_entry_and_spell(self):
+        step = {'action': 'assert', 'actor': 'caster', 'metric': 'nearby_creature_aura_count', 'entry': 23686,
+                'spell': 42074, 'min': 1}
+        self.assert_step_validates(step)
+        for change in ({'actor': 'target'}, {'entry': 0}, {'spell': 0}, {'spell': '42074'}):
+            self.assert_step_rejected({**step, **change})
+        for field in ('entry', 'spell'):
+            self.assert_step_rejected({key: value for key, value in step.items() if key != field})
+
     def assert_step_validates(self, step):
         scenario = copy.deepcopy(self.scenario)
         scenario['steps'].append(step)
@@ -153,7 +186,8 @@ class RunnerTests(unittest.TestCase):
             run.validate(scenario)
 
     def test_spawn_placement_metrics_need_a_player_guid_and_spawn_type(self):
-        for metric in ('spawn_placement', 'spawn_ground_gap', 'spawn_submerged', 'spawn_display_state'):
+        for metric in ('spawn_placement', 'spawn_ground_gap', 'spawn_submerged', 'spawn_display_state',
+                       'spawn_stand_state'):
             step = {'action': 'assert', 'actor': 'caster', 'metric': metric, 'guid': 6942106,
                     'spawn_type': 'gameobject', 'equals': 0}
             if metric == 'spawn_placement':
