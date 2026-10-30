@@ -709,6 +709,7 @@ public: /* SpellSC */
     void OnSpellCheckCast(Spell* spell, bool strict, SpellCastResult& res);
     bool OnSpellFocusAnswered(Spell* spell);
     bool CanPrepare(Spell* spell, SpellCastTargets const* targets, AuraEffect const* triggeredByAura);
+    bool CanIgnoreShapeshift(Spell const* spell);
     bool CanScalingEverything(Spell* spell);
     bool CanSelectSpecTalent(Spell* spell);
     void OnScaleAuraUnitAdd(Spell* spell, Unit* target, uint32 effectMask, bool checkIfValid, bool implicit, uint8 auraScaleMask, TargetInfo& targetInfo);
@@ -730,6 +731,7 @@ public: /* SpellSC */
     void OnSpellSuccessfulDispel(Spell* spell, Unit* target, SpellEffIndex effect, uint32 count);
     void OnSpellCritChance(Spell* spell, Unit* target, float& chance);
     void OnGuardianSummoned(Spell* spell, TempSummon* summon);
+    void OnSpellGlobalCooldown(Spell* spell, int32& duration);
 
 public: /* GameEventScript */
     void OnGameEventStart(uint16 EventID);

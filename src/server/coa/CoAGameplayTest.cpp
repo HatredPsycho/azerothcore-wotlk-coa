@@ -2480,10 +2480,13 @@ private:
         WorldPacket create(CMSG_CHAR_CREATE, 32);
         uint32 race = actor.definition.get<uint32>("race");
         uint32 playerClass = actor.definition.get<uint32>("class");
+        uint32 gender = actor.definition.get<uint32>("gender", GENDER_MALE);
         Require(race > 0 && race <= 255 && playerClass > 0 && playerClass <= 255,
             "Race/class must fit the character creation packet");
-        create << actor.definition.get<std::string>("name", actor.name) << uint8(race) << uint8(playerClass);
-        for (uint8 i = 0; i < 7; ++i)
+        Require(gender == GENDER_MALE || gender == GENDER_FEMALE, "Gender must be 0 (male) or 1 (female)");
+        create << actor.definition.get<std::string>("name", actor.name) << uint8(race) << uint8(playerClass)
+               << uint8(gender);
+        for (uint8 i = 0; i < 6; ++i)
             create << uint8(0);
         actor.session->HandleCharCreateOpcode(create);
         Reach(actor, ActorStage::Creating);
@@ -2548,6 +2551,12 @@ private:
             player->ApplyRatingMod(CR_HIT_MELEE, *hitRating, true);
         if (auto expertise = actor.definition.get_optional<int32>("expertise_rating"))
             player->ApplyRatingMod(CR_EXPERTISE, *expertise, true);
+        if (auto power = actor.definition.get_optional<int32>("attack_power"))
+            player->HandleStatFlatModifier(UNIT_MOD_ATTACK_POWER, TOTAL_VALUE, float(*power), true);
+        if (auto power = actor.definition.get_optional<int32>("ranged_attack_power"))
+            player->HandleStatFlatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(*power), true);
+        if (auto power = actor.definition.get_optional<int32>("spell_power"))
+            player->ApplySpellPowerBonus(*power, true);
         if (!actor.definition.get<bool>("allow_regeneration", true))
             NoRegenerationActors.insert(player->GetGUID());
         player->SetHealth(player->GetMaxHealth());
@@ -4182,6 +4191,12 @@ private:
         {
             Unit* attacker = GetUnit(step.get<std::string>("target"));
             SpellInfo const* info = sSpellMgr->GetSpellInfo(spell);
+            Unit* victim = player;
+            if (auto entry = step.get_optional<uint32>("entry"))
+            {
+                victim = GetOwnedCreature(player, *entry);
+                Require(victim != nullptr, "Scripted damage observation needs a present owned creature");
+            }
             if (metric == "script_melee_damage_dealt")
             {
                 uint32 damage = 1000;
@@ -4191,17 +4206,17 @@ private:
             if (metric == "script_melee_damage_taken")
             {
                 uint32 damage = 1000;
-                sScriptMgr->ModifyMeleeDamage(player, attacker, damage);
+                sScriptMgr->ModifyMeleeDamage(victim, attacker, damage);
                 float minDamage = float(damage);
                 float maxDamage = float(damage);
-                sScriptMgr->ModifyMeleeDamageRange(player, attacker, minDamage, maxDamage);
+                sScriptMgr->ModifyMeleeDamageRange(victim, attacker, minDamage, maxDamage);
                 return (minDamage + maxDamage) / 2.0f;
             }
             Require(info != nullptr, "Unknown spell for scripted damage taken");
             if (metric == "script_spell_damage_taken")
             {
                 int32 damage = 1000;
-                sScriptMgr->ModifySpellDamageTaken(player, attacker, damage, info);
+                sScriptMgr->ModifySpellDamageTaken(victim, attacker, damage, info);
                 return damage;
             }
             if (metric == "script_heal_received")
@@ -4212,7 +4227,7 @@ private:
             }
             Require(metric == "script_periodic_damage_taken", "Unknown scripted damage metric");
             uint32 damage = 1000;
-            sScriptMgr->ModifyPeriodicDamageAurasTick(player, attacker, damage, info);
+            sScriptMgr->ModifyPeriodicDamageAurasTick(victim, attacker, damage, info);
             return damage;
         }
         if (metric == "spell_done_crit_chance" || metric == "spell_taken_crit_chance" ||
@@ -4446,10 +4461,14 @@ private:
             auto const rangedWeaponSubclass = step.get_optional<uint32>("ranged_weapon_subclass");
             Require(!rangedWeaponSubclass || *rangedWeaponSubclass < MAX_ITEM_SUBCLASS_WEAPON,
                 "Invalid ranged weapon subclass");
+            auto const sheathState = step.get_optional<uint32>("sheath_state");
+            Require(!sheathState || *sheathState < MAX_SHEATH_STATE, "Invalid sheath state");
             return std::count_if(creatures.begin(), creatures.end(),
                 [player, spell, caster, minDistance, ownerDisplay, creatorOnly,
-                 rangedWeaponSubclass](Creature* creature)
+                 rangedWeaponSubclass, sheathState](Creature* creature)
             {
+                if (sheathState && creature->GetSheath() != SheathState(*sheathState))
+                    return false;
                 if (rangedWeaponSubclass)
                 {
                     ItemTemplate const* weapon = sObjectMgr->GetItemTemplate(
@@ -4497,6 +4516,12 @@ private:
             Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
             Require(creature != nullptr, "Armor observation needs a present owned creature");
             return creature->GetArmor();
+        }
+        if (metric == "owned_creature_max_health")
+        {
+            Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
+            Require(creature != nullptr, "Health observation needs a present owned creature");
+            return creature->GetMaxHealth();
         }
         if (metric == "owned_creature_virtual_item")
         {
@@ -4723,6 +4748,12 @@ private:
             Require(slot < EQUIPMENT_SLOT_END, "Equipment observation needs a slot from 0 through 18");
             Item const* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, uint8(slot));
             return item ? item->GetEntry() : 0;
+        }
+        if (metric == "visible_item")
+        {
+            uint32 slot = step.get<uint32>("slot");
+            Require(slot < EQUIPMENT_SLOT_END, "Equipment observation needs a slot from 0 through 18");
+            return player->GetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + slot * 2);
         }
         if (metric == "item_random_property" || metric == "item_suffix_factor" || metric == "item_enchantment" ||
             metric == "item_guid" || metric == "item_soulbound" || metric == "item_duration")
@@ -5898,6 +5929,8 @@ private:
                 movementFlag = MOVEMENTFLAG_STRAFE_LEFT;
             else if (direction == "strafe_right")
                 movementFlag = MOVEMENTFLAG_STRAFE_RIGHT;
+            else if (direction == "falling")
+                movementFlag = MOVEMENTFLAG_FALLING;
             else
                 Require(direction == "forward", "Unknown movement flag: " + direction);
             if (step.get<bool>("enabled"))
