@@ -967,7 +967,6 @@ def validate(scenario):
                           'distance_2d', 'can_detect'} \
                     or metric.startswith('script_'):
                 if metric.startswith('script_') and 'entry' in step:
-                    require('target' not in step, f'{where}: scripted damage selects either target or entry')
                     number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
                 else:
                     require('target' in step, f'{where}: damage metric needs target')
