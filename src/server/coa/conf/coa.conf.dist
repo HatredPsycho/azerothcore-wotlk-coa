@@ -708,3 +708,7 @@ XPHotspots.ActiveCount = 3
 XPHotspots.BuffSpell = 993945
 # Brand: a short label (32 characters at most, no "|") the client shows with the hotspots; empty = none.
 XPHotspots.Brand = ""
+
+# Diagnostic boss probe: logs the casts, cast results and incoming melee and spell damage of
+# creatures under investigation to the "coa.bossprobe" logger. Off on a normal realm.
+CoA.BossProbe.Enable = 0
