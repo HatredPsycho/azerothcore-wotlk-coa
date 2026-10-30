@@ -89,7 +89,7 @@ METRICS = TIMELINE_METRICS | {
     'system_messages',
     'system_message_contains', 'whispers_received', 'challenge_start_responses', 'challenge_start_code',
     'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display', 'owned_creature_virtual_item',
-    'owned_creature_armor',
+    'owned_creature_armor', 'owned_creature_max_health',
     'unit_scale', 'combat_reach',
     'token_count', 'item_sell_price', 'monster_chat_count', 'creature_model_scale', 'creature_model_display',
     'taxi_node', 'in_flight', 'taxi_destination', 'stabled_pet_count', 'stable_result', 'pet_rows', 'instance_binds_listed', 'pet_entry', 'pet_aura_stacks', 'pet_aura_duration_ms', 'pet_is_banker', 'pet_display',
@@ -145,7 +145,7 @@ METRICS = TIMELINE_METRICS | {
     'melee_attacks_taken',
     'spell_damage_count', 'spell_damage_total', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
-    'equipped_item',
+    'equipped_item', 'visible_item',
     'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_max_health', 'pet_health', 'pet_attack_power',
     'pet_run_speed_rate',
     'distance', 'spawn_active', 'threat', 'threat_per_damage', 'spell_proc_count', 'spell_proc_chance', 'aura_proc_rate', 'temporary_spell_replacement',
@@ -180,7 +180,7 @@ PLAYER_STAT_METRICS = {
     'melee_attacks_taken',
     'spell_damage_count', 'spell_damage_total', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
-    'equipped_item',
+    'equipped_item', 'visible_item',
     'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_aura_duration_ms', 'pet_max_health', 'pet_health',
     'pet_attack_power',
     'pet_run_speed_rate',
@@ -188,8 +188,8 @@ PLAYER_STAT_METRICS = {
 METRIC_FIELDS = {'actor', 'metric', 'spell', 'power', 'caster', 'effect', 'item', 'entry', 'button',
                  'relative_to', 'ratio_to', 'target', 'quest', 'id', 'stat', 'school', 'hand', 'rating', 'op',
                  'base', 'key', 'index', 'pet', 'critical', 'target_pet', 'periodic', 'name', 'text',
-                 'min_distance', 'owner_display', 'creator_only', 'ranged_weapon_subclass', 'skill', 'cache',
-                 'table', 'exclude', 'dungeon', 'source', 'opcode', 'from', 'slot', 'achievement', 'title',
+                 'min_distance', 'owner_display', 'creator_only', 'ranged_weapon_subclass', 'sheath_state', 'skill',
+                 'cache', 'table', 'exclude', 'dungeon', 'source', 'opcode', 'from', 'slot', 'achievement', 'title',
                  'type_mask', 'hit_mask', 'spell_type_mask',
                  'phase_mask', 'trigger_spell', 'trials', 'incoming', 'heal', 'quality',
                  'row', 'offset', 'skip_strings', 'from_end', 'x', 'y', 'min_required_level', 'max_required_level',
@@ -459,9 +459,10 @@ def validate(scenario):
     actor_ids = set()
     for player in players:
         keys(player, {'id', 'race', 'class'},
-             {'id', 'race', 'class', 'level', 'bot', 'spell_hit_rating', 'spell_crit_rating',
+             {'id', 'race', 'class', 'gender', 'level', 'bot', 'spell_hit_rating', 'spell_crit_rating',
               'melee_crit_rating', 'ranged_crit_rating', 'ranged_hit_rating', 'melee_hit_rating',
-              'expertise_rating', 'allow_regeneration', 'name', 'expansion', 'ascension_client', 'account_of',
+              'expertise_rating', 'attack_power', 'ranged_attack_power', 'spell_power',
+              'allow_regeneration', 'name', 'expansion', 'ascension_client', 'account_of',
               'role', 'rotation', 'heal_spell', 'taunt_spell', 'rotation_assist', 'security'}, 'player')
         identity = player['id']
         require(isinstance(identity, str) and ACTOR_ID.fullmatch(identity), 'Invalid player id')
@@ -476,6 +477,7 @@ def validate(scenario):
                     and len(player['name'].encode('utf-8')) <= 47, 'Invalid fixture character name')
         for key in ('race', 'class'):
             number(player[key], key, 1, 255, True)
+        number(player.get('gender', 0), 'gender', 0, 1, True)
         number(player.get('level', 80), 'level', 1, 255, True)
         number(player.get('expansion', 2), 'expansion', 0, 2, True)
         require(type(player.get('bot', False)) is bool, 'bot must be boolean')
@@ -487,6 +489,8 @@ def validate(scenario):
         number(player.get('ranged_hit_rating', 0), 'ranged_hit_rating', 0, 100000, True)
         number(player.get('melee_hit_rating', 0), 'melee_hit_rating', 0, 100000, True)
         number(player.get('expertise_rating', 0), 'expertise_rating', 0, 100000, True)
+        for stat in ('attack_power', 'ranged_attack_power', 'spell_power'):
+            number(player.get(stat, 0), stat, 0, 100000, True)
         number(player.get('security', 0), 'security', 0, 3, True)
         require(type(player.get('allow_regeneration', True)) is bool, 'allow_regeneration must be boolean')
         validate_raid_role(player)
@@ -608,8 +612,8 @@ def validate(scenario):
         if action in {'pvp', 'set_moving'}:
             require(type(step['enabled']) is bool, f'{where}: enabled must be boolean')
         if action == 'set_moving' and 'flag' in step:
-            require(step['flag'] in {'forward', 'backward', 'strafe_left', 'strafe_right'},
-                f'{where}: flag must be forward, backward, strafe_left or strafe_right')
+            require(step['flag'] in {'forward', 'backward', 'strafe_left', 'strafe_right', 'falling'},
+                f'{where}: flag must be forward, backward, strafe_left, strafe_right or falling')
         if 'all_specs' in step:
             require(type(step['all_specs']) is bool, f'{where}: all_specs must be boolean')
         if action == 'talent' and 'command' in step:
@@ -800,7 +804,7 @@ def validate(scenario):
             if 'creator_only' in step:
                 require(metric == 'owned_creature_count', f'{where}: creator_only needs owned_creature_count')
                 require(type(step['creator_only']) is bool, f'{where}: creator_only must be boolean')
-            if metric == 'equipped_item':
+            if metric in {'equipped_item', 'visible_item'}:
                 require(step['actor'] in player_ids, f'{where}: equipment metric needs a player')
                 number(step.get('slot'), f'{where}.slot', 0, 18, True)
             if metric in {'known_entry_rank', 'owned_creature_spell_proc_count'}:
@@ -1062,10 +1066,12 @@ def validate(scenario):
                 require('caster' not in step or 'spell' in step, f'{where}: aura caster filter needs spell')
                 if 'ranged_weapon_subclass' in step:
                     number(step['ranged_weapon_subclass'], f'{where}.ranged_weapon_subclass', 0, 20, True)
+                if 'sheath_state' in step:
+                    number(step['sheath_state'], f'{where}.sheath_state', 0, 2, True)
             if metric in {'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display',
                           'owned_creature_virtual_item', 'owned_creature_spacing', 'owned_creature_weapon_damage_min',
                           'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_victim',
-                          'owned_creature_armor'}:
+                          'owned_creature_armor', 'owned_creature_max_health'}:
                 require('entry' in step, f'{where}: metric needs creature entry')
             if metric == 'owned_creature_attackable':
                 require(step.get('target') in actor_ids, f'{where}: metric needs the attacking unit')
@@ -1146,7 +1152,7 @@ def validate(scenario):
                           'challenge_start_responses', 'challenge_start_code', 'owned_creature_scale', 'cast_failure',
                           'owned_creature_weapon_damage_min', 'owned_creature_spell_hit_chance',
                           'owned_creature_attackable', 'owned_creature_victim', 'owned_creature_virtual_item',
-                          'owned_creature_armor',
+                          'owned_creature_armor', 'owned_creature_max_health',
                           'pet_entry', 'pet_aura_stacks', 'pet_is_banker', 'pet_display', 'pet_native_display', 'pet_scale',
                           'pet_knows_spell', 'pet_distance', 'pet_casting', 'pet_loading',
                           'owned_creature_count', 'owned_creature_spacing', 'charm_entry',

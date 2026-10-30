@@ -316,7 +316,7 @@ class aura_ascension_witch_hunter_event : public AuraScript
                 break;
             }
             case 680516:
-                Cast(owner, other, 680517);
+                Brand(owner, other);
                 break;
             case 805346:
                 for (auto const& [id, state] : player->GetSpellMap())
@@ -326,7 +326,7 @@ class aura_ascension_witch_hunter_event : public AuraScript
                 break;
             case 680528:
             {
-                Cast(owner, other, 680517);
+                Brand(owner, other);
                 SpellInfo const* dot = sSpellMgr->GetSpellInfo(680532);
                 uint32 ticks = std::max(1, dot->GetDuration() / int32(dot->Effects[EFFECT_0].Amplitude));
                 CarryDamage(owner, other, 680532,
@@ -451,9 +451,31 @@ class aura_ascension_witch_hunter_event : public AuraScript
         OnProc += AuraProcFn(aura_ascension_witch_hunter_event::Proc);
     }
 };
+
+class aura_ascension_witch_hunter_anguish : public AuraScript
+{
+    PrepareAuraScript(aura_ascension_witch_hunter_anguish);
+
+    void ResetDarkflock(AuraEffect const*, AuraEffectHandleModes)
+    {
+        Player* player = GetTarget()->ToPlayer();
+        if (!player)
+            return;
+        for (auto const& [id, state] : player->GetSpellMap())
+            if (state->State != PLAYERSPELL_REMOVED && Family(sSpellMgr->GetSpellInfo(id), 0, 2))
+                player->RemoveSpellCooldown(id, true);
+    }
+
+    void Register() override
+    {
+        AfterEffectApply += AuraEffectApplyFn(aura_ascension_witch_hunter_anguish::ResetDarkflock, EFFECT_0,
+                                              SPELL_AURA_ADD_PCT_MODIFIER, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+    }
+};
 }
 
 void AddAscensionWitchHunterEventScripts()
 {
     RegisterSpellScript(aura_ascension_witch_hunter_event);
+    RegisterSpellScript(aura_ascension_witch_hunter_anguish);
 }
