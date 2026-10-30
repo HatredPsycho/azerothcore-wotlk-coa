@@ -56,7 +56,7 @@ METRICS = TIMELINE_METRICS | {
     'melee_damage_count', 'melee_damage_total',
     'pet_power', 'pet_max_power', 'spell_energize_count', 'spell_energize_total',
     'xp', 'next_level_xp', 'skill_value', 'skill_maximum', 'lfg_dungeon_disabled', 'lfg_lock_status', 'lfg_state',
-    'lfg_need_allowed',
+    'lfg_selected_dungeon_count', 'lfg_selected_dungeon', 'lfg_need_allowed',
     'map_id', 'instance_id',
     'in_arena', 'arena_team_members', 'arena_team_season_games', 'arena_team_season_wins',
     'battleground_team', 'team', 'name_query_race',
@@ -120,7 +120,8 @@ METRICS = TIMELINE_METRICS | {
     'carried_item_stat',
     'nearby_gameobject_count', 'nearby_gameobject_quest_active', 'nearby_gameobject_state', 'nearby_gameobject_scale',
     'nearby_gameobject_ground_offset',
-    'nearby_creature_count', 'map_creature_count', 'nearby_gameobject_at_client', 'voidportal_group',
+    'nearby_creature_count', 'map_creature_count', 'map_creatures_below_floor', 'nearby_gameobject_at_client',
+    'voidportal_group',
     'carried_money',
     'channel_object_entry',
     'quest_rewarded', 'has_achievement', 'has_title', 'spell_damage_taken', 'melee_damage_taken', 'spell_healing_taken',
@@ -138,7 +139,7 @@ METRICS = TIMELINE_METRICS | {
     'aura_crit_chance', 'aura_script_value', 'melee_hit_chance', 'spell_hit_chance', 'spell_power',
     'spell_done_crit_chance', 'spell_taken_crit_chance', 'spell_done_crit_chance_scripted', 'ranged_taken_crit_chance',
     'melee_spell_damage_done', 'melee_spell_damage_done_scripted', 'script_melee_damage_taken',
-    'script_melee_damage_dealt',
+    'script_melee_hit_taken', 'script_melee_damage_dealt',
     'script_spell_damage_taken', 'script_periodic_damage_taken', 'script_heal_received', 'spell_effect_value',
     'block_chance', 'block_value', 'critical_block_chance', 'spell_critical_damage', 'armor_reduced_damage',
     'aoe_damage_taken', 'reputation_gain', 'spell_immune', 'spell_effect_immune', 'melee_attack_count',
@@ -173,7 +174,8 @@ PLAYER_STAT_METRICS = {
     'melee_hit_chance', 'spell_power', 'spell_done_crit_chance',
     'spell_taken_crit_chance', 'spell_done_crit_chance_scripted', 'melee_spell_damage_done',
     'melee_spell_damage_done_scripted',
-    'script_melee_damage_taken', 'script_melee_damage_dealt', 'script_spell_damage_taken',
+    'script_melee_damage_taken', 'script_melee_hit_taken', 'script_melee_damage_dealt',
+    'script_spell_damage_taken',
     'script_periodic_damage_taken', 'script_heal_received', 'spell_effect_value',
     'block_chance', 'block_value', 'critical_block_chance', 'spell_critical_damage', 'armor_reduced_damage',
     'aoe_damage_taken', 'reputation_gain', 'spell_immune', 'spell_effect_immune', 'melee_attack_count',
@@ -875,7 +877,10 @@ def validate(scenario):
                     f'{where}: placement audit metric needs an earlier placement_audit')
             if metric == 'map_creature_count':
                 require(step['actor'] in player_ids, f'{where}: creature count needs a player')
-                number(step.get('entry'), f'{where}.entry', 1, 2**32 - 1, True)
+                if 'entry' in step:
+                    number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
+            if metric == 'map_creatures_below_floor':
+                require(step['actor'] in player_ids, f'{where}: floor check needs a player')
             if metric == 'nearby_creature_count':
                 require(step['actor'] in player_ids, f'{where}: creature count needs a player')
                 number(step.get('entry'), f'{where}.entry', 1, 2**32 - 1, True)
@@ -894,6 +899,10 @@ def validate(scenario):
                         f'{where}: creature level bounds are reversed')
             if metric == 'lfg_state':
                 require(step['actor'] in player_ids, f'{where}: LFG state metric needs a player')
+            if metric in {'lfg_selected_dungeon_count', 'lfg_selected_dungeon'}:
+                require(step['actor'] in player_ids, f'{where}: LFG selected dungeon metric needs a player')
+            if metric == 'lfg_selected_dungeon':
+                number(step.get('dungeon'), f'{where}.dungeon', 1, 2**24 - 1, True)
             if metric == 'lfg_need_allowed':
                 require(step['actor'] in player_ids, f'{where}: LFG Need metric needs a player')
                 number(step.get('item'), f'{where}.item', 1, 2**32 - 1, True)

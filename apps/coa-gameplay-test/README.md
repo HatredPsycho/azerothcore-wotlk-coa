@@ -766,6 +766,9 @@ periodic aura effect's snapshotted crit chance; `aura_script_value` requires `ke
 the latter two) and return 1000 after the registered module damage-taken hooks. With `entry` they take the actor's
 owned creature of that entry as the victim instead of the actor. `script_heal_received` requires
 `spell` and `target` as the healer and returns 1000 after the registered heal-received hooks, with the actor as recipient.
+`script_melee_hit_taken` requires `target` as the attacker and returns the mean of 2000 of its main-hand blows
+on the actor before armor: the weapon roll with the melee range hooks, the done and taken bonuses and the melee
+damage hooks, as `Unit::CalculateMeleeDamage` applies them.
 `script_melee_damage_dealt` requires `target` as the victim and returns 1000 after the registered melee damage hooks
 with the actor as the attacker.
 `set_health` also accepts a creature actor, or `pet: true` with a player actor to set its current pet's health.
@@ -974,6 +977,9 @@ server lists for that dungeon in the player's Dungeon Finder info (0 when it is 
 `LfgLockStatusType`, such as 2 too low level or 4 too low gear score).
 `lfg_state` takes a player `actor` and returns its native Dungeon Finder state (0 none, 1 role check, 2 queued,
 3 proposal, 4 vote kick, 5 in dungeon, 6 finished dungeon, 7 raid browser).
+`lfg_selected_dungeon_count` takes a player `actor` and returns how many dungeons the server keeps as that player's
+Dungeon Finder selection; `lfg_selected_dungeon` also takes an LFGDungeons.dbc `dungeon` id and returns 1 when the
+selection holds it, otherwise 0.
 `lfg_need_allowed` takes a player `actor` and an `item` entry and returns 1 when the native Dungeon Finder
 loot rule lets the actor roll Need on that item at the actor's position, otherwise 0. Outside a Dungeon Finder
 group or its dungeon every item returns 1.
@@ -1020,8 +1026,12 @@ all 19 map/mode pairs per tier and a real VanCleef killing blow, without a GM ac
 60 yards. Optional `min_level` and `max_level` filter their native levels; `min_home_distance` keeps creatures
 at least that many yards from their own home positions (2D), and `spell` those carrying that aura. This can
 observe movement and auras of native summons without creating or controlling them.
-`map_creature_count` requires a player and `entry`, and counts living spawned creatures of that entry loaded
-anywhere on the player's map, in any phase; a spawn whose grid is not loaded is not counted.
+`map_creature_count` requires a player and counts living spawned creatures loaded anywhere on the player's map,
+in any phase, of `entry` when given and of every entry otherwise; a spawn whose grid is not loaded is not counted.
+`map_creatures_below_floor` requires a player and counts those loaded living spawns that stand more than 3 yards
+below the floor under them, or over no floor at all. The floor is searched downward from the higher of the
+creature's current Z and its spawn Z, so a creature that sank through the ground counts while one that walked
+down a ramp does not. Each one counted is logged with its spawn id, position and floor.
 `nearby_gameobject_state` takes `entry` and returns the state of the nearest such gameobject within 20 yards
 (0 open, 1 closed, 99 none).
 `nearby_gameobject_scale` takes `entry` and returns the object scale of the nearest such gameobject within
