@@ -1829,6 +1829,7 @@ public:
     [[nodiscard]] uint32 GetFreePrimaryProfessionPoints() const { return GetUInt32Value(PLAYER_CHARACTER_POINTS2); }
     void SetFreePrimaryProfessions(uint16 profs) { SetUInt32Value(PLAYER_CHARACTER_POINTS2, profs); }
     void InitPrimaryProfessions();
+    [[nodiscard]] bool SpendsPrimaryProfessionSlot(SpellInfo const* spellInfo) const;
 
     [[nodiscard]] PlayerSpellMap const& GetSpellMap() const { return m_spells; }
     PlayerSpellMap&       GetSpellMap()       { return m_spells; }
