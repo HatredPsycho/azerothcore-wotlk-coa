@@ -10,6 +10,7 @@
 #include "AscensionClientDbcStream.h"
 #include "AscensionFelsworn.h"
 #include "AscensionHighRiskPolicy.h"
+#include "AscensionRulesets.h"
 #include "AscensionItemScaling.h"
 #include "AscensionPyromancer.h"
 #include "AscensionCultist.h"
@@ -17,6 +18,7 @@
 #include "AscensionTinker.h"
 #include "AscensionTinkerData.h"
 #include "AscensionSunCleric.h"
+#include "AscensionStormbringer.h"
 #include "AscensionXoroth.h"
 #include "AllCreatureScript.h"
 #include "AllItemScript.h"
@@ -2114,6 +2116,7 @@ public:
         return false;
       }
 
+    bool const callerPlacesBar = requestedSpec.has_value();
     std::unordered_map<uint32, uint32> wanted;
     std::unordered_set<uint32> received;
     std::unordered_set<uint32> selectedGroups;
@@ -2292,7 +2295,7 @@ public:
       }
     }
 
-    if (std::string reason; switching && !SwitchSpecialization(player, targetSpec, &reason, false))
+    if (std::string reason; switching && !SwitchSpecialization(player, targetSpec, &reason, false, !callerPlacesBar))
     {
       refusal = SpecializationSwitchRefused(targetSpec, std::move(reason));
       return false;
@@ -2322,8 +2325,12 @@ public:
         refusal.Result = "CA_UPDATE_ENTRIES_UNKNOWN";
         refusal.Entry = entry->EntryId;
         refusal.Rank = rank;
+        if (switching && !callerPlacesBar)
+          RestoreBarButtons(player, targetSpec, activeSpecialization);
         return false;
       }
+    if (switching && !callerPlacesBar)
+      RestoreBarButtons(player, targetSpec, activeSpecialization);
 
     if (payment.Marks)
       player->DestroyItemCount(AscensionCoATalentState::MARK_OF_ASCENSION_ITEM, payment.Marks, true);
@@ -2691,7 +2698,7 @@ public:
   }
 
   bool SwitchSpecialization(Player* player, uint32 specializationId, std::string* refusal = nullptr,
-                            bool restoreStoredBuild = true)
+                            bool restoreStoredBuild = true, bool rememberBar = true)
   {
     if (!IsAscensionCustomClass(player) || (!specializationId && restoreStoredBuild))
       return false;
@@ -2751,7 +2758,7 @@ public:
             if (spellId && player->HasSpell(spellId))
               talentSpells.insert(spellId);
       player->SendActionButtons(2);
-      if (restoreStoredBuild)
+      if (rememberBar)
         RememberBarButtons(player, previousSpecialization, talentSpells);
     }
     for (AscensionCompatData::CoATalentEntry const &entry :
@@ -2782,7 +2789,7 @@ public:
     uint32 granted = SynchronizeProgression(player);
     if (restoreStoredBuild)
       RestoreBarButtons(player, specializationId, previousSpecialization);
-    else
+    else if (!rememberBar)
       player->SendInitialActionButtons();
     ChatHandler(player->GetSession())
         .PSendSysMessage(
@@ -5416,6 +5423,11 @@ private:
     }
     if (info->Id == AscensionSunCleric::Dawn)
       row.Values[4] = info->Attributes;
+    if (info->Id == AscensionStormbringer::SPELL_ATMOSPHERIC_PRESSURE)
+    {
+      row.Values[SPELL_ATTRIBUTES_FIELD] = info->Attributes;
+      row.Values[SPELL_ATTRIBUTES_FIELD + 5] = info->AttributesEx5;
+    }
     if (info->Id == 805027 ||
         (info->Id >= 807938 && info->Id <= 807941))
     {
@@ -7985,10 +7997,10 @@ public:
         };
 
         static std::unordered_set<std::string_view> const secureAscensionAddons = {
-            "AscensionUI", "Ascension_Collections", "Ascension_CompactRaidFrames", "Ascension_EnchantCollection",
+            "AscensionUI", "Ascension_CharacterAdvancement", "Ascension_CharacterAdvancementSeason9",
+            "Ascension_Collections", "Ascension_CompactRaidFrames", "Ascension_EnchantCollection",
             "Ascension_HelpUI", "Ascension_InspectUI", "Ascension_Manastorm", "Ascension_MythicPlus",
-            "Ascension_SeasonCollection",
-            "Ascension_TicketUI", "Ascension_UIDevelopmentTools", "Ascension_WildCard",
+            "Ascension_SeasonCollection", "Ascension_TicketUI", "Ascension_UIDevelopmentTools", "Ascension_WildCard",
         };
 
         std::vector<std::string> names = session->GetClientAddonNames();
@@ -10753,8 +10765,8 @@ class spell_ascension_vanity_use_restriction : public SpellScript
                     : "Only usable as Guild Master or Officer.";
             case SPELL_SUMMON_PORTABLE_TRANSPOLYPORTER:
             case SPELL_PORTABLE_TRANSPOLYPORTER_TELEPORT:
-                return player->HasAura(HighRisk::HighRiskAura) ? "Cannot be used by High-Risk players."
-                    : std::string_view{};
+                return player->HasAura(HighRisk::HighRiskAura) || AscensionRulesets::HighRiskSuspended(player)
+                    ? "Cannot be used by High-Risk players." : std::string_view{};
             default:
                 return player->GetMap()->IsDungeon() ? "Can only be used on continents and in battlegrounds."
                     : std::string_view{};

@@ -89,12 +89,12 @@ METRICS = TIMELINE_METRICS | {
     'system_messages',
     'system_message_contains', 'whispers_received', 'challenge_start_responses', 'challenge_start_code',
     'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display', 'owned_creature_virtual_item',
-    'owned_creature_armor', 'owned_creature_max_health',
+    'owned_creature_armor', 'owned_creature_max_health', 'owned_creature_health',
     'unit_scale', 'combat_reach',
     'token_count', 'item_sell_price', 'monster_chat_count', 'creature_model_scale', 'creature_model_display',
     'taxi_node', 'in_flight', 'taxi_destination', 'stabled_pet_count', 'stable_result', 'pet_rows', 'instance_binds_listed', 'pet_entry', 'pet_aura_stacks', 'pet_aura_duration_ms', 'pet_is_banker', 'pet_display',
-    'pet_native_display', 'race', 'pet_scale', 'pet_knows_spell', 'pet_distance', 'pet_bearing', 'pet_casting',
-    'pet_loading', 'pet_spell_bar_count',
+    'pet_native_display', 'race', 'faction', 'pet_scale', 'pet_knows_spell', 'pet_distance', 'pet_bearing',
+    'pet_casting', 'pet_loading', 'pet_spell_bar_count',
     'owned_creature_count', 'owned_creature_spacing', 'owned_creature_weapon_damage_min',
     'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_victim',
     'charm_entry', 'charm_aura_stacks', 'controls_self', 'viewpoint_entry', 'seer_entry', 'private_instance',
@@ -155,7 +155,7 @@ METRICS = TIMELINE_METRICS | {
     'quest_menu_items', 'quest_menu_has', 'player_setting', 'server_packets', 'server_packet_u8', 'server_packet_u32',
     'server_packet_float', 'server_packet_contains',
     'known_entry_rank',
-    'pet_autocast_enabled', 'pet_react_state', 'pet_player_react_state', 'combo_points', 'game_mode_mask', 'owned_creature_spell_proc_count',
+    'pet_autocast_enabled', 'pet_react_state', 'pet_free_talent_points', 'pet_player_react_state', 'combo_points', 'game_mode_mask', 'owned_creature_spell_proc_count',
     'player_class', 'cached_class', 'at_login_flag', 'wildcard_starter_spells_known', 'action_bar_unknown_spells',
     'wildcard_spells_known', 'wildcard_cards_pending', 'wildcard_cards_collected', 'wildcard_roll_cards_set',
     'wildcard_roll_cards_used', 'wildcard_bonus_pack_progress',
@@ -229,7 +229,7 @@ ACTIONS = {
     'cancel_aura': ({'actor', 'spell'}, {'actor', 'spell'}),
     'cancel_mount': ({'actor'}, {'actor'}),
     'cast': ({'actor', 'spell'}, {'actor', 'spell', 'target', 'destination', 'target_pet', 'target_item',
-                                  'target_gameobject'}),
+                                  'target_gameobject', 'target_owned_entry'}),
     'attack': ({'actor', 'target'}, {'actor', 'target', 'pet'}),
     'pvp': ({'actor', 'enabled'}, {'actor', 'enabled'}),
     'group': ({'actor', 'target'}, {'actor', 'target', 'loot_method', 'master_looter'}),
@@ -242,7 +242,7 @@ ACTIONS = {
     'encounter_credit': ({'actor', 'entry'}, {'actor', 'entry'}),
     'encounter_start': ({'actor', 'boss_entry'}, {'actor', 'boss_entry', 'radius'}),
     'leave_group': ({'actor'}, {'actor'}),
-    'die': ({'actor'}, {'actor', 'revived'}),
+    'die': ({'actor'}, {'actor', 'revived', 'pet'}),
     'release_spirit': ({'actor'}, {'actor'}),
     'cast_charm': ({'actor', 'spell'}, {'actor', 'spell', 'target', 'pet', 'destination'}),
     'gossip_hello': ({'actor'}, {'actor', 'target'}),
@@ -297,6 +297,7 @@ ACTIONS = {
     'mapless_loot_hook': ({'actor', 'store'}, {'actor', 'store'}),
     'set_skill': ({'actor', 'skill', 'value', 'maximum'}, {'actor', 'skill', 'value', 'maximum'}),
     'gather_skill': ({'actor', 'skill', 'required'}, {'actor', 'skill', 'required'}),
+    'give_xp': ({'actor', 'amount'}, {'actor', 'amount'}),
     'set_xp_enabled': ({'actor', 'enabled'}, {'actor', 'enabled'}),
     'set_level': ({'actor', 'value'}, {'actor', 'value'}),
     'set_health': ({'actor'}, {'actor', 'value', 'percent', 'pet', 'maximum'}),
@@ -572,6 +573,10 @@ def validate(scenario):
                 require(type(step['target_pet']) is bool, f'{where}: target_pet must be boolean')
                 require(step['actor'] in player_ids and 'target' not in step,
                         f'{where}: target_pet casts from a player at their current pet')
+            if action == 'cast' and 'target_owned_entry' in step:
+                require(step['actor'] in player_ids and 'target' not in step and 'target_pet' not in step,
+                        f'{where}: target_owned_entry casts from a player at a creature they own')
+                number(step['target_owned_entry'], f'{where}.target_owned_entry', 1, 2**32 - 1, True)
         for key in ('target', 'caster'):
             if key in step:
                 require(step[key] in actor_ids, f'{where}: unknown {key}')
@@ -687,6 +692,8 @@ def validate(scenario):
         if action == 'gather_skill':
             require(step['skill'] in {182, 186, 393, 633, 773, 755}, f'{where}: unsupported gathering skill')
             number(step['required'], f'{where}.required', 0, 450, True)
+        if action == 'give_xp':
+            number(step['amount'], f'{where}.amount', 1, 2**31 - 1, True)
         if action == 'set_xp_enabled':
             require(type(step['enabled']) is bool, f'{where}: enabled must be boolean')
         if action == 'money':
@@ -707,6 +714,9 @@ def validate(scenario):
                 require(step['code_actor'] in player_ids, f'{where}: code_actor must be a player')
         if action == 'die' and 'revived' in step:
             require(type(step['revived']) is bool, f'{where}: revived must be boolean')
+        if action == 'die' and 'pet' in step:
+            require(type(step['pet']) is bool and 'revived' not in step,
+                    f'{where}: pet death is a boolean without revived')
         if action == 'relog':
             require(step['actor'] in player_ids, f'{where}: relog needs a player')
             if 'race' in step:
@@ -770,7 +780,8 @@ def validate(scenario):
                 require(isinstance(field, dict) and len(field) == 1, f'{where}.fields[{index}]: expected one typed value')
                 (kind, value), = field.items()
                 require(kind in {'u8', 'u32', 'u64', 'string', 'buyback_guid', 'item_guid', 'item_bag', 'item_slot', 'gameobject_guid',
-                                 'actor_guid', 'packed_actor_guid',
+                                 'mail_id', 'mail_item_guid',
+                                 'actor_guid', 'packed_actor_guid', 'nearest_creature_guid',
                                  'pet_guid', 'stabled_pet', 'duel_arbiter', 'invited_battleground_type',
                                  'wildcard_entry', 'wildcard_pending_cards', 'wildcard_lowest_card'},
                         f'{where}.fields[{index}]: unknown field type')
@@ -783,6 +794,7 @@ def validate(scenario):
                 else:
                     maximum = {'u8': 255, 'u32': 2**32 - 1, 'u64': 2**64 - 1, 'buyback_guid': 2**31 - 1,
                                'item_guid': 2**32 - 1, 'item_bag': 2**32 - 1, 'item_slot': 2**32 - 1, 'gameobject_guid': 2**32 - 1,
+                               'mail_id': 2**32 - 1, 'mail_item_guid': 2**32 - 1, 'nearest_creature_guid': 2**32 - 1,
                                'stabled_pet': 3, 'wildcard_entry': 255, 'wildcard_pending_cards': 1000,
                                'wildcard_lowest_card': 7}[kind]
                     number(value, f'{where}.fields[{index}]', 0, maximum, True)
@@ -1080,7 +1092,7 @@ def validate(scenario):
             if metric in {'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display',
                           'owned_creature_virtual_item', 'owned_creature_spacing', 'owned_creature_weapon_damage_min',
                           'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_victim',
-                          'owned_creature_armor', 'owned_creature_max_health'}:
+                          'owned_creature_armor', 'owned_creature_max_health', 'owned_creature_health'}:
                 require('entry' in step, f'{where}: metric needs creature entry')
             if metric == 'owned_creature_attackable':
                 require(step.get('target') in actor_ids, f'{where}: metric needs the attacking unit')
@@ -1161,7 +1173,7 @@ def validate(scenario):
                           'challenge_start_responses', 'challenge_start_code', 'owned_creature_scale', 'cast_failure',
                           'owned_creature_weapon_damage_min', 'owned_creature_spell_hit_chance',
                           'owned_creature_attackable', 'owned_creature_victim', 'owned_creature_virtual_item',
-                          'owned_creature_armor', 'owned_creature_max_health',
+                          'owned_creature_armor', 'owned_creature_max_health', 'owned_creature_health',
                           'pet_entry', 'pet_aura_stacks', 'pet_is_banker', 'pet_display', 'pet_native_display', 'pet_scale',
                           'pet_knows_spell', 'pet_distance', 'pet_bearing', 'pet_casting', 'pet_loading',
                           'owned_creature_count', 'owned_creature_spacing', 'charm_entry',
