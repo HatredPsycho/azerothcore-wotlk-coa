@@ -13625,11 +13625,6 @@ bool Player::isHonorOrXPTarget(Unit* victim) const
     return true;
 }
 
-bool Player::IsKillXPAuraEffect(AuraEffect const* effect)
-{
-    return (effect->GetMiscValue() & XP_AURA_SOURCE_KILL) != 0;
-}
-
 void Player::SetGrantableLevels(uint8 val)
 {
     m_grantableLevels = val;

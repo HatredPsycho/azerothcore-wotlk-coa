@@ -50,11 +50,6 @@ inline bool _ModifyUInt32(bool apply, uint32& baseValue, int32& amount)
 
 namespace
 {
-int32 RoundedStat(float value)
-{
-    return int32(std::lround(value));
-}
-
 float GetAscensionStatFromStatBonus(Player const& player, Stats destinationStat)
 {
     float bonus = 0.0f;
@@ -161,9 +156,7 @@ bool Player::UpdateStats(Stats stat)
     // value = ((base_value * base_pct) + total_value) * total_pct
     float value = GetTotalStatValue(stat, GetAscensionStatFromStatBonus(*this, stat));
 
-    // Rounded, not truncated: a percentage buff on a small base (3% of 32 Intellect at level 60)
-    // would otherwise often vanish. The other totals stay truncated as in stock.
-    SetStat(stat, RoundedStat(value));
+    SetStat(stat, int32(value));
 
     switch (stat)
     {
@@ -297,7 +290,7 @@ bool Player::UpdateAllStats()
     for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
     {
         float value = GetTotalStatValue(Stats(i));
-        SetStat(Stats(i), RoundedStat(value));
+        SetStat(Stats(i), int32(value));
     }
 
     // Source stats must be current before evaluating aura 327. Keeping the
@@ -309,7 +302,7 @@ bool Player::UpdateAllStats()
         {
             Stats const stat = Stats(i);
             float value = GetTotalStatValue(stat, GetAscensionStatFromStatBonus(*this, stat));
-            SetStat(stat, RoundedStat(value));
+            SetStat(stat, int32(value));
         }
     }
 
@@ -1352,7 +1345,7 @@ bool Guardian::UpdateStats(Stats stat)
         return false;
 
     float value = GetTotalStatValue(stat);
-    SetStat(stat, RoundedStat(value));
+    SetStat(stat, int32(value));
 
     switch (stat)
     {

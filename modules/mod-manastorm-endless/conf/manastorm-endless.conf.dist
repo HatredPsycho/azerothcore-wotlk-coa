@@ -49,9 +49,9 @@ Manastorm.Objective.NativeHighlight = 0
 #   2 = reward icons anchor below the Potential Rewards divider
 #   4 = the queue panel handles an empty enterable-level list and uncached reward items
 #   8 = the loadout flyout hides when there are no loadout spells
-#  15 = all of the above (default)
+#  15 = all of the above
 # A /reload drops them until the next login.
-Manastorm.ClientUIFixes = 15
+Manastorm.ClientUIFixes = 0
 
 # Native Mobility covers all 36 listed class spell families automatically in Mode 2.
 # Runtime supporting auras follow the active mixture and are removed outside your Manastorm stage.

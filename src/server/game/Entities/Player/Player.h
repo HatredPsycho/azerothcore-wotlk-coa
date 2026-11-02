@@ -1016,15 +1016,6 @@ enum PlayerXPSource
     XPSOURCE_PROFESSION_SKILL = 6
 };
 
-// SPELL_AURA_MOD_XP_PCT carries in its misc value the mask of experience sources it modifies.
-enum XPAuraSourceMask : int32
-{
-    XP_AURA_SOURCE_KILL         = 0x01,
-    XP_AURA_SOURCE_QUEST        = 0x02,
-    XP_AURA_SOURCE_PROFESSION   = 0x04,
-    XP_AURA_SOURCE_BATTLEGROUND = 0x08
-};
-
 enum InstantFlightGossipAction
 {
     GOSSIP_ACTION_TOGGLE_INSTANT_FLIGHT = 500
@@ -2252,7 +2243,6 @@ public:
     bool isHonorOrXPTarget(Unit* victim) const;
 
     bool GetsRecruitAFriendBonus(bool forXP);
-    [[nodiscard]] static bool IsKillXPAuraEffect(AuraEffect const* effect);
     uint8 GetGrantableLevels() const { return m_grantableLevels; }
     void SetGrantableLevels(uint8 val);
 

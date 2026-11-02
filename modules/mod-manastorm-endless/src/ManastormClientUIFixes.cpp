@@ -212,7 +212,7 @@ namespace ManastormClientUIFixes
 {
     uint32 ConfiguredFixes()
     {
-        return sConfigMgr->GetOption<uint32>("Manastorm.ClientUIFixes", FIX_ALL, false) & FIX_ALL;
+        return sConfigMgr->GetOption<uint32>("Manastorm.ClientUIFixes", 0, false) & FIX_ALL;
     }
 
     std::string BuildLua(uint32 fixes)

@@ -7951,9 +7951,6 @@ void Player::_SaveSpells(CharacterDatabaseTransaction trans)
 {
     CharacterDatabasePreparedStatement* stmt = nullptr;
 
-    // A character's first save writes its whole spellbook (a companion that was just created knows over a thousand
-    // spells). New spells go out as multi-row INSERTs - same statement, same columns, same duplicate handling as
-    // CHAR_INS_CHAR_SPELL - instead of one round trip each, which is what made saving a large population take minutes.
     constexpr uint32 SPELLS_PER_INSERT = 200;
     std::string newSpellRows;
     uint32 newSpellCount = 0;
@@ -7961,7 +7958,7 @@ void Player::_SaveSpells(CharacterDatabaseTransaction trans)
     {
         if (!newSpellCount)
             return;
-        newSpellRows.pop_back(); // the trailing comma
+        newSpellRows.pop_back();
         trans->Append("INSERT INTO character_spell (guid, spell, specMask) VALUES " + newSpellRows +
             " ON DUPLICATE KEY UPDATE specMask = VALUES(specMask)");
         newSpellRows.clear();
