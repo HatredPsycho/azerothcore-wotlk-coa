@@ -8,6 +8,7 @@
 #include "AscensionAetherialReliquary.h"
 #include "AscensionAccountProgress.h"
 #include "AscensionClientDbcStream.h"
+#include "AscensionDisplayPatch.h"
 #include "AscensionFelsworn.h"
 #include "AscensionHighRiskPolicy.h"
 #include "AscensionRulesets.h"
@@ -413,7 +414,7 @@ constexpr uint32 APPEARANCE_CATEGORY_SHADOWHOUND = 68;
 constexpr uint32 APPEARANCE_CATEGORY_NECROMANCER_LICH_FORM = 67;
 constexpr uint32 APPEARANCE_CATEGORY_TAMED_BEAST = 33;
 constexpr uint32 APPEARANCE_CATEGORY_SUMMONED_DEMON = 34;
-constexpr uint32 TAME_BEAST_SPELL = 1515;
+constexpr uint32 TAME_CREATURE_SPELL = 13481;
 constexpr std::array<uint32, 3> CALL_PET_SPELLS = { 883, 574302, 1100883 };
 
 AscensionCollectionModels::Entry const* FindCollectionModel(uint32 creatureId);
@@ -4111,6 +4112,16 @@ public:
         _onDemandItemRows[player->GetGUID().GetCounter()].Add(sent);
     }
 
+    void ResendSkillLineAbilityRows(Player* player, uint32 spellId)
+    {
+        if (!ReceivesPatchRows(player))
+            return;
+
+        for (SkillLineAbilityPatchRow const& row : GetPreparedPatchRows().SkillLineAbilities)
+            if (!spellId || row[2] == spellId)
+                SendSkillLineAbilityRow(player, row);
+    }
+
     void SendLearnedRecipeItemRows(Player* player, uint32 spellId)
     {
         if (!player->IsInWorld())
@@ -5416,7 +5427,7 @@ private:
     if (!info)
       return;
 
-    if (info->Id == AscensionXoroth::SPELL_SACRIFICIAL_CIRCLE || AscensionCultist::Named(info, 804152))
+    if (info->Id == AscensionXoroth::SPELL_SACRIFICIAL_CIRCLE)
     {
       row.Values[SPELL_WIRE_SLOT(SPELL_CASTER_AURA_SPELL_FIELD)] = info->CasterAuraSpell;
       row.Values[SPELL_WIRE_SLOT(SPELL_EXCLUDE_CASTER_AURA_SPELL_FIELD)] = info->ExcludeCasterAuraSpell;
@@ -7703,7 +7714,7 @@ private:
       }
     }
 
-    Pet* pet = player->CreateTamedPetFrom(entry, TAME_BEAST_SPELL);
+    Pet* pet = player->CreateTamedPetFrom(entry, TAME_CREATURE_SPELL);
     if (!pet)
       return "APPLY_APPEARANCES_BAD_CREATURE_ENTRY";
     uint8 const level = player->GetLevel();
@@ -8462,7 +8473,10 @@ bool HandlePersonalBankActivate(Player* player, WorldPacket const& packet)
 
     auto itr = personalBankVaults.find(banker.GetCounter());
     if (itr == personalBankVaults.end())
+    {
+        AscensionPersonalBank::Closed(player);
         return false;
+    }
 
     if (!OwnsPlacedBank(player, itr->second.Kind))
     {
@@ -9911,6 +9925,7 @@ void ApplyAscensionExperienceContracts(SpellInfo* info)
             break;
         case 818059:
         {
+            int32 const professions = 4;
             SpellEffectInfo& kills = info->Effects[EFFECT_1];
             SpellEffectInfo& quests = info->Effects[EFFECT_2];
             if (kills.Effect != SPELL_EFFECT_APPLY_AREA_AURA_PARTY ||
@@ -9918,6 +9933,7 @@ void ApplyAscensionExperienceContracts(SpellInfo* info)
                 break;
             kills.BasePoints = 49;
             kills.DieSides = 1;
+            kills.MiscValue &= ~professions;
             quests.Effect = kills.Effect;
             quests.ApplyAuraName = SPELL_AURA_MOD_XP_QUEST_PCT;
             quests.BasePoints = kills.BasePoints;
@@ -9995,6 +10011,27 @@ public:
             ApplyAscensionReaperScytheRushContracts(spellInfo);
             ApplyAscensionBloodmageHemoglobeContract(spellInfo);
         }
+    }
+};
+
+class AscensionCompatMirrorImageScript : public GlobalScript
+{
+public:
+    AscensionCompatMirrorImageScript()
+        : GlobalScript("AscensionCompatMirrorImageScript", {GLOBALHOOK_ON_MIRRORIMAGE_DISPLAY_ITEM}) { }
+
+    void OnMirrorImageDisplayItem(Item const* item, uint32& display) override
+    {
+        Player const* owner = item->GetOwner();
+        if (!owner || !item->IsEquipped())
+            return;
+
+        uint32 const visibleEntry = owner->GetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + item->GetSlot() * 2);
+        if (visibleEntry == item->GetEntry())
+            return;
+
+        if (ItemTemplate const* appearance = sObjectMgr->GetItemTemplate(visibleEntry))
+            display = appearance->DisplayInfoID;
     }
 };
 
@@ -10823,6 +10860,14 @@ class spell_ascension_stick_on_a_carrot : public AuraScript
 
 }
 
+namespace AscensionDisplayPatch
+{
+void ResendSkillLineAbilityRows(Player* player, uint32 spellId)
+{
+    AscensionDisplayPatchService::Instance().ResendSkillLineAbilityRows(player, spellId);
+}
+}
+
 AscensionVanityOwnership::TestOverride::TestOverride(bool unlockAll, std::string const& starterItems)
     : _unlockAll(ascensionCompatConfig.GetConfigValue<bool>(AscensionCompatConfig::UNLOCK_ALL_VANITY)),
       _starterItems(ascensionCompatConfig.GetConfigValue<std::string>(AscensionCompatConfig::STARTER_VANITY_ITEMS))
@@ -11164,6 +11209,7 @@ void AddAscensionCompatScripts() {
   new AscensionCompatAllSpellScript();
   new AscensionCompatUnitScript();
   new AscensionCompatChangelogScript();
+  new AscensionCompatMirrorImageScript();
   new AscensionCompatWorldScript();
   new AscensionCompatAllCreatureScript();
 }

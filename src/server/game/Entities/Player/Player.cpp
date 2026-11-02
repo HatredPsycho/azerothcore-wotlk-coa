@@ -25,6 +25,7 @@
 #include "ArenaTeamMgr.h"
 #include "ArenaSeasonMgr.h"
 #include "AscensionBazaarTokenReserve.h"
+#include "AscensionDisplayPatch.h"
 #include "AscensionPooledVitality.h"
 #include "AscensionVanityOwnership.h"
 #include "Battlefield.h"
@@ -3028,6 +3029,7 @@ void Player::SendInitialSpells()
     }
 
     SendDirectMessage(&data);
+    AscensionDisplayPatch::ResendSkillLineAbilityRows(this);
 }
 
 void Player::SendUnlearnSpells()
@@ -3284,6 +3286,7 @@ void Player::SendLearnPacket(uint32 spellId, bool learn, bool keepActionButtons 
         data << uint32(spellId);
         data << uint16(0);
         SendDirectMessage(&data);
+        AscensionDisplayPatch::ResendSkillLineAbilityRows(this, spellId);
     }
     else
     {
@@ -13598,9 +13601,13 @@ uint32 Player::GetResurrectionSpellId()
 
     // Reincarnation (passive spell)  // prio: 1                  // Glyph of Renewed Life
     std::vector<uint32> const reincarnation = sSpellMgr->GetSpellAndRelatives(20608);
-    bool const knowsReincarnation = std::any_of(reincarnation.begin(), reincarnation.end(), [this](uint32 spellId) { return HasSpell(spellId); });
-    if (prio < 1 && knowsReincarnation && !HasSpellCooldown(21169) && (HasAura(58059) || HasItemCount(17030)))
-        spell_id = 21169;
+    auto const known = std::find_if(reincarnation.begin(), reincarnation.end(), [this](uint32 spellId) { return HasSpell(spellId); });
+    if (known != reincarnation.end())
+    {
+        uint32 const resurrect = sSpellMgr->GetSpellTwinFor(21169, *known);
+        if (prio < 1 && !HasSpellCooldown(resurrect) && (HasAura(58059) || HasItemCount(17030)))
+            spell_id = resurrect;
+    }
 
     return spell_id;
 }
@@ -15414,7 +15421,7 @@ bool Player::CanResummonPet(uint32 spellid)
 
     if (IsClass(CLASS_MAGE, CLASS_CONTEXT_PET))
     {
-        if (HasSpell(31687) && HasAuraOrTwin(70937))  //Has [Summon Water Elemental] spell and [Glyph of Eternal Water].
+        if (HasSpellOrTwin(31687) && HasAuraOrTwin(70937))  //Has [Summon Water Elemental] spell and [Glyph of Eternal Water].
             return true;
     }
 

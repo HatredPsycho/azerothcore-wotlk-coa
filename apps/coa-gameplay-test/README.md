@@ -537,6 +537,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `give_xp` | `actor`, `amount` (1..2^31-1): grant experience through native `Player::GiveXP` without a victim, so XP hooks and level gates apply. |
 | `set_xp_enabled` | `actor`, boolean `enabled`: fixture the native XP-lock flag. |
 | `set_level` | `actor`, `value` (1..80): fixture level change through native `GiveLevel`, including level-change hooks. |
+| `set_reputation` | `actor`, `id`, `value` (-42000..42999): fixture absolute standing with faction `id` through native `ReputationMgr::SetOneFactionReputation`, without spillover; rank hooks and achievement criteria still run. |
 | `set_health`, `set_power` | `actor`, `value` within native maximums; `set_power` accepts `power` (default 0). Optional `pet: true` selects the player's current pet. |
 | `set_health_pct` | Player `actor`, `pct` (1..99) and exactly one of `entry` (nearest living creature within 100 yards) or `target` (creature fixture id): deals the missing health as direct damage from the actor through `Unit::DealDamage`, so damage-driven phase hooks fire. Refuses to raise health. Use `attack_nearby` with `kill: true` for an early exit through the normal death path. |
 | `reset_cooldown` | Player `actor`, `spell`: reset that native spell cooldown between independent cases. |
@@ -682,6 +683,7 @@ It does not execute an attack.
 (default 0), including spell school, armor bypass and bleed mechanics.
 `aoe_damage_taken` applies native area damage avoidance to 1000 damage for `school` (0..6).
 `reputation_gain` calculates a native spell reputation reward of 1000 for faction `id`, without granting it.
+`reputation` reads the actor's absolute standing with faction `id` (base standing for its race and class included).
 `spell_immune` and `spell_effect_immune` query native immunity against `spell` from `target`; the latter
 accepts `effect` (default 0). These queries submit no attack.
 `melee_attack_count` counts the actor's native melee combat packets, including extra attacks and misses.
@@ -689,6 +691,11 @@ accepts `effect` (default 0). These queries submit no attack.
 `melee_damage_total` sums the positive melee damage in those packets and accepts the same hand filter.
 `melee_attacks_taken` counts the melee combat packets whose victim is the player actor, optionally only those from
 the `target` attacker.
+`pet_melee_swings`, `pet_melee_crits`, `pet_melee_glancing`, `pet_melee_plain_count`, `pet_melee_plain_damage`
+and `pet_melee_damage` read the melee combat packets the player actor received from its current pet, or with
+`entry` from every creature of that entry: all swings, critical hits, glancing blows, the count and summed damage
+of the remaining hits that dealt damage, and the summed damage of every swing. Snapshot them around a fight;
+`ratio_to` a plain-count snapshot gives an average plain hit.
 These observations do not test delivery to a network client.
 `spell_damage_count` and `spell_damage_total` require `spell` and count positive direct or periodic spell
 damage events, or sum their post-mitigation damage, from the actor's native combat packets. Optional `target`
@@ -798,6 +805,8 @@ returns the highest per-item level that native item scaling stored for such an i
 `loot_slot` with `item` also picks up a copy of that item.
 `creature_loot_quality_rate` requires `entry` (a creature loot id), fills that template `rolls` times (default 10000)
 for the actor and reports the percentage of fills holding an item of at least `quality` (default 3, rare).
+`item_loot_item_rate` requires `entry` (an item loot id, the container's item entry) and `item`, fills that template
+10000 times for the actor and reports the percentage of fills holding `item`.
 `forced_loot_count` requires `item`, adds it directly through `Loot::AddItem` with the actor as loot owner
 (bypassing any loot table), and reports how many uncollected copies survive that call; a gate inside `AddItem`
 that rejects the item for that actor reports zero.
@@ -919,6 +928,7 @@ An optional `spell` restricts the count to creatures with that aura; `caster` ca
 `ranged_weapon_subclass` (0..20) restricts the count to creatures carrying a weapon of that item subclass
 in their ranged virtual equipment slot; subclass 2 means bows. This observes server equipment, not client rendering.
 `sheath_state` (0..2) restricts it to creatures whose server sheath state is unarmed, melee or ranged (2).
+`target` restricts it to creatures whose current victim is that scenario unit.
 `owned_creature_spacing` requires a player and `entry`. It reads the smallest 2D distance between two of those
 living creatures, selected as `owned_creature_count` does, or zero when fewer than two are present.
 `owned_creature_visible` requires a player and `entry` and reads one matching summon's server visibility,
@@ -1056,6 +1066,8 @@ down a ramp does not. Each one counted is logged with its spawn id, position and
 (0 open, 1 closed, 99 none).
 `nearby_gameobject_scale` takes `entry` and returns the object scale of the nearest such gameobject within
 20 yards (0 when none).
+`nearby_gameobject_display` takes `entry` and returns the display id the server sends for the nearest such
+gameobject within 20 yards (0 when none); it does not verify client rendering.
 `nearby_gameobject_ground_offset` takes `entry` and returns the nearest such gameobject's Z minus the map's terrain
 height under it (negative when buried); it requires a gameobject to exist within 20 yards.
 `nearby_gameobject_at_client` takes `entry` and is 1 while the nearest such gameobject within 20 yards is in

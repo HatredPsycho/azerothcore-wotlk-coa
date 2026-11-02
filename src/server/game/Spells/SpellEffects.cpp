@@ -1596,7 +1596,8 @@ void Spell::EffectTriggerSpell(SpellEffIndex effIndex)
             && effectHandleMode == SPELL_EFFECT_HANDLE_LAUNCH_TARGET)
     {
         // special cases
-        switch (triggered_spell_id)
+        uint32 const cloakOfShadows = sSpellMgr->GetSpellTwinSource(triggered_spell_id);
+        switch (cloakOfShadows == 35729 ? cloakOfShadows : triggered_spell_id)
         {
             // Mirror Image
             case 58832:
@@ -4162,6 +4163,7 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
     }
 
     Pet* OldSummon = owner->GetPet();
+    bool const keepsPetCooldowns = owner->getClass() == CLASS_TINKER;
 
     // if pet requested type already exist
     if (OldSummon)
@@ -4184,12 +4186,15 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
 
             OldSummon->SetHealth(OldSummon->GetMaxHealth());
             OldSummon->SetPower(OldSummon->getPowerType(), OldSummon->GetMaxPower(OldSummon->getPowerType()));
-            // notify player
-            for (CreatureSpellCooldowns::const_iterator itr = OldSummon->m_CreatureSpellCooldowns.begin(); itr != OldSummon->m_CreatureSpellCooldowns.end(); ++itr)
-                owner->SendClearCooldown(itr->first, OldSummon);
+            if (!keepsPetCooldowns)
+            {
+                // notify player
+                for (CreatureSpellCooldowns::const_iterator itr = OldSummon->m_CreatureSpellCooldowns.begin(); itr != OldSummon->m_CreatureSpellCooldowns.end(); ++itr)
+                    owner->SendClearCooldown(itr->first, OldSummon);
 
-            // actually clear cooldowns
-            OldSummon->m_CreatureSpellCooldowns.clear();
+                // actually clear cooldowns
+                OldSummon->m_CreatureSpellCooldowns.clear();
+            }
             Unit::AuraApplicationMap& myAuras = OldSummon->GetAppliedAuras();
             for (Unit::AuraApplicationMap::iterator i = myAuras.begin(); i != myAuras.end();)
             {
@@ -4228,7 +4233,8 @@ void Spell::EffectSummonPet(SpellEffIndex effIndex)
     // Reset cooldowns
     if (!owner->IsClass(CLASS_HUNTER, CLASS_CONTEXT_PET))
     {
-        pet->m_CreatureSpellCooldowns.clear();
+        if (!keepsPetCooldowns)
+            pet->m_CreatureSpellCooldowns.clear();
         owner->PetSpellInitialize();
     }
 
@@ -4290,7 +4296,7 @@ void Spell::EffectTaunt(SpellEffIndex /*effIndex*/)
     }
 
     ThreatManager& mgr = unitTarget->GetThreatMgr();
-    if (mgr.GetCurrentVictim() == m_caster)
+    if (unitTarget->GetVictim() == m_caster)
     {
         SendCastResult(SPELL_FAILED_DONT_REPORT);
         return;
@@ -4429,9 +4435,6 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
                 // Stormstrike
                 if (AuraEffect* aurEff = m_caster->IsScriptOverriden(m_spellInfo, 5634))
                     m_caster->CastSpell(m_caster, 38430, true, nullptr, aurEff);
-                // Lava lash damage increased by Flametongue weapon
-                if (m_caster->GetAuraEffect(SPELL_AURA_DUMMY, SPELLFAMILY_SHAMAN, 688, EFFECT_0))
-                    AddPct(totalDamagePercentMod, 25.0f);
                 break;
             }
         case SPELLFAMILY_DRUID:
