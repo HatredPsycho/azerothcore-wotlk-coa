@@ -9,7 +9,11 @@
   "steps": [
     { "action": "wait", "label": "Let spawn settle", "ms": 3000 },
     { "action": "learn", "actor": "v", "spell": 803212 },
-    { "action": "learn", "actor": "v", "spell": 804980 },
+    { "action": "learn", "label": "The talent grants Weaver Form", "actor": "v", "spell": 706940 },
+    {
+      "action": "assert", "label": "SETUP: the talent grants Weaver Form", "actor": "v",
+      "metric": "knows_spell", "spell": 804980, "equals": 1, "within_ms": 3000
+    },
     { "action": "assert", "label": "SETUP: no form is active yet", "actor": "v", "metric": "aura", "spell": 803212, "equals": 0 },
     { "action": "cast", "actor": "v", "spell": 803212 },
     { "action": "assert", "label": "SETUP: Sea Serpent Form is active", "actor": "v", "metric": "aura",

@@ -14,7 +14,11 @@
   "steps": [
     { "action": "wait", "label": "Let spawn AI and level scaling settle", "ms": 5000 },
     { "action": "learn", "actor": "v", "spell": 707871 },
-    { "action": "learn", "actor": "v", "spell": 804980 },
+    { "action": "learn", "label": "The talent grants Weaver Form", "actor": "v", "spell": 706940 },
+    {
+      "action": "assert", "label": "SETUP: the talent grants Weaver Form", "actor": "v",
+      "metric": "knows_spell", "spell": 804980, "equals": 1, "within_ms": 3000
+    },
     { "action": "learn", "actor": "v", "spell": 804982 },
     { "action": "learn", "actor": "v", "spell": 804983 },
     {

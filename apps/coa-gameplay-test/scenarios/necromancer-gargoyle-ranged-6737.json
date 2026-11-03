@@ -5,7 +5,7 @@
   "timeout_ms": 60000,
   "location": { "map": 0, "x": -8917.41, "y": -115.853, "z": 82.3711, "o": 0 },
   "players": [
-    { "id": "n", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000 }
+    { "id": "n", "race": 5, "class": 23, "level": 60, "spell_hit_rating": 10000, "melee_hit_rating": 10000 }
   ],
   "creatures": [
     { "id": "golem", "owner": "n", "entry": 36, "level": 60, "health": 1000000, "distance": 15 }
@@ -32,8 +32,18 @@
       "metric": "aura", "spell": 704706, "equals": 0
     },
     { "action": "set_power", "label": "Runic Power for Command: Gargoyle", "actor": "n", "power": 6, "value": 500 },
+    { "action": "learn", "label": "Fixture stun: a stunned golem cannot dodge or parry the Command shot", "actor": "n", "spell": 23775 },
+    { "action": "cast", "label": "Stun the golem", "actor": "n", "spell": 23775, "target": "golem" },
+    { "action": "assert", "label": "SETUP: the golem is stunned", "actor": "golem", "metric": "stunned", "equals": 1, "within_ms": 1000 },
+    { "action": "wait", "label": "Global cooldown", "ms": 2000 },
     { "action": "attack", "label": "Target the golem for the self-cast Command", "actor": "n", "target": "golem" },
-    { "action": "cast", "label": "Command: Gargoyle on the Necromancer's target", "actor": "n", "spell": 504052 },
+    { "action": "cast", "label": "Command: Gargoyle on the Necromancer's target, attempt 1 because a shot can fail to land", "actor": "n", "spell": 504052 },
+    { "action": "wait", "label": "Global cooldown", "ms": 1600 },
+    { "action": "set_power", "label": "Runic Power for the next Command", "actor": "n", "power": 6, "value": 500 },
+    { "action": "cast", "label": "Command: Gargoyle on the Necromancer's target, attempt 2 because a shot can fail to land", "actor": "n", "spell": 504052 },
+    { "action": "wait", "label": "Global cooldown", "ms": 1600 },
+    { "action": "set_power", "label": "Runic Power for the next Command", "actor": "n", "power": 6, "value": 500 },
+    { "action": "cast", "label": "Command: Gargoyle on the Necromancer's target, attempt 3 because a shot can fail to land", "actor": "n", "spell": 504052 },
     {
       "action": "assert", "label": "The Command shot applies Bone Toss to the golem", "actor": "golem",
       "metric": "aura", "spell": 704706, "equals": 1, "within_ms": 2000

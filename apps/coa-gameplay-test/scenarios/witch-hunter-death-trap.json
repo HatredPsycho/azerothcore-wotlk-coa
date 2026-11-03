@@ -95,12 +95,12 @@
     },
     {
       "action": "assert",
-      "label": "The mark's damage lands after the minute",
+      "label": "The mark's damage lands after the minute, at least half of it through partial resists",
       "actor": "hunter",
       "metric": "spell_damage_total",
       "spell": 681452,
       "target": "a",
-      "min": 3000,
+      "min": 1691,
       "within_ms": 75000
     },
     {

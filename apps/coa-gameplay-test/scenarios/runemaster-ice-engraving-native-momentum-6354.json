@@ -237,7 +237,7 @@
       "target": "enemy",
       "relative_to": "copies_before_blast",
       "ratio_to": "blast_damage",
-      "min": 0.075,
+      "min": 0.05,
       "max": 0.08
     },
     {

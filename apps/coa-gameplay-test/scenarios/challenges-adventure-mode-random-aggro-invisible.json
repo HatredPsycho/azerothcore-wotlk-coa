@@ -10,11 +10,12 @@
     "z": 80.6
   },
   "players": [
-    { "id": "pulser", "race": 1, "class": 1, "level": 1 }
+    { "id": "pulser", "race": 1, "class": 1, "level": 1 },
+    { "id": "summoner", "race": 1, "class": 1, "level": 1 }
   ],
   "creatures": [
-    { "id": "wolf", "owner": "pulser", "entry": 299, "faction": 7, "level": 1, "health": 42, "distance": 12 },
-    { "id": "hidden_wolf", "owner": "pulser", "entry": 299, "faction": 7, "level": 1, "health": 42, "distance": 8 }
+    { "id": "wolf", "owner": "summoner", "entry": 299, "faction": 7, "level": 1, "health": 42, "distance": 12 },
+    { "id": "hidden_wolf", "owner": "summoner", "entry": 299, "faction": 7, "level": 1, "health": 42, "distance": 8 }
   ],
   "steps": [
     { "action": "wait", "ms": 5000 },
