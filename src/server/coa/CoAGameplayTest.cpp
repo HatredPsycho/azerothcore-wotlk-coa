@@ -42,6 +42,7 @@
 #include "GridTerrainLoader.h"
 #include "Group.h"
 #include "GroupMgr.h"
+#include "Guild.h"
 #include "InstanceScript.h"
 #include "Item.h"
 #include "LFGMgr.h"
@@ -4493,6 +4494,8 @@ private:
             if (metric == "armor_reduced_damage")
             {
                 Unit* attacker = step.get<bool>("pet", false) ? static_cast<Unit*>(player->GetPet()) : player;
+                if (auto const from = step.get_optional<std::string>("from"))
+                    attacker = GetUnit(*from);
                 Require(attacker != nullptr, "Armor probe needs a current pet");
                 return Unit::CalcArmorReducedDamage(attacker, target, 1000, info);
             }
@@ -4594,6 +4597,8 @@ private:
             return player->GetActiveSpec();
         if (metric == "bank_bag_slots")
             return player->GetBankBagSlotCount();
+        if (metric == "guild_bank_tabs")
+            return player->GetGuild() ? player->GetGuild()->GetBankTabCount() : -1;
         if (metric == "taxi_node")
             return player->m_taxi.IsTaximaskNodeKnown(step.get<uint32>("entry"));
         if (metric == "in_flight")
@@ -5049,6 +5054,15 @@ private:
         }
         if (metric == "monster_chat_count")
             return double(_actors.at(step.get<std::string>("actor")).monsterChats);
+        if (metric == "item_spell_ppm")
+        {
+            uint32 item = step.get<uint32>("item");
+            uint32 slot = step.get<uint32>("slot");
+            ItemTemplate const* proto = sObjectMgr->GetItemTemplate(item);
+            Require(proto != nullptr, "Unknown item in metric");
+            Require(slot < MAX_ITEM_PROTO_SPELLS, "Item spell slot out of range");
+            return proto->Spells[slot].SpellPPMRate;
+        }
         if (metric == "item_sell_price")
         {
             uint32 item = step.get<uint32>("item");
@@ -5280,6 +5294,7 @@ private:
             auto offStat = step.get_optional<uint32>("off_stat");
             auto quality = step.get_optional<uint32>("quality");
             auto belowArmorClass = step.get_optional<uint32>("below_armor_class");
+            bool const unwearable = step.get<bool>("unwearable", false);
             auto strongestAttributes = [](ItemTemplate const* proto)
             {
                 std::array<int32, ITEM_MOD_SPIRIT + 1> attributes{};
@@ -5297,10 +5312,12 @@ private:
                 return stats;
             };
             uint32 count = 0;
-            auto countItem = [pool, &count, &excluded, minRequiredLevel, maxRequiredLevel, &dominantStat, &offStat,
-                &quality, &belowArmorClass, &strongestAttributes](Item* item)
+            auto countItem = [player, pool, &count, &excluded, minRequiredLevel, maxRequiredLevel, &dominantStat,
+                &offStat, &quality, &belowArmorClass, unwearable, &strongestAttributes](Item* item)
             {
                 if (excluded && item->GetEntry() == *excluded)
+                    return;
+                if (unwearable && (!item->GetSkill() || player->GetSkillValue(item->GetSkill())))
                     return;
                 uint32 const requiredLevel = item->GetTemplate()->RequiredLevel;
                 if (requiredLevel < minRequiredLevel || requiredLevel > maxRequiredLevel)
