@@ -4270,6 +4270,9 @@ public:
         return;
       _fallbackTimers.erase(guid);
     }
+    WorldSession* session = player->GetSession();
+    bool const sendSpellVisuals = !session->HasAscensionSpellVisualRows();
+    session->SetAscensionSpellVisualRows();
 
     std::vector<ItemPatchRow> itemRows;
     std::unordered_set<uint32> itemIds = CollectOwnedItemIds(player);
@@ -4319,8 +4322,11 @@ public:
     for (QuestSuperTrackPatch const &patch : rows.QuestSuperTracks)
       bytes += SendQuestSuperTrackRow(player, QuestSuperTrackRowFor(patch, player->getRaceMask()));
 
-    bytes += SendSpellVisualRows(player);
-    bytes += SendSoundEntryRows(player);
+    if (sendSpellVisuals)
+    {
+      bytes += SendSpellVisualRows(player);
+      bytes += SendSoundEntryRows(player);
+    }
 
     for (SkillLineAbilityPatchRow const& row : rows.SkillLineAbilities)
         bytes += SendSkillLineAbilityRow(player, row);
