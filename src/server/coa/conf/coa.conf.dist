@@ -39,6 +39,11 @@ CoA.MapClass10ToWarrior = 1
 CoA.ProbeRelay.Enable = 0
 CoA.ProbeRelay.AccountPrefix = "COALAB"
 
+CoA.LevelBoostNpc.Enable = 0
+CoA.LevelBoostNpc.Level = 60
+CoA.LevelBoostNpc.GoldReward = 5000
+CoA.LevelBoostNpc.RuneOfDescensionReward = 2000000
+
 # Log each consumed extension packet during protocol discovery.
 CoA.LogConsumedPackets = 1
 
@@ -48,13 +53,7 @@ CoA.LogConsumedPackets = 1
 # the account's own characters is free. Farmed tokens above the reserve stay tradeable.
 CoA.BazaarTokens.WarchestRealmBound = 1
 
-# Hourly limit on earned Bazaar Tokens (975001), per account. The first token earned opens a window of
-# HourlyCap.WindowSeconds; within it the account earns at most HourlyCap.Amount tokens. A reward that would go over
-# pays the rest up to the limit, then nothing until the window has run out; the next token opens a new window.
-# Counted: Ethereal Bazaar kill, boss and quest tokens and quest reward items. Never limited: the Elite Warchest,
-# the Groot Coin exchange, Recruit-a-Friend rewards, GM commands and tokens moved between players.
-# Players see their progress with .tokencap. HourlyCap.Amount 0 turns the limit off.
-CoA.BazaarTokens.HourlyCap.Amount = 1250
+CoA.BazaarTokens.HourlyCap.Amount = 0
 CoA.BazaarTokens.HourlyCap.WindowSeconds = 3600
 
 # Ascension character screen: enable/disable (activate/deactivate) and the
