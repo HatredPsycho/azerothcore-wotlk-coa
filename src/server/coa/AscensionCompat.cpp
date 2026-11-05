@@ -2227,6 +2227,12 @@ public:
                     Acore::StringFormat("Talent entry {} is not purchasable and cannot be granted automatically.", item.EntryId) };
         return false;
     }
+    std::vector<AscensionCoATalentState::KnownEntry> current;
+    for (AscensionCompatData::CoATalentEntry const& entry : AscensionCompatData::CoATalentEntries)
+      if (entry.ClassId == player->getClass() && (entry.AECost || entry.TECost) &&
+          (!entry.SpecId || entry.SpecId == activeSpecialization))
+        if (uint32 const rank = KnownRank(player, entry))
+          current.push_back({ entry.EntryId, rank });
     for (AscensionCoATalentState::KnownEntry const& item : priced)
     {
         AscensionCompatData::CoATalentEntry const* entry = FindTalentEntry(item.EntryId);
@@ -2244,7 +2250,9 @@ public:
                         item.EntryId, requiredId) };
                 return false;
             }
-        if (char const* learnResult = TabInvestmentShortfall(priced, *entry))
+        if (char const* learnResult = TabInvestmentShortfall(priced, *entry);
+            learnResult && !(!switching && item.Rank <= KnownRank(player, *entry) &&
+                             TabInvestmentShortfall(current, *entry)))
         {
             refusal = { "CA_UPDATE_ENTRIES_NOT_TRAVERSIBLE", learnResult, item.EntryId, item.Rank,
                 Acore::StringFormat("Talent entry {} needs more points invested in its tab first.",
@@ -6320,7 +6328,7 @@ public:
     void OnCosmeticCancelled(Player* player, uint32 spellId)
     {
         auto state = GetState(player);
-        if (!state || !state->AppliedCosmeticSpells.contains(spellId))
+        if (!state || !state->AppliedCosmeticSpells.contains(spellId) || WearsOtherForm(player))
             return;
 
         for (uint32 category = 56; category <= 58; ++category)
@@ -8342,6 +8350,11 @@ private:
     player->GetSession()->SendPacket(&packet);
   }
 
+    static bool WearsOtherForm(Player const* player)
+    {
+        return player->GetDisplayId() != player->GetNativeDisplayId();
+    }
+
     void RefreshCosmetics(Player* player, PlayerCollectionState& state)
     {
         std::unordered_set<uint32> desired;
@@ -8357,7 +8370,7 @@ private:
             if (!desired.contains(spell))
                 player->RemoveAurasDueToSpell(spell, player->GetGUID());
         state.AppliedCosmeticSpells = std::move(desired);
-        if (!player->IsAlive())
+        if (!player->IsAlive() || WearsOtherForm(player))
             return;
         for (uint32 spell : state.AppliedCosmeticSpells)
         {
