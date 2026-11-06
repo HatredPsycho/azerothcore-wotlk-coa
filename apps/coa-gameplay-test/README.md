@@ -381,7 +381,8 @@ runs such a case exclusively because the setting is process-global. Optional
 `vanity_ownership: {"unlock_all": false, "starter_items": [98457]}` replaces `CoA.UnlockAllVanity` and
 `CoA.StarterVanityItems` for that case in the same way, and is likewise run exclusively. Optional
 `two_side: {"trade": true, "mail": false}` sets `AllowTwoSide.Trade` and `AllowTwoSide.Interaction.Mail` for that
-case (an omitted field is disabled) and is likewise run exclusively.
+case (an omitted field is disabled) and is likewise run exclusively. Its optional `group` sets
+`AllowTwoSide.Interaction.Group`, which keeps the configured value when omitted.
 The [talent and item scenario](scenarios/talent-and-items.json) exercises talent learning, passive removal,
 equipping a shirt and consuming a healing potion. It does not measure the talent's damage coefficient.
 The [Shadowblast scenario](scenarios/shadowblast-shadow-rage.json) reproduces a Shadow Rage pet-targeting crash
@@ -498,7 +499,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `group` | `actor`, `target`, optional `loot_method` (0-4) and `master_looter` (a player id, read with `loot_method`): fixture party; creates the actor's group if needed, adds an ungrouped player and sets the loot method and master looter. |
 | `loot_roll` | Player `actor`, `item`, `vote` (0 pass, 1 need, 2 greed, 3 disenchant): native `CMSG_LOOT_ROLL` on the group's pending roll for that item (or a level-scaled copy) in which the actor takes part. |
 | `master_loot_give` | Player `actor` as master looter, `item`, `target` (a player id): native `CMSG_LOOT_MASTER_GIVE` of that item from the actor's open loot to the target. |
-| `lfg_dungeon` | `actor`, LFGDungeons.dbc `dungeon`: fixture Dungeon Finder group; converts the actor's ordinary group to an LFG group assigned to that dungeon, as a completed proposal does. |
+| `lfg_dungeon` | `actor`, LFGDungeons.dbc `dungeon`: fixture Dungeon Finder group; converts the actor's ordinary group to an LFG group assigned to that dungeon, as a completed proposal does, and re-sends each member's scaled creature views. Conversion sets Need Before Greed; optional `loot_method` (0-4) sets another afterwards. |
 | `lfg_teleport` | Player `actor`, optional boolean `out` (default false): native `CMSG_LFG_TELEPORT` request into or out of the group's dungeon. |
 | `lfg_join` | Player `actor`, LFGDungeons.dbc `dungeons` list, `roles` mask (1 leader, 2 tank, 4 healer, 8 damage): native `CMSG_LFG_JOIN` queue request, as the Dungeon Finder button sends it. A group leader starts the role check. |
 | `lfg_set_roles` | Player `actor` in a group, `roles` mask: native `CMSG_LFG_SET_ROLES` answer to the group role check. |
@@ -580,7 +581,7 @@ Metrics: `health`, `max_health`, `creature_type`, `power`, `max_power`, `alive`,
 `level`, `quest_objective_count` (needs `quest`, optional `index`), `knows_spell`, `has_talent`, `talent_points`, `active_talent_spec`,
 `cooldown_ms`, `spell_cooldown_packet_ms`, `item_loot_releases`, `item_count`, `carried_item_count`, `bank_bag_slots`, `guild_bank_tabs`, `aura`, `aura_stacks`, `aura_charges`,
 `aura_duration_ms`, `aura_amount`, `pet_entry`, `pet_aura_stacks`, `owned_creature_count`, `owned_creature_spacing`,
-`charm_entry`, `charm_aura_stacks`, `controls_self`, `private_instance`, `dynamic_object`,
+`charm_entry`, `charm_distance`, `charm_aura_stacks`, `owned_creature_sent_faction`, `controls_self`, `private_instance`, `dynamic_object`,
 `dynamic_object_duration_ms`, `dynamic_object_height`, `distance`, `spell_proc_count`, `spell_proc_chance`,
 `aura_proc_rate`, `spell_cast_count`, `temporary_spell_replacement`,
 `carried_aura_count` (how many of the `spells` list the unit carries, optionally only from `caster`; for an
@@ -864,7 +865,9 @@ Optional `race` seeds the saved character's race through `CHAR_UPD_CHAR_RACE` an
 before login, retaining saved pet data. This fixtures the post-service state; it does not submit a race/faction
 service request or perform that service's spell, quest, faction, language or appearance conversions.
 Optional `offline_seconds` moves the saved logout time that far back, so the login handler treats the character
-as offline for that long (real-time item durations, rest). `item_duration` requires `item` and reads the
+as offline for that long (real-time item durations, rest). `reconnect` takes `actor` and hands the character, still in the world, to a new session through the native reconnect handler (`HandlePlayerLoginToCharInWorld`), as a client restarted before its character logged out would. No login hook runs; packets recorded on the actor accumulate across both sessions.
+
+`item_duration` requires `item` and reads the
 remaining duration in seconds of the first carried copy of that item.
 `race` reads the loaded unit's current race. `faction` reads its server faction template, which clients may be
 sent differently (`sent_faction`). `pet_native_display` reads the guardian's native display,
@@ -942,6 +945,7 @@ resource type, recipient and current pets. The total is the logged nominal gain 
 
 `pet_max_health`, `pet_attack_power` and `pet_run_speed_rate` read the current pet's totals and require a present pet.
 `charm_entry` and `charm_aura_stacks` observe the player's charmed unit in the same way.
+`charm_distance` is the 2D distance from the player to its charmed unit, or -1 without one.
 `controls_self` checks that the player's movement controller is their own character.
 `private_instance` checks membership in a scripted private map such as Manastorm.
 `dynamic_object` checks for the player's ground effect with the specified `spell`.
@@ -972,6 +976,8 @@ returning zero when absent. Pair it with a count assertion when checking a hidde
 It reads that creature's native spell hit modifier. `set_aura` accepts `owned_entry` to select the same type
 of owned creature within 100 yards and the player's phase; it cannot also select `pet: true`.
 `owned_creature_attackable` requires the owning player, a present creature `entry` and a `target` unit.
+`owned_creature_sent_faction` requires the owning player, a present creature `entry` and a viewing `target` player; it
+reads the last faction template value update that player received for the creature (0 when none arrived).
 It reads whether that target can attack the summon through the native `IsValidAttackTarget` check.
 `owned_creature_victim` requires the owning player, a present creature `entry` and a `target` unit.
 It returns one while that unit is the summon's current victim.

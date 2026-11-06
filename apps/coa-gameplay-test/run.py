@@ -105,8 +105,8 @@ METRICS = TIMELINE_METRICS | {
     'pet_casting', 'pet_loading', 'pet_spell_bar_count',
     'controlled_aura_count', 'controlled_aura_min_damage', 'controlled_aura_max_damage',
     'owned_creature_count', 'owned_creature_spacing', 'owned_creature_weapon_damage_min',
-    'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_victim',
-    'charm_entry', 'charm_aura_stacks', 'controls_self', 'viewpoint_entry', 'seer_entry', 'private_instance',
+    'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_sent_faction', 'owned_creature_victim',
+    'charm_entry', 'charm_distance', 'charm_aura_stacks', 'controls_self', 'viewpoint_entry', 'seer_entry', 'private_instance',
     'dynamic_object', 'dynamic_object_duration_ms', 'dynamic_object_height', 'gossip_options', 'gossip_option_text',
     'owned_gameobject_count', 'gameobject_remaining_ms', 'gameobject_display', 'gameobject_scale', 'at_homebind', 'summon_pending',
     'spellbook_rows', 'spellbook_offers_spell', 'spellbook_covers_spell', 'spellbook_learned_alerts',
@@ -255,7 +255,7 @@ ACTIONS = {
     'attack': ({'actor', 'target'}, {'actor', 'target', 'pet'}),
     'pvp': ({'actor', 'enabled'}, {'actor', 'enabled'}),
     'group': ({'actor', 'target'}, {'actor', 'target', 'loot_method', 'master_looter'}),
-    'lfg_dungeon': ({'actor', 'dungeon'}, {'actor', 'dungeon'}),
+    'lfg_dungeon': ({'actor', 'dungeon'}, {'actor', 'dungeon', 'loot_method'}),
     'lfg_teleport': ({'actor'}, {'actor', 'out'}),
     'lfg_join': ({'actor', 'dungeons', 'roles'}, {'actor', 'dungeons', 'roles'}),
     'lfg_set_roles': ({'actor', 'roles'}, {'actor', 'roles'}),
@@ -308,6 +308,7 @@ ACTIONS = {
     'restore_quest_spells': ({'actor'}, {'actor'}),
     'login_hooks': ({'actor'}, {'actor'}),
     'relog': ({'actor'}, {'actor', 'race', 'offline_seconds'}),
+    'reconnect': ({'actor'}, {'actor'}),
     'talent': ({'actor', 'talent', 'rank'}, {'actor', 'talent', 'rank', 'command'}),
     'reset_talents': ({'actor'}, {'actor'}),
     'add_item': ({'actor', 'item'}, {'actor', 'item', 'count'}),
@@ -491,7 +492,7 @@ def validate(scenario):
             number(item, 'vanity_ownership.starter_items', 1, 2**32 - 1, True)
     if 'two_side' in scenario:
         two_side = scenario['two_side']
-        keys(two_side, set(), {'trade', 'mail'}, 'two_side')
+        keys(two_side, set(), {'trade', 'mail', 'group'}, 'two_side')
         for name, value in two_side.items():
             require(type(value) is bool, f'two_side.{name} must be boolean')
     if 'quest_log_size' in scenario:
@@ -717,6 +718,8 @@ def validate(scenario):
             require(step['target'] in player_ids, f'{where}: master loot needs a player recipient')
         if action == 'lfg_dungeon':
             number(step['dungeon'], f'{where}.dungeon', 1, 2**24 - 1, True)
+            if 'loot_method' in step:
+                number(step['loot_method'], f'{where}.loot_method', 0, 4, True)
         if action == 'encounter_credit':
             number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
         if action == 'encounter_start':
@@ -744,7 +747,7 @@ def validate(scenario):
             number(step['maximum'], f'{where}.maximum', 1, 450, True)
             number(step['value'], f'{where}.value', 0, step['maximum'], True)
         if action == 'gather_skill':
-            require(step['skill'] in {182, 186, 393, 633, 773, 755}, f'{where}: unsupported gathering skill')
+            require(step['skill'] in {182, 186, 393, 633, 732, 773, 755}, f'{where}: unsupported gathering skill')
             number(step['required'], f'{where}.required', 0, 450, True)
         if action == 'give_xp':
             number(step['amount'], f'{where}.amount', 1, 2**31 - 1, True)
@@ -1161,7 +1164,7 @@ def validate(scenario):
                     number(step['sheath_state'], f'{where}.sheath_state', 0, 2, True)
             if metric in {'owned_creature_scale', 'owned_creature_visible', 'owned_creature_display',
                           'owned_creature_virtual_item', 'owned_creature_spacing', 'owned_creature_weapon_damage_min',
-                          'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_victim',
+                          'owned_creature_spell_hit_chance', 'owned_creature_attackable', 'owned_creature_sent_faction', 'owned_creature_victim',
                           'owned_creature_armor', 'owned_creature_max_health', 'owned_creature_health'}:
                 require('entry' in step, f'{where}: metric needs creature entry')
             if metric in {'owned_creature_damage_total', 'owned_creature_damage_count',
@@ -1171,6 +1174,8 @@ def validate(scenario):
                 number(step['entry'], f'{where}.entry', 1, 2**32 - 1, True)
             if metric == 'owned_creature_attackable':
                 require(step.get('target') in actor_ids, f'{where}: metric needs the attacking unit')
+            if metric == 'owned_creature_sent_faction':
+                require(step.get('target') in player_ids, f'{where}: metric needs the viewing player')
             if metric == 'owned_creature_victim':
                 require(step.get('target') in actor_ids, f'{where}: metric needs the expected victim')
             if metric in {'system_message_contains', 'whisper_contains'}:
@@ -1256,11 +1261,11 @@ def validate(scenario):
                           'whisper_contains',
                           'challenge_start_responses', 'challenge_start_code', 'owned_creature_scale', 'cast_failure',
                           'owned_creature_weapon_damage_min', 'owned_creature_spell_hit_chance',
-                          'owned_creature_attackable', 'owned_creature_victim', 'owned_creature_virtual_item',
+                          'owned_creature_attackable', 'owned_creature_sent_faction', 'owned_creature_victim', 'owned_creature_virtual_item',
                           'owned_creature_armor', 'owned_creature_max_health', 'owned_creature_health',
                           'pet_entry', 'pet_aura_stacks', 'pet_is_banker', 'pet_display', 'pet_flags', 'pet_mirror_image', 'pet_name_is', 'pet_native_display', 'pet_scale',
                           'pet_knows_spell', 'pet_distance', 'pet_bearing', 'pet_casting', 'pet_loading',
-                          'owned_creature_count', 'owned_creature_spacing', 'charm_entry',
+                          'owned_creature_count', 'owned_creature_spacing', 'charm_entry', 'charm_distance',
                           'charm_aura_stacks', 'controls_self', 'private_instance',
                           'dynamic_object', 'dynamic_object_duration_ms', 'dynamic_object_height',
                           'gossip_options', 'gossip_option_text',

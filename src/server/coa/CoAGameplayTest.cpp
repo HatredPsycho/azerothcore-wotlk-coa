@@ -567,6 +567,8 @@ public:
     {
         Set(CONFIG_ALLOW_TWO_SIDE_TRADE, settings.get<bool>("trade", false));
         Set(CONFIG_ALLOW_TWO_SIDE_INTERACTION_MAIL, settings.get<bool>("mail", false));
+        if (auto group = settings.get_optional<bool>("group"))
+            Set(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP, *group);
     }
 
     TwoSideConfig(TwoSideConfig const&) = delete;
@@ -2605,6 +2607,24 @@ private:
 
     static void OpenSession(Actor& actor)
     {
+        CreateSession(actor);
+        WorldPacket create(CMSG_CHAR_CREATE, 32);
+        uint32 race = actor.definition.get<uint32>("race");
+        uint32 playerClass = actor.definition.get<uint32>("class");
+        uint32 gender = actor.definition.get<uint32>("gender", GENDER_MALE);
+        Require(race > 0 && race <= 255 && playerClass > 0 && playerClass <= 255,
+            "Race/class must fit the character creation packet");
+        Require(gender == GENDER_MALE || gender == GENDER_FEMALE, "Gender must be 0 (male) or 1 (female)");
+        create << actor.definition.get<std::string>("name", actor.name) << uint8(race) << uint8(playerClass)
+               << uint8(gender);
+        for (uint8 i = 0; i < 6; ++i)
+            create << uint8(0);
+        actor.session->HandleCharCreateOpcode(create);
+        Reach(actor, ActorStage::Creating);
+    }
+
+    static void CreateSession(Actor& actor)
+    {
         uint32 const expansion = actor.definition.get<uint32>("expansion", EXPANSION_WRATH_OF_THE_LICH_KING);
         Require(expansion <= EXPANSION_WRATH_OF_THE_LICH_KING, "Player expansion must be 0..2");
         uint32 const security = actor.definition.get<uint32>("security", uint32(SEC_PLAYER));
@@ -2627,19 +2647,6 @@ private:
             }
         });
         actor.session->InitializeSession();
-        WorldPacket create(CMSG_CHAR_CREATE, 32);
-        uint32 race = actor.definition.get<uint32>("race");
-        uint32 playerClass = actor.definition.get<uint32>("class");
-        uint32 gender = actor.definition.get<uint32>("gender", GENDER_MALE);
-        Require(race > 0 && race <= 255 && playerClass > 0 && playerClass <= 255,
-            "Race/class must fit the character creation packet");
-        Require(gender == GENDER_MALE || gender == GENDER_FEMALE, "Gender must be 0 (male) or 1 (female)");
-        create << actor.definition.get<std::string>("name", actor.name) << uint8(race) << uint8(playerClass)
-               << uint8(gender);
-        for (uint8 i = 0; i < 6; ++i)
-            create << uint8(0);
-        actor.session->HandleCharCreateOpcode(create);
-        Reach(actor, ActorStage::Creating);
     }
 
     static uint32 RaidSpell(Tree const& value)
@@ -4844,6 +4851,11 @@ private:
             }
             return object ? object->GetDuration() : 0;
         }
+        if (metric == "charm_distance")
+        {
+            Unit* charm = player->GetCharm();
+            return charm ? player->GetExactDist2d(charm) : -1.0f;
+        }
         if (metric == "charm_entry" || metric == "charm_aura_stacks")
         {
             Unit* charm = player->GetCharm();
@@ -4956,6 +4968,16 @@ private:
             Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
             Require(creature != nullptr, "Attack observation needs a present owned creature");
             return GetUnit(step.get<std::string>("target"))->IsValidAttackTarget(creature);
+        }
+        if (metric == "owned_creature_sent_faction")
+        {
+            Creature* creature = GetOwnedCreature(player, step.get<uint32>("entry"));
+            Require(creature != nullptr, "Sent faction observation needs a present owned creature");
+            Actor& viewer = _actors.at(step.get<std::string>("target"));
+            auto itr = viewer.unitValues.find(creature->GetGUID().GetRawValue());
+            if (itr == viewer.unitValues.end() || !itr->second.count(UNIT_FIELD_FACTIONTEMPLATE))
+                return 0;
+            return itr->second.at(UNIT_FIELD_FACTIONTEMPLATE);
         }
         if (metric == "owned_creature_victim")
         {
@@ -6534,6 +6556,14 @@ private:
             group->ConvertToLFG();
             group->SetDungeonDifficulty(Difficulty(dungeon->difficulty));
             sLFGMgr->SetDungeon(group->GetGUID(), dungeon->Entry());
+            if (auto method = step.get_optional<uint32>("loot_method"))
+            {
+                group->SetLootMethod(LootMethod(*method));
+                group->SendUpdate();
+            }
+            for (GroupReference* member = group->GetFirstMember(); member; member = member->next())
+                if (Player* memberPlayer = member->GetSource())
+                    LocalLevelScaling::NotifyScalingChanged(memberPlayer);
         }
         else if (action == "lfg_teleport")
         {
@@ -7147,6 +7177,18 @@ private:
             WorldPacket packet(CMSG_CANCEL_AURA, 4);
             packet << spell;
             player->GetSession()->HandleCancelAuraOpcode(packet);
+        }
+        else if (action == "reconnect")
+        {
+            Actor& actor = _actors.at(step.get<std::string>("actor"));
+            std::unique_ptr<WorldSession> previous = std::move(actor.session);
+            CreateSession(actor);
+            previous->SetPlayer(nullptr);
+            actor.session->SetPlayer(player);
+            player->SetSession(actor.session.get());
+            delete player->PlayerTalkClass;
+            player->PlayerTalkClass = new PlayerMenu(actor.session.get());
+            actor.session->HandlePlayerLoginToCharInWorld(player);
         }
         else if (action == "cancel_mount")
         {
