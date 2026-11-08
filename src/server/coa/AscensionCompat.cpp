@@ -26,6 +26,7 @@
 #include "AllItemScript.h"
 #include "AllSpellScript.h"
 #include "AscensionChangelogCompat.h"
+#include "AscensionCompanionLoot.h"
 #include "AscensionAverageItemLevel.h"
 #include "AscensionCompatOpcodes.h"
 #include "AscensionCharacterSelection.h"
@@ -406,6 +407,13 @@ enum CompanionLoot : uint32
     SPELL_LOOT_TRANSFIGURATOR = 84419,
     SPELL_SKIN_PEELER = 92864
 };
+
+static_assert(APPEARANCE_CATEGORY_COMPANION_LOOT == Ascension::CompanionLooting::LootAppearanceCategory);
+static_assert(APPEARANCE_CATEGORY_COMPANION_SKINNING == Ascension::CompanionLooting::SkinningAppearanceCategory);
+static_assert(APPEARANCE_LOOT_TRANSFIGURATOR == Ascension::CompanionLooting::LootTransfiguratorAppearance);
+static_assert(APPEARANCE_SKIN_PEELER == Ascension::CompanionLooting::SkinPeelerAppearance);
+static_assert(SPELL_LOOT_TRANSFIGURATOR == Ascension::CompanionLooting::LootTransfiguratorSpell);
+static_assert(SPELL_SKIN_PEELER == Ascension::CompanionLooting::SkinPeelerSpell);
 
 constexpr uint8 PYROMANCER_HEAT_PER_EMBER = 100;
 constexpr uint8 REAPER_SOUL_FRAGMENT_COST = 3;
@@ -6083,6 +6091,42 @@ public:
     return state && state->OwnedVanityItems.contains(itemId);
   }
 
+  bool HasActiveCompanionAppearance(Player const* player, bool skin) {
+    std::shared_ptr<PlayerCollectionState> state = GetState(player);
+    return state && HasActiveCompanionAppearanceIn(*state, skin);
+  }
+
+  bool CompanionLootsFor(Player const* player, bool skin) {
+    std::shared_ptr<PlayerCollectionState> state = GetState(player);
+    Map* map = player->FindMap();
+    if (!state || !map || CompanionLootRadius(player, skin) <= 0.0f)
+      return false;
+    Creature* companion = map->GetCreature(player->GetCritterGUID());
+    if (!companion || !companion->IsAlive() || companion->GetOwnerGUID() != player->GetGUID())
+      return false;
+    bool const appearance = HasActiveCompanionAppearanceIn(*state, skin);
+    if (skin)
+      return Ascension::CompanionLooting::SkinsWith(appearance);
+    return Ascension::CompanionLooting::LootsWith(appearance,
+        Ascension::CompanionLooting::IsSelfLootingCompanion(companion->GetEntry()), map->IsRaid());
+  }
+
+  static float CompanionLootRadius(Player const* player, bool skin) {
+    SpellInfo const* spell = sSpellMgr->GetSpellInfo(skin ? SPELL_SKIN_PEELER : SPELL_LOOT_TRANSFIGURATOR);
+    if (!spell || !spell->Effects[EFFECT_0].Amplitude)
+      return 0.0f;
+    float const radius = spell->Effects[EFFECT_0].CalcRadius(const_cast<Player*>(player));
+    if (!skin && IsGoblinSalvageFieldTesting(player))
+      return std::min(radius, GOBLIN_SALVAGE_FIELD_TESTING_LOOT_REACH);
+    return radius;
+  }
+
+  static bool HasActiveCompanionAppearanceIn(PlayerCollectionState const& state, bool skin) {
+    uint32 const category = skin ? APPEARANCE_CATEGORY_COMPANION_SKINNING : APPEARANCE_CATEGORY_COMPANION_LOOT;
+    uint32 const appearance = skin ? APPEARANCE_SKIN_PEELER : APPEARANCE_LOOT_TRANSFIGURATOR;
+    return state.ActiveAppearances[category] == appearance && state.CollectedAppearances.contains(appearance);
+  }
+
   bool LoadClientData() {
     _appearances.clear();
     _itemAppearances.clear();
@@ -6475,24 +6519,18 @@ public:
 
     void ProcessCompanionLoot(Player* player, uint32 diff, bool skin = false)
     {
-        constexpr uint32 CREATURE_LOOTBOT_3000 = 44022;
-        constexpr uint32 CREATURE_KLEPTOMANIC_DEMON = 79026;
-        constexpr std::array<uint32, 2> LOOT_COMPANIONS = { CREATURE_LOOTBOT_3000, CREATURE_KLEPTOMANIC_DEMON };
-        uint32 const category = skin ? APPEARANCE_CATEGORY_COMPANION_SKINNING : APPEARANCE_CATEGORY_COMPANION_LOOT;
-        uint32 const appearance = skin ? APPEARANCE_SKIN_PEELER : APPEARANCE_LOOT_TRANSFIGURATOR;
         auto state = GetState(player);
         if (!state)
             return;
 
-        bool const hasAppearance = state->ActiveAppearances[category] == appearance &&
-            state->CollectedAppearances.contains(appearance);
+        bool const hasAppearance = HasActiveCompanionAppearanceIn(*state, skin);
 
         bool isLootbot = false;
         if (!skin && !hasAppearance)
         {
             Creature* c = player->GetMap()->GetCreature(player->GetCritterGUID());
             isLootbot = c && c->IsAlive() && c->GetOwnerGUID() == player->GetGUID() &&
-                        std::find(LOOT_COMPANIONS.begin(), LOOT_COMPANIONS.end(), c->GetEntry()) != LOOT_COMPANIONS.end() &&
+                        Ascension::CompanionLooting::IsSelfLootingCompanion(c->GetEntry()) &&
                         !player->GetMap()->IsRaid();
         }
 
@@ -11280,6 +11318,36 @@ AscensionVanityOwnership::TestOverride::~TestOverride()
 bool AscensionVanityOwnership::OwnsItem(Player const* player, uint32 itemId)
 {
     return AscensionCollectionService::Instance().OwnsVanityItem(player, itemId);
+}
+
+bool Ascension::CompanionLooting::HasLootAppearance(Player const* player)
+{
+    return player && AscensionCollectionService::Instance().HasActiveCompanionAppearance(player, false);
+}
+
+bool Ascension::CompanionLooting::HasSkinningAppearance(Player const* player)
+{
+    return player && AscensionCollectionService::Instance().HasActiveCompanionAppearance(player, true);
+}
+
+bool Ascension::CompanionLooting::CompanionLoots(Player const* player)
+{
+    return player && AscensionCollectionService::Instance().CompanionLootsFor(player, false);
+}
+
+bool Ascension::CompanionLooting::CompanionSkins(Player const* player)
+{
+    return player && AscensionCollectionService::Instance().CompanionLootsFor(player, true);
+}
+
+float Ascension::CompanionLooting::LootRadius(Player const* player)
+{
+    return player ? AscensionCollectionService::CompanionLootRadius(player, false) : 0.0f;
+}
+
+float Ascension::CompanionLooting::SkinningRadius(Player const* player)
+{
+    return player ? AscensionCollectionService::CompanionLootRadius(player, true) : 0.0f;
 }
 
 bool AscensionCosmeticPetTokens::AvailableOnRealm(uint32 itemId)
