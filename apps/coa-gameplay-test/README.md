@@ -382,7 +382,9 @@ runs such a case exclusively because the setting is process-global. Optional
 `CoA.StarterVanityItems` for that case in the same way, and is likewise run exclusively. Optional
 `two_side: {"trade": true, "mail": false}` sets `AllowTwoSide.Trade` and `AllowTwoSide.Interaction.Mail` for that
 case (an omitted field is disabled) and is likewise run exclusively. Its optional `group` sets
-`AllowTwoSide.Interaction.Group`, which keeps the configured value when omitted.
+`AllowTwoSide.Interaction.Group`, which keeps the configured value when omitted. Optional
+`ptr_character_copy: true` enables `.ptr copy` for that case with this realm's own characters schema as the
+source and no cooldown, and is likewise run exclusively.
 The [talent and item scenario](scenarios/talent-and-items.json) exercises talent learning, passive removal,
 equipping a shirt and consuming a healing potion. It does not measure the talent's damage coefficient.
 The [Shadowblast scenario](scenarios/shadowblast-shadow-rage.json) reproduces a Shadow Rage pet-targeting crash
@@ -481,7 +483,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `learn`, `unlearn` | `actor`, `spell`: configure learned spells/passives through player APIs. `unlearn` accepts `all_specs: true` to remove the fixture grant from every specialization before testing a lower weapon rank. |
 | `money` | `actor`, `copper`: fixture purse, so a priced trainer row can be bought on a character that starts with none. |
 | `set_player_setting` | `actor`, `source`, `index`, `value`: fixture a stored character setting, such as a value saved by an earlier build, before a `relog` reads it. |
-| `set_aura` | `actor`, `spell`, `stacks`: fixture aura state, within its stack limit; zero removes it. Optional `pet: true` selects the actor's current pet. |
+| `set_aura` | `actor`, `spell`, `stacks`: fixture aura state, within its stack limit; zero removes it. Optional `pet: true` selects the actor's current pet, `owned_entry` a creature the actor owns and `target` any scenario actor. |
 | `cancel_aura` | Player `actor`, `spell`: native `CMSG_CANCEL_AURA` handler; assert the resulting aura state. |
 | `cancel_mount` | Player `actor`: native `CMSG_CANCEL_MOUNT_AURA` handler, the dismount a client sends with a mounted cast. |
 | `talent` | `actor`, `talent`, zero-based `rank`: learn with normal point/prerequisite checks; optional `command` skips the point and tier checks like the GM command. |
@@ -499,6 +501,8 @@ assert stable maximums and final levels when testing damage coefficients.
 | `group` | `actor`, `target`, optional `loot_method` (0-4) and `master_looter` (a player id, read with `loot_method`): fixture party; creates the actor's group if needed, adds an ungrouped player and sets the loot method and master looter. |
 | `loot_roll` | Player `actor`, `item`, `vote` (0 pass, 1 need, 2 greed, 3 disenchant): native `CMSG_LOOT_ROLL` on the group's pending roll for that item (or a level-scaled copy) in which the actor takes part. |
 | `master_loot_give` | Player `actor` as master looter, `item`, `target` (a player id): native `CMSG_LOOT_MASTER_GIVE` of that item from the actor's open loot to the target. |
+| `send_mail` | Player `actor`, `target` (another player id): the actor mails the target a plain player letter, committed to the database at once. |
+| `add_at_login_flag` | Player `actor`, `AtLoginFlags` value `id`: adds that flag to the player and to the stored character at once, as a pending customize or reset would. |
 | `lfg_dungeon` | `actor`, LFGDungeons.dbc `dungeon`: fixture Dungeon Finder group; converts the actor's ordinary group to an LFG group assigned to that dungeon, as a completed proposal does, and re-sends each member's scaled creature views. Conversion sets Need Before Greed; optional `loot_method` (0-4) sets another afterwards. |
 | `lfg_teleport` | Player `actor`, optional boolean `out` (default false): native `CMSG_LFG_TELEPORT` request into or out of the group's dungeon. |
 | `lfg_join` | Player `actor`, LFGDungeons.dbc `dungeons` list, `roles` mask (1 leader, 2 tank, 4 healer, 8 damage): native `CMSG_LFG_JOIN` queue request, as the Dungeon Finder button sends it. A group leader starts the role check. |
@@ -517,6 +521,7 @@ assert stable maximums and final levels when testing damage coefficients.
 | `personal_bank_swap` | `actor`, vault `entry`, `direction` `deposit` or `withdraw`, optional bank `slot` (default 0) and split `count` (0 moves the stack); `deposit` needs `item`, the first carried item of that entry. Withdrawals optionally take backpack `inventory_slot` (23-38), otherwise use automatic storage. Sends native `CMSG_GUILD_BANK_SWAP_ITEMS` into or out of the open Personal Bank. |
 | `binder_activate` | `actor`, innkeeper `target` (or `owner` + `entry` for a creature that actor has out): native "make this inn your home" confirmation (`CMSG_BINDER_ACTIVATE`), walking up to the innkeeper first. |
 | `destroy_item` | `actor`, `item`: native `CMSG_DESTROYITEM` of the first carried item of that entry, as the player deleting it. |
+| `system_mail` | `actor`, `item`, `kind` `postmaster` (a mail from the Postmaster creature, as `Player::SendItemRetrievalMail` sends), `reward` (a Recruit-A-Friend reward mail: no sender, GM stationery and the reward subject) or `server` (the same sender-less GM-stationery mail with another subject, as boss loot and item recovery mail): post one such mail carrying one `item` to the actor. |
 | `area_trigger` | `actor`, `id`: native area-trigger packet, as the client sends on walking into one; inn triggers are what set the rested flag. |
 | `gossip_select` | `actor`, zero-based `option`: select from the current menu through the session handler. |
 | `who` | `actor`, optional name-filter `target`, `class_mask`, `race_mask`: submit a native Who query. |
@@ -596,7 +601,13 @@ effect that picks one of several auras at random),
 number of mails the player holds and `mail_item_count` the items inside them, which is how a reward
 that the bags could not take proves it was posted rather than lost; `mail_has_item` takes `item` and
 returns whether any mail carries it, and `mail_pool_item_count` takes `cache` (optional `table`) and
-counts only the mail items that are in that cache's own pool. `notifications` counts the
+counts only the mail items that are in that cache's own pool. `account_character_count` counts the stored
+characters on the player's account, and `account_other_item_count` takes `item` and counts that item on the
+account's other characters, which is how a character copy proves it carried the inventory.
+`account_other_bank_item_count` (needs `item`) counts that item in those characters' own Personal Banks,
+`account_other_mail_count` counts the mails they hold and `account_other_foreign_mail_count` only the player mails
+whose sender is not the receiver. `account_other_at_login_flag` takes an `AtLoginFlags` value as `id` and counts
+those characters that carry it in the database. `notifications` counts the
 centre-screen notices a session has been sent and `notification_contains` takes `text` and returns
 whether one carried it, which is how a test proves a player was told something in the middle of the
 screen and not only in chat. The cache metrics are `carried_pool_item_count` (needs `cache`,
@@ -611,7 +622,8 @@ and weapons whose skill the player lacks), `pool_variant_count`, `pool_retired_i
 pool across every raid difficulty), and `cache_token_count`, `cache_token_stage`, `cache_token_present`
 (need `cache`, the last also `item`), which read the token table the realm loads and answer how many
 tier tokens a cache may pay, the highest tier among them, and whether one named token is among them.
-Boolean metrics use 0/1. Spell/aura metrics require `spell`; `item_count` requires `item`.
+Boolean metrics use 0/1. Spell/aura metrics require `spell`; `item_count` requires `item`, or `items` to sum the
+counts of several entries.
 `spell_family_flags` reads one word of the effective server spell's family flags; `index` is 0..2 (default 0).
 `stunned` reads the unit's native stun state, including changes caused by aura removal.
 `carried_item_count` sums the stack counts of equipped items (bags included), the backpack and the bags' contents.
@@ -1094,12 +1106,14 @@ guid) and returns the seconds until the actor's map respawns that spawn, from th
 (zero when none is saved). `loot_gear_item_level` returns the first unlooted weapon/armor item's level in
 the current loot window (zero if absent). The three `vanilla-dungeons-*` scenarios use these to check
 all 19 map/mode pairs per tier and a real VanCleef killing blow, without a GM access bypass.
+`nearest_creature_distance` requires player `entry` and reads the 2D distance from the player to the nearest living creature with that entry in its phase within 60 yards, or -1 when there is none.
 `nearby_creature_count` requires a player and `entry`, and counts living creatures in the same phase within
 60 yards. Optional `min_level` and `max_level` filter their native levels; `min_home_distance` keeps creatures
 at least that many yards from their own home positions (2D), and `spell` those carrying that aura. This can
 observe movement and auras of native summons without creating or controlling them.
 `map_creature_count` requires a player and counts living spawned creatures loaded anywhere on the player's map,
-in any phase, of `entry` when given and of every entry otherwise; a spawn whose grid is not loaded is not counted.
+in any phase, of `entry` or of any entry in the list `entries` when given and of every entry otherwise; a spawn
+whose grid is not loaded is not counted.
 `map_creatures_below_floor` requires a player and counts those loaded living spawns that stand more than 3 yards
 below the floor under them, or over no floor at all. The floor is searched downward from the higher of the
 creature's current Z and its spawn Z, so a creature that sank through the ground counts while one that walked
