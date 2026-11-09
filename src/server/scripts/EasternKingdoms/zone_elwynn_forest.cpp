@@ -288,6 +288,9 @@ struct npc_supervisor_raelen : public ScriptedAI
 
     void CallPeasent()
     {
+        if (_PeasentId >= peasentGUIDs.size())
+            return;
+
         if (Creature* peasent = ObjectAccessor::GetCreature(*me, peasentGUIDs[_PeasentId]))
             peasent->AI()->SetData(1, 1);
     }
@@ -309,6 +312,14 @@ struct npc_supervisor_raelen : public ScriptedAI
                     {
                         tempGUIDs.push_back(peasent->GetGUID());
                     }
+                    // The five peasants can be dead or away (players or bots nearby): look again later instead of
+                    // reading past the end of the list.
+                    if (tempGUIDs.size() < 5)
+                    {
+                        _events.ScheduleEvent(EVENT_FIND_PEASENTS, 30s);
+                        break;
+                    }
+                    peasentGUIDs.clear();
                     peasentGUIDs.push_back(tempGUIDs[2]);
                     peasentGUIDs.push_back(tempGUIDs[3]);
                     peasentGUIDs.push_back(tempGUIDs[0]);
