@@ -4027,6 +4027,12 @@ private:
             GameObject* object = player->FindNearestGameObject(step.get<uint32>("entry"), 20.0f);
             return object ? object->GetObjectScale() : 0.0f;
         }
+        if (metric == "nearby_gameobject_orientation")
+        {
+            GameObject* object = player->FindNearestGameObject(step.get<uint32>("entry"), 20.0f);
+            Require(object != nullptr, "Orientation needs an existing nearby gameobject");
+            return object->GetOrientation();
+        }
         if (metric == "nearby_gameobject_display")
         {
             GameObject* object = player->FindNearestGameObject(step.get<uint32>("entry"), 20.0f);
@@ -4255,6 +4261,12 @@ private:
                         nearest = distance;
                 }
             return nearest;
+        }
+        if (metric == "nearby_creature_orientation")
+        {
+            Creature* creature = player->FindNearestCreature(step.get<uint32>("entry"), 60.0f);
+            Require(creature != nullptr, "Orientation needs an existing nearby creature");
+            return creature->GetOrientation();
         }
         if (metric == "nearby_creature_count")
         {

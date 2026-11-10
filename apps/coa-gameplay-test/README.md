@@ -383,8 +383,9 @@ runs such a case exclusively because the setting is process-global. Optional
 `two_side: {"trade": true, "mail": false}` sets `AllowTwoSide.Trade` and `AllowTwoSide.Interaction.Mail` for that
 case (an omitted field is disabled) and is likewise run exclusively. Its optional `group` sets
 `AllowTwoSide.Interaction.Group`, which keeps the configured value when omitted. Optional
-`ptr_character_copy: true` enables `.ptr copy` for that case with this realm's own characters schema as the
-source and no cooldown, and is likewise run exclusively.
+`ptr_character_copy: true` makes this realm both the source and the target of `.ptr copy` for that case, with no
+cooldown, and is likewise run exclusively. Queued copies load and report within a 5-second poll, so wait after
+the command before asserting.
 The [talent and item scenario](scenarios/talent-and-items.json) exercises talent learning, passive removal,
 equipping a shirt and consuming a healing potion. It does not measure the talent's damage coefficient.
 The [Shadowblast scenario](scenarios/shadowblast-shadow-rage.json) reproduces a Shadow Rage pet-targeting crash
@@ -1107,6 +1108,8 @@ guid) and returns the seconds until the actor's map respawns that spawn, from th
 the current loot window (zero if absent). The three `vanilla-dungeons-*` scenarios use these to check
 all 19 map/mode pairs per tier and a real VanCleef killing blow, without a GM access bypass.
 `nearest_creature_distance` requires player `entry` and reads the 2D distance from the player to the nearest living creature with that entry in its phase within 60 yards, or -1 when there is none.
+`nearby_creature_orientation` requires a player and `entry`, and returns the orientation in radians (0 to 2 pi) of the
+nearest living creature with that entry within 60 yards; it requires one to exist there.
 `nearby_creature_count` requires a player and `entry`, and counts living creatures in the same phase within
 60 yards. Optional `min_level` and `max_level` filter their native levels; `min_home_distance` keeps creatures
 at least that many yards from their own home positions (2D), and `spell` those carrying that aura. This can
@@ -1122,6 +1125,8 @@ down a ramp does not. Each one counted is logged with its spawn id, position and
 (0 open, 1 closed, 99 none).
 `nearby_gameobject_scale` takes `entry` and returns the object scale of the nearest such gameobject within
 20 yards (0 when none).
+`nearby_gameobject_orientation` takes `entry` and returns the orientation in radians (0 to 2 pi) of the nearest such
+gameobject within 20 yards; it requires a gameobject to exist there.
 `nearby_gameobject_display` takes `entry` and returns the display id the server sends for the nearest such
 gameobject within 20 yards (0 when none); it does not verify client rendering.
 `nearby_gameobject_ground_offset` takes `entry` and returns the nearest such gameobject's Z minus the map's terrain
