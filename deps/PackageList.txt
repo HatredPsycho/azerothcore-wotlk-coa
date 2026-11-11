@@ -89,3 +89,11 @@ fkYAML (A C++ header-only YAML library)
 libsidecar (enables interaction with other components when the worldserver is running in cluster mode. Place the shared library from the release assets in deps/libsidecar for builds. UNIX: BUILD_RPATH finds deps/libsidecar; install copies to ${prefix}/lib; runtime also searches next to worldserver and ../lib. Windows: no rpath - build copies the DLL next to worldserver; install places it next to worldserver. Headers under deps/libsidecar/include - including tc9_version.h - must come from the same libsidecar build/release as the linked binary. worldserver checks ABI early when Cluster.Enabled.)
   https://github.com/walkline/ToCloud9/releases/tag/libsidecar-v1.0.0
   Version: 1.0.0 (TC9_VERSION in deps/libsidecar/include/tc9_version.h)
+
+mod-ale (ALE, AzerothCore Lua Engine, derived from Eluna; GPLv3; optional, built only with -DCOA_WITH_ALE=ON)
+  https://github.com/azerothcore/mod-ale
+  Version: 84b85cc5 (modules/mod-ale, with CoA sandbox changes)
+
+Lua (scripting language used by mod-ale; MIT license; local source tarball deps/lua/lua-5.2.4.tar.gz)
+  https://www.lua.org/
+  Version: 5.2.4
