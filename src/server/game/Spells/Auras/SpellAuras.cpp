@@ -1503,30 +1503,37 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                         uint32 spellId = 0;
                         switch (aurEff->GetId())
                         {
-                            // Ebon Plague
+                            // Ebon Plague (CoA copies of the talent: +1100000)
                             case 51161:
+                            case 1151161:
                                 spellId = 51735;
                                 break;
                             case 51160:
+                            case 1151160:
                                 spellId = 51734;
                                 break;
                             case 51099:
+                            case 1151099:
                                 spellId = 51726;
                                 break;
-                            // Crypt Fever
+                            // Crypt Fever (CoA copies of the talent: +1100000)
                             case 49632:
+                            case 1149632:
                                 spellId = 50510;
                                 break;
                             case 49631:
+                            case 1149631:
                                 spellId = 50509;
                                 break;
                             case 49032:
+                            case 1149032:
                                 spellId = 50508;
                                 break;
                             default:
                                 LOG_ERROR("spells.aura", "Aura::HandleAuraSpecificMods: Unknown rank of Crypt Fever/Ebon Plague ({}) found", aurEff->GetId());
                         }
-                        caster->CastSpell(target, spellId, true, 0, GetEffect(0));
+                        if (spellId)
+                            caster->CastSpell(target, spellId, true, 0, GetEffect(0));
                     }
                 }
                 // Unholy blight
