@@ -29,6 +29,9 @@
 
 project ( lua C )
 
+# CoA: LuaJIT is disabled (it would download its sources). Only lua52 from deps/lua is allowed.
+message(FATAL_ERROR "CoA: LuaJIT is disabled in this core. Use LUA_VERSION=lua52 (local tarball deps/lua/lua-5.2.4.tar.gz).")
+
 # Remove -Werror from flags for LuaJIT compilation
 string(REGEX REPLACE "-Werror" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 string(REGEX REPLACE "-Werror" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")

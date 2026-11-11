@@ -29,30 +29,28 @@
 
 project ( lua C )
 
-# LUA_VERSION must be one of lua51, lua52, lua53, lua54
+# CoA: only lua52 is allowed, from a local tarball. No URL on the Internet,
+# so no configure step can download anything. The tarball is placed by the
+# Builder; its SHA256 is checked by FetchContent.
+if (NOT LUA_VERSION STREQUAL "lua52")
+  message(FATAL_ERROR "CoA: LUA_VERSION='${LUA_VERSION}' is not supported, only lua52.")
+endif()
+
+set(COA_LUA52_TARBALL "${CMAKE_SOURCE_DIR}/deps/lua/lua-5.2.4.tar.gz")
+if (NOT EXISTS "${COA_LUA52_TARBALL}")
+  message(FATAL_ERROR "CoA: COA_WITH_ALE=ON needs the Lua 5.2.4 source tarball at\n"
+                      "  ${COA_LUA52_TARBALL}\n"
+                      "(SHA256 b9e2e4aad6789b3b63a056d442f7b39f0ecfca3ae0f1fc0ae4e9614401b69f4b).\n"
+                      "Place it there, or configure with -DCOA_WITH_ALE=OFF.")
+endif()
 
 include(FetchContent)
 FetchContent_Declare(
-  lua51
-  URL      https://www.lua.org/ftp/lua-5.1.5.tar.gz
-  URL_HASH SHA256=2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333
-)
-FetchContent_Declare(
   lua52
-  URL      https://www.lua.org/ftp/lua-5.2.4.tar.gz
+  URL      ${COA_LUA52_TARBALL}
   URL_HASH SHA256=b9e2e4aad6789b3b63a056d442f7b39f0ecfca3ae0f1fc0ae4e9614401b69f4b
 )
-FetchContent_Declare(
-  lua53
-  URL      https://www.lua.org/ftp/lua-5.3.6.tar.gz
-  URL_HASH SHA256=fc5fd69bb8736323f026672b1b7235da613d7177e72558893a0bdcd320466d60
-)
-FetchContent_Declare(
-  lua54
-  URL      https://www.lua.org/ftp/lua-5.4.4.tar.gz
-  URL_HASH SHA256=164c7849653b80ae67bec4b7473b884bf5cc8d2dca05653475ec2ed27b9ebf61
-)
-FetchContent_MakeAvailable(${LUA_VERSION})
+FetchContent_MakeAvailable(lua52)
 
 # Easen warnings - disable Werror for Lua sources
 string(REGEX REPLACE "( |^)/W[0-9]( |$)" "\\1/W2\\2" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -74,13 +72,9 @@ file(GLOB LOCAL_SOURCES_C ${LUA_SOURCE_FOLDER}/*.c)
 list(REMOVE_ITEM LOCAL_SOURCES_C ${LUA_SOURCE_FOLDER}/lua.c)
 list(REMOVE_ITEM LOCAL_SOURCES_C ${LUA_SOURCE_FOLDER}/luac.c)
 
-if (LUA_STATIC)
-  add_library(lualib STATIC ${LOCAL_SOURCES_H} ${LOCAL_SOURCES_C})
-  set_property(TARGET lualib PROPERTY POSITION_INDEPENDENT_CODE ON)
-else()
-  add_library(lualib SHARED ${LOCAL_SOURCES_H} ${LOCAL_SOURCES_C})
-  set_property(TARGET lualib PROPERTY POSITION_INDEPENDENT_CODE ON)
-endif()
+# CoA: static library only
+add_library(lualib STATIC ${LOCAL_SOURCES_H} ${LOCAL_SOURCES_C})
+set_property(TARGET lualib PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(lualib PROPERTIES LINKER_LANGUAGE C)
 target_include_directories(lualib PUBLIC "${LUA_SOURCE_FOLDER}" "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -115,30 +109,5 @@ elseif (UNIX)
   set_target_properties(lualib PROPERTIES OUTPUT_NAME ${LUA_VERSION})
 endif()
 
-add_executable(lua_interpreter ${LUA_SOURCE_FOLDER}/lua.c)
-target_link_libraries(lua_interpreter lualib)
-target_compile_definitions(lua_interpreter PRIVATE _CRT_SECURE_NO_WARNINGS)
-if (NOT WIN32)
-  target_compile_options(lua_interpreter PRIVATE -Wno-empty-body -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-sign-compare -Wno-string-plus-int)
-endif()
-set_target_properties(lua_interpreter PROPERTIES OUTPUT_NAME ${LUA_VERSION}_interpreter)
-if (WIN32)
-  install(TARGETS lua_interpreter DESTINATION "${CMAKE_INSTALL_PREFIX}")
-  install(FILES $<TARGET_PDB_FILE:lua_interpreter> DESTINATION "${CMAKE_INSTALL_PREFIX}" OPTIONAL)
-else()
-  install(TARGETS lua_interpreter DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
-endif()
-
-add_executable(lua_compiler ${LUA_SOURCE_FOLDER}/luac.c)
-target_link_libraries(lua_compiler lualib)
-target_compile_definitions(lua_compiler PRIVATE _CRT_SECURE_NO_WARNINGS)
-if (NOT WIN32)
-  target_compile_options(lua_compiler PRIVATE -Wno-empty-body -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-sign-compare -Wno-string-plus-int)
-endif()
-set_target_properties(lua_compiler PROPERTIES OUTPUT_NAME ${LUA_VERSION}_compiler)
-if (WIN32)
-  install(TARGETS lua_compiler DESTINATION "${CMAKE_INSTALL_PREFIX}")
-  install(FILES $<TARGET_PDB_FILE:lua_compiler> DESTINATION "${CMAKE_INSTALL_PREFIX}" OPTIONAL)
-else()
-  install(TARGETS lua_compiler DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
-endif()
+# CoA: the standalone lua interpreter and luac compiler are not built
+# (no unsandboxed Lua executable is shipped next to the server).

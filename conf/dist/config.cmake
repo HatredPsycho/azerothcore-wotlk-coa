@@ -11,6 +11,14 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
 
+# CoA: mod-ale (AzerothCore Lua Engine) is only built on request.
+# OFF (default): modules/mod-ale is skipped entirely (no lualib, no ALE sources,
+# no mod_ale.conf.dist), the core behaves exactly as without the module.
+option(COA_WITH_ALE "CoA: build mod-ale (Lua engine, Lua 5.2 static, local tarball deps/lua)" OFF)
+if(NOT COA_WITH_ALE)
+  list(APPEND DISABLED_AC_MODULES mod-ale)
+endif()
+
 set(SCRIPTS_AVAILABLE_OPTIONS none static dynamic minimal-static minimal-dynamic)
 set(MODULES_AVAILABLE_OPTIONS none static dynamic)
 set(BUILD_APPS_AVAILABLE_OPTIONS none all auth-only world-only)
