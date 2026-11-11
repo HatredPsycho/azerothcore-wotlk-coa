@@ -411,13 +411,15 @@ if (MOD_ALE_FOUND)
       set(MSVC_CONFIGURATION_NAME $(ConfigurationName)/)
     endif()
 
+    # CoA: ship an empty lua_scripts folder; ALE's stock extensions use os/debug,
+    # which the CoA sandbox removes, so they are not copied
     add_custom_command(TARGET modules
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/bin/${MSVC_CONFIGURATION_NAME}lua_scripts/extensions/"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${MOD_ALE_PATH}/LuaEngine/extensions" "${CMAKE_BINARY_DIR}/bin/${MSVC_CONFIGURATION_NAME}lua_scripts/extensions/")
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/bin/${MSVC_CONFIGURATION_NAME}lua_scripts/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${MOD_ALE_PATH}/../lua_scripts" "${CMAKE_BINARY_DIR}/bin/${MSVC_CONFIGURATION_NAME}lua_scripts/")
   endif()
 
-  install(DIRECTORY "${MOD_ALE_PATH}/LuaEngine/extensions" DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/lua_scripts/")
+  install(DIRECTORY "${MOD_ALE_PATH}/../lua_scripts/" DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/lua_scripts")
 endif()
 
 message("")

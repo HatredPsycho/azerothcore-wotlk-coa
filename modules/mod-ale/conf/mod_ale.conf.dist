@@ -5,8 +5,9 @@
 #
 #   ALE.Enabled
 #       Description: Enable or disable ALE LuaEngine
-#       Default:    true  - (enabled)
-#                   false - (disabled)
+#                    CoA: disabled by default.
+#       Default:    0 - (disabled)
+#                   1 - (enabled)
 #
 #   ALE.TraceBack
 #       Description: Sets whether to use debug.traceback function on a lua error or not.
@@ -33,6 +34,7 @@
 #
 #   ALE.RequireCPaths
 #       Description: Sets the location of additional require C paths.
+#                    CoA: ignored while ALE.Sandbox.Enable = 1 (no native DLL/.so modules).
 #                    These paths are absolute and follows the standard Lua require path patterns.
 #                    Below are a set of "standard" paths used by most package managers.
 #                    "/usr/local/lib/lua/%s/?.so;/usr/lib/x86_64-linux-gnu/lua/%s/?.so;/usr/local/lib/lua/%s/loadall.so;"
@@ -59,8 +61,37 @@
 #                    Cache is cleared only when files are modified or server restarts.
 #       Default:    true  - (enabled)
 #                   false - (disabled)
+#
+#   ALE.Sandbox.Enable
+#       Description: CoA sandbox for Lua scripts. When enabled, scripts lose the io, os and
+#                    debug libraries, dofile, loadfile, package.loadlib, package.cpath and the
+#                    C module searchers; load() only accepts text chunks; .dll, .so and .out
+#                    files in ALE.ScriptPath are not loaded; ALE.RequireCPaths is ignored.
+#                    require() still loads pure Lua modules from ALE.ScriptPath and ALE.RequirePaths.
+#                    ALE.TraceBack has no effect while the sandbox is on (no debug library).
+#       Default:    1 - (enabled)
+#                   0 - (disabled, full Lua access: only for trusted scripts)
+#
+#   ALE.Sandbox.AllowHttp
+#       Description: Allow HttpRequest while the sandbox is enabled.
+#                    When 0, HttpRequest raises a Lua error.
+#       Default:    0 - (denied)
+#                   1 - (allowed)
+#
+#   ALE.Sandbox.AllowSql
+#       Description: Allow WorldDBQuery/Execute, CharDBQuery/Execute, AuthDBQuery/Execute
+#                    (and their Async variants) while the sandbox is enabled.
+#                    When 0, these functions raise a Lua error.
+#       Default:    0 - (denied)
+#                   1 - (allowed)
+#
+#   ALE.Sandbox.AllowCommands
+#       Description: Allow RunCommand and Player:RunCommand while the sandbox is enabled.
+#                    When 0, they raise a Lua error.
+#       Default:    0 - (denied)
+#                   1 - (allowed)
 
-ALE.Enabled = true
+ALE.Enabled = 0
 ALE.TraceBack = false
 ALE.ScriptPath = "lua_scripts"
 ALE.PlayerAnnounceReload = false
@@ -69,6 +100,10 @@ ALE.RequireCPaths = ""
 ALE.AutoReload = false
 ALE.AutoReloadInterval = 1
 ALE.BytecodeCache = true
+ALE.Sandbox.Enable = 1
+ALE.Sandbox.AllowHttp = 0
+ALE.Sandbox.AllowSql = 0
+ALE.Sandbox.AllowCommands = 0
 
 ###################################################################################################
 # LOGGING SYSTEM SETTINGS
