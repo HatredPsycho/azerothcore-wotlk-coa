@@ -1676,7 +1676,8 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
                     target->CastSpell(target, 24932, true, nullptr, this, target->GetGUID());
             }
             // Improved Barkskin - apply/remove armor bonus due to shapeshift
-            if (player->HasTalent(63410, player->GetActiveSpec()) || player->HasTalent(63411, player->GetActiveSpec()))
+            if (player->HasTalent(63410, player->GetActiveSpec()) || player->HasTalent(63411, player->GetActiveSpec()) ||
+                player->HasTalent(1163410, player->GetActiveSpec()) || player->HasTalent(1163411, player->GetActiveSpec())) // CoA copy (+1100000)
             {
                 target->RemoveAurasDueToSpell(66530);
                 if (GetMiscValue() == FORM_TRAVEL || GetMiscValue() == FORM_NONE) // "while in Travel Form or while not shapeshifted"
@@ -1773,7 +1774,8 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
         // Improved Barkskin - apply/remove armor bonus due to shapeshift
         if (player)
         {
-            if (player->HasTalent(63410, player->GetActiveSpec()) || player->HasTalent(63411, player->GetActiveSpec()))
+            if (player->HasTalent(63410, player->GetActiveSpec()) || player->HasTalent(63411, player->GetActiveSpec()) ||
+                player->HasTalent(1163410, player->GetActiveSpec()) || player->HasTalent(1163411, player->GetActiveSpec())) // CoA copy (+1100000)
             {
                 target->RemoveAurasDueToSpell(66530);
                 target->CastSpell(target, 66530, true);
@@ -6261,11 +6263,13 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster) const
                 {
                     // Feeding Frenzy Rank 1
                     case 53511:
+                    case 1153511: // CoA copy (+1100000)
                         if (target->GetVictim() && target->GetVictim()->HealthBelowPct(35))
                             target->CastSpell(target, 60096, true, 0, this);
                         return;
                     // Feeding Frenzy Rank 2
                     case 53512:
+                    case 1153512: // CoA copy (+1100000)
                         if (target->GetVictim() && target->GetVictim()->HealthBelowPct(35))
                             target->CastSpell(target, 60097, true, 0, this);
                         return;
@@ -6278,6 +6282,7 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster) const
             switch (GetId())
             {
                 case 49016: // Hysteria
+                case 1149016: // CoA copy (+1100000)
                     uint32 damage = uint32(target->CountPctFromMaxHealth(1));
                     Unit::DealDamage(target, target, damage, nullptr, NODAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                     break;

@@ -1347,7 +1347,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                             {
                                 if (AuraEffect* aurEff = owner->GetAuraEffect(SPELL_AURA_ADD_FLAT_MODIFIER, SPELLFAMILY_WARLOCK, 214, 0))
                                 {
-                                    int32 bp0 = aurEff->GetId() == 54037 ? 4 : 8;
+                                    int32 bp0 = (aurEff->GetId() == 54037 || aurEff->GetId() == 1154037) ? 4 : 8; // CoA copy (+1100000)
                                     m_caster->CastCustomSpell(m_caster, 54425, &bp0, nullptr, nullptr, true);
                                 }
                             }
@@ -4543,6 +4543,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
                         spell_bonus += int32(0.13f * m_caster->SpellBaseDamageBonusDone(m_spellInfo->GetSchoolMask()));
                         break;
                     case 53385:  // Divine Storm deals normalized damage
+                    case 1153385: // CoA copy (+1100000)
                         normalized = true;
                         break;
                     default:

@@ -2748,6 +2748,7 @@ void SpellInfo::_LoadImmunityInfo()
                 {
                     case 34471: // The Beast Within
                     case 19574: // Bestial Wrath
+                    case 1119574: // CoA copy (+1100000)
                     case 42292: // PvP trinket
                     case 1142292: // PvP Trinket (Ascension)
                     case 46227: // Medallion of Immunity

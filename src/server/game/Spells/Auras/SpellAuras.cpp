@@ -1751,6 +1751,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                 switch (GetId())
                 {
                     case 47788: // Guardian Spirit
+                    case 1147788: // CoA copy (+1100000)
                     {
                         if (removeMode != AURA_REMOVE_BY_EXPIRE)
                             break;
@@ -1761,7 +1762,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                         // Glyph of Guardian Spirit
                         if (AuraEffect* aurEff = player->GetAuraEffectOfRankedSpellOrTwin(63231, 0))
                         {
-                            if (!player->HasSpellCooldown(47788))
+                            if (!player->HasSpellCooldown(GetSpellInfo()->Id))
                                 break;
 
                             player->AddSpellCooldown(GetSpellInfo()->Id, 0, aurEff->GetAmount()*IN_MILLISECONDS);
@@ -1775,6 +1776,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                         break;
                     }
                     case 47585: // Dispersion (fixed bug invisible as a Shadow Priest)
+                    case 1147585: // CoA copy (+1100000)
                     {
                         if (target->IsMounted())
                         {
@@ -1897,11 +1899,12 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
             switch (GetId())
             {
                 case 19574: // Bestial Wrath
+                case 1119574: // CoA copy (+1100000)
                     // The Beast Within cast on owner if talent present
                     if (Unit* owner = target->GetOwner())
                     {
                         // Search talent
-                        if (owner->HasAura(34692))
+                        if (owner->HasAura(34692) || owner->HasAura(1134692)) // CoA copy (+1100000)
                         {
                             if (apply)
                                 owner->CastSpell(owner, 34471, true, 0, GetEffect(0));
