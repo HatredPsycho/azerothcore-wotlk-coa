@@ -10,6 +10,11 @@ enum class ALEConfigValues : uint32
     TRACEBACK_ENABLED,
     AUTORELOAD_ENABLED,
     BYTECODE_CACHE_ENABLED,
+    // CoA: sandbox
+    SANDBOX_ENABLED,
+    SANDBOX_ALLOW_HTTP,
+    SANDBOX_ALLOW_SQL,
+    SANDBOX_ALLOW_COMMANDS,
 
     // String
     SCRIPT_PATH,
@@ -33,6 +38,11 @@ class ALEConfig final : public ConfigValueCache<ALEConfigValues>
         bool IsTraceBackEnabled() const { return GetConfigValue<bool>(ALEConfigValues::TRACEBACK_ENABLED); }
         bool IsAutoReloadEnabled() const { return GetConfigValue<bool>(ALEConfigValues::AUTORELOAD_ENABLED); }
         bool IsByteCodeCacheEnabled() const { return GetConfigValue<bool>(ALEConfigValues::BYTECODE_CACHE_ENABLED); }
+        // CoA: sandbox
+        bool IsSandboxEnabled() const { return GetConfigValue<bool>(ALEConfigValues::SANDBOX_ENABLED); }
+        bool IsSandboxHttpAllowed() const { return GetConfigValue<bool>(ALEConfigValues::SANDBOX_ALLOW_HTTP); }
+        bool IsSandboxSqlAllowed() const { return GetConfigValue<bool>(ALEConfigValues::SANDBOX_ALLOW_SQL); }
+        bool IsSandboxCommandsAllowed() const { return GetConfigValue<bool>(ALEConfigValues::SANDBOX_ALLOW_COMMANDS); }
 
         std::string_view GetScriptPath() const { return GetConfigValue(ALEConfigValues::SCRIPT_PATH); }
         std::string_view GetRequirePath() const { return GetConfigValue(ALEConfigValues::REQUIRE_PATH); }

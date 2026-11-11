@@ -15,6 +15,7 @@
 #include "ALEUtility.h"
 #include "ALECreatureAI.h"
 #include "ALEInstanceAI.h"
+#include "ALESandbox.h"
 
 #if AC_PLATFORM == AC_PLATFORM_WINDOWS
 #define ALE_WINDOWS
@@ -138,8 +139,14 @@ void ALE::LoadScriptPaths()
     if (!lua_path_extra.empty())
         lua_requirepath += lua_path_extra;
 
+    // CoA: sandbox - ALE.RequireCPaths (native DLL/.so modules) is ignored while the sandbox is on
     if (!lua_cpath_extra.empty())
-        lua_requirecpath += lua_cpath_extra;
+    {
+        if (ALESandbox::IsEnabled())
+            ALE_LOG_ERROR("[ALE]: ALE.RequireCPaths is ignored while ALE.Sandbox.Enable = 1");
+        else
+            lua_requirecpath += lua_cpath_extra;
+    }
 
     // Erase last ;
     if (!lua_requirepath.empty())
@@ -286,6 +293,9 @@ void ALE::OpenLua()
     }
 
     lua_pop(L, 1);
+
+    // CoA: sandbox - strip io/os/debug/dofile/loadfile/package.loadlib/package.cpath and the C searchers
+    ALESandbox::Apply(L);
 }
 
 void ALE::CreateBindStores()
@@ -377,6 +387,12 @@ void ALE::AddScriptPath(std::string filename, const std::string& fullpath)
     // check extension and add path to scripts to load
     if (ext != ".lua" && ext != ".dll" && ext != ".so" && ext != ".ext" && ext !=".moon" && ext != ".out")
         return;
+    // CoA: sandbox - native modules (.dll/.so) and precompiled bytecode (.out) are not loaded
+    if (ALESandbox::IsEnabled() && (ext == ".dll" || ext == ".so" || ext == ".out"))
+    {
+        ALE_LOG_ERROR("[ALE]: `{}` skipped: {} files are not loaded while ALE.Sandbox.Enable = 1", fullpath, ext);
+        return;
+    }
     bool extension = ext == ".ext";
 
     LuaScript script;

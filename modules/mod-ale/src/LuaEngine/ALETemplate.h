@@ -16,6 +16,7 @@ extern "C"
 #include "LuaEngine.h"
 #include "ALECompat.h"
 #include "ALEUtility.h"
+#include "ALESandbox.h"
 #include "SharedDefines.h"
 #include <type_traits>
 
@@ -47,8 +48,14 @@ public:
         for (; methodTable && methodTable->name && methodTable->func; ++methodTable)
         {
             lua_pushstring(E->L, methodTable->name);
-            lua_pushlightuserdata(E->L, (void*)methodTable);
-            lua_pushcclosure(E->L, thunk, 1);
+            // CoA: sandbox - restricted globals (HttpRequest, *DB*, RunCommand) raise a Lua error instead
+            if (char const* option = ALESandbox::GetRequiredOption(methodTable->name))
+                ALESandbox::PushDeniedMethod(E->L, methodTable->name, option);
+            else
+            {
+                lua_pushlightuserdata(E->L, (void*)methodTable);
+                lua_pushcclosure(E->L, thunk, 1);
+            }
             lua_rawset(E->L, -3);
         }
 
@@ -245,8 +252,14 @@ public:
         for (; methodTable && methodTable->name && methodTable->mfunc; ++methodTable)
         {
             lua_pushstring(E->L, methodTable->name);
-            lua_pushlightuserdata(E->L, (void*)methodTable);
-            lua_pushcclosure(E->L, CallMethod, 1);
+            // CoA: sandbox - restricted methods (e.g. Player:RunCommand) raise a Lua error instead
+            if (char const* option = ALESandbox::GetRequiredOption(methodTable->name))
+                ALESandbox::PushDeniedMethod(E->L, methodTable->name, option);
+            else
+            {
+                lua_pushlightuserdata(E->L, (void*)methodTable);
+                lua_pushcclosure(E->L, CallMethod, 1);
+            }
             lua_rawset(E->L, -3);
         }
 
