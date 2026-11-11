@@ -1923,7 +1923,14 @@ public:
         if (_scenario.get<bool>("creature_scaling", false))
             _creatureScaling.emplace();
         if (_scenario.get<bool>("ptr_character_copy", false))
-            _ptrCharacterCopy.emplace();
+        {
+            std::string const interruption = _scenario.get<std::string>("ptr_character_copy_interruption", "");
+            Require(interruption.empty() || interruption == "before_load" || interruption == "after_load",
+                "Invalid ptr_character_copy_interruption");
+            _ptrCharacterCopy.emplace(interruption == "before_load" ? PtrCharacterCopy::Interruption::BeforeLoad
+                : interruption == "after_load" ? PtrCharacterCopy::Interruption::AfterLoad
+                : PtrCharacterCopy::Interruption::None);
+        }
         if (auto ownership = _scenario.get_child_optional("vanity_ownership"))
         {
             std::string starterItems;
@@ -3715,7 +3722,7 @@ private:
         }
         Player* player = unit->ToPlayer();
         Require(player != nullptr, "Metric requires a player: " + metric);
-        if (metric == "knows_spell" || metric == "cooldown_ms" || metric == "spell_charges" ||
+        if (metric == "knows_spell" || metric == "spell_rank" || metric == "first_rank_spell" || metric == "cooldown_ms" || metric == "spell_charges" ||
             metric == "spell_active" || metric == "global_cooldown_ms" || metric == "has_talent" ||
             metric == "spellbook_offers_spell" || metric == "spellbook_covers_spell" ||
             metric == "trainer_window_state" || metric == "trainer_window_ability" ||
@@ -3724,6 +3731,10 @@ private:
             Require(sSpellMgr->GetSpellInfo(spell) != nullptr, "Unknown spell in metric");
         if (metric == "knows_spell")
             return player->HasSpell(spell);
+        if (metric == "spell_rank")
+            return sSpellMgr->AssertSpellInfo(spell)->GetRank();
+        if (metric == "first_rank_spell")
+            return sSpellMgr->GetFirstSpellInChain(spell);
         if (metric == "level_scaling_choice")
             return LocalLevelScaling::ScalingChoiceEnabled(player) ? 1.0 : 0.0;
         if (metric == "skill_line_after_initial" || metric == "skill_line_after_learned")
