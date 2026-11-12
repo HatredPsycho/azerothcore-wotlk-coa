@@ -2,14 +2,13 @@
   "schema": 1,
   "name": "Client Lua loader: CoA interface pieces arrive after login and again after a /reload, with stored settings",
   "contract": [
-    "The server loads the CoARotation button and the CoACompanions frame into the client as Lua inside",
-    "SMSG_COA_PATCH_CHALLENGE_REQUIREMENT_TYPE (0x5BC). A client that never announces the hot-patch channel gets",
-    "them after the server's 30 second wait for that announcement. A /reload loses them; the",
-    "client announces its reloaded interface with CMSG_SET_ACTIONBAR_TOGGLES (0x2BF), and about 1.5 seconds later",
-    "the server sends them again. A setting saved with the COAUI<TAB>SAVE whisper is stored per character and",
-    "travels with the piece after the next login; a setting with characters outside the allowed set is dropped.",
-    "Expected: both pieces after login, at least both again after 0x2BF, the stored scale after a relog and no",
-    "trace of the rejected value. The client's rendering of the button and the frame is not exercised here."
+    "A client with the hot-patch channel announces CMSG 0x8F1 (protocol 1, mode 2) after entering the world, and",
+    "the server loads the CoARotation button and the CoACompanions frame into it as SMSG 0x8F0. A /reload loses",
+    "them; the client announces its reloaded interface with CMSG_SET_ACTIONBAR_TOGGLES (0x2BF), and about 1.5",
+    "seconds later the server sends them again. A setting saved with the COAUI<TAB>SAVE whisper is stored per",
+    "character and travels with the piece after the next login; a setting with characters outside the allowed set",
+    "is dropped. Expected: both pieces after login, at least both again after 0x2BF, the stored scale after a relog",
+    "and no trace of the rejected value. The client's rendering of the button and the frame is not exercised here."
   ],
   "timeout_ms": 90000,
   "players": [
@@ -17,18 +16,22 @@
   ],
   "steps": [
     {
+      "action": "client_packet", "label": "The client announces the hot-patch channel", "actor": "player",
+      "opcode": 2289, "fields": [{"u32": 1}, {"u8": 2}]
+    },
+    {
       "action": "assert", "label": "The CoARotation button arrives after login", "actor": "player",
-      "metric": "server_packet_contains", "opcode": 1468, "text": "CoARotationButton", "equals": 1,
-      "within_ms": 40000
+      "metric": "server_packet_contains", "opcode": 2288, "text": "CoARotationButton", "equals": 1,
+      "within_ms": 10000
     },
     {
       "action": "assert", "label": "The CoACompanions frame arrives after login", "actor": "player",
-      "metric": "server_packet_contains", "opcode": 1468, "text": "CoACompanionsFrame", "equals": 1,
+      "metric": "server_packet_contains", "opcode": 2288, "text": "CoACompanionsFrame", "equals": 1,
       "within_ms": 2000
     },
     { "action": "wait", "label": "Let the login send settle", "ms": 2000 },
     {
-      "action": "snapshot", "actor": "player", "metric": "server_packets", "opcode": 1468, "save_as": "before_reload"
+      "action": "snapshot", "actor": "player", "metric": "server_packets", "opcode": 2288, "save_as": "before_reload"
     },
     {
       "action": "client_packet", "label": "The reloaded interface reports its action bars", "actor": "player",
@@ -36,7 +39,7 @@
     },
     {
       "action": "assert", "label": "DISCRIMINATING: a reload brings both pieces back", "actor": "player",
-      "metric": "server_packets", "opcode": 1468, "relative_to": "before_reload", "min": 2, "within_ms": 5000
+      "metric": "server_packets", "opcode": 2288, "relative_to": "before_reload", "min": 2, "within_ms": 5000
     },
     {
       "action": "whisper", "actor": "player", "to": "Luaprobe", "language": 4294967295,
@@ -49,13 +52,17 @@
     { "action": "wait", "label": "Let the settings be written", "ms": 1500 },
     { "action": "relog", "actor": "player" },
     {
+      "action": "client_packet", "label": "The client announces the hot-patch channel again", "actor": "player",
+      "opcode": 2289, "fields": [{"u32": 1}, {"u8": 2}]
+    },
+    {
       "action": "assert", "label": "The stored scale travels with the button after the relog", "actor": "player",
-      "metric": "server_packet_contains", "opcode": 1468, "text": "scale=1.35;x=120;y=-40", "equals": 1,
-      "within_ms": 40000
+      "metric": "server_packet_contains", "opcode": 2288, "text": "scale=1.35;x=120;y=-40", "equals": 1,
+      "within_ms": 10000
     },
     {
       "action": "assert", "label": "A setting with a quote is rejected", "actor": "player",
-      "metric": "server_packet_contains", "opcode": 1468, "text": "x=0'y=0", "equals": 0
+      "metric": "server_packet_contains", "opcode": 2288, "text": "x=0'y=0", "equals": 0
     }
   ]
 }
