@@ -30,8 +30,8 @@
 project ( lua C )
 
 # CoA: only lua52 is allowed, from a local tarball. No URL on the Internet,
-# so no configure step can download anything. The tarball is placed by the
-# Builder; its SHA256 is checked by FetchContent.
+# so no configure step can download anything. The tarball is kept in the
+# repository (deps/lua); its SHA256 is checked by FetchContent.
 if (NOT LUA_VERSION STREQUAL "lua52")
   message(FATAL_ERROR "CoA: LUA_VERSION='${LUA_VERSION}' is not supported, only lua52.")
 endif()
