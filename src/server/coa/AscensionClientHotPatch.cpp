@@ -1,9 +1,7 @@
 /* Copyright (C) 2016+ AzerothCore, GNU AGPL v3. */
 #include "AscensionClientLua.h"
 #include "AscensionCompatOpcodes.h"
-#include "GameTime.h"
 #include "Log.h"
-#include "ObjectAccessor.h"
 #include "Player.h"
 #include "PlayerScript.h"
 #include "ScriptMgr.h"
@@ -12,7 +10,6 @@
 
 namespace
 {
-    constexpr Milliseconds CapabilityRetry = Milliseconds(2000);
     constexpr std::size_t MaxResultText = 255;
 
     char const* const OutcomeNames[] = {
@@ -40,9 +37,9 @@ namespace
 
         uint32 const protocolVersion = packet.read<uint32>();
         uint8 const mode = packet.read<uint8>();
-        SetAscensionClientLuaCapability(session->GetAccountId(), protocolVersion, mode);
-        LOG_DEBUG("coa.hotpatch", "Account {} accepts hot patches (protocol {}, mode {})",
-            session->GetAccountId(), protocolVersion, mode);
+        std::size_t const flushed = SetAscensionClientLuaCapability(session, protocolVersion, mode);
+        LOG_DEBUG("coa.hotpatch", "Account {} accepts hot patches (protocol {}, mode {}), {} queued sent",
+            session->GetAccountId(), protocolVersion, mode, flushed);
         return true;
     }
 
@@ -62,15 +59,6 @@ namespace
         return true;
     }
 
-    void RetryWhenCapabilityKnown(Player* player, AscensionClientLuaChunk const& chunk)
-    {
-        player->m_Events.AddEventAtOffset([guid = player->GetGUID(), chunk]()
-        {
-            if (Player* current = ObjectAccessor::FindPlayer(guid))
-                RunAscensionClientLua(current, chunk);
-        }, CapabilityRetry);
-    }
-
     class AscensionClientHotPatchPlayer final : public PlayerScript
     {
     public:
@@ -79,7 +67,7 @@ namespace
         void OnPlayerLogin(Player* player) override
         {
             if (WorldSession* session = player->GetSession(); session && !session->IsBot())
-                ResetAscensionClientLuaCapability(session->GetAccountId(), GameTime::SteadyNow());
+                BeginAscensionClientLuaSession(session->GetAccountId());
         }
 
         void OnPlayerLogout(Player* player) override
@@ -94,6 +82,5 @@ void AddSC_AscensionClientHotPatch()
 {
     AscensionCompatOpcodes::Claim(AscensionClientLuaCapabilityOpcode, &HandleCapability);
     AscensionCompatOpcodes::Claim(AscensionClientLuaResultOpcode, &HandleResult);
-    RegisterAscensionClientLuaDeferral(&RetryWhenCapabilityKnown);
     new AscensionClientHotPatchPlayer();
 }
