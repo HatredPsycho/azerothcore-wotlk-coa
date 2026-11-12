@@ -143,9 +143,13 @@ void ALE::LoadScriptPaths()
     if (!lua_cpath_extra.empty())
     {
         if (ALESandbox::IsEnabled())
+        {
             ALE_LOG_ERROR("[ALE]: ALE.RequireCPaths is ignored while ALE.Sandbox.Enable = 1");
+        }
         else
+        {
             lua_requirecpath += lua_cpath_extra;
+        }
     }
 
     // Erase last ;

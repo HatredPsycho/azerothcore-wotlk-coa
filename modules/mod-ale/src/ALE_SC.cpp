@@ -1326,7 +1326,7 @@ public:
         }
     }
 
-    uint32 DealDamage(Unit* AttackerUnit, Unit* pVictim, uint32 damage, DamageEffectType damagetype) override
+    uint32 DealDamage(Unit* AttackerUnit, Unit* pVictim, uint32 damage, DamageEffectType damagetype, std::optional<uint32>* /*scriptHealthLeechDamage*/) override
     {
         if (!AttackerUnit || !pVictim) return damage;
 
