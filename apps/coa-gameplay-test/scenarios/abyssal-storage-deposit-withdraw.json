@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "name": "Abyssal storage: deposit and withdraw materials, keep bound materials out of the account vault",
+  "contract": [
+    "With mod-abyssal-storage-plus at its defaults (AbyssalStoragePlus.Enable=1), .asp deposit moves every",
+    "storable trade good from the bags into the account-wide vault and .asp withdraw returns it. Items added by",
+    "the harness have no loot source, so they stay in the bags until the deposit. Primal Nether (23572) binds",
+    "on pickup; the account-wide vault would hand it to other characters, so neither the deposit of everything",
+    "nor a targeted .asp deposit takes it, while unbound Linen Cloth (2589) moves. After a relog the deposit is",
+    "still in the vault and not back in the bags. The addon's interface is not exercised; this checks the",
+    "command protocol it drives."
+  ],
+  "timeout_ms": 60000,
+  "players": [
+    { "id": "crafter", "race": 1, "class": 1, "level": 20 }
+  ],
+  "steps": [
+    { "action": "wait", "ms": 2000 },
+    { "action": "add_item", "actor": "crafter", "item": 2589, "count": 20 },
+    { "action": "add_item", "actor": "crafter", "item": 23572, "count": 5 },
+    { "action": "wait", "ms": 500 },
+    {
+      "action": "assert", "label": "CONTROL: items without a loot source stay in the bags", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 20
+    },
+    {
+      "action": "assert", "label": "Primal Nether arrives soulbound", "actor": "crafter",
+      "metric": "item_soulbound", "item": 23572, "equals": 1
+    },
+    { "action": "command", "actor": "crafter", "command": ".asp deposit" },
+    {
+      "action": "assert", "label": "Linen Cloth leaves the bags", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 0, "within_ms": 2000
+    },
+    {
+      "action": "assert", "label": "Deposit of everything leaves the bound Primal Nether in the bags",
+      "actor": "crafter", "metric": "item_count", "item": 23572, "equals": 5
+    },
+    { "action": "command", "actor": "crafter", "command": ".asp deposit 23572 5" },
+    { "action": "wait", "ms": 500 },
+    {
+      "action": "assert", "label": "A targeted deposit refuses the bound Primal Nether", "actor": "crafter",
+      "metric": "item_count", "item": 23572, "equals": 5
+    },
+    { "action": "relog", "actor": "crafter" },
+    { "action": "wait", "ms": 2000 },
+    {
+      "action": "assert", "label": "After a relog the deposited cloth is not back in the bags", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 0
+    },
+    { "action": "command", "actor": "crafter", "command": ".asp withdraw 2589" },
+    {
+      "action": "assert", "label": "Withdraw returns the deposited cloth", "actor": "crafter",
+      "metric": "item_count", "item": 2589, "equals": 20, "within_ms": 2000
+    },
+    {
+      "action": "assert", "label": "The bound material is untouched", "actor": "crafter",
+      "metric": "item_count", "item": 23572, "equals": 5
+    }
+  ]
+}

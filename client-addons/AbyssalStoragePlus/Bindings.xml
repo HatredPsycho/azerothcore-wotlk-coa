@@ -1,0 +1,5 @@
+<Bindings>
+    <Binding name="ABYSSALSTORAGEPLUS_DEPOSITALL" header="ABYSSALSTORAGEPLUS" category="ADDONS">
+        AbyssalStoragePlus:Deposit()
+    </Binding>
+</Bindings>

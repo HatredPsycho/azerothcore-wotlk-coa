@@ -97,3 +97,7 @@ mod-ale (ALE, AzerothCore Lua Engine, derived from Eluna; GPLv3; optional, built
 Lua (scripting language used by mod-ale; MIT license; local source tarball deps/lua/lua-5.2.4.tar.gz)
   https://www.lua.org/
   Version: 5.2.4
+
+mod-abyssal-storage-plus (account-wide material vault with the AbyssalStoragePlus client addon; based on thanhtong89/mod-abyssal-storage; the repository states no license)
+  https://github.com/LightFrost/mod-abyssal-storage-plus
+  Version: 7d030cd (modules/mod-abyssal-storage-plus and client-addons/AbyssalStoragePlus, with CoA changes)

@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: |cFF00B0E8Abyssal Storage|r |cff1cd3a2Plus|r
+## Version: 3.0
+## Author: LightFrost, thanhtong89
+## Notes: An Interdimensional vault to automatically store your profession materials accountwide. Materials get automatically pulled & used when crafting.
+## SavedVariables: AbyssalStoragePlusDB
+AbyssalStoragePlus.lua
+AbyssalStoragePlusUI.lua
+AbyssalStoragePlusOptions.lua

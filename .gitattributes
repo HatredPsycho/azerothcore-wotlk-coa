@@ -44,3 +44,6 @@ src/server/coa/AscensionCustomClassData.h -text
 
 # CoA : archives tierces versées telles quelles (Lua 5.2.4 pour mod-ale) : jamais de conversion de fins de ligne
 deps/lua/*.tar.gz binary
+
+# CoA: client addon textures (BLP) are binary
+*.blp binary
