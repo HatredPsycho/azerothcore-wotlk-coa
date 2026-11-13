@@ -225,3 +225,6 @@ not shipped) and moves the stored reagents into it.
 - Mail auto-vault uses the core's `OnPlayerTakeMailItem` hook and moves the taken material's whole bag count.
 - Alt bots run `.asp deposit` from mod-playerbots (`AiPlayerbot.AltBotReagentDepositInterval`); random bots never
   use the vault.
+- The addon files Woodcutting and Woodworking materials under a Wood category and a Woodworking tab. The list holds
+  the reagents and products of skills 732/757's SkillLineAbility recipes that no other profession uses, plus the
+  logs only woodcutting nodes drop; worldofd2's `coa` fork suggested the tab.

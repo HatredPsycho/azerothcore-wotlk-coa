@@ -53,16 +53,50 @@ local CATEGORY_ORDER = {
     "Cloth",
     "Leather",
     "Metal & Stone",
+    "Wood",
     "Herbs",
     "Elemental",
     "Enchanting",
     "Other",
 }
 
-local function GetItemCategory(itemType, itemSubType)
+-- Woodcutting (732) and Woodworking (757) materials: the reagents and products of their SkillLineAbility
+-- recipes that no other profession uses, plus the logs only woodcutting nodes drop.
+local WOOD_MATERIALS = {
+    [1006602] = true,
+    [1006603] = true,
+    [1006605] = true,
+    [1006620] = true,
+    [1006621] = true,
+    [1006623] = true,
+    [1006638] = true,
+    [1006639] = true,
+    [1006641] = true,
+    [1006656] = true,
+    [1006657] = true,
+    [1006659] = true,
+    [1006674] = true,
+    [1006675] = true,
+    [1006677] = true,
+    [8210210] = true,
+    [8210211] = true,
+    [8210212] = true,
+    [8210213] = true,
+    [8210214] = true,
+    [8210215] = true,
+    [8210217] = true,
+    [8210230] = true,
+    [8210231] = true,
+    [8210232] = true,
+    [8210233] = true,
+    [8210234] = true,
+}
+
+local function GetItemCategory(entry, itemType, itemSubType)
     if itemType ~= "Trade Goods" then
         return "Other"
     end
+    if WOOD_MATERIALS[entry] then return "Wood" end
 
     itemSubType = itemSubType or ""
     if itemSubType == "Cloth" then return "Cloth" end
@@ -84,6 +118,7 @@ local PROFESSION_ORDER = {
     "Jewelcrafting",
     "Leatherworking",
     "Tailoring",
+    "Woodworking",
     "Other",
 }
 
@@ -98,6 +133,7 @@ local PROFESSION_ICONS = {
     Jewelcrafting = "Interface\\Icons\\INV_Misc_Gem_01",
     Leatherworking = "Interface\\Icons\\INV_Misc_ArmorKit_17",
     Tailoring = "Interface\\Icons\\Trade_Tailoring",
+    Woodworking = "Interface\\Icons\\INV_TradeskillItem_03",
     Other = "Interface\\Icons\\INV_Misc_Urn_01",
 }
 
@@ -139,6 +175,7 @@ local ABYSSAL_RECIPE_CATEGORIES = {
 local function GetProfessionCategory(entry, itemType, itemSubType, itemName)
     if itemType == "Gem" then return "Jewelcrafting" end
     if itemType ~= "Trade Goods" then return "Other" end
+    if entry and WOOD_MATERIALS[entry] then return "Woodworking" end
 
     local recipeCategory = entry and ABYSSAL_RECIPE_CATEGORIES[entry]
     if recipeCategory then return recipeCategory end
@@ -189,7 +226,7 @@ local function BuildDisplayList()
     wipe(displayList)
     for entry, count in pairs(AbyssalStoragePlus.items) do
         local name, itemType, itemSubType, icon = GetItemMeta(entry)
-        local category = GetItemCategory(itemType, itemSubType)
+        local category = GetItemCategory(entry, itemType, itemSubType)
         local categoryMatches = selectedCategory == "All" or category == selectedCategory
         if name then
             if categoryMatches and (searchFilter == "" or name:lower():find(searchFilter:lower(), 1, true)) then
@@ -331,14 +368,16 @@ end)
 
 -- Category filters, matching ReagentBankUI's category-first workflow.
 local categoryButtons = {}
-local categoryButtonWidth = 114
-local categoryButtonHeight = 22
 local categoryButtonGap = 6
+local categoryColumns = math.ceil(#CATEGORY_ORDER / 2)
+local categoryButtonWidth = math.floor((FRAME_WIDTH - 2 * FRAME_PADDING - (categoryColumns - 1) * categoryButtonGap)
+    / categoryColumns)
+local categoryButtonHeight = 22
 for index, categoryName in ipairs(CATEGORY_ORDER) do
     local categoryButton = CreateFrame("Button", nil, classicView, "UIPanelButtonTemplate")
     local categoryIndex = index - 1
-    local categoryColumn = categoryIndex % 4
-    local categoryRow = math.floor(categoryIndex / 4)
+    local categoryColumn = categoryIndex % categoryColumns
+    local categoryRow = math.floor(categoryIndex / categoryColumns)
     categoryButton:SetSize(categoryButtonWidth, categoryButtonHeight)
     categoryButton:SetPoint("TOPLEFT", frame, "TOPLEFT", FRAME_PADDING + categoryColumn * (categoryButtonWidth + categoryButtonGap), -(HEADER_HEIGHT + 60 + categoryRow * (categoryButtonHeight + 4)))
     categoryButton:SetFrameStrata("MEDIUM")
