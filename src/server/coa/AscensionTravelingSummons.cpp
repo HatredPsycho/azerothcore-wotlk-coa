@@ -128,10 +128,10 @@ public:
         uint32 const mapId = travel->mapId;
         std::vector<TravelingSummon> const summons = travel->summons;
         player->CustomData.Erase(TRAVELING_SUMMONS);
-        if (mapId != player->GetMapId() || !player->IsAlive())
+        Map* map = player->GetMap();
+        if (mapId != player->GetMapId() || !player->IsAlive() || map->IsScriptedPrivateInstance())
             return;
 
-        Map* map = player->GetMap();
         for (std::size_t index = 0; index < summons.size(); ++index)
         {
             TravelingSummon const& kept = summons[index];
