@@ -1160,7 +1160,6 @@ struct Actor
     std::map<uint32, uint32> questOfferXP;
     uint32 lastQuestWindow = 0;
     uint32 lastStableResult = 0;
-    std::optional<uint8> charCreateResult;
     uint32 lfgProposalId = 0;
     std::map<uint16, uint32> extensionPackets;
     std::map<uint32, uint32> addonFieldUpdates;
@@ -1542,8 +1541,6 @@ void ObservePacket(Actor& actor, WorldPacket const& packet)
         actor.charCreateResult = packet.read<uint8>(0);
     if (packet.GetOpcode() == SMSG_STABLE_RESULT && packet.size() == sizeof(uint8))
         actor.lastStableResult = packet.read<uint8>(0);
-    if (packet.GetOpcode() == SMSG_CHAR_CREATE && packet.size() == sizeof(uint8))
-        actor.charCreateResult = packet.read<uint8>(0);
     constexpr std::size_t LfgProposalIdOffset = sizeof(uint32) + sizeof(uint8);
     if (packet.GetOpcode() == SMSG_LFG_PROPOSAL_UPDATE && packet.size() >= LfgProposalIdOffset + sizeof(uint32))
         actor.lfgProposalId = packet.read<uint32>(LfgProposalIdOffset);
