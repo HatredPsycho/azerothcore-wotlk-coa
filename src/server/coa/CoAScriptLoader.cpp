@@ -407,7 +407,6 @@ void AddSC_AscensionBlackwoodRifts();
 void AddSC_AscensionCardensDiary();
 void AddSC_AscensionCainManor();
 void AddSC_AscensionExperimentalTeleporter();
-void AddSC_AscensionTravelingSummons();
 void AddSC_AscensionBotParachute();
 void AddSC_AscensionThreeTotems();
 void AddSC_AscensionInnRest();
@@ -716,7 +715,6 @@ void AddCoAScripts()
     AddSC_AscensionCardensDiary();
     AddSC_AscensionCainManor();
     AddSC_AscensionExperimentalTeleporter();
-    AddSC_AscensionTravelingSummons();
     AddSC_AscensionBotParachute();
     AddSC_AscensionThreeTotems();
     AddSC_AscensionInnRest();
