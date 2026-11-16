@@ -470,6 +470,8 @@ namespace lfg
         uint32 GetDungeon(ObjectGuid guid, bool asId = true);
         /// Get the map id of the current dungeon
         uint32 GetDungeonMapId(ObjectGuid guid);
+        /// Turn a finished Dungeon Finder group whose members all left the dungeon into an ordinary group
+        void ReleaseFinishedDungeon(Group* grp);
         /// Get kicks left in current group
         uint8 GetKicksLeft(ObjectGuid gguid);
         /// Load Lfg group info from DB

@@ -1710,6 +1710,35 @@ namespace lfg
         LOG_DEBUG("lfg", "LFGMgr::ReleaseAbandonedDungeon: [{}] left map {} unfinished; released", gguid.ToString(), mapId);
     }
 
+    void LFGMgr::ReleaseFinishedDungeon(Group* grp)
+    {
+        ObjectGuid const gguid = grp->GetGUID();
+        if (!grp->isLFGGroup() || GetState(gguid) != LFG_STATE_FINISHED_DUNGEON || !GetDungeon(gguid))
+            return;
+
+        uint32 const mapId = GetDungeonMapId(gguid);
+        for (GroupReference* itr = grp->GetFirstMember(); itr != nullptr; itr = itr->next())
+            if (Player* member = itr->GetSource())
+                if (member->GetMapId() == mapId)
+                    return;
+
+        SetState(gguid, LFG_STATE_NONE);
+        SetDungeon(gguid, 0);
+        LfgGuidSet const players = GetPlayers(gguid);
+        for (ObjectGuid const& guid : players)
+        {
+            SetState(guid, LFG_STATE_NONE);
+            SendLfgUpdateParty(guid, LfgUpdateData(LFG_UPDATETYPE_REMOVED_FROM_QUEUE));
+        }
+
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_LFG_DATA);
+        stmt->SetData(0, gguid.GetCounter());
+        CharacterDatabase.Execute(stmt);
+
+        grp->ConvertFromLFG();
+        LOG_DEBUG("lfg", "LFGMgr::ReleaseFinishedDungeon: [{}] left finished map {}; ordinary group again", gguid.ToString(), mapId);
+    }
+
     uint8 LFGMgr::CheckGroupRoles(LfgRolesMap& groles)
     {
         if (groles.empty())
