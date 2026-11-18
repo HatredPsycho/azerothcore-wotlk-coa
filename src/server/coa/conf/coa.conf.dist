@@ -1137,3 +1137,6 @@ XPHotspots.Brand = ""
 # Diagnostic boss probe: logs the casts, cast results and incoming melee and spell damage of
 # creatures under investigation to the "coa.bossprobe" logger. Off on a normal realm.
 CoA.BossProbe.Enable = 0
+
+CoA.ChatLog.Enable = 0
+CoA.ChatLog.KeepDays = 30
