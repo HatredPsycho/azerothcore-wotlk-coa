@@ -76,7 +76,7 @@ METRICS = TIMELINE_METRICS | EVENT_TIME_METRICS | {
     'pet_power', 'pet_max_power', 'spell_energize_count', 'spell_energize_total',
     'xp', 'next_level_xp', 'skill_value', 'skill_maximum', 'lfg_dungeon_disabled', 'lfg_lock_status', 'lfg_state',
     'lfg_selected_dungeon_count', 'lfg_selected_dungeon', 'lfg_need_allowed',
-    'map_id', 'instance_id',
+    'map_id', 'instance_id', 'battleground_queued', 'battleground_invited_max_level',
     'in_arena', 'arena_team_members', 'arena_team_season_games', 'arena_team_season_wins',
     'battleground_team', 'team', 'name_query_race',
     'map_difficulty', 'nearby_creature_template', 'nearby_creature_max_health', 'nearby_creature_health_pct',
@@ -88,7 +88,7 @@ METRICS = TIMELINE_METRICS | EVENT_TIME_METRICS | {
     'placement_audit_spawns', 'placement_audit_anomalies',
     'placement_audit_event_spawns',
     'loot_gear_item_level',
-    'position_x', 'position_y', 'position_z',
+    'position_x', 'position_y', 'position_z', 'object_scale',
     'view_level', 'sent_level', 'sent_max_health', 'sent_faction', 'sent_free_for_all_pvp', 'sent_visible_item',
     'level_scaling_choice',
     'spell_mod_mutants',
@@ -103,7 +103,8 @@ METRICS = TIMELINE_METRICS | EVENT_TIME_METRICS | {
     'global_cooldown_ms', 'spell_charges',
     'action_button', 'action_button_packed', 'persisted_action_button', 'item_count', 'carried_item_count',
     'carried_pool_item_count', 'carried_variant_item_count', 'carried_statless_armor_count',
-    'client_knows_spell', 'client_spellbook_copies', 'initial_spells_at', 'learned_spell_at',
+    'client_knows_spell', 'client_spellbook_copies', 'client_cooldown_ready', 'client_cooldown_clears',
+    'client_cooldown_blocked_casts', 'initial_spells_at', 'learned_spell_at',
     'skill_line_ability', 'skill_line_ability_at', 'skill_line_after_initial', 'skill_line_after_learned',
     'pool_variant_count', 'pool_retired_item_count', 'pool_row_count', 'pool_item_present',
     'cache_token_count', 'cache_token_stage', 'cache_token_present',
@@ -200,7 +201,7 @@ METRICS = TIMELINE_METRICS | EVENT_TIME_METRICS | {
     'spell_resist_chance', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
     'equipped_item', 'visible_item',
-    'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_max_health', 'pet_health', 'pet_attack_power',
+    'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_max_health', 'pet_stat', 'pet_health', 'pet_attack_power',
     'pet_melee_swings', 'pet_melee_crits', 'pet_melee_glancing', 'pet_melee_plain_count', 'pet_melee_plain_damage',
     'pet_melee_damage', 'pet_melee_hits', 'pet_melee_blocked',
     'owned_creature_damage_total', 'owned_creature_damage_count', 'owned_creature_attack_count',
@@ -251,7 +252,7 @@ PLAYER_STAT_METRICS = {
     'spell_resist_chance', 'spell_uses_armor',
     'spell_heal_count', 'spell_heal_total', 'spell_effective_heal_total',
     'equipped_item', 'visible_item',
-    'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_aura_duration_ms', 'pet_max_health', 'pet_health',
+    'pet_aura_amount', 'pet_aura_amplitude_ms', 'pet_aura_duration_ms', 'pet_max_health', 'pet_stat', 'pet_health',
     'pet_attack_power',
     'pet_melee_swings', 'pet_melee_crits', 'pet_melee_glancing', 'pet_melee_plain_count', 'pet_melee_plain_damage',
     'pet_melee_damage', 'pet_melee_hits', 'pet_melee_blocked',
@@ -1165,7 +1166,7 @@ def validate(scenario, clock=REAL_CLOCK):
                 number(step.get('entry'), f'{where}.entry', 1, 2**31 - 1, True)
             if metric == 'creature_query_quest_item':
                 number(step.get('item'), f'{where}.item', 1, 2**32 - 1, True)
-            if metric in {'map_id', 'instance_id', 'map_difficulty', 'nearby_creature_template',
+            if metric in {'map_id', 'instance_id', 'battleground_queued', 'battleground_invited_max_level', 'map_difficulty', 'nearby_creature_template',
                           'nearby_creature_max_health',
                           'nearby_creature_health_pct', 'nearby_creature_sent_spellclick', 'nearby_creature_sent_gossip', 'nearby_creature_can_attack',
                           'nearby_creature_mount_display', 'nearby_creature_display', 'nearby_creature_aura_count',
@@ -1261,6 +1262,7 @@ def validate(scenario, clock=REAL_CLOCK):
             if metric.startswith('aura') or metric in {
                     'knows_spell', 'spell_rank', 'first_rank_spell', 'cooldown_ms', 'spell_cooldown_packet_ms', 'sent_aura_amount', 'global_cooldown_ms', 'spell_charges', 'cast_remaining_ms', 'has_talent',
                     'pet_knows_spell', 'client_knows_spell', 'client_spellbook_copies', 'learned_spell_at',
+                    'client_cooldown_ready', 'client_cooldown_clears', 'client_cooldown_blocked_casts',
                     'skill_line_ability', 'skill_line_ability_at', 'skill_line_after_initial', 'skill_line_after_learned',
                     'pet_aura_stacks', 'pet_aura_duration_ms', 'charm_aura_stacks', 'spell_active',
                     'dynamic_object', 'dynamic_object_duration_ms', 'dynamic_object_height', 'spell_power_cost',
@@ -1367,7 +1369,7 @@ def validate(scenario, clock=REAL_CLOCK):
                     number(step.get(key), f'{where}.{key}', -17000, 17000)
             elif 'x' in step or 'y' in step:
                 require(False, f'{where}: x and y only apply to point metrics')
-            if metric in {'stat', 'stat_exact', 'owned_creature_stat'}:
+            if metric in {'stat', 'stat_exact', 'owned_creature_stat', 'pet_stat'}:
                 number(step.get('stat'), f'{where}.stat', 0, 4, True)
             if metric == 'track_creature_type':
                 number(step.get('id'), f'{where}.id', 1, 32, True)
@@ -1585,7 +1587,8 @@ def validate(scenario, clock=REAL_CLOCK):
                         f'{where}: metric needs the text to look for')
             if metric in {'knows_spell', 'spell_rank', 'first_rank_spell', 'client_knows_spell', 'client_spellbook_copies', 'has_talent',
                           'talent_points', 'active_talent_spec', 'cooldown_ms',
-                          'spell_charges',
+                          'spell_charges', 'client_cooldown_ready', 'client_cooldown_clears',
+                          'client_cooldown_blocked_casts',
                           'action_button', 'action_button_packed', 'persisted_action_button', 'item_count',
                           'carried_item_count', 'carried_pool_item_count', 'carried_variant_item_count',
                           'carried_statless_armor_count',

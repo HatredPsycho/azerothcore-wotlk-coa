@@ -593,6 +593,17 @@ superseded, removed and unlearned) leave it in the client's spellbook. `client_s
 and counts how many rows the client's spellbook holds for it: the client appends a row per announcement and only
 its highest-rank view hides a spell that has ranks, so an unranked spell announced twice (a learned-spell packet
 beside the superseded one that delivers it) is listed twice on screen.
+`client_cooldown_ready` requires `spell` and is 1 unless the client still shows it cooling down. The client
+starts its own cooldown when SMSG_SPELL_GO reports its own cast of a spell in its spellbook (the longer of the
+DBC recovery and category recovery times, shared with the spell's category) and drops it only on an
+SMSG_CLEAR_COOLDOWN for that spell that arrives later, so a clear sent before the cast's SMSG_SPELL_GO is lost.
+`client_cooldown_clears` requires `spell` and counts the SMSG_CLEAR_COOLDOWN packets for it that ended a
+cooldown the client was still showing. That includes a clear that a later SMSG_SPELL_GO of the same cast
+restarts at once, so it does not prove the player saw a reset.
+`client_cooldown_blocked_casts` requires `spell` and counts the actor's own SMSG_SPELL_GO packets for it whose
+`cast` or `cast_no_target` step found the client still showing it cooling down: casts the server allowed but
+the button refused. Readiness is read when the step submits the cast, before any packet of that cast, and an
+SMSG_SPELL_GO without such a step is judged at its arrival.
 XP-delta assertions must also keep the level stable, or crossing a level would wrap the XP bar.
 
 Every step accepts a descriptive `label`. Assertions optionally accept `within_ms`: poll until the expected
@@ -813,6 +824,8 @@ that target. It reads position and nothing else, so displacement from a knockbac
 the difference between two observations; take a `snapshot` first and assert `relative_to` it. Height is excluded.
 `position_x`, `position_y` and `position_z` read the unit's native coordinates on its current map, so a
 teleport's landing can be held to its destination with `min`/`max` bounds; pair them with `map_id`.
+`object_scale` reads the unit's object scale (UNIT_FIELD_SCALE), e.g. a boss keeping its model size after a
+display change.
 `in_flight` is 1 while a player rides a taxi and `taxi_destination` is the last node of the route still
 ahead (0 when none). `discover_taxi_node` (player `actor`, TaxiNodes `entry`) marks a node discovered, as
 talking to its flight master does, so a scenario can request a route through it.
