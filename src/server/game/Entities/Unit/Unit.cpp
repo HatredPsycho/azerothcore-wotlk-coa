@@ -18923,7 +18923,7 @@ void Unit::Whisper(uint32 textId, Player* target, bool isBossWhisper /*= false*/
 bool Unit::CanRestoreMana(SpellInfo const* spellInfo) const
 {
     // Aura of Despair exceptions
-    switch (spellInfo->Id)
+    switch (sSpellMgr->GetSpellTwinSource(spellInfo->Id) == 54428 ? 54428 : spellInfo->Id)
     {
         case 16666: // Demonic Rune
         case 27869: // Dark Rune
@@ -18941,7 +18941,7 @@ bool Unit::CanRestoreMana(SpellInfo const* spellInfo) const
         case 68285: // Improved Leader of the Pack
             return true;
         case 54428: // Divine Plea - only with talent Guarded by the Light
-            return HasSpell(53583) || HasSpell(1153583); // CoA copy (+1100000)
+            return IsPlayer() ? ToPlayer()->HasSpellOrTwin(53583) : HasSpell(53583);
         default:
             break;
     }

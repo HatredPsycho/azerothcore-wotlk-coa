@@ -1501,7 +1501,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                     if (aurEff)
                     {
                         uint32 spellId = 0;
-                        switch (aurEff->GetId())
+                        switch (sSpellMgr->GetSpellTwinSource(aurEff->GetId()))
                         {
                             // Ebon Plague (CoA copies of the talent: +1100000)
                             case 51161:
@@ -1533,7 +1533,8 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                                 LOG_ERROR("spells.aura", "Aura::HandleAuraSpecificMods: Unknown rank of Crypt Fever/Ebon Plague ({}) found", aurEff->GetId());
                         }
                         if (spellId)
-                            caster->CastSpell(target, spellId, true, 0, GetEffect(0));
+                            caster->CastSpell(target, sSpellMgr->GetSpellTwinFor(spellId, aurEff->GetId()), true, 0,
+                                GetEffect(0));
                     }
                 }
                 // Unholy blight
@@ -1748,7 +1749,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                         }
                     }
                 }
-                switch (GetId())
+                switch (sSpellMgr->GetSpellTwinSource(GetId()))
                 {
                     case 47788: // Guardian Spirit
                     case 1147788: // CoA copy (+1100000)
@@ -1762,7 +1763,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                         // Glyph of Guardian Spirit
                         if (AuraEffect* aurEff = player->GetAuraEffectOfRankedSpellOrTwin(63231, 0))
                         {
-                            if (!player->HasSpellCooldown(GetSpellInfo()->Id))
+                            if (!player->HasSpellCooldown(GetId()))
                                 break;
 
                             player->AddSpellCooldown(GetSpellInfo()->Id, 0, aurEff->GetAmount()*IN_MILLISECONDS);
@@ -1896,7 +1897,7 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
             }
             break;
         case SPELLFAMILY_HUNTER:
-            switch (GetId())
+            switch (sSpellMgr->GetSpellTwinSource(GetId()) == 19574 ? 19574 : GetId())
             {
                 case 19574: // Bestial Wrath
                 case 1119574: // CoA copy (+1100000)
@@ -1904,12 +1905,13 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                     if (Unit* owner = target->GetOwner())
                     {
                         // Search talent
-                        if (owner->HasAura(34692) || owner->HasAura(1134692)) // CoA copy (+1100000)
+                        if (owner->HasAuraOrTwin(34692))
                         {
+                            uint32 const beastWithin = sSpellMgr->GetSpellTwinFor(34471, GetId());
                             if (apply)
-                                owner->CastSpell(owner, 34471, true, 0, GetEffect(0));
+                                owner->CastSpell(owner, beastWithin, true, 0, GetEffect(0));
                             else
-                                owner->RemoveAurasDueToSpell(34471);
+                                owner->RemoveAurasDueToSpell(beastWithin);
                         }
                     }
                     break;
