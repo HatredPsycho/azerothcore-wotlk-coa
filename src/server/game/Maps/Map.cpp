@@ -2896,7 +2896,9 @@ void Map::ProcessCreatureRespawn(ObjectGuid::LowType spawnId)
     // Pool members are handled entirely by the pool system on this map's pool data
     if (uint32 poolId = sPoolMgr->IsPartOfAPool<Creature>(spawnId))
     {
-        sPoolMgr->UpdatePool<Creature>(GetPoolData(), poolId, spawnId);
+        // A member the pool no longer counts as spawned left a stale timer: re-rolling would spawn a second member
+        if (GetPoolData().IsSpawnedObject<Creature>(spawnId))
+            sPoolMgr->UpdatePool<Creature>(GetPoolData(), poolId, spawnId);
         RemoveCreatureRespawnTime(spawnId);
         return;
     }
@@ -2976,7 +2978,8 @@ void Map::ProcessGameObjectRespawn(ObjectGuid::LowType spawnId)
     // Pool members are handled entirely by the pool system on this map's pool data
     if (uint32 poolId = sPoolMgr->IsPartOfAPool<GameObject>(spawnId))
     {
-        sPoolMgr->UpdatePool<GameObject>(GetPoolData(), poolId, spawnId);
+        if (GetPoolData().IsSpawnedObject<GameObject>(spawnId))
+            sPoolMgr->UpdatePool<GameObject>(GetPoolData(), poolId, spawnId);
         RemoveGORespawnTime(spawnId);
         return;
     }
