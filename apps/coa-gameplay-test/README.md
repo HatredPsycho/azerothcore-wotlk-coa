@@ -393,7 +393,7 @@ runs such a case exclusively because the setting is process-global. Optional
 case (an omitted field is disabled) and is likewise run exclusively. Its optional `group` sets
 `AllowTwoSide.Interaction.Group`, which keeps the configured value when omitted. Optional `chat_log: true`
 turns `CoA.ChatLog.Enable` on for that case and back to the configured state when it ends, and is likewise run
-exclusively. Optional `battleground_kill_xp: true` turns `Battleground.GiveXPForKills` on for that case in the same
+exclusively; with it, `chat_log_max_pending` (1-1000000) sets `CoA.ChatLog.MaxPendingRows` for the case. Optional `battleground_kill_xp: true` turns `Battleground.GiveXPForKills` on for that case in the same
 way, and is likewise run exclusively. Optional
 `ptr_character_copy: true` makes this realm both the source and the target of `.ptr copy` for that case, with no
 cooldown, and is likewise run exclusively. Queued copies load and report within a 5-second poll, so wait after
@@ -501,8 +501,8 @@ assert stable maximums and final levels when testing damage coefficients.
 | `console` | `command`: execute one console command on the test server; capture its output. Optional `restore`: one console command that undoes it, run when the case ends, whether it passed or failed (the latest step's first); use it for process-global state such as `raidphase set`. |
 | `game_event` | `event`, `active`: start or stop a game event whatever the realm date, so a holiday case passes on any day; `event start`/`event stop` refuse an event already in that state. The case restores each event's original state when it ends and runs exclusively, because events are process-global. |
 | `command` | `actor`, `command` beginning with `.`: execute with the player's normal permissions. Optional `rejected: true` instead requires the command to be refused (unknown, malformed or answered with an error). |
-| `whisper` | Player `actor`, `to`, `text`, optional `language` (Common by default): the client's whisper packet, sent as typed. |
-| `chat_log_cleanup` | `actor`, `days_ahead` (0-3650): writes the chat log's pending rows, then runs its daily cleanup as if the realm clock were `days_ahead` days later, waiting for it: every `coa_chat_log` row older than `CoA.ChatLog.KeepDays` days at that time is deleted. |
+| `whisper` | Player `actor`, `to`, `text`, optional `language` (Common by default) and `repeat` (1-100, 1 by default): the client's whisper packet, sent as typed, `repeat` times in the same update. |
+| `chat_log_cleanup` | `actor`, `days_ahead` (0-3650): writes the chat log's pending rows, then runs its daily cleanup as if the realm clock were `days_ahead` days later, waiting for it: every `coa_chat_log` row older than `CoA.ChatLog.KeepDays` days at that time is deleted. With `background: true` it only starts the cleanup the worldserver runs in the background, in batches between other character database work; assert its result with `within_ms`. |
 | `learn`, `unlearn` | `actor`, `spell`: configure learned spells/passives through player APIs. `unlearn` accepts `all_specs: true` to remove the fixture grant from every specialization before testing a lower weapon rank. |
 | `money` | `actor`, `copper`: fixture purse, so a priced trainer row can be bought on a character that starts with none. |
 | `set_player_setting` | `actor`, `source`, `index`, `value`: fixture a stored character setting, such as a value saved by an earlier build, before a `relog` reads it. |
@@ -778,6 +778,8 @@ blocked: false` selects plain hits.
 `melee_attacks_taken` counts the melee combat packets whose victim is the player actor, optionally only those from
 the `target` attacker. `victim_state` (0 to 8, the packet's `VictimState`: 0 missed, 1 hit, 2 dodged, 3 parried,
 5 blocked, 6 evaded, 7 immune, 8 deflected) keeps only the packets with that outcome.
+`melee_attack_taken_last_ms` reads the game time in milliseconds at which the player actor last received such a
+packet, optionally only one with the given `victim_state`; it is missing before the first one (ADR 1273).
 `melee_missed_taken` counts the same packets that carry `HITINFO_MISS` (a miss reaches the client with victim state
 0), optionally only those from the `target` attacker.
 `pet_melee_swings`, `pet_melee_crits`, `pet_melee_glancing`, `pet_melee_plain_count`, `pet_melee_plain_damage`
@@ -837,6 +839,11 @@ penetration modifiers. It applies no damage.
 periodic healing logs, counting positive heals, summing healing including overhealing, or summing effective
 healing. They accept the same caster/critical filters; `target_pet: true` selects the current pet of a player
 `target`. Absorbed healing is excluded. These metrics avoid confusing normal regeneration with spell healing.
+`spell_heal_absorb_total` sums the absorbed amount that native direct and periodic healing logs of `spell` report
+(the third field of `SMSG_SPELLHEALLOG` and of a periodic heal `SMSG_PERIODICAURALOG`), including a heal that a
+heal absorb (aura 301) took whole and that the other healing metrics therefore do not see. Unlike
+`spell_absorb_total` it reads periodic logs too. It takes the `caster` (a unit id, the player by default), `target`
+and `critical` filters, and refuses `pet`, `caster_entry` and `target_pet` (ADR 1286).
 The result's optional `cast_failures` array records native `SMSG_CAST_FAILED` spell IDs, cast counters and
 numeric `SpellCastResult` reasons. These diagnose a rejected submission; effect assertions still establish success.
 `distance` requires `target` and measures the native two-dimensional distance, in yards, between the actor and
@@ -999,7 +1006,9 @@ Optional `race` seeds the saved character's race through `CHAR_UPD_CHAR_RACE` an
 before login, retaining saved pet data. This fixtures the post-service state; it does not submit a race/faction
 service request or perform that service's spell, quest, faction, language or appearance conversions.
 Optional `offline_seconds` moves the saved logout time that far back, so the login handler treats the character
-as offline for that long (real-time item durations, rest). `reconnect` takes `actor` and hands the character, still in the world, to a new session through the native reconnect handler (`HandlePlayerLoginToCharInWorld`), as a client restarted before its character logged out would. No login hook runs; packets recorded on the actor accumulate across both sessions.
+as offline for that long (real-time item durations, rest). Optional `logout_repop: true` first runs the repop a
+native logout gives a player who died without releasing (`BuildPlayerRepop`, `RepopAtGraveyard` and the finished
+graveyard transfer), before the save, so the saved state matches a real logout of a dead character. `reconnect` takes `actor` and hands the character, still in the world, to a new session through the native reconnect handler (`HandlePlayerLoginToCharInWorld`), as a client restarted before its character logged out would. No login hook runs; packets recorded on the actor accumulate across both sessions.
 
 `item_duration` requires `item` and reads the
 remaining duration in seconds of the first carried copy of that item.
@@ -1067,6 +1076,8 @@ banker click is answered with. `system_messages` counts the chat lines the sessi
 `chat_text`, `chat_channel`, `chat_subject`, `chat_name` (the sender's name as written on the row) and `chat_target_name` must match exactly, `chat_target` names the player the row is
 addressed to, `chat_emote` is the text emote id, and `chat_has_position`, `chat_has_group`, `chat_has_guild` and
 `chat_has_mail_id` require that value to be set (true) or zero (false).
+`chat_log_dropped` counts the chat log rows dropped since the case started because `CoA.ChatLog.MaxPendingRows`
+rows were already waiting for the database; it needs `chat_log: true`.
 `cast_failure` requires `spell` and reports the reason the client was told the last submitted cast of
 that spell was refused, or zero if it was not refused since (the record is cleared when the scenario
 submits that spell again).
@@ -1209,6 +1220,7 @@ teleports and expiry. It requires `mod-portablemail`; mailbox and altar client i
 `mana_regen` and `mana_regen_interrupted` read the player's owner-visible mana regeneration fields in
 mana per second, outside and inside the five-second rule. `resting` reads the native resting player flag and
 `free_for_all_pvp` the native free-for-all PvP flag the player's own client receives.
+`pvp_flagged` reads whether any unit carries the native PvP flag (`Unit::IsPvP`).
 `track_creature_type` reads whether a player's PLAYER_TRACK_CREATURES field holds the bit of creature type `id`
 (1 to 32), the field SPELL_AURA_TRACK_CREATURES sets.
 `sent_mana_regen` and `sent_mana_regen_interrupted` decode those fields from native values-update packets
