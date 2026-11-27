@@ -118,6 +118,8 @@ void ApplyContracts(SpellInfo* info)
         info->AttributesCu &= ~SPELL_ATTR0_CU_NEGATIVE;
         Ascension::ClientSpellPatches::Instance().Register(id);
     }
+    if (id == SunStride)
+        Ascension::ClientSpellPatches::Instance().Register(id);
     if (id == SolarPower)
         dummy(1);
     if (id == 800764)
@@ -232,6 +234,12 @@ void ApplyContracts(SpellInfo* info)
         info->AttributesEx2 |= SPELL_ATTR2_CANT_CRIT;
         info->AttributesEx3 |= SPELL_ATTR3_IGNORE_CASTER_MODIFIERS;
         info->AttributesEx4 |= SPELL_ATTR4_IGNORE_DAMAGE_TAKEN_MODIFIERS;
+        info->AscensionInheritsResolvedAmount = true;
+    }
+    if (id == 505370)
+    {
+        info->AttributesEx2 |= SPELL_ATTR2_CANT_CRIT;
+        info->AttributesEx3 |= SPELL_ATTR3_IGNORE_CASTER_MODIFIERS;
         info->AscensionInheritsResolvedAmount = true;
     }
     if (Gavel(info))

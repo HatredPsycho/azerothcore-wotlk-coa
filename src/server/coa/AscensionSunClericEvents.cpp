@@ -184,12 +184,11 @@ class aura_ascension_sun_cleric_event : public AuraScript
             uint32 amount = damage ? damage : healing;
             if (id == 803489)
                 Copy(player, target, damage ? 803490 : 803816, CalculatePct(amount, Amount(id,1) * (fulfillment ? 2 : 1)));
-            Spell* bounceGuard = raw && raw->GetSpellInfo()->Id == 807058 ? raw : spell;
-            bool const bounced = bounceGuard && bounceGuard->GetScriptValue(803491);
+            bool const bounced = tickGuard && tickGuard->GetScriptValue(803491);
             if (id == 803491 && !bounced)
             {
-                if (bounceGuard)
-                    bounceGuard->SetScriptValue(803491, 1);
+                if (tickGuard)
+                    tickGuard->SetScriptValue(803491, 1);
                 auto nearby = damage ? Nearby(target, 10) : Allies(player, target, 10);
                 nearby.remove(target);
                 if (spell)
@@ -224,20 +223,21 @@ class aura_ascension_sun_cleric_event : public AuraScript
                     std::max(0, Amount(504877,0,player));
                 Mana(player, mana);
             }
-            if (id == 807435)
+            if (id == 807435 && target)
             {
-                Unit* enemy = damage ? target : player->GetVictim();
-                if (enemy && player->IsValidAttackTarget(enemy))
+                bool marked = target->HasAura(damage ? 505340 : 505370, player->GetGUID());
+                if (damage && player->IsValidAttackTarget(target))
+                    Eclipse(player, target, CalculatePct(amount, Amount(id)));
+                else if (!damage && player->IsValidAssistTarget(target))
+                    EclipseHeal(player, target, CalculatePct(amount, Amount(807437)));
+                else
+                    marked = false;
+                if (fulfillment && marked)
                 {
-                    bool marked = enemy->HasAura(505340, player->GetGUID());
-                    Eclipse(player, enemy, CalculatePct(amount, Amount(id)));
-                    if (fulfillment && marked)
-                    {
-                        int32 pct = Amount(807444,1);
-                        if (player->HasAura(704579))
-                            pct = CalculatePct(pct, 100 + Amount(704579,1));
-                        Copy(player, target, damage ? 807215 : 803816, CalculatePct(amount,pct));
-                    }
+                    int32 pct = Amount(807444,1);
+                    if (player->HasAura(704579))
+                        pct = CalculatePct(pct, 100 + Amount(704579,1));
+                    Copy(player, target, damage ? 807215 : 803816, CalculatePct(amount,pct));
                 }
             }
             if (id == 807547)

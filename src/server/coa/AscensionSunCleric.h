@@ -24,6 +24,7 @@ constexpr uint32 RejuvenatingRays = 807240;
 constexpr uint32 Rejuvenating = 807239;
 constexpr uint32 ValianceExtraAttack = 681472;
 constexpr uint32 ValianceMarker = 681531;
+constexpr uint32 SunStride = 680700;
 struct SunClericState
 {
     EventMap timers;
@@ -67,6 +68,7 @@ void StackWithoutRefresh(Player* player, uint32 id);
 void ActivateDawn(Player* player);
 void Fulfill(Player* player, Spell* spell, Spell* guard, Unit* target);
 void Eclipse(Player* player, Unit* target, uint32 amount);
+void EclipseHeal(Player* player, Unit* target, uint32 amount);
 void ReleaseSuncharge(Player* player, Unit* target, uint32 stacks);
 bool Daytime();
 void SunGate(Player* player);
